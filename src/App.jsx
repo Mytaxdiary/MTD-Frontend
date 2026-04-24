@@ -1,18 +1,19 @@
 import { useState } from "react";
-import Dashboard from "./mtd_agent_dashboard.jsx";
-import ClientList from "./mtd_client_list.jsx";
-import AddClient from "./mtd_add_client.jsx";
-import ClientDetail from "./mtd_client_detail.jsx";
-import ChaseManager from "./mtd_chase_manager.jsx";
-import QuarterlyReview from "./mtd_quarterly_review.jsx";
-import Settings from "./mtd_settings.jsx";
+import AppShell from "./components/layout/appShell";
+import Dashboard from "./features/dashboard/agentDashboard";
+import ClientList from "./features/clients/clientList";
+import AddClient from "./features/clients/addClient";
+import ClientDetail from "./features/clients/clientDetail";
+import ChaseManager from "./features/chase/chaseManager";
+import QuarterlyReview from "./features/quarterly/quarterlyReview";
+import Settings from "./features/settings/settings";
 
 export default function App() {
   const [page, setPage] = useState("dashboard");
   const navigate = (p) => setPage(p);
 
   return (
-    <>
+    <AppShell navigate={navigate} activePage={page}>
       {page === "dashboard" && <Dashboard navigate={navigate} />}
       {page === "clients" && <ClientList navigate={navigate} />}
       {page === "add-client" && <AddClient navigate={navigate} />}
@@ -20,6 +21,6 @@ export default function App() {
       {page === "chase" && <ChaseManager navigate={navigate} />}
       {page === "quarterly-review" && <QuarterlyReview navigate={navigate} />}
       {page === "settings" && <Settings navigate={navigate} />}
-    </>
+    </AppShell>
   );
 }

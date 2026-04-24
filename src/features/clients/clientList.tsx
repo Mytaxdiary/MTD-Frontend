@@ -1,3 +1,4 @@
+'use client'
 import { useState } from "react";
 
 const B = {
@@ -38,15 +39,8 @@ const Badge = ({ status }) => {
   return <span style={{ fontSize: 11, fontWeight: 600, padding: "3px 10px", borderRadius: 20, background: s.bg, color: s.c, border: `1px solid ${s.b}`, whiteSpace: "nowrap" }}>{s.l}</span>;
 };
 
-const NavItem = ({ label, active, icon, count, onClick }) => (
-  <div onClick={onClick} style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 14px", borderRadius: 8, cursor: "pointer", background: active ? "rgba(14,165,201,0.12)" : "transparent", color: active ? B.primary : "rgba(255,255,255,0.65)", fontSize: 13, fontWeight: active ? 600 : 400, marginBottom: 2 }}>
-    <span style={{ fontSize: 15, opacity: active ? 1 : 0.6 }}>{icon}</span>
-    <span style={{ flex: 1 }}>{label}</span>
-    {count > 0 && <span style={{ fontSize: 10, fontWeight: 700, background: B.red, color: "#fff", borderRadius: 10, padding: "1px 7px" }}>{count}</span>}
-  </div>
-);
 
-export default function ClientList({ navigate = () => {} }) {
+export default function ClientList({ navigate = () => {} }: { navigate?: (route: string) => void }) {
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -62,7 +56,7 @@ export default function ClientList({ navigate = () => {} }) {
   });
 
   filtered = [...filtered].sort((a, b) => {
-    let va = a[sortCol], vb = b[sortCol];
+    let va = (a as Record<string, unknown>)[sortCol], vb = (b as Record<string, unknown>)[sortCol];
     if (typeof va === "string") { va = va.toLowerCase(); vb = vb.toLowerCase(); }
     if (va < vb) return sortDir === "asc" ? -1 : 1;
     if (va > vb) return sortDir === "asc" ? 1 : -1;
@@ -82,33 +76,6 @@ export default function ClientList({ navigate = () => {} }) {
   );
 
   return (
-    <div style={{ display: "flex", height: "100vh", fontFamily: "'DM Sans', 'Segoe UI', system-ui, sans-serif", background: B.surface, color: B.text }}>
-      <div style={{ width: 230, background: B.navy, display: "flex", flexDirection: "column", flexShrink: 0 }}>
-        <div style={{ padding: "22px 20px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: `linear-gradient(135deg, ${B.primary}, ${B.primaryDark})`, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 13, color: "#fff" }}>NE</div>
-            <div><div style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>NewEffect</div><div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", fontWeight: 500 }}>MTD ITSA</div></div>
-          </div>
-        </div>
-        <div style={{ padding: "16px 12px", flex: 1 }}>
-          <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.3)", letterSpacing: "0.08em", padding: "0 14px", marginBottom: 8 }}>MAIN</div>
-          <NavItem label="Dashboard" icon="⊞" onClick={() => navigate("dashboard")} />
-          <NavItem label="Clients" active icon="⊡" onClick={() => navigate("clients")} />
-          <NavItem label="Chase manager" icon="↗" count={2} onClick={() => navigate("chase")} />
-          <NavItem label="Filing status" icon="◎" onClick={() => navigate("dashboard")} />
-          <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.3)", letterSpacing: "0.08em", padding: "0 14px", marginTop: 24, marginBottom: 8 }}>MANAGE</div>
-          <NavItem label="Add client" icon="+" onClick={() => navigate("add-client")} />
-          <NavItem label="Settings" icon="⚙" onClick={() => navigate("settings")} />
-          <NavItem label="HMRC connection" icon="⟷" onClick={() => navigate("settings")} />
-        </div>
-        <div style={{ padding: "16px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ width: 32, height: 32, borderRadius: 20, background: "rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 600, color: "rgba(255,255,255,0.7)" }}>JW</div>
-            <div><div style={{ fontSize: 12, fontWeight: 600, color: "rgba(255,255,255,0.85)" }}>Jane Walker</div><div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)" }}>Walker & Co</div></div>
-          </div>
-        </div>
-      </div>
-
       <div style={{ flex: 1, overflow: "auto", display: "flex", flexDirection: "column" }}>
         <div style={{ padding: "16px 32px", background: B.white, borderBottom: `1px solid ${B.border}`, display: "flex", justifyContent: "space-between", alignItems: "center", flexShrink: 0 }}>
           <div>
@@ -199,6 +166,5 @@ export default function ClientList({ navigate = () => {} }) {
           </div>
         </div>
       </div>
-    </div>
   );
 }

@@ -1,3 +1,4 @@
+'use client'
 import { useState } from "react";
 
 const BRAND = {
@@ -46,15 +47,8 @@ const MetricCard = ({ label, value, sub, color, icon }) => (
   </div>
 );
 
-const NavItem = ({ label, active, icon, count, onClick }) => (
-  <div onClick={onClick} style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 14px", borderRadius: 8, cursor: "pointer", background: active ? "rgba(14,165,201,0.12)" : "transparent", color: active ? BRAND.primary : "rgba(255,255,255,0.65)", fontSize: 13, fontWeight: active ? 600 : 400, marginBottom: 2 }}>
-    <span style={{ fontSize: 15, opacity: active ? 1 : 0.6 }}>{icon}</span>
-    <span style={{ flex: 1 }}>{label}</span>
-    {count > 0 && <span style={{ fontSize: 10, fontWeight: 700, background: BRAND.red, color: "#fff", borderRadius: 10, padding: "1px 7px", minWidth: 18, textAlign: "center" }}>{count}</span>}
-  </div>
-);
 
-export default function Dashboard({ navigate = () => {} }) {
+export default function Dashboard({ navigate = () => {} }: { navigate?: (route: string) => void }) {
   const [filter, setFilter] = useState("all");
   const [selectedClient, setSelectedClient] = useState(null);
 
@@ -66,28 +60,6 @@ export default function Dashboard({ navigate = () => {} }) {
   const totalOutstanding = clients.reduce((s, c) => s + c.balance, 0);
 
   return (
-    <div style={{ display: "flex", height: "100vh", fontFamily: "'DM Sans', 'Segoe UI', system-ui, sans-serif", background: BRAND.surface, color: BRAND.text }}>
-      <div style={{ width: 230, background: BRAND.navy, display: "flex", flexDirection: "column", flexShrink: 0 }}>
-        <div style={{ padding: "22px 20px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: `linear-gradient(135deg, ${BRAND.primary}, ${BRAND.primaryDark})`, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 13, color: "#fff", letterSpacing: "-0.5px" }}>NE</div>
-            <div><div style={{ fontSize: 14, fontWeight: 700, color: "#fff", letterSpacing: "-0.01em" }}>NewEffect</div><div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", fontWeight: 500 }}>MTD ITSA</div></div>
-          </div>
-        </div>
-        <div style={{ padding: "16px 12px", flex: 1 }}>
-          <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.3)", letterSpacing: "0.08em", padding: "0 14px", marginBottom: 8 }}>MAIN</div>
-          <NavItem label="Dashboard" active icon="⊞" onClick={() => navigate("dashboard")} />
-          <NavItem label="Clients" icon="⊡" onClick={() => navigate("clients")} />
-          <NavItem label="Chase manager" icon="↗" count={overdueCount} onClick={() => navigate("chase")} />
-          <NavItem label="Filing status" icon="◎" onClick={() => navigate("dashboard")} />
-          <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.3)", letterSpacing: "0.08em", padding: "0 14px", marginTop: 24, marginBottom: 8 }}>MANAGE</div>
-          <NavItem label="Add client" icon="+" onClick={() => navigate("add-client")} />
-          <NavItem label="Settings" icon="⚙" onClick={() => navigate("settings")} />
-          <NavItem label="HMRC connection" icon="⟷" onClick={() => navigate("settings")} />
-        </div>
-        <div style={{ padding: "16px", borderTop: "1px solid rgba(255,255,255,0.08)" }}><div style={{ display: "flex", alignItems: "center", gap: 10 }}><div style={{ width: 32, height: 32, borderRadius: 20, background: "rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 600, color: "rgba(255,255,255,0.7)" }}>JW</div><div><div style={{ fontSize: 12, fontWeight: 600, color: "rgba(255,255,255,0.85)" }}>Jane Walker</div><div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)" }}>Walker & Co Accountants</div></div></div></div>
-      </div>
-
       <div style={{ flex: 1, overflow: "auto", display: "flex", flexDirection: "column" }}>
         <div style={{ padding: "16px 32px", background: BRAND.white, borderBottom: `1px solid ${BRAND.border}`, display: "flex", justifyContent: "space-between", alignItems: "center", flexShrink: 0 }}>
           <div>
@@ -162,6 +134,5 @@ export default function Dashboard({ navigate = () => {} }) {
           </div>
         </div>
       </div>
-    </div>
   );
 }
