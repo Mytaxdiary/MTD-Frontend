@@ -73,7 +73,6 @@ export default function AppSidebar({ overdueCount = 2 }: { overdueCount?: number
         <NavItem label="Dashboard"      active={active === 'dashboard'}  icon="⊞" onClick={() => go('dashboard')} />
         <NavItem label="Clients"        active={active === 'clients'}    icon="⊡" onClick={() => go('clients')} />
         <NavItem label="Chase manager"  active={active === 'chase'}      icon="↗" count={overdueCount} onClick={() => go('chase')} />
-        <NavItem label="Filing status"                                    icon="◎" onClick={() => go('dashboard')} />
 
         <div style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.08em', padding: '0 14px', marginTop: 24, marginBottom: 8 }}>
           MANAGE
