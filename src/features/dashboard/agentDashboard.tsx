@@ -12,17 +12,17 @@ const B = {
 };
 
 const clients = [
-  { id:1, name:"Sarah Mitchell", business:"Mitchell Consulting", type:"SE", status:"overdue", stage:"chased", q:"Q4", deadline:"7 Apr 2026", daysLeft:-17, chase:"No response", records:false, balance:2400, q1:"filed", q2:"filed", q3:"filed", q4:"overdue" },
-  { id:2, name:"James Cooper", business:"Cooper Properties", type:"Prop", status:"overdue", stage:"chased", q:"Q4", deadline:"7 Apr 2026", daysLeft:-17, chase:"Opened email", records:false, balance:0, q1:"filed", q2:"filed", q3:"filed", q4:"overdue" },
-  { id:3, name:"Priya Sharma", business:"Sharma Design Studio", type:"SE", status:"due-soon", stage:"received", q:"Q4", deadline:"7 May 2026", daysLeft:13, chase:"Records received", records:true, balance:3620, q1:"filed", q2:"filed", q3:"filed", q4:"ready" },
-  { id:4, name:"Tom Grant", business:"Grant Rentals", type:"Prop", status:"due-soon", stage:"chased", q:"Q4", deadline:"7 May 2026", daysLeft:13, chase:"Chased 3d ago", records:false, balance:1800, q1:"filed", q2:"filed", q3:"filed", q4:"pending" },
-  { id:5, name:"David Okafor", business:"Okafor Plumbing", type:"SE", status:"filed", stage:"submitted", q:"Q4", deadline:"—", daysLeft:0, chase:"Complete", records:true, balance:0, q1:"filed", q2:"filed", q3:"filed", q4:"filed" },
-  { id:6, name:"Rebecca Hall", business:"Hall Interiors", type:"SE", status:"filed", stage:"submitted", q:"Q4", deadline:"—", daysLeft:0, chase:"Complete", records:true, balance:0, q1:"filed", q2:"filed", q3:"filed", q4:"filed" },
-  { id:7, name:"Marcus Chen", business:"Chen Photography", type:"SE", status:"due-soon", stage:"not-started", q:"Q4", deadline:"7 May 2026", daysLeft:13, chase:"Not started", records:false, balance:950, q1:"filed", q2:"filed", q3:"filed", q4:"pending" },
-  { id:8, name:"George Whitfield", business:"Whitfield Electricals", type:"SE", status:"due-soon", stage:"chased", q:"Q4", deadline:"7 May 2026", daysLeft:13, chase:"Chased 7d ago", records:false, balance:0, q1:"filed", q2:"filed", q3:"overdue", q4:"pending" },
-  { id:9, name:"Fatima Al-Rashid", business:"Al-Rashid Catering", type:"SE", status:"filed", stage:"submitted", q:"Q4", deadline:"—", daysLeft:0, chase:"Complete", records:true, balance:0, q1:"filed", q2:"filed", q3:"filed", q4:"filed" },
-  { id:10, name:"Oliver Stone", business:"Stone Lettings", type:"Prop", status:"due-soon", stage:"not-started", q:"Q4", deadline:"7 May 2026", daysLeft:13, chase:"Not started", records:false, balance:0, q1:"filed", q2:"filed", q3:"filed", q4:"pending" },
-  { id:11, name:"Aisha Patel", business:"Patel Tutoring", type:"SE", status:"pending-invite", stage:"not-started", q:"—", deadline:"—", daysLeft:0, chase:"Invite sent", records:false, balance:0, q1:"—", q2:"—", q3:"—", q4:"—" },
+  { id:1,  name:"Sarah Mitchell",  business:"Mitchell Consulting",    type:["SE"],         status:"overdue",       stage:"chased",      q:"Q4", deadline:"7 Apr 2026", daysLeft:-17, chase:"No response",      records:false, balance:2400, q1:"filed", q2:"filed", q3:"filed",   q4:"overdue" },
+  { id:2,  name:"James Cooper",    business:"Cooper Properties",      type:["Prop"],       status:"overdue",       stage:"chased",      q:"Q4", deadline:"7 Apr 2026", daysLeft:-17, chase:"Opened email",     records:false, balance:0,    q1:"filed", q2:"filed", q3:"filed",   q4:"overdue" },
+  { id:3,  name:"Priya Sharma",    business:"Sharma Design Studio",   type:["SE"],         status:"due-soon",      stage:"received",    q:"Q4", deadline:"7 May 2026", daysLeft:13,  chase:"Records received", records:true,  balance:3620, q1:"filed", q2:"filed", q3:"filed",   q4:"ready"   },
+  { id:4,  name:"Tom Grant",       business:"Grant Rentals",          type:["SE","Prop"],  status:"due-soon",      stage:"chased",      q:"Q4", deadline:"7 May 2026", daysLeft:13,  chase:"Chased 3d ago",    records:false, balance:1800, q1:"filed", q2:"filed", q3:"filed",   q4:"pending" },
+  { id:5,  name:"David Okafor",    business:"Okafor Plumbing",        type:["SE"],         status:"filed",         stage:"submitted",   q:"Q4", deadline:"—",          daysLeft:0,   chase:"Complete",         records:true,  balance:0,    q1:"filed", q2:"filed", q3:"filed",   q4:"filed"   },
+  { id:6,  name:"Rebecca Hall",    business:"Hall Interiors",         type:["SE"],         status:"filed",         stage:"submitted",   q:"Q4", deadline:"—",          daysLeft:0,   chase:"Complete",         records:true,  balance:0,    q1:"filed", q2:"filed", q3:"filed",   q4:"filed"   },
+  { id:7,  name:"Marcus Chen",     business:"Chen Photography",       type:["SE"],         status:"due-soon",      stage:"not-started", q:"Q4", deadline:"7 May 2026", daysLeft:13,  chase:"Not started",      records:false, balance:950,  q1:"filed", q2:"filed", q3:"filed",   q4:"pending" },
+  { id:8,  name:"George Whitfield",business:"Whitfield Electricals",  type:["SE","Prop"],  status:"due-soon",      stage:"chased",      q:"Q4", deadline:"7 May 2026", daysLeft:13,  chase:"Chased 7d ago",    records:false, balance:0,    q1:"filed", q2:"filed", q3:"overdue", q4:"pending" },
+  { id:9,  name:"Fatima Al-Rashid",business:"Al-Rashid Catering",     type:["SE"],         status:"filed",         stage:"submitted",   q:"Q4", deadline:"—",          daysLeft:0,   chase:"Complete",         records:true,  balance:0,    q1:"filed", q2:"filed", q3:"filed",   q4:"filed"   },
+  { id:10, name:"Oliver Stone",    business:"Stone Lettings",         type:["Prop"],       status:"due-soon",      stage:"not-started", q:"Q4", deadline:"7 May 2026", daysLeft:13,  chase:"Not started",      records:false, balance:0,    q1:"filed", q2:"filed", q3:"filed",   q4:"pending" },
+  { id:11, name:"Aisha Patel",     business:"Patel Tutoring",         type:["SE"],         status:"pending-invite",stage:"not-started", q:"—",  deadline:"—",          daysLeft:0,   chase:"Invite sent",      records:false, balance:0,    q1:"—",     q2:"—",     q3:"—",       q4:"—"       },
 ];
 
 const kanbanCols = [
@@ -48,6 +48,16 @@ const Badge = ({ status }: { status: string }) => {
   return <span style={{ fontSize:11, fontWeight:600, padding:"3px 10px", borderRadius:20, background:s.bg, color:s.c, border:`1px solid ${s.b}`, whiteSpace:"nowrap" }}>{s.l}</span>;
 };
 
+const TypePills = ({ types }: { types: string[] }) => (
+  <div style={{ display:"flex", gap:4, flexWrap:"wrap" }}>
+    {types.map(t => (
+      <span key={t} style={{ fontSize:10, fontWeight:600, padding:"2px 7px", borderRadius:10, background:t==="SE"?"#F0F9FF":"#F5F3FF", color:t==="SE"?"#0C4A6E":"#5B21B6", border:`1px solid ${t==="SE"?"#BAE6FD":"#DDD6FE"}`, whiteSpace:"nowrap" }}>
+        {t==="SE"?"Self-emp":"Property"}
+      </span>
+    ))}
+  </div>
+);
+
 const MetricCard = ({ label, value, sub, color, icon, active, onClick }: {
   label: string; value: number | string; sub: string; color: string;
   icon: React.ReactNode; active: boolean; onClick: () => void;
@@ -69,6 +79,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
   const [view, setView] = useState("list");
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
+  const [quarterFilter, setQuarterFilter] = useState("all");
   const [activeMetric, setActiveMetric] = useState<string | null>(null);
 
   const handleMetricClick = (filterKey: string) => {
@@ -78,7 +89,9 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
 
   let filtered = clients.filter(c => {
     if (statusFilter !== "all" && c.status !== statusFilter) return false;
-    if (typeFilter !== "all" && c.type !== typeFilter) return false;
+    if (typeFilter === "both" && c.type.length < 2) return false;
+    if (typeFilter !== "all" && typeFilter !== "both" && !c.type.includes(typeFilter)) return false;
+    if (quarterFilter !== "all" && c.q !== quarterFilter) return false;
     return true;
   });
 
@@ -95,8 +108,8 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
           <div style={{ fontSize:13, color:B.muted, marginTop:2 }}>Thursday 24 April 2026 — Tax year 2025-26, Q4</div>
         </div>
         <div style={{ display:"flex", gap:10 }}>
-          <button style={{ padding:"8px 16px", borderRadius:8, border:`1px solid ${B.border}`, background:B.white, fontSize:13, fontWeight:500, cursor:"pointer", color:B.text }}>+ Add client</button>
-          <button style={{ padding:"8px 16px", borderRadius:8, border:"none", background:B.primary, color:"#fff", fontSize:13, fontWeight:600, cursor:"pointer" }}>↗ Chase all overdue</button>
+          <button onClick={()=>navigate('add-client')} style={{ padding:"8px 16px", borderRadius:8, border:`1px solid ${B.border}`, background:B.white, fontSize:13, fontWeight:500, cursor:"pointer", color:B.text }}>+ Add client</button>
+          <button onClick={()=>navigate('chase')} style={{ padding:"8px 16px", borderRadius:8, border:"none", background:B.primary, color:"#fff", fontSize:13, fontWeight:600, cursor:"pointer" }}>↗ Chase all overdue</button>
         </div>
       </div>
 
@@ -123,6 +136,14 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
               <option value="all">All types</option>
               <option value="SE">Self-employment</option>
               <option value="Prop">UK Property</option>
+              <option value="both">Both income types</option>
+            </select>
+            <select value={quarterFilter} onChange={e=>setQuarterFilter(e.target.value)} style={{ padding:"6px 10px", borderRadius:6, border:`1px solid ${B.border}`, fontSize:12, color:B.text, background:B.white, cursor:"pointer" }}>
+              <option value="all">All quarters</option>
+              <option value="Q1">Q1</option>
+              <option value="Q2">Q2</option>
+              <option value="Q3">Q3</option>
+              <option value="Q4">Q4</option>
             </select>
             <span style={{ fontSize:12, color:B.light, marginLeft:4 }}>{filtered.length} of {clients.length}</span>
           </div>
@@ -147,9 +168,9 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
               </tr></thead>
               <tbody>
                 {filtered.map((c,i)=>(
-                  <tr key={c.id} style={{ borderBottom:`1px solid ${B.borderLight}`, cursor:"pointer", background:i%2===1?"#FAFBFC":"transparent" }}>
+                  <tr key={c.id} onClick={()=>navigate('client-detail')} style={{ borderBottom:`1px solid ${B.borderLight}`, cursor:"pointer", background:i%2===1?"#FAFBFC":"transparent" }}>
                     <td style={{ padding:"12px 16px" }}><div style={{ fontWeight:600 }}>{c.name}</div><div style={{ fontSize:11, color:B.light, marginTop:1 }}>{c.business}</div></td>
-                    <td style={{ padding:"12px 16px", color:B.muted, fontSize:12 }}>{c.type === "SE" ? "Self-employment" : "UK Property"}</td>
+                    <td style={{ padding:"12px 16px" }}><TypePills types={c.type} /></td>
                     <td style={{ padding:"12px 16px", fontWeight:600 }}>{c.q}</td>
                     <td style={{ padding:"12px 16px" }}><div>{c.deadline}</div>{c.daysLeft<0 && <div style={{ fontSize:11, color:B.red, fontWeight:600 }}>{Math.abs(c.daysLeft)}d overdue</div>}{c.daysLeft>0 && <div style={{ fontSize:11, color:B.light }}>{c.daysLeft}d left</div>}</td>
                     <td style={{ padding:"12px 16px" }}><Badge status={c.status} /></td>
@@ -182,8 +203,8 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                     <span style={{ fontSize:11, fontWeight:600, color:B.muted, background:B.white, borderRadius:10, padding:"1px 8px", border:`1px solid ${B.border}` }}>{colClients.length}</span>
                   </div>
                   <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-                    {colClients.map(c => (
-                      <div key={c.id} style={{ background:B.white, borderRadius:8, padding:"12px 14px", border:`1px solid ${B.border}`, cursor:"pointer" }}>
+                      {colClients.map(c => (
+                        <div key={c.id} onClick={()=>navigate('client-detail')} style={{ background:B.white, borderRadius:8, padding:"12px 14px", border:`1px solid ${B.border}`, cursor:"pointer" }}>
                         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:6 }}>
                           <div style={{ fontWeight:600, fontSize:12, lineHeight:1.3 }}>{c.name}</div>
                           <Badge status={c.status} />
@@ -221,7 +242,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                   const allFiled = qs.every(q=>q==="filed");
                   const hasOverdue = qs.some(q=>q==="overdue");
                   return (
-                    <tr key={c.id} style={{ borderBottom:`1px solid ${B.borderLight}`, background:i%2===1?"#FAFBFC":"transparent", cursor:"pointer" }}>
+                      <tr key={c.id} onClick={()=>navigate('client-detail')} style={{ borderBottom:`1px solid ${B.borderLight}`, background:i%2===1?"#FAFBFC":"transparent", cursor:"pointer" }}>
                       <td style={{ padding:"12px 16px", fontWeight:600 }}>{c.name}</td>
                       <td style={{ padding:"12px 16px", fontSize:12, color:B.muted }}>{c.business}</td>
                       {qs.map((q,qi)=>(

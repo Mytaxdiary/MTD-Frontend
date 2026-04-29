@@ -19,6 +19,7 @@ out/
 # Env files (keep .env.example, ignore .env.local and any real secrets)
 .env.local
 .env.*.local
+.env
 
 # Editor directories and files
 .vscode/*

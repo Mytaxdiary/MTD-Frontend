@@ -13,19 +13,29 @@ const B = {
 };
 
 const allClients = [
-  { id:1, name:"Sarah Mitchell", business:"Mitchell Consulting", type:"SE", mtd:"Mandated", deadline:"7 Apr 2026", filing:"overdue", chase:"No response", agentType:"Main", income:68000 },
-  { id:2, name:"James Cooper", business:"Cooper Properties", type:"Prop", mtd:"Mandated", deadline:"7 Apr 2026", filing:"overdue", chase:"No response", agentType:"Main", income:52000 },
-  { id:3, name:"Priya Sharma", business:"Sharma Design Studio", type:"SE", mtd:"Mandated", deadline:"7 May 2026", filing:"ready", chase:"Records received", agentType:"Main", income:52000 },
-  { id:4, name:"Tom Grant", business:"Grant Rentals", type:"Prop", mtd:"Mandated", deadline:"7 May 2026", filing:"due-soon", chase:"Chased 3d ago", agentType:"Main", income:44000 },
-  { id:5, name:"David Okafor", business:"Okafor Plumbing", type:"SE", mtd:"Mandated", deadline:"—", filing:"filed", chase:"Complete", agentType:"Main", income:71000 },
-  { id:6, name:"Rebecca Hall", business:"Hall Interiors", type:"SE", mtd:"Mandated", deadline:"—", filing:"filed", chase:"Complete", agentType:"Main", income:58000 },
-  { id:7, name:"Marcus Chen", business:"Chen Photography", type:"SE", mtd:"Voluntary", deadline:"7 May 2026", filing:"due-soon", chase:"Not started", agentType:"Supporting", income:28000 },
-  { id:8, name:"Aisha Patel", business:"Patel Tutoring", type:"SE", mtd:"Mandated", deadline:"—", filing:"pending", chase:"Invite sent", agentType:"—", income:0 },
-  { id:9, name:"George Whitfield", business:"Whitfield Electricals", type:"SE", mtd:"Mandated", deadline:"7 May 2026", filing:"due-soon", chase:"Chased 7d ago", agentType:"Main", income:62000 },
-  { id:10, name:"Fatima Al-Rashid", business:"Al-Rashid Catering", type:"SE", mtd:"Mandated", deadline:"—", filing:"filed", chase:"Complete", agentType:"Main", income:89000 },
-  { id:11, name:"Oliver Stone", business:"Stone Lettings", type:"Prop", mtd:"Voluntary", deadline:"7 May 2026", filing:"due-soon", chase:"Not started", agentType:"Main", income:31000 },
-  { id:12, name:"Nina Kowalski", business:"Kowalski Translations", type:"SE", mtd:"Mandated", deadline:"—", filing:"filed", chase:"Complete", agentType:"Main", income:54000 },
+  { id:1,  name:"Sarah Mitchell",  business:"Mitchell Consulting",   type:["SE"],        mtd:"Mandated",  deadline:"7 Apr 2026", filing:"overdue",  chase:"No response",     agentType:"Main",      income:68000 },
+  { id:2,  name:"James Cooper",    business:"Cooper Properties",     type:["Prop"],      mtd:"Mandated",  deadline:"7 Apr 2026", filing:"overdue",  chase:"No response",     agentType:"Main",      income:52000 },
+  { id:3,  name:"Priya Sharma",    business:"Sharma Design Studio",  type:["SE"],        mtd:"Mandated",  deadline:"7 May 2026", filing:"ready",    chase:"Records received",agentType:"Main",      income:52000 },
+  { id:4,  name:"Tom Grant",       business:"Grant Rentals",         type:["SE","Prop"], mtd:"Mandated",  deadline:"7 May 2026", filing:"due-soon", chase:"Chased 3d ago",   agentType:"Main",      income:44000 },
+  { id:5,  name:"David Okafor",    business:"Okafor Plumbing",       type:["SE"],        mtd:"Mandated",  deadline:"—",          filing:"filed",    chase:"Complete",        agentType:"Main",      income:71000 },
+  { id:6,  name:"Rebecca Hall",    business:"Hall Interiors",        type:["SE"],        mtd:"Mandated",  deadline:"—",          filing:"filed",    chase:"Complete",        agentType:"Main",      income:58000 },
+  { id:7,  name:"Marcus Chen",     business:"Chen Photography",      type:["SE"],        mtd:"Voluntary", deadline:"7 May 2026", filing:"due-soon", chase:"Not started",     agentType:"Supporting",income:28000 },
+  { id:8,  name:"Aisha Patel",     business:"Patel Tutoring",        type:["SE"],        mtd:"Mandated",  deadline:"—",          filing:"pending",  chase:"Invite sent",     agentType:"—",         income:0     },
+  { id:9,  name:"George Whitfield",business:"Whitfield Electricals", type:["SE","Prop"], mtd:"Mandated",  deadline:"7 May 2026", filing:"due-soon", chase:"Chased 7d ago",   agentType:"Main",      income:62000 },
+  { id:10, name:"Fatima Al-Rashid",business:"Al-Rashid Catering",    type:["SE"],        mtd:"Mandated",  deadline:"—",          filing:"filed",    chase:"Complete",        agentType:"Main",      income:89000 },
+  { id:11, name:"Oliver Stone",    business:"Stone Lettings",        type:["Prop"],      mtd:"Voluntary", deadline:"7 May 2026", filing:"due-soon", chase:"Not started",     agentType:"Main",      income:31000 },
+  { id:12, name:"Nina Kowalski",   business:"Kowalski Translations", type:["SE"],        mtd:"Mandated",  deadline:"—",          filing:"filed",    chase:"Complete",        agentType:"Main",      income:54000 },
 ];
+
+const TypePills = ({ types }: { types: string[] }) => (
+  <div style={{ display:"flex", gap:4, flexWrap:"wrap" }}>
+    {types.map(t => (
+      <span key={t} style={{ fontSize:10, fontWeight:600, padding:"2px 7px", borderRadius:10, background:t==="SE"?"#F0F9FF":"#F5F3FF", color:t==="SE"?"#0C4A6E":"#5B21B6", border:`1px solid ${t==="SE"?"#BAE6FD":"#DDD6FE"}`, whiteSpace:"nowrap" }}>
+        {t==="SE"?"Self-employment":"UK Property"}
+      </span>
+    ))}
+  </div>
+);
 
 const Badge = ({ status }: { status: string }) => {
   const m: Record<string, { bg: string; c: string; b: string; l: string }> = {
@@ -54,15 +64,16 @@ export default function ClientList({ navigate = () => {} }: { navigate?: (route:
 
   let filtered = allClients.filter(c => {
     if (search && !c.name.toLowerCase().includes(search.toLowerCase()) && !c.business.toLowerCase().includes(search.toLowerCase())) return false;
-    if (typeFilter !== "all" && c.type !== typeFilter) return false;
+    if (typeFilter === "both" && c.type.length < 2) return false;
+    if (typeFilter !== "all" && typeFilter !== "both" && !c.type.includes(typeFilter)) return false;
     if (statusFilter !== "all" && c.filing !== statusFilter) return false;
     return true;
   });
   filtered = [...filtered].sort((a,b) => {
     const va = (a as Record<string, unknown>)[sortCol];
     const vb = (b as Record<string, unknown>)[sortCol];
-    const sa = typeof va === "string" ? va.toLowerCase() : va;
-    const sb = typeof vb === "string" ? vb.toLowerCase() : vb;
+    const sa = Array.isArray(va) ? va.join(",").toLowerCase() : typeof va === "string" ? va.toLowerCase() : va;
+    const sb = Array.isArray(vb) ? vb.join(",").toLowerCase() : typeof vb === "string" ? vb.toLowerCase() : vb;
     if(sa! < sb!) return sortDir==="asc"?-1:1;
     if(sa! > sb!) return sortDir==="asc"?1:-1;
     return 0;
@@ -76,7 +87,7 @@ export default function ClientList({ navigate = () => {} }: { navigate?: (route:
     <div style={{ flex:1, overflow:"auto", display:"flex", flexDirection:"column" }}>
       <div style={{ padding:"16px 32px", background:B.white, borderBottom:`1px solid ${B.border}`, display:"flex", justifyContent:"space-between", alignItems:"center", flexShrink:0 }}>
         <div><div style={{ fontSize:20, fontWeight:700 }}>Clients</div><div style={{ fontSize:13, color:B.muted, marginTop:2 }}>{allClients.length} clients — {allClients.filter(c=>c.filing!=="pending").length} authorised, {allClients.filter(c=>c.filing==="pending").length} pending</div></div>
-        <button style={{ padding:"8px 16px", borderRadius:8, border:"none", background:B.primary, color:"#fff", fontSize:13, fontWeight:600, cursor:"pointer" }}>+ Add client</button>
+        <button onClick={()=>navigate('add-client')} style={{ padding:"8px 16px", borderRadius:8, border:"none", background:B.primary, color:"#fff", fontSize:13, fontWeight:600, cursor:"pointer" }}>+ Add client</button>
       </div>
 
       <div style={{ padding:"20px 32px", flex:1 }}>
@@ -86,7 +97,7 @@ export default function ClientList({ navigate = () => {} }: { navigate?: (route:
             <span style={{ position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", fontSize:14, color:B.light }}>⌕</span>
           </div>
           <select value={typeFilter} onChange={e=>setTypeFilter(e.target.value)} style={{ padding:"8px 10px", borderRadius:8, border:`1px solid ${B.border}`, fontSize:12, color:B.text, background:B.white, cursor:"pointer" }}>
-            <option value="all">All types</option><option value="SE">Self-employment</option><option value="Prop">UK Property</option>
+            <option value="all">All types</option><option value="SE">Self-employment</option><option value="Prop">UK Property</option><option value="both">Both income types</option>
           </select>
           <select value={statusFilter} onChange={e=>setStatusFilter(e.target.value)} style={{ padding:"8px 10px", borderRadius:8, border:`1px solid ${B.border}`, fontSize:12, color:B.text, background:B.white, cursor:"pointer" }}>
             <option value="all">All statuses</option><option value="overdue">Overdue</option><option value="due-soon">Due soon</option><option value="ready">Records ready</option><option value="filed">Submitted</option><option value="pending">Pending invite</option>
@@ -124,10 +135,10 @@ export default function ClientList({ navigate = () => {} }: { navigate?: (route:
             </tr></thead>
             <tbody>
               {filtered.map((c,i)=>(
-                <tr key={c.id} style={{ borderBottom:`1px solid ${B.borderLight}`, background:selected.has(c.id)?"#F0F9FF":i%2===1?"#FAFBFC":"transparent", cursor:"pointer" }}>
-                  <td style={{ padding:"10px 16px" }}><input type="checkbox" checked={selected.has(c.id)} onChange={()=>toggleSelect(c.id)} style={{ cursor:"pointer", accentColor:B.primary }} /></td>
+                <tr key={c.id} onClick={()=>navigate('client-detail')} style={{ borderBottom:`1px solid ${B.borderLight}`, background:selected.has(c.id)?"#F0F9FF":i%2===1?"#FAFBFC":"transparent", cursor:"pointer" }}>
+                  <td style={{ padding:"10px 16px" }}><input type="checkbox" checked={selected.has(c.id)} onChange={()=>toggleSelect(c.id)} onClick={e=>e.stopPropagation()} style={{ cursor:"pointer", accentColor:B.primary }} /></td>
                   <td style={{ padding:"10px 14px" }}><div style={{ fontWeight:600, fontSize:13 }}>{c.name}</div><div style={{ fontSize:11, color:B.light, marginTop:1 }}>{c.business}</div></td>
-                  {cols.type && <td style={{ padding:"10px 14px", color:B.muted, fontSize:12 }}>{c.type==="SE"?"Self-employment":"UK Property"}</td>}
+                  {cols.type && <td style={{ padding:"10px 14px" }}><TypePills types={c.type} /></td>}
                   {cols.mtd && <td style={{ padding:"10px 14px" }}><span style={{ fontSize:11, fontWeight:600, padding:"2px 9px", borderRadius:20, background:c.mtd==="Mandated"?B.greenBg:B.blueBg, color:c.mtd==="Mandated"?B.greenText:B.blueText, border:`1px solid ${c.mtd==="Mandated"?"#A7F3D0":"#BAE6FD"}` }}>{c.mtd}</span></td>}
                   {cols.deadline && <td style={{ padding:"10px 14px", fontSize:12 }}>{c.deadline}</td>}
                   {cols.filing && <td style={{ padding:"10px 14px" }}><Badge status={c.filing} /></td>}
