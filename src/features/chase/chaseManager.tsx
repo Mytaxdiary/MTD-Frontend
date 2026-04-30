@@ -1,33 +1,9 @@
 'use client'
 import { useState } from "react";
+import { mockChaseClients as chaseClients, mockChaseTemplates as defaultTemplates } from "@/mocks/chase/chaseData";
 
-const B = {
-  primary: "#0EA5C9", primaryDark: "#0284A8", navy: "#1B2A4A",
-  surface: "#F8FAFC", white: "#FFFFFF", border: "#E2E8F0", borderLight: "#F1F5F9",
-  text: "#0F172A", muted: "#64748B", light: "#94A3B8", xlight: "#CBD5E1",
-  red: "#EF4444", redBg: "#FEF2F2", redText: "#991B1B",
-  amber: "#F59E0B", amberBg: "#FFFBEB", amberText: "#92400E",
-  green: "#10B981", greenBg: "#ECFDF5", greenText: "#065F46",
-  purple: "#8B5CF6", purpleBg: "#F5F3FF", purpleText: "#5B21B6",
-  blueBg: "#F0F9FF", blueText: "#0C4A6E",
-};
+import B from "@/styles/theme";
 
-const chaseClients = [
-  { id:1, name:"Sarah Mitchell", business:"Mitchell Consulting", deadline:"7 Apr 2026", daysOverdue:17, lastChase:"10 Apr", chaseCount:3, status:"no-response", channel:"email", workflowType:"data-request" },
-  { id:2, name:"James Cooper", business:"Cooper Properties", deadline:"7 Apr 2026", daysOverdue:17, lastChase:"14 Apr", chaseCount:2, status:"opened", channel:"email", workflowType:"bookkeeping" },
-  { id:4, name:"Tom Grant", business:"Grant Rentals", deadline:"7 May 2026", daysOverdue:-13, lastChase:"16 Apr", chaseCount:1, status:"opened", channel:"sms", workflowType:"data-request" },
-  { id:7, name:"Marcus Chen", business:"Chen Photography", deadline:"7 May 2026", daysOverdue:-13, lastChase:null, chaseCount:0, status:"not-started", channel:"email", workflowType:"bookkeeping" },
-  { id:9, name:"George Whitfield", business:"Whitfield Electricals", deadline:"7 May 2026", daysOverdue:-13, lastChase:"12 Apr", chaseCount:1, status:"no-response", channel:"email", workflowType:"data-request" },
-  { id:11, name:"Oliver Stone", business:"Stone Lettings", deadline:"7 May 2026", daysOverdue:-13, lastChase:null, chaseCount:0, status:"not-started", channel:"email", workflowType:"bookkeeping" },
-];
-
-const defaultTemplates = [
-  { id:"bk-gentle", type:"bookkeeping", name:"Bookkeeping reminder", subject:"Quarterly bookkeeping needed — {business}", body:"Hi {name},\n\nJust a reminder that your {quarter} quarterly records are due by {deadline}. Please complete your bookkeeping in your accounting software and let us know when it's ready for us to review.\n\nIf you need any help, just reply to this email.\n\nBest regards,\n{agent_name}" },
-  { id:"bk-urgent", type:"bookkeeping", name:"Bookkeeping overdue", subject:"Action required: overdue bookkeeping — {business}", body:"Hi {name},\n\nThe deadline for your {quarter} quarterly update has passed. Please complete your bookkeeping as soon as possible so we can review and ensure your records are up to date with HMRC.\n\nBest regards,\n{agent_name}" },
-  { id:"dr-gentle", type:"data-request", name:"Data request — gentle", subject:"Quarterly records needed — {business}", body:"Hi {name},\n\nWe need your income and expense records for {quarter} (due {deadline}). Please send us your bank statements, invoices, and receipts for the period.\n\nYou can reply to this email with attachments, or upload files directly in your NewEffect portal.\n\nBest regards,\n{agent_name}" },
-  { id:"dr-urgent", type:"data-request", name:"Data request — urgent", subject:"Urgent: records overdue — {business}", body:"Hi {name},\n\nYour {quarter} records are now overdue. We need your bank statements and receipts urgently to submit your quarterly update to HMRC.\n\nPlease send everything you have as soon as possible.\n\nBest regards,\n{agent_name}" },
-  { id:"welcome", type:"general", name:"Welcome / onboarding", subject:"Welcome to {firm_name} — getting started", body:"Hi {name},\n\nWelcome! We're looking forward to helping you with your Making Tax Digital obligations.\n\nYou'll receive a separate email from HMRC asking you to authorise us as your agent. Please accept this — it allows us to manage your quarterly updates.\n\nBest regards,\n{agent_name}" },
-];
 
 const ResponseBadge = ({ status }: { status: string }) => {
   const m: Record<string, { bg: string; c: string; b: string; l: string }> = {

@@ -1,49 +1,14 @@
 'use client'
 import { useState } from "react";
+import {
+  mockClientQuarters as quarters,
+  mockClientLiabilities as liabilities,
+  mockPaymentHistory as paymentHistory,
+  mockChaseLog as chaseLog,
+} from "@/mocks/clients/clientDetailData";
 
-const B = {
-  primary: "#0EA5C9", primaryDark: "#0284A8", navy: "#1B2A4A",
-  surface: "#F8FAFC", white: "#FFFFFF", border: "#E2E8F0", borderLight: "#F1F5F9",
-  text: "#0F172A", muted: "#64748B", light: "#94A3B8", xlight: "#CBD5E1",
-  red: "#EF4444", redBg: "#FEF2F2", redText: "#991B1B",
-  amber: "#F59E0B", amberBg: "#FFFBEB", amberText: "#92400E",
-  green: "#10B981", greenBg: "#ECFDF5", greenText: "#065F46",
-  purple: "#8B5CF6", purpleBg: "#F5F3FF", purpleText: "#5B21B6",
-  blueBg: "#F0F9FF", blueText: "#0C4A6E",
-};
-
-const quarters = [
-  { q:"Q1", period:"6 Apr – 5 Jul 2025", due:"7 Aug 2025", status:"filed", filed:"2 Aug 2025", income:12400, expenses:3200 },
-  { q:"Q2", period:"6 Jul – 5 Oct 2025", due:"7 Nov 2025", status:"filed", filed:"1 Nov 2025", income:14800, expenses:4100 },
-  { q:"Q3", period:"6 Oct – 5 Jan 2026", due:"7 Feb 2026", status:"filed", filed:"5 Feb 2026", income:11200, expenses:3800 },
-  { q:"Q4", period:"6 Jan – 5 Apr 2026", due:"7 May 2026", status:"pending", filed:null, income:null, expenses:null },
-];
-
-const liabilities = [
-  { desc:"1st payment on account 2025-26", due:"31 Jan 2026", original:3620, outstanding:0, interest:0, status:"paid" },
-  { desc:"2nd payment on account 2025-26", due:"31 Jul 2026", original:3620, outstanding:3620, interest:0, status:"upcoming" },
-  { desc:"Balancing payment 2024-25", due:"31 Jan 2026", original:1240, outstanding:0, interest:0, status:"paid" },
-];
-
-const paymentHistory = [
-  { date:"28 Jan 2026", amount:4860, ref:"1234567890 — POA1 + balancing", method:"Bank transfer" },
-  { date:"30 Jan 2025", amount:3200, ref:"1234567890 — POA1 2024-25", method:"Bank transfer" },
-];
-
-const chaseLog = [
-  { date:"14 Apr 2026", type:"email", msg:"Q4 records reminder sent", status:"Opened" },
-  { date:"10 Apr 2026", type:"email", msg:"Q4 deadline approaching — records needed", status:"Opened" },
-  { date:"2 Feb 2026", type:"email", msg:"Q3 records reminder sent", status:"Responded" },
-];
-
-const Card = ({ children }: { children: React.ReactNode }) => (
-  <div style={{ background:B.white, borderRadius:12, border:`1px solid ${B.border}`, overflow:"hidden" }}>{children}</div>
-);
-const CardHeader = ({ title, right }: { title: string; right?: React.ReactNode }) => (
-  <div style={{ padding:"14px 20px", borderBottom:`1px solid ${B.border}`, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-    <div style={{ fontSize:14, fontWeight:700 }}>{title}</div>{right}
-  </div>
-);
+import B from "@/styles/theme";
+import { Card, CardHeader } from "@/components/ui/card";
 
 export default function ClientDetail({ navigate = () => {} }: { navigate?: (route: string) => void }) {
   const [activeTab, setActiveTab] = useState("overview");

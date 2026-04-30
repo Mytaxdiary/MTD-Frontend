@@ -1,41 +1,9 @@
 'use client'
 import { useState } from "react";
-
-const B = {
-  primary:"#0EA5C9", primaryDark:"#0284A8", navy:"#1B2A4A",
-  surface:"#F8FAFC", white:"#FFFFFF", border:"#E2E8F0", borderLight:"#F1F5F9",
-  text:"#0F172A", muted:"#64748B", light:"#94A3B8", xlight:"#CBD5E1",
-  red:"#EF4444", redBg:"#FEF2F2", redText:"#991B1B",
-  amber:"#F59E0B", amberBg:"#FFFBEB", amberText:"#92400E",
-  green:"#10B981", greenBg:"#ECFDF5", greenText:"#065F46",
-  purple:"#8B5CF6", purpleBg:"#F5F3FF", purpleText:"#5B21B6",
-  blueBg:"#F0F9FF", blueText:"#0C4A6E",
-};
-
-const allClients = [
-  { id:1,  name:"Sarah Mitchell",  business:"Mitchell Consulting",   type:["SE"],        mtd:"Mandated",  deadline:"7 Apr 2026", filing:"overdue",  chase:"No response",     agentType:"Main",      income:68000 },
-  { id:2,  name:"James Cooper",    business:"Cooper Properties",     type:["Prop"],      mtd:"Mandated",  deadline:"7 Apr 2026", filing:"overdue",  chase:"No response",     agentType:"Main",      income:52000 },
-  { id:3,  name:"Priya Sharma",    business:"Sharma Design Studio",  type:["SE"],        mtd:"Mandated",  deadline:"7 May 2026", filing:"ready",    chase:"Records received",agentType:"Main",      income:52000 },
-  { id:4,  name:"Tom Grant",       business:"Grant Rentals",         type:["SE","Prop"], mtd:"Mandated",  deadline:"7 May 2026", filing:"due-soon", chase:"Chased 3d ago",   agentType:"Main",      income:44000 },
-  { id:5,  name:"David Okafor",    business:"Okafor Plumbing",       type:["SE"],        mtd:"Mandated",  deadline:"—",          filing:"filed",    chase:"Complete",        agentType:"Main",      income:71000 },
-  { id:6,  name:"Rebecca Hall",    business:"Hall Interiors",        type:["SE"],        mtd:"Mandated",  deadline:"—",          filing:"filed",    chase:"Complete",        agentType:"Main",      income:58000 },
-  { id:7,  name:"Marcus Chen",     business:"Chen Photography",      type:["SE"],        mtd:"Voluntary", deadline:"7 May 2026", filing:"due-soon", chase:"Not started",     agentType:"Supporting",income:28000 },
-  { id:8,  name:"Aisha Patel",     business:"Patel Tutoring",        type:["SE"],        mtd:"Mandated",  deadline:"—",          filing:"pending",  chase:"Invite sent",     agentType:"—",         income:0     },
-  { id:9,  name:"George Whitfield",business:"Whitfield Electricals", type:["SE","Prop"], mtd:"Mandated",  deadline:"7 May 2026", filing:"due-soon", chase:"Chased 7d ago",   agentType:"Main",      income:62000 },
-  { id:10, name:"Fatima Al-Rashid",business:"Al-Rashid Catering",    type:["SE"],        mtd:"Mandated",  deadline:"—",          filing:"filed",    chase:"Complete",        agentType:"Main",      income:89000 },
-  { id:11, name:"Oliver Stone",    business:"Stone Lettings",        type:["Prop"],      mtd:"Voluntary", deadline:"7 May 2026", filing:"due-soon", chase:"Not started",     agentType:"Main",      income:31000 },
-  { id:12, name:"Nina Kowalski",   business:"Kowalski Translations", type:["SE"],        mtd:"Mandated",  deadline:"—",          filing:"filed",    chase:"Complete",        agentType:"Main",      income:54000 },
-];
-
-const TypePills = ({ types }: { types: string[] }) => (
-  <div style={{ display:"flex", gap:4, flexWrap:"wrap" }}>
-    {types.map(t => (
-      <span key={t} style={{ fontSize:10, fontWeight:600, padding:"2px 7px", borderRadius:10, background:t==="SE"?"#F0F9FF":"#F5F3FF", color:t==="SE"?"#0C4A6E":"#5B21B6", border:`1px solid ${t==="SE"?"#BAE6FD":"#DDD6FE"}`, whiteSpace:"nowrap" }}>
-        {t==="SE"?"Self-employment":"UK Property"}
-      </span>
-    ))}
-  </div>
-);
+import { mockClientList as allClients } from "@/mocks/clients/clientListData";
+import TypePills from "@/components/common/typePills";
+import { matchesTypeFilter } from "@/lib/helpers/clientType";
+import B from "@/styles/theme";
 
 const Badge = ({ status }: { status: string }) => {
   const m: Record<string, { bg: string; c: string; b: string; l: string }> = {
@@ -64,8 +32,7 @@ export default function ClientList({ navigate = () => {} }: { navigate?: (route:
 
   let filtered = allClients.filter(c => {
     if (search && !c.name.toLowerCase().includes(search.toLowerCase()) && !c.business.toLowerCase().includes(search.toLowerCase())) return false;
-    if (typeFilter === "both" && c.type.length < 2) return false;
-    if (typeFilter !== "all" && typeFilter !== "both" && !c.type.includes(typeFilter)) return false;
+    if (!matchesTypeFilter(c.type, typeFilter)) return false;
     if (statusFilter !== "all" && c.filing !== statusFilter) return false;
     return true;
   });

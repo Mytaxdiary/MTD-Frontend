@@ -1,36 +1,14 @@
 'use client'
 import { useState } from "react";
+import {
+  mockIncomeData as incomeData,
+  mockExpenseRows as expenseRows,
+  mockReviewChecks as checks,
+  mockYtdIncome as ytdIncome,
+} from "@/mocks/quarterlyReview/quarterlyReviewData";
 
-const B = {
-  primary: "#0EA5C9", primaryDark: "#0284A8", navy: "#1B2A4A",
-  surface: "#F8FAFC", white: "#FFFFFF", border: "#E2E8F0", borderLight: "#F1F5F9",
-  text: "#0F172A", muted: "#64748B", light: "#94A3B8", xlight: "#CBD5E1",
-  red: "#EF4444", redBg: "#FEF2F2", redText: "#991B1B",
-  amber: "#F59E0B", amberBg: "#FFFBEB", amberText: "#92400E",
-  green: "#10B981", greenBg: "#ECFDF5", greenText: "#065F46",
-  blueBg: "#F0F9FF", blueText: "#0C4A6E",
-};
+import B from "@/styles/theme";
 
-const incomeData = { turnover: 13600 };
-
-const expenseRows = [
-  { cat: "Premises running costs", q4: 1200, ytd: 4800, prior: 1100 },
-  { cat: "Staff costs", q4: 0, ytd: 0, prior: 0 },
-  { cat: "Travel costs", q4: 680, ytd: 2450, prior: 720 },
-  { cat: "Admin & office costs", q4: 540, ytd: 2100, prior: 480 },
-  { cat: "Advertising costs", q4: 320, ytd: 1280, prior: 350 },
-  { cat: "Professional fees", q4: 450, ytd: 1800, prior: 400 },
-  { cat: "Interest & bank charges", q4: 180, ytd: 720, prior: 190 },
-  { cat: "Other allowable expenses", q4: 1030, ytd: 4150, prior: 960 },
-];
-
-const checks = [
-  { ok: true, msg: "All mandatory income fields populated" },
-  { ok: true, msg: "Expense categories within expected ranges" },
-  { ok: true, msg: "Turnover below £90,000 — consolidated expenses eligible" },
-  { ok: true, msg: "Cumulative totals consistent with prior submissions" },
-  { ok: false, warn: true, msg: "Travel costs 5% below Q3 — verify no missing claims" },
-];
 
 
 export default function QuarterlyReview({ navigate = () => {} }: { navigate?: (route: string) => void }) {
@@ -40,7 +18,6 @@ export default function QuarterlyReview({ navigate = () => {} }: { navigate?: (r
   const totalQ4Exp = expenseRows.reduce((s, r) => s + r.q4, 0);
   const totalYtdExp = expenseRows.reduce((s, r) => s + r.ytd, 0);
   const totalPriorExp = expenseRows.reduce((s, r) => s + r.prior, 0);
-  const ytdIncome = 52000;
   const netProfit = ytdIncome - totalYtdExp;
 
   return (

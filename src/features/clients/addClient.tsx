@@ -1,16 +1,7 @@
 'use client'
 import { useState } from "react";
 
-const B = {
-  primary:"#0EA5C9", primaryDark:"#0284A8", navy:"#1B2A4A",
-  surface:"#F8FAFC", white:"#FFFFFF", border:"#E2E8F0", borderLight:"#F1F5F9",
-  text:"#0F172A", muted:"#64748B", light:"#94A3B8", xlight:"#CBD5E1",
-  red:"#EF4444", redBg:"#FEF2F2", redText:"#991B1B",
-  amber:"#F59E0B", amberBg:"#FFFBEB", amberText:"#92400E",
-  green:"#10B981", greenBg:"#ECFDF5", greenText:"#065F46",
-  purple:"#8B5CF6", purpleBg:"#F5F3FF", purpleText:"#5B21B6",
-  blueBg:"#F0F9FF", blueText:"#0C4A6E",
-};
+import B from "@/styles/theme";
 
 const pendingInvites = [
   { id:1, name:"Aisha Patel", nino:"AB 12 34 56 C", sent:"12 Apr 2026", expires:"3 May 2026", daysLeft:9 },

@@ -2,13 +2,9 @@
 
 import { useRouter, usePathname } from 'next/navigation'
 import { PATH_ACTIVE_MAP, ROUTE_PATHS } from '@/config/routes'
+import B from '@/styles/theme'
 
-const C = {
-  navy: '#1B2A4A',
-  primary: '#0EA5C9',
-  primaryDark: '#0284A8',
-  red: '#EF4444',
-}
+const C = B
 
 interface NavItemProps {
   label: string
