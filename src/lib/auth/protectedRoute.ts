@@ -1,7 +1,12 @@
 // Protected route helpers
 // TODO: Replace mock checkAuth with a real session/token check when backend auth is ready
 
-export const PUBLIC_ROUTES = ['/login'] as const
+export const PUBLIC_ROUTES = [
+  '/login',
+  '/register',
+  '/forgot-password',
+  '/reset-password',
+] as const
 export const DEFAULT_LOGIN_ROUTE = '/login'
 export const DEFAULT_APP_ROUTE = '/'
 
