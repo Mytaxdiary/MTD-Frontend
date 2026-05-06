@@ -17,9 +17,9 @@ dist-ssr
 out/
 
 # Env files (keep .env.example, ignore .env.local and any real secrets)
+.env
 .env.local
 .env.*.local
-.env
 
 # Editor directories and files
 .vscode/*
