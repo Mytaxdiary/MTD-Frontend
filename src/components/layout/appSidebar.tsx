@@ -3,6 +3,7 @@
 import { useRouter, usePathname } from 'next/navigation'
 import { PATH_ACTIVE_MAP, ROUTE_PATHS } from '@/config/routes'
 import B from '@/styles/theme'
+import { useAuth } from '@/hooks/useAuth'
 
 const C = B
 
@@ -38,6 +39,7 @@ const NavItem = ({ label, active, icon, count = 0, onClick }: NavItemProps) => (
 export default function AppSidebar({ overdueCount = 2 }: { overdueCount?: number }) {
   const router = useRouter()
   const pathname = usePathname()
+  const { logout } = useAuth()
 
   const active = PATH_ACTIVE_MAP[pathname] ?? 'dashboard'
   const go = (key: string) => router.push(ROUTE_PATHS[key] ?? `/${key}`)
@@ -80,7 +82,7 @@ export default function AppSidebar({ overdueCount = 2 }: { overdueCount?: number
 
       {/* User footer */}
       <div style={{ padding: '16px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
           <div style={{ width: 32, height: 32, borderRadius: 20, background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.7)' }}>
             JW
           </div>
@@ -89,6 +91,19 @@ export default function AppSidebar({ overdueCount = 2 }: { overdueCount?: number
             <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)' }}>Walker &amp; Co Accountants</div>
           </div>
         </div>
+        <button
+          onClick={logout}
+          style={{
+            width: '100%', padding: '7px 14px', borderRadius: 7,
+            background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
+            color: 'rgba(255,255,255,0.5)', fontSize: 12, fontWeight: 500,
+            cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 8,
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.1)'; (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.8)' }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.06)'; (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.5)' }}
+        >
+          <span style={{ fontSize: 13 }}>↩</span> Sign out
+        </button>
       </div>
     </nav>
   )

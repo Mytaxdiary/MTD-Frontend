@@ -6,20 +6,20 @@ import B from '@/styles/theme'
 import AuthPageLayout from '@/components/auth/authPageLayout'
 import FormField from '@/components/ui/formField'
 import { authInputStyle } from '@/lib/helpers/inputStyles'
+import { useAuth } from '@/hooks/useAuth'
 
 export default function ForgotPasswordPage() {
+  const { forgotPassword, loading, error: apiError } = useAuth()
   const [email, setEmail] = useState('')
   const [emailError, setEmailError] = useState('')
   const [submitted, setSubmitted] = useState(false)
-  const [submitting, setSubmitting] = useState(false)
 
-  const handleSubmit = (ev: React.FormEvent) => {
+  const handleSubmit = async (ev: React.FormEvent) => {
     ev.preventDefault()
     const errors = validateForgotPasswordEmail(email)
     if (errors.email) { setEmailError(errors.email); return }
-    setSubmitting(true)
-    // TODO: call password reset API in next phase
-    setTimeout(() => { setSubmitting(false); setSubmitted(true) }, 800)
+    const ok = await forgotPassword({ email })
+    if (ok) setSubmitted(true)
   }
 
   return (
@@ -38,6 +38,13 @@ export default function ForgotPasswordPage() {
           </div>
 
           <form onSubmit={handleSubmit} noValidate>
+
+            {apiError && (
+              <div style={{ padding: '10px 14px', borderRadius: 7, background: '#FFF5F5', border: '1px solid #FECACA', marginBottom: 16, fontSize: 13, color: B.redText }}>
+                {apiError}
+              </div>
+            )}
+
             <FormField label="Email address" error={emailError} mb={24}>
               <input
                 type="email"
@@ -50,10 +57,10 @@ export default function ForgotPasswordPage() {
 
             <button
               type="submit"
-              disabled={submitting}
-              style={{ width: '100%', padding: '11px', borderRadius: 8, border: 'none', background: submitting ? B.xlight : B.primary, color: submitting ? B.muted : '#fff', fontSize: 13, fontWeight: 700, cursor: submitting ? 'not-allowed' : 'pointer', transition: 'all 0.15s', letterSpacing: '0.01em' }}
+              disabled={loading}
+              style={{ width: '100%', padding: '11px', borderRadius: 8, border: 'none', background: loading ? B.xlight : B.primary, color: loading ? B.muted : '#fff', fontSize: 13, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', transition: 'all 0.15s', letterSpacing: '0.01em' }}
             >
-              {submitting ? 'Sending…' : 'Send reset link'}
+              {loading ? 'Sending…' : 'Send reset link'}
             </button>
           </form>
         </>
@@ -65,7 +72,6 @@ export default function ForgotPasswordPage() {
           <div style={{ fontSize: 13, color: B.muted, lineHeight: 1.6, marginBottom: 20 }}>
             If <b style={{ color: B.text }}>{email}</b> is registered, you&#39;ll receive a reset link within a few minutes. Check your spam folder if it doesn&#39;t arrive.
           </div>
-          {/* TODO: add real resend logic when email API is wired */}
           <button
             type="button"
             onClick={() => setSubmitted(false)}

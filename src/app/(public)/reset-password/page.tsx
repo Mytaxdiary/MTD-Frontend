@@ -7,24 +7,25 @@ import B from '@/styles/theme'
 import AuthPageLayout from '@/components/auth/authPageLayout'
 import FormField from '@/components/ui/formField'
 import { authInputStyle } from '@/lib/helpers/inputStyles'
+import { useAuth } from '@/hooks/useAuth'
 
 function ResetPasswordContent() {
   const searchParams = useSearchParams()
   const token = searchParams.get('token')
+  const { resetPassword, loading, error: apiError } = useAuth()
 
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [errors, setErrors] = useState<{ password?: string; confirm?: string }>({})
-  const [submitting, setSubmitting] = useState(false)
   const [done, setDone] = useState(false)
 
-  const handleSubmit = (ev: React.FormEvent) => {
+  const handleSubmit = async (ev: React.FormEvent) => {
     ev.preventDefault()
     const e = validateResetPasswordForm(password, confirm)
     if (Object.keys(e).length) { setErrors(e); return }
-    setSubmitting(true)
-    // TODO: call /api/auth/reset-password with { token, password } in next phase
-    setTimeout(() => { setSubmitting(false); setDone(true) }, 800)
+    if (!token) return
+    const ok = await resetPassword({ token, password })
+    if (ok) setDone(true)
   }
 
   /* Expired / missing token state */
@@ -35,7 +36,7 @@ function ResetPasswordContent() {
           <div style={{ fontSize: 28, marginBottom: 12 }}>⚠</div>
           <div style={{ fontSize: 16, fontWeight: 700, color: B.navy, marginBottom: 10 }}>Invalid or expired link</div>
           <div style={{ fontSize: 13, color: B.muted, lineHeight: 1.6, marginBottom: 24 }}>
-            This password reset link is invalid or has expired. Reset links are valid for 24 hours.
+            This password reset link is invalid or has expired. Reset links are valid for 1 hour.
           </div>
           <Link href="/forgot-password" style={{ display: 'inline-block', padding: '10px 24px', borderRadius: 8, background: B.primary, color: '#fff', fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>
             Request a new link
@@ -66,6 +67,13 @@ function ResetPasswordContent() {
           </div>
 
           <form onSubmit={handleSubmit} noValidate>
+
+            {apiError && (
+              <div style={{ padding: '10px 14px', borderRadius: 7, background: '#FFF5F5', border: '1px solid #FECACA', marginBottom: 16, fontSize: 13, color: B.redText }}>
+                {apiError}
+              </div>
+            )}
+
             <FormField label="New password" error={errors.password} mb={18}>
               <input
                 type="password"
@@ -88,10 +96,10 @@ function ResetPasswordContent() {
 
             <button
               type="submit"
-              disabled={submitting}
-              style={{ width: '100%', padding: '11px', borderRadius: 8, border: 'none', background: submitting ? B.xlight : B.primary, color: submitting ? B.muted : '#fff', fontSize: 13, fontWeight: 700, cursor: submitting ? 'not-allowed' : 'pointer', transition: 'all 0.15s', letterSpacing: '0.01em' }}
+              disabled={loading}
+              style={{ width: '100%', padding: '11px', borderRadius: 8, border: 'none', background: loading ? B.xlight : B.primary, color: loading ? B.muted : '#fff', fontSize: 13, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', transition: 'all 0.15s', letterSpacing: '0.01em' }}
             >
-              {submitting ? 'Saving…' : 'Set new password'}
+              {loading ? 'Saving…' : 'Set new password'}
             </button>
           </form>
         </>

@@ -1,21 +1,26 @@
-// Protected route helpers
-// TODO: Replace mock checkAuth with a real session/token check when backend auth is ready
+import { cookies } from 'next/headers';
+import { TOKEN_KEYS } from './tokenStorage';
 
 export const PUBLIC_ROUTES = [
   '/login',
   '/register',
   '/forgot-password',
   '/reset-password',
-] as const
-export const DEFAULT_LOGIN_ROUTE = '/login'
-export const DEFAULT_APP_ROUTE = '/'
+] as const;
+
+export const DEFAULT_LOGIN_ROUTE = '/login';
+export const DEFAULT_APP_ROUTE = '/';
 
 /**
- * Checks whether the current request is authenticated.
- * Returns true (mock) — swap this with real logic later.
- * TODO: Verify JWT / cookie / server-side session here.
+ * Server-side auth check used by the protected layout.
+ * Reads the access token cookie set by the frontend after login/register.
+ * Returns false (→ redirect to /login) if the cookie is missing.
+ *
+ * Note: this is a presence check only. JWT signature verification
+ * happens on the backend when API calls are made.
  */
 export async function checkAuth(): Promise<boolean> {
-  // TODO: Replace with real auth check (e.g. verify JWT from cookie, call /api/me)
-  return true
+  const cookieStore = await cookies();
+  const token = cookieStore.get(TOKEN_KEYS.access);
+  return !!token?.value;
 }

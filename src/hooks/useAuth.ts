@@ -15,16 +15,6 @@ interface AuthState {
   error: string | null;
 }
 
-/**
- * Auth hook — wraps authService calls with loading/error state.
- *
- * The auth pages currently use their own useState + setTimeout stubs.
- * TODO (auth phase): replace those stubs with useAuth() calls.
- *
- * Usage:
- *   const { login, loading, error } = useAuth();
- *   await login({ email, password });
- */
 export function useAuth() {
   const router = useRouter();
   const [state, setState] = useState<AuthState>({ loading: false, error: null });
@@ -37,8 +27,8 @@ export function useAuth() {
       setLoading(true);
       setError(null);
       try {
+        // Backend sets httpOnly cookies; no manual token handling needed
         await authService.login(payload);
-        // TODO (auth phase): store tokens in secure cookie/storage here
         router.push('/dashboard');
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Login failed. Please try again.');
@@ -54,8 +44,8 @@ export function useAuth() {
       setLoading(true);
       setError(null);
       try {
+        // Backend sets httpOnly cookies; no manual token handling needed
         await authService.register(payload);
-        // TODO (auth phase): store tokens here
         router.push('/dashboard');
       } catch (err) {
         setError(
@@ -68,39 +58,49 @@ export function useAuth() {
     [router],
   );
 
-  const forgotPassword = useCallback(async (payload: ForgotPasswordPayload) => {
-    setLoading(true);
-    setError(null);
-    try {
-      await authService.forgotPassword(payload);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Request failed. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const forgotPassword = useCallback(
+    async (payload: ForgotPasswordPayload): Promise<boolean> => {
+      setLoading(true);
+      setError(null);
+      try {
+        await authService.forgotPassword(payload);
+        return true;
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Request failed. Please try again.');
+        return false;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [],
+  );
 
-  const resetPassword = useCallback(async (payload: ResetPasswordPayload) => {
-    setLoading(true);
-    setError(null);
-    try {
-      await authService.resetPassword(payload);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Password reset failed. Please try again.',
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const resetPassword = useCallback(
+    async (payload: ResetPasswordPayload): Promise<boolean> => {
+      setLoading(true);
+      setError(null);
+      try {
+        await authService.resetPassword(payload);
+        return true;
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Password reset failed. Please try again.',
+        );
+        return false;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [],
+  );
 
   const logout = useCallback(async () => {
     try {
+      // Backend revokes the refresh token and clears httpOnly cookies
       await authService.logout();
     } catch {
-      // Ignore logout errors — always redirect
+      // Ignore logout API errors — always redirect to login
     } finally {
-      // TODO (auth phase): clear stored tokens here
       router.push('/login');
     }
   }, [router]);

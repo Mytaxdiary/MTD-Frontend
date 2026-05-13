@@ -1,13 +1,13 @@
 'use client'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useState } from 'react'
 import { validateRegisterForm } from '@/validations/auth'
 import B from '@/styles/theme'
 import AuthPageLayout from '@/components/auth/authPageLayout'
 import SSOPlaceholder from '@/components/auth/ssoPlaceholder'
 import FormField from '@/components/ui/formField'
 import { authInputStyle } from '@/lib/helpers/inputStyles'
+import { useAuth } from '@/hooks/useAuth'
 
 interface FormFields {
   firstName: string
@@ -20,26 +20,20 @@ interface FormFields {
 type FormErrors = Partial<Record<keyof FormFields, string>>
 
 export default function RegisterPage() {
-  const router = useRouter()
+  const { register, loading, error: apiError } = useAuth()
   const [form, setForm] = useState<FormFields>({ firstName: '', lastName: '', practiceName: '', email: '', password: '' })
   const [errors, setErrors] = useState<FormErrors>({})
-  const [submitting, setSubmitting] = useState(false)
 
   const set = (key: keyof FormFields) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm(p => ({ ...p, [key]: e.target.value }))
     setErrors(p => ({ ...p, [key]: undefined }))
   }
 
-  const handleSubmit = (ev: React.FormEvent) => {
+  const handleSubmit = async (ev: React.FormEvent) => {
     ev.preventDefault()
     const e = validateRegisterForm(form)
     if (Object.keys(e).length) { setErrors(e); return }
-    setSubmitting(true)
-    // TODO: connect to registration API in next phase
-    setTimeout(() => {
-      setSubmitting(false)
-      router.push('/dashboard')
-    }, 800)
+    await register(form)
   }
 
   return (
@@ -55,6 +49,12 @@ export default function RegisterPage() {
       }
     >
       <form onSubmit={handleSubmit} noValidate>
+
+        {apiError && (
+          <div style={{ padding: '10px 14px', borderRadius: 7, background: '#FFF5F5', border: '1px solid #FECACA', marginBottom: 16, fontSize: 13, color: B.redText }}>
+            {apiError}
+          </div>
+        )}
 
         {/* First Name + Last Name */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 18 }}>
@@ -94,15 +94,14 @@ export default function RegisterPage() {
               <div style={{ fontSize: 9, color: B.xlight }}>placeholder</div>
             </div>
           </div>
-          {/* TODO: integrate reCAPTCHA or hCaptcha in next phase */}
         </div>
 
         <button
           type="submit"
-          disabled={submitting}
-          style={{ width: '100%', padding: '11px', borderRadius: 8, border: 'none', background: submitting ? B.xlight : B.primary, color: submitting ? B.muted : '#fff', fontSize: 13, fontWeight: 700, cursor: submitting ? 'not-allowed' : 'pointer', transition: 'all 0.15s', letterSpacing: '0.01em' }}
+          disabled={loading}
+          style={{ width: '100%', padding: '11px', borderRadius: 8, border: 'none', background: loading ? B.xlight : B.primary, color: loading ? B.muted : '#fff', fontSize: 13, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', transition: 'all 0.15s', letterSpacing: '0.01em' }}
         >
-          {submitting ? 'Creating account…' : 'Create account'}
+          {loading ? 'Creating account…' : 'Create account'}
         </button>
 
       </form>

@@ -31,6 +31,7 @@ export interface AuthUser {
   name: string;
   email: string;
   firmName: string;
+  isEmailVerified: boolean;
 }
 
 export interface AuthTokens {
@@ -46,11 +47,8 @@ export interface AuthResponse extends AuthTokens {
 
 /**
  * Auth API service.
- * All methods are pre-wired to the backend contract from mtd-api.
- * The auth pages currently use setTimeout stubs — replace those calls
- * with these methods once the auth module is live in the backend.
- *
- * TODO (auth phase): swap setTimeout in login/register pages with calls here.
+ * Tokens are managed as httpOnly cookies by the backend.
+ * The browser sends/receives them automatically — no manual handling needed.
  */
 export const authService = {
   login: async (payload: LoginPayload): Promise<AuthResponse> => {
@@ -77,17 +75,35 @@ export const authService = {
     await axiosClient.post('/auth/reset-password', payload);
   },
 
-  refreshToken: async (
-    refreshToken: string,
-  ): Promise<Pick<AuthResponse, 'accessToken' | 'refreshToken'>> => {
+  /**
+   * Silent refresh — no body needed.
+   * The refresh token httpOnly cookie is sent automatically by the browser.
+   */
+  refreshToken: async (): Promise<Pick<AuthResponse, 'accessToken' | 'refreshToken'>> => {
     const { data } = await axiosClient.post<{
       success: true;
       data: Pick<AuthResponse, 'accessToken' | 'refreshToken'>;
-    }>('/auth/refresh', { refreshToken });
+    }>('/auth/refresh');
     return data.data;
   },
 
+  /**
+   * Logout — no body needed.
+   * The backend reads the refresh token from the httpOnly cookie and clears both cookies.
+   */
   logout: async (): Promise<void> => {
     await axiosClient.post('/auth/logout');
+  },
+
+  /**
+   * Verify email address with the token from the verification email link.
+   */
+  verifyEmail: async (token: string): Promise<void> => {
+    await axiosClient.get(`/auth/verify-email?token=${encodeURIComponent(token)}`);
+  },
+
+  getProfile: async (): Promise<AuthUser> => {
+    const { data } = await axiosClient.get<{ success: true; data: AuthUser }>('/auth/profile');
+    return data.data;
   },
 };
