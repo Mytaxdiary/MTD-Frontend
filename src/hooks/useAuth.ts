@@ -38,11 +38,11 @@ export function useAuth() {
         } else {
           console.log('Email verified, redirecting to dashboard')
           // Try both router.push and window.location as fallback
-          // router.push('/dashboard')
+          router.push('/dashboard')
           // Fallback in case router.push fails
           setTimeout(() => {
             if (typeof window !== 'undefined') {
-              // window.location.href = '/dashboard'
+              window.location.href = '/dashboard'
             }
           }, 100)
         }
