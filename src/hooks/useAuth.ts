@@ -28,9 +28,26 @@ export function useAuth() {
       setError(null)
       try {
         // Backend sets httpOnly cookies; no manual token handling needed
-        await authService.login(payload)
-        router.push('/dashboard')
+        const response = await authService.login(payload)
+        console.log('Login response:', response)
+        
+        // Check if email verification is required (optional enforcement)
+        if (!response.user.isEmailVerified) {
+          console.log('Email not verified, redirecting to check-email')
+          router.push(`/check-email?email=${encodeURIComponent(payload.email)}`)
+        } else {
+          console.log('Email verified, redirecting to dashboard')
+          // Try both router.push and window.location as fallback
+          router.push('/dashboard')
+          // Fallback in case router.push fails
+          setTimeout(() => {
+            if (typeof window !== 'undefined') {
+              window.location.href = '/dashboard'
+            }
+          }, 100)
+        }
       } catch (err) {
+        console.error('Login error:', err)
         setError(err instanceof Error ? err.message : 'Login failed. Please try again.')
       } finally {
         setLoading(false)
@@ -45,8 +62,14 @@ export function useAuth() {
       setError(null)
       try {
         // Backend sets httpOnly cookies; no manual token handling needed
-        await authService.register(payload)
-        router.push('/dashboard')
+        const response = await authService.register(payload)
+        
+        // Check if email verification is required
+        if (!response.user.isEmailVerified) {
+          router.push(`/check-email?email=${encodeURIComponent(payload.email)}`)
+        } else {
+          router.push('/dashboard')
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Registration failed. Please try again.')
       } finally {
