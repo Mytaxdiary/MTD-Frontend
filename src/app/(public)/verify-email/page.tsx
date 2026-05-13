@@ -25,19 +25,23 @@ export default function VerifyEmailPage() {
     let cancelled = false
     authService
       .verifyEmail(token)
-      .then(() => { if (!cancelled) setStatus('success') })
+      .then(() => {
+        if (!cancelled) setStatus('success')
+      })
       .catch((err: unknown) => {
         if (!cancelled) {
           setErrorMsg(
             err instanceof Error
               ? err.message
-              : 'Verification failed. The link may have expired or already been used.',
+              : 'Verification failed. The link may have expired or already been used.'
           )
           setStatus('error')
         }
       })
 
-    return () => { cancelled = true }
+    return () => {
+      cancelled = true
+    }
   }, [token])
 
   return (

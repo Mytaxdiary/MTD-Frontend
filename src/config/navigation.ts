@@ -12,14 +12,19 @@ export interface NavItemConfig {
 
 export const NAV_SECTIONS: { main: NavItemConfig[]; manage: NavItemConfig[] } = {
   main: [
-    { label: 'Dashboard',     icon: '⊞', route: 'dashboard', activeOn: ['dashboard'] },
-    { label: 'Clients',       icon: '⊡', route: 'clients',   activeOn: ['clients', 'client-detail', 'quarterly-review'] },
-    { label: 'Chase manager', icon: '↗', route: 'chase',     activeOn: ['chase'], badge: 'overdue' },
+    { label: 'Dashboard', icon: '⊞', route: 'dashboard', activeOn: ['dashboard'] },
+    {
+      label: 'Clients',
+      icon: '⊡',
+      route: 'clients',
+      activeOn: ['clients', 'client-detail', 'quarterly-review'],
+    },
+    { label: 'Chase manager', icon: '↗', route: 'chase', activeOn: ['chase'], badge: 'overdue' },
     { label: 'Filing status', icon: '◎', route: 'dashboard', activeOn: [] },
   ],
   manage: [
-    { label: 'Add client',      icon: '+',  route: 'add-client', activeOn: ['add-client'] },
-    { label: 'Settings',        icon: '⚙',  route: 'settings',   activeOn: ['settings'] },
-    { label: 'HMRC connection', icon: '⟷', route: 'settings',   activeOn: [] },
+    { label: 'Add client', icon: '+', route: 'add-client', activeOn: ['add-client'] },
+    { label: 'Settings', icon: '⚙', route: 'settings', activeOn: ['settings'] },
+    { label: 'HMRC connection', icon: '⟷', route: 'settings', activeOn: [] },
   ],
 }

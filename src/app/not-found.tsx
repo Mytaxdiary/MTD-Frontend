@@ -11,7 +11,9 @@ export default function NotFound() {
       }}
     >
       <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: 56, fontWeight: 800, color: '#1B2A4A', letterSpacing: '-0.04em' }}>404</div>
+        <div style={{ fontSize: 56, fontWeight: 800, color: '#1B2A4A', letterSpacing: '-0.04em' }}>
+          404
+        </div>
         <div style={{ fontSize: 16, color: '#64748B', marginTop: 8 }}>Page not found</div>
       </div>
     </div>

@@ -40,13 +40,13 @@ App runs at **http://localhost:3000**
 
 ## Available scripts
 
-| Command | Description |
-|---|---|
-| `npm run dev` | Start dev server with hot-reload |
-| `npm run build` | Build for production |
-| `npm run start` | Start production build |
-| `npm run lint` | Run ESLint |
-| `npm run format` | Format with Prettier |
+| Command          | Description                      |
+| ---------------- | -------------------------------- |
+| `npm run dev`    | Start dev server with hot-reload |
+| `npm run build`  | Build for production             |
+| `npm run start`  | Start production build           |
+| `npm run lint`   | Run ESLint                       |
+| `npm run format` | Format with Prettier             |
 
 ---
 

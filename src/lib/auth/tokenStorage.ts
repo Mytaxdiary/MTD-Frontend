@@ -13,4 +13,4 @@
 export const TOKEN_KEYS = {
   access: 'mtd_at',
   refresh: 'mtd_rt',
-} as const;
+} as const

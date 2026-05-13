@@ -1,15 +1,10 @@
-import { cookies } from 'next/headers';
-import { TOKEN_KEYS } from './tokenStorage';
+import { cookies } from 'next/headers'
+import { TOKEN_KEYS } from './tokenStorage'
 
-export const PUBLIC_ROUTES = [
-  '/login',
-  '/register',
-  '/forgot-password',
-  '/reset-password',
-] as const;
+export const PUBLIC_ROUTES = ['/login', '/register', '/forgot-password', '/reset-password'] as const
 
-export const DEFAULT_LOGIN_ROUTE = '/login';
-export const DEFAULT_APP_ROUTE = '/';
+export const DEFAULT_LOGIN_ROUTE = '/login'
+export const DEFAULT_APP_ROUTE = '/'
 
 /**
  * Server-side auth check used by the protected layout.
@@ -20,7 +15,7 @@ export const DEFAULT_APP_ROUTE = '/';
  * happens on the backend when API calls are made.
  */
 export async function checkAuth(): Promise<boolean> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(TOKEN_KEYS.access);
-  return !!token?.value;
+  const cookieStore = await cookies()
+  const token = cookieStore.get(TOKEN_KEYS.access)
+  return !!token?.value
 }

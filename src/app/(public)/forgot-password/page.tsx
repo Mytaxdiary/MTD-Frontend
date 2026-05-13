@@ -17,7 +17,10 @@ export default function ForgotPasswordPage() {
   const handleSubmit = async (ev: React.FormEvent) => {
     ev.preventDefault()
     const errors = validateForgotPasswordEmail(email)
-    if (errors.email) { setEmailError(errors.email); return }
+    if (errors.email) {
+      setEmailError(errors.email)
+      return
+    }
     const ok = await forgotPassword({ email })
     if (ok) setSubmitted(true)
   }
@@ -26,7 +29,10 @@ export default function ForgotPasswordPage() {
     <AuthPageLayout
       subtitle="Reset your password"
       footerContent={
-        <Link href="/login" style={{ color: B.primary, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>
+        <Link
+          href="/login"
+          style={{ color: B.primary, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}
+        >
           ← Back to sign in
         </Link>
       }
@@ -38,9 +44,18 @@ export default function ForgotPasswordPage() {
           </div>
 
           <form onSubmit={handleSubmit} noValidate>
-
             {apiError && (
-              <div style={{ padding: '10px 14px', borderRadius: 7, background: '#FFF5F5', border: '1px solid #FECACA', marginBottom: 16, fontSize: 13, color: B.redText }}>
+              <div
+                style={{
+                  padding: '10px 14px',
+                  borderRadius: 7,
+                  background: '#FFF5F5',
+                  border: '1px solid #FECACA',
+                  marginBottom: 16,
+                  fontSize: 13,
+                  color: B.redText,
+                }}
+              >
                 {apiError}
               </div>
             )}
@@ -49,7 +64,10 @@ export default function ForgotPasswordPage() {
               <input
                 type="email"
                 value={email}
-                onChange={e => { setEmail(e.target.value); setEmailError('') }}
+                onChange={(e) => {
+                  setEmail(e.target.value)
+                  setEmailError('')
+                }}
                 placeholder="jane@walkerco.co.uk"
                 style={authInputStyle(emailError)}
               />
@@ -58,7 +76,19 @@ export default function ForgotPasswordPage() {
             <button
               type="submit"
               disabled={loading}
-              style={{ width: '100%', padding: '11px', borderRadius: 8, border: 'none', background: loading ? B.xlight : B.primary, color: loading ? B.muted : '#fff', fontSize: 13, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', transition: 'all 0.15s', letterSpacing: '0.01em' }}
+              style={{
+                width: '100%',
+                padding: '11px',
+                borderRadius: 8,
+                border: 'none',
+                background: loading ? B.xlight : B.primary,
+                color: loading ? B.muted : '#fff',
+                fontSize: 13,
+                fontWeight: 700,
+                cursor: loading ? 'not-allowed' : 'pointer',
+                transition: 'all 0.15s',
+                letterSpacing: '0.01em',
+              }}
             >
               {loading ? 'Sending…' : 'Send reset link'}
             </button>
@@ -67,15 +97,40 @@ export default function ForgotPasswordPage() {
       ) : (
         /* Success state */
         <div style={{ textAlign: 'center', padding: '8px 0' }}>
-          <div style={{ width: 52, height: 52, borderRadius: 26, background: B.greenBg, border: '2px solid #A7F3D0', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontSize: 22 }}>✓</div>
-          <div style={{ fontSize: 16, fontWeight: 700, color: B.navy, marginBottom: 10 }}>Check your email</div>
+          <div
+            style={{
+              width: 52,
+              height: 52,
+              borderRadius: 26,
+              background: B.greenBg,
+              border: '2px solid #A7F3D0',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 16px',
+              fontSize: 22,
+            }}
+          >
+            ✓
+          </div>
+          <div style={{ fontSize: 16, fontWeight: 700, color: B.navy, marginBottom: 10 }}>
+            Check your email
+          </div>
           <div style={{ fontSize: 13, color: B.muted, lineHeight: 1.6, marginBottom: 20 }}>
-            If <b style={{ color: B.text }}>{email}</b> is registered, you&#39;ll receive a reset link within a few minutes. Check your spam folder if it doesn&#39;t arrive.
+            If <b style={{ color: B.text }}>{email}</b> is registered, you&#39;ll receive a reset
+            link within a few minutes. Check your spam folder if it doesn&#39;t arrive.
           </div>
           <button
             type="button"
             onClick={() => setSubmitted(false)}
-            style={{ fontSize: 12, color: B.primary, background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: 500 }}
+            style={{
+              fontSize: 12,
+              color: B.primary,
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              fontWeight: 500,
+            }}
           >
             Resend email
           </button>

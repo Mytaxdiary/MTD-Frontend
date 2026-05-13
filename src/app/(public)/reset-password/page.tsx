@@ -22,7 +22,10 @@ function ResetPasswordContent() {
   const handleSubmit = async (ev: React.FormEvent) => {
     ev.preventDefault()
     const e = validateResetPasswordForm(password, confirm)
-    if (Object.keys(e).length) { setErrors(e); return }
+    if (Object.keys(e).length) {
+      setErrors(e)
+      return
+    }
     if (!token) return
     const ok = await resetPassword({ token, password })
     if (ok) setDone(true)
@@ -34,16 +37,35 @@ function ResetPasswordContent() {
       <AuthPageLayout subtitle="">
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: 28, marginBottom: 12 }}>⚠</div>
-          <div style={{ fontSize: 16, fontWeight: 700, color: B.navy, marginBottom: 10 }}>Invalid or expired link</div>
+          <div style={{ fontSize: 16, fontWeight: 700, color: B.navy, marginBottom: 10 }}>
+            Invalid or expired link
+          </div>
           <div style={{ fontSize: 13, color: B.muted, lineHeight: 1.6, marginBottom: 24 }}>
             This password reset link is invalid or has expired. Reset links are valid for 1 hour.
           </div>
-          <Link href="/forgot-password" style={{ display: 'inline-block', padding: '10px 24px', borderRadius: 8, background: B.primary, color: '#fff', fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>
+          <Link
+            href="/forgot-password"
+            style={{
+              display: 'inline-block',
+              padding: '10px 24px',
+              borderRadius: 8,
+              background: B.primary,
+              color: '#fff',
+              fontSize: 13,
+              fontWeight: 700,
+              textDecoration: 'none',
+            }}
+          >
             Request a new link
           </Link>
         </div>
         <div style={{ textAlign: 'center', marginTop: 20, fontSize: 13 }}>
-          <Link href="/login" style={{ color: B.primary, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>← Back to sign in</Link>
+          <Link
+            href="/login"
+            style={{ color: B.primary, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}
+          >
+            ← Back to sign in
+          </Link>
         </div>
       </AuthPageLayout>
     )
@@ -54,7 +76,10 @@ function ResetPasswordContent() {
       subtitle="Set a new password"
       footerContent={
         !done ? (
-          <Link href="/login" style={{ color: B.primary, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>
+          <Link
+            href="/login"
+            style={{ color: B.primary, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}
+          >
             ← Back to sign in
           </Link>
         ) : undefined
@@ -67,9 +92,18 @@ function ResetPasswordContent() {
           </div>
 
           <form onSubmit={handleSubmit} noValidate>
-
             {apiError && (
-              <div style={{ padding: '10px 14px', borderRadius: 7, background: '#FFF5F5', border: '1px solid #FECACA', marginBottom: 16, fontSize: 13, color: B.redText }}>
+              <div
+                style={{
+                  padding: '10px 14px',
+                  borderRadius: 7,
+                  background: '#FFF5F5',
+                  border: '1px solid #FECACA',
+                  marginBottom: 16,
+                  fontSize: 13,
+                  color: B.redText,
+                }}
+              >
                 {apiError}
               </div>
             )}
@@ -78,7 +112,10 @@ function ResetPasswordContent() {
               <input
                 type="password"
                 value={password}
-                onChange={e => { setPassword(e.target.value); setErrors(p => ({ ...p, password: undefined })) }}
+                onChange={(e) => {
+                  setPassword(e.target.value)
+                  setErrors((p) => ({ ...p, password: undefined }))
+                }}
                 placeholder="At least 8 characters"
                 style={authInputStyle(errors.password)}
               />
@@ -88,7 +125,10 @@ function ResetPasswordContent() {
               <input
                 type="password"
                 value={confirm}
-                onChange={e => { setConfirm(e.target.value); setErrors(p => ({ ...p, confirm: undefined })) }}
+                onChange={(e) => {
+                  setConfirm(e.target.value)
+                  setErrors((p) => ({ ...p, confirm: undefined }))
+                }}
                 placeholder="Re-enter your password"
                 style={authInputStyle(errors.confirm)}
               />
@@ -97,7 +137,19 @@ function ResetPasswordContent() {
             <button
               type="submit"
               disabled={loading}
-              style={{ width: '100%', padding: '11px', borderRadius: 8, border: 'none', background: loading ? B.xlight : B.primary, color: loading ? B.muted : '#fff', fontSize: 13, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', transition: 'all 0.15s', letterSpacing: '0.01em' }}
+              style={{
+                width: '100%',
+                padding: '11px',
+                borderRadius: 8,
+                border: 'none',
+                background: loading ? B.xlight : B.primary,
+                color: loading ? B.muted : '#fff',
+                fontSize: 13,
+                fontWeight: 700,
+                cursor: loading ? 'not-allowed' : 'pointer',
+                transition: 'all 0.15s',
+                letterSpacing: '0.01em',
+              }}
             >
               {loading ? 'Saving…' : 'Set new password'}
             </button>
@@ -106,14 +158,40 @@ function ResetPasswordContent() {
       ) : (
         /* Success state */
         <div style={{ textAlign: 'center', padding: '8px 0' }}>
-          <div style={{ width: 52, height: 52, borderRadius: 26, background: B.greenBg, border: '2px solid #A7F3D0', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontSize: 22 }}>✓</div>
-          <div style={{ fontSize: 16, fontWeight: 700, color: B.navy, marginBottom: 10 }}>Password updated</div>
+          <div
+            style={{
+              width: 52,
+              height: 52,
+              borderRadius: 26,
+              background: B.greenBg,
+              border: '2px solid #A7F3D0',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 16px',
+              fontSize: 22,
+            }}
+          >
+            ✓
+          </div>
+          <div style={{ fontSize: 16, fontWeight: 700, color: B.navy, marginBottom: 10 }}>
+            Password updated
+          </div>
           <div style={{ fontSize: 13, color: B.muted, lineHeight: 1.6, marginBottom: 24 }}>
             Your password has been reset successfully. You can now sign in with your new password.
           </div>
           <Link
             href="/login"
-            style={{ display: 'inline-block', padding: '10px 28px', borderRadius: 8, background: B.primary, color: '#fff', fontSize: 13, fontWeight: 700, textDecoration: 'none' }}
+            style={{
+              display: 'inline-block',
+              padding: '10px 28px',
+              borderRadius: 8,
+              background: B.primary,
+              color: '#fff',
+              fontSize: 13,
+              fontWeight: 700,
+              textDecoration: 'none',
+            }}
           >
             Sign in
           </Link>

@@ -1,19 +1,19 @@
-import { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios'
 
 type FailedRequest = {
-  resolve: () => void;
-  reject: (error: unknown) => void;
-};
+  resolve: () => void
+  reject: (error: unknown) => void
+}
 
-let isRefreshing = false;
-let failedQueue: FailedRequest[] = [];
+let isRefreshing = false
+let failedQueue: FailedRequest[] = []
 
 function processQueue(error: unknown): void {
   failedQueue.forEach(({ resolve, reject }) => {
-    if (error) reject(error);
-    else resolve();
-  });
-  failedQueue = [];
+    if (error) reject(error)
+    else resolve()
+  })
+  failedQueue = []
 }
 
 export function setupInterceptors(client: AxiosInstance): void {
@@ -24,8 +24,8 @@ export function setupInterceptors(client: AxiosInstance): void {
     (response) => response,
     async (error: AxiosError<{ message?: string; statusCode?: number }>) => {
       const originalRequest = error.config as InternalAxiosRequestConfig & {
-        _retry?: boolean;
-      };
+        _retry?: boolean
+      }
 
       // Attempt silent refresh on 401, but not for the refresh endpoint itself
       if (
@@ -36,35 +36,35 @@ export function setupInterceptors(client: AxiosInstance): void {
       ) {
         if (isRefreshing) {
           return new Promise<void>((resolve, reject) => {
-            failedQueue.push({ resolve, reject });
+            failedQueue.push({ resolve, reject })
           })
             .then(() => client(originalRequest))
-            .catch((err) => Promise.reject(err));
+            .catch((err) => Promise.reject(err))
         }
 
-        originalRequest._retry = true;
-        isRefreshing = true;
+        originalRequest._retry = true
+        isRefreshing = true
 
         try {
           // Refresh token is in the httpOnly cookie — no body needed
-          await client.post('/auth/refresh');
-          processQueue(null);
-          return client(originalRequest);
+          await client.post('/auth/refresh')
+          processQueue(null)
+          return client(originalRequest)
         } catch (refreshError) {
-          processQueue(refreshError);
+          processQueue(refreshError)
           if (typeof window !== 'undefined') {
-            window.location.href = '/login';
+            window.location.href = '/login'
           }
-          return Promise.reject(refreshError);
+          return Promise.reject(refreshError)
         } finally {
-          isRefreshing = false;
+          isRefreshing = false
         }
       }
 
       const message =
-        error.response?.data?.message || error.message || 'An unexpected error occurred';
+        error.response?.data?.message || error.message || 'An unexpected error occurred'
 
-      return Promise.reject(new Error(message));
-    },
-  );
+      return Promise.reject(new Error(message))
+    }
+  )
 }

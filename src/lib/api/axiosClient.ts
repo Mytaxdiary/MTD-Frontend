@@ -1,6 +1,6 @@
-import axios from 'axios';
-import { env } from '@/lib/env';
-import { setupInterceptors } from './interceptors';
+import axios from 'axios'
+import { env } from '@/lib/env'
+import { setupInterceptors } from './interceptors'
 
 const axiosClient = axios.create({
   baseURL: env.apiBaseUrl || 'http://localhost:3500/api/v1',
@@ -9,8 +9,8 @@ const axiosClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-});
+})
 
-setupInterceptors(axiosClient);
+setupInterceptors(axiosClient)
 
-export default axiosClient;
+export default axiosClient

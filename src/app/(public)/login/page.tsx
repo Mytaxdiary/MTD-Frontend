@@ -18,7 +18,10 @@ export default function LoginPage() {
   const handleSubmit = async (ev: React.FormEvent) => {
     ev.preventDefault()
     const e = validateLoginForm(email, password)
-    if (Object.keys(e).length) { setErrors(e); return }
+    if (Object.keys(e).length) {
+      setErrors(e)
+      return
+    }
     await login({ email, password })
   }
 
@@ -26,17 +29,30 @@ export default function LoginPage() {
     <AuthPageLayout
       subtitle="Sign in to your agent account"
       footerContent={
-        <>Don&#39;t have an account?{' '}
-          <Link href="/register" style={{ color: B.primary, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>
+        <>
+          Don&#39;t have an account?{' '}
+          <Link
+            href="/register"
+            style={{ color: B.primary, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}
+          >
             Create account
           </Link>
         </>
       }
     >
       <form onSubmit={handleSubmit} noValidate>
-
         {apiError && (
-          <div style={{ padding: '10px 14px', borderRadius: 7, background: '#FFF5F5', border: '1px solid #FECACA', marginBottom: 16, fontSize: 13, color: B.redText }}>
+          <div
+            style={{
+              padding: '10px 14px',
+              borderRadius: 7,
+              background: '#FFF5F5',
+              border: '1px solid #FECACA',
+              marginBottom: 16,
+              fontSize: 13,
+              color: B.redText,
+            }}
+          >
             {apiError}
           </div>
         )}
@@ -45,7 +61,10 @@ export default function LoginPage() {
           <input
             type="email"
             value={email}
-            onChange={e => { setEmail(e.target.value); setErrors(p => ({ ...p, email: undefined })) }}
+            onChange={(e) => {
+              setEmail(e.target.value)
+              setErrors((p) => ({ ...p, email: undefined }))
+            }}
             placeholder="jane@walkerco.co.uk"
             style={authInputStyle(errors.email)}
           />
@@ -55,14 +74,20 @@ export default function LoginPage() {
           <input
             type="password"
             value={password}
-            onChange={e => { setPassword(e.target.value); setErrors(p => ({ ...p, password: undefined })) }}
+            onChange={(e) => {
+              setPassword(e.target.value)
+              setErrors((p) => ({ ...p, password: undefined }))
+            }}
             placeholder="••••••••"
             style={authInputStyle(errors.password)}
           />
         </FormField>
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 24 }}>
-          <Link href="/forgot-password" style={{ fontSize: 12, color: B.primary, fontWeight: 500, textDecoration: 'none' }}>
+          <Link
+            href="/forgot-password"
+            style={{ fontSize: 12, color: B.primary, fontWeight: 500, textDecoration: 'none' }}
+          >
             Forgot password?
           </Link>
         </div>
@@ -70,15 +95,25 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          style={{ width: '100%', padding: '11px', borderRadius: 8, border: 'none', background: loading ? B.xlight : B.primary, color: loading ? B.muted : '#fff', fontSize: 13, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', transition: 'all 0.15s', letterSpacing: '0.01em' }}
+          style={{
+            width: '100%',
+            padding: '11px',
+            borderRadius: 8,
+            border: 'none',
+            background: loading ? B.xlight : B.primary,
+            color: loading ? B.muted : '#fff',
+            fontSize: 13,
+            fontWeight: 700,
+            cursor: loading ? 'not-allowed' : 'pointer',
+            transition: 'all 0.15s',
+            letterSpacing: '0.01em',
+          }}
         >
           {loading ? 'Signing in…' : 'Sign in'}
         </button>
-
       </form>
 
       <SSOPlaceholder dividerText="or continue with" />
-
     </AuthPageLayout>
   )
 }
