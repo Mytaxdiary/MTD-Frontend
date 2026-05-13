@@ -17,5 +17,10 @@ export const DEFAULT_APP_ROUTE = '/'
 export async function checkAuth(): Promise<boolean> {
   const cookieStore = await cookies()
   const token = cookieStore.get(TOKEN_KEYS.access)
+  
+  console.log('checkAuth - All cookies:', cookieStore.getAll())
+  console.log('checkAuth - Looking for:', TOKEN_KEYS.access)
+  console.log('checkAuth - Found token:', token?.value ? 'YES' : 'NO')
+  
   return !!token?.value
 }
