@@ -9,6 +9,7 @@ import {
   ForgotPasswordPayload,
   ResetPasswordPayload,
 } from '@/services/auth.service'
+import { setSessionCookie, clearSessionCookie } from '@/lib/auth/tokenStorage'
 
 interface AuthState {
   loading: boolean
@@ -29,22 +30,12 @@ export function useAuth() {
       try {
         // Backend sets httpOnly cookies; no manual token handling needed
         const response = await authService.login(payload)
-        console.log('Login response:', response)
-        
-        // Check if email verification is required (optional enforcement)
+        setSessionCookie()
+
         if (!response.user.isEmailVerified) {
-          console.log('Email not verified, redirecting to check-email')
           router.push(`/check-email?email=${encodeURIComponent(payload.email)}`)
         } else {
-          console.log('Email verified, redirecting to dashboard')
-          // Try both router.push and window.location as fallback
           router.push('/dashboard')
-          // Fallback in case router.push fails
-          setTimeout(() => {
-            if (typeof window !== 'undefined') {
-              window.location.href = '/dashboard'
-            }
-          }, 100)
         }
       } catch (err) {
         console.error('Login error:', err)
@@ -63,8 +54,8 @@ export function useAuth() {
       try {
         // Backend sets httpOnly cookies; no manual token handling needed
         const response = await authService.register(payload)
-        
-        // Check if email verification is required
+        setSessionCookie()
+
         if (!response.user.isEmailVerified) {
           router.push(`/check-email?email=${encodeURIComponent(payload.email)}`)
         } else {
@@ -109,11 +100,11 @@ export function useAuth() {
 
   const logout = useCallback(async () => {
     try {
-      // Backend revokes the refresh token and clears httpOnly cookies
       await authService.logout()
     } catch {
-      // Ignore logout API errors — always redirect to login
+      // Ignore logout API errors — always clear session and redirect
     } finally {
+      clearSessionCookie()
       router.push('/login')
     }
   }, [router])
