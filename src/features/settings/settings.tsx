@@ -1,5 +1,6 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import B from '@/styles/theme'
 import SettingsSidebar, { type SectionKey } from './components/SettingsSidebar'
 import FirmDetailsSection from './components/FirmDetailsSection'
@@ -8,8 +9,16 @@ import TeamSection from './components/TeamSection'
 import NotificationsSection from './components/NotificationsSection'
 import BillingSection from './components/BillingSection'
 
+const VALID_SECTIONS: SectionKey[] = ['firm', 'hmrc', 'team', 'notifications', 'billing']
+
 export default function Settings({ navigate = () => {} }: { navigate?: (route: string) => void }) {
+  const searchParams = useSearchParams()
   const [section, setSection] = useState<SectionKey>('firm')
+
+  useEffect(() => {
+    const s = searchParams.get('section') as SectionKey | null
+    if (s && VALID_SECTIONS.includes(s)) setSection(s)
+  }, [searchParams])
 
   return (
     <div style={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
