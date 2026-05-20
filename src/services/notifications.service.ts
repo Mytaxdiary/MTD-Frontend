@@ -12,8 +12,17 @@ export interface NotificationPrefs {
 
 const notificationsService = {
   async getPrefs(): Promise<NotificationPrefs> {
-    const res = await axiosClient.get<{ data: NotificationPrefs }>('/tenants/me/notifications')
-    return res.data.data
+    const res = await axiosClient.get<{ data: Record<string, unknown> }>('/tenants/me/notifications')
+    const d = res.data.data
+    return {
+      chaseEmail: d.chaseEmail as boolean,
+      chaseSms: d.chaseSms as boolean,
+      overdueAlert: d.overdueAlert as boolean,
+      deadlineReminder: d.deadlineReminder as boolean,
+      inviteAccepted: d.inviteAccepted as boolean,
+      liabilityAlert: d.liabilityAlert as boolean,
+      reminderDays: d.reminderDays as number,
+    }
   },
 
   async updatePrefs(payload: Partial<NotificationPrefs>): Promise<NotificationPrefs> {
