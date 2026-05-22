@@ -8,8 +8,16 @@ import HmrcSection from './components/HmrcSection'
 import TeamSection from './components/TeamSection'
 import NotificationsSection from './components/NotificationsSection'
 import BillingSection from './components/BillingSection'
+import SandboxInvitationsSection from './components/SandboxInvitationsSection'
 
-const VALID_SECTIONS: SectionKey[] = ['firm', 'hmrc', 'team', 'notifications', 'billing']
+const VALID_SECTIONS: SectionKey[] = [
+  'firm',
+  'hmrc',
+  'sandbox-invitations',
+  'team',
+  'notifications',
+  'billing',
+]
 
 export default function Settings({ navigate = () => {} }: { navigate?: (route: string) => void }) {
   const searchParams = useSearchParams()
@@ -43,6 +51,7 @@ export default function Settings({ navigate = () => {} }: { navigate?: (route: s
           <div>
             {section === 'firm' && <FirmDetailsSection />}
             {section === 'hmrc' && <HmrcSection />}
+            {section === 'sandbox-invitations' && <SandboxInvitationsSection />}
             {section === 'team' && <TeamSection />}
             {section === 'notifications' && <NotificationsSection />}
             {section === 'billing' && <BillingSection />}

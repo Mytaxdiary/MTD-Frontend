@@ -1,19 +1,69 @@
 'use client'
-import { useState } from 'react'
-import { mockClientList as allClients } from '@/mocks/clients/clientListData'
+import { useEffect, useState } from 'react'
+import { clientsService, type ClientRecord } from '@/services/clients.service'
 import TypePills from '@/components/common/typePills'
-import { matchesTypeFilter } from '@/lib/helpers/clientType'
 import B from '@/styles/theme'
+
+function apiErrorMessage(err: unknown): string {
+  const msg = (err as { message?: string })?.message
+  return msg ?? 'Something went wrong.'
+}
+
+function mapToRow(c: ClientRecord) {
+  const statusMap: Record<string, string> = {
+    pending: 'pending',
+    'partial-auth': 'partial-auth',
+    accepted: 'filed',
+    rejected: 'rejected',
+    expired: 'expired',
+    cancelled: 'expired',
+    deauthorised: 'expired',
+  }
+  const needsResend =
+    (c.invitationStatus === 'pending' && !c.invitationId) ||
+    ['expired', 'rejected', 'cancelled', 'deauthorised'].includes(c.invitationStatus)
+  return {
+    id: c.id,
+    name: c.name,
+    business: c.nino,
+    type: [] as string[],
+    mtd:
+      c.invitationStatus === 'accepted'
+        ? 'Mandated'
+        : c.invitationStatus === 'partial-auth'
+          ? 'Partial auth'
+          : 'Pending',
+    deadline: '—',
+    filing: statusMap[c.invitationStatus] ?? c.invitationStatus,
+    chase: needsResend ? 'resend' : '—',
+    agentType: c.agentType,
+    income: 0,
+    needsResend,
+  }
+}
 
 const Badge = ({ status }: { status: string }) => {
   const m: Record<string, { bg: string; c: string; b: string; l: string }> = {
     overdue: { bg: B.redBg, c: B.redText, b: '#FECACA', l: 'Overdue' },
     'due-soon': { bg: B.amberBg, c: B.amberText, b: '#FDE68A', l: 'Due soon' },
     ready: { bg: B.greenBg, c: B.greenText, b: '#A7F3D0', l: 'Records ready' },
-    filed: { bg: B.greenBg, c: B.greenText, b: '#A7F3D0', l: 'Submitted' },
+    filed: { bg: B.greenBg, c: B.greenText, b: '#A7F3D0', l: 'Authorised' },
     pending: { bg: B.purpleBg, c: B.purpleText, b: '#DDD6FE', l: 'Pending invite' },
+    'partial-auth': { bg: B.amberBg, c: B.amberText, b: '#FDE68A', l: 'Partial auth' },
+    rejected: { bg: B.redBg, c: B.redText, b: '#FECACA', l: 'Rejected' },
+    expired: { bg: B.surface, c: B.muted, b: B.border, l: 'Expired' },
   }
-  const s = m[status] || m.filed
+  const s =
+    m[status] ??
+    ({
+      bg: B.surface,
+      c: B.text,
+      b: B.border,
+      l: status
+        .split('-')
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' '),
+    } as const)
   return (
     <span
       style={{
@@ -47,23 +97,47 @@ export default function ClientList({
 }: {
   navigate?: (route: string) => void
 }) {
+  const [allClients, setAllClients] = useState<ReturnType<typeof mapToRow>[]>([])
+  const [clientsLoading, setClientsLoading] = useState(true)
+
   const [search, setSearch] = useState('')
-  const [typeFilter, setTypeFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
   const [sortCol, setSortCol] = useState('name')
   const [sortDir, setSortDir] = useState('asc')
-  const [selected, setSelected] = useState(new Set<number>())
+  const [selected, setSelected] = useState(new Set<string>())
   const [cols, setCols] = useState<Record<ColKeys, boolean>>(defaultCols)
   const [showColPicker, setShowColPicker] = useState(false)
+  const [resendingId, setResendingId] = useState<string | null>(null)
+
+  const reloadClients = () => {
+    setClientsLoading(true)
+    clientsService
+      .list()
+      .then((clients) => setAllClients(clients.map(mapToRow)))
+      .catch(() => setAllClients([]))
+      .finally(() => setClientsLoading(false))
+  }
+
+  useEffect(() => {
+    reloadClients()
+  }, [])
+
+  async function handleResend(clientId: string, e: { stopPropagation: () => void }) {
+    e.stopPropagation()
+    setResendingId(clientId)
+    try {
+      await clientsService.resendInvitation(clientId)
+      reloadClients()
+    } catch (err: unknown) {
+      alert(apiErrorMessage(err))
+    } finally {
+      setResendingId(null)
+    }
+  }
 
   let filtered = allClients.filter((c) => {
-    if (
-      search &&
-      !c.name.toLowerCase().includes(search.toLowerCase()) &&
-      !c.business.toLowerCase().includes(search.toLowerCase())
-    )
+    if (search && !c.name.toLowerCase().includes(search.toLowerCase()) && !c.business.toLowerCase().includes(search.toLowerCase()))
       return false
-    if (!matchesTypeFilter(c.type, typeFilter)) return false
     if (statusFilter !== 'all' && c.filing !== statusFilter) return false
     return true
   })
@@ -91,7 +165,7 @@ export default function ClientList({
       setSortDir('asc')
     }
   }
-  const toggleSelect = (id: number) =>
+  const toggleSelect = (id: string) =>
     setSelected((p) => {
       const n = new Set(p)
       n.has(id) ? n.delete(id) : n.add(id)
@@ -99,7 +173,7 @@ export default function ClientList({
     })
   const toggleAll = () =>
     setSelected((p) =>
-      p.size === filtered.length ? new Set<number>() : new Set(filtered.map((c) => c.id))
+      p.size === filtered.length ? new Set<string>() : new Set(filtered.map((c) => c.id))
     )
   const SortIcon = ({ col }: { col: string }) => (
     <span style={{ fontSize: 10, marginLeft: 4, opacity: sortCol === col ? 1 : 0.3 }}>
@@ -123,8 +197,9 @@ export default function ClientList({
         <div>
           <div style={{ fontSize: 20, fontWeight: 700 }}>Clients</div>
           <div style={{ fontSize: 13, color: B.muted, marginTop: 2 }}>
-            {allClients.length} clients — {allClients.filter((c) => c.filing !== 'pending').length}{' '}
-            authorised, {allClients.filter((c) => c.filing === 'pending').length} pending
+            {clientsLoading
+              ? 'Loading…'
+              : `${allClients.length} clients — ${allClients.filter((c) => c.filing === 'filed').length} authorised, ${allClients.filter((c) => c.filing === 'pending').length} pending`}
           </div>
         </div>
         <button
@@ -184,24 +259,6 @@ export default function ClientList({
             </span>
           </div>
           <select
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-            style={{
-              padding: '8px 10px',
-              borderRadius: 8,
-              border: `1px solid ${B.border}`,
-              fontSize: 12,
-              color: B.text,
-              background: B.white,
-              cursor: 'pointer',
-            }}
-          >
-            <option value="all">All types</option>
-            <option value="SE">Self-employment</option>
-            <option value="Prop">UK Property</option>
-            <option value="both">Both income types</option>
-          </select>
-          <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             style={{
@@ -220,6 +277,7 @@ export default function ClientList({
             <option value="ready">Records ready</option>
             <option value="filed">Submitted</option>
             <option value="pending">Pending invite</option>
+            <option value="partial-auth">Partial auth</option>
           </select>
           <div style={{ marginLeft: 'auto', display: 'flex', gap: 6, alignItems: 'center' }}>
             {selected.size > 0 && (
@@ -473,9 +531,23 @@ export default function ClientList({
               </tr>
             </thead>
             <tbody>
-              {filtered.map((c, i) => (
+              {clientsLoading && (
+                <tr>
+                  <td colSpan={10} style={{ padding: '24px', textAlign: 'center', fontSize: 13, color: B.muted }}>
+                    Loading clients…
+                  </td>
+                </tr>
+              )}
+              {!clientsLoading && filtered.length === 0 && (
+                <tr>
+                  <td colSpan={10} style={{ padding: '24px', textAlign: 'center', fontSize: 13, color: B.light }}>
+                    No clients yet. Click &ldquo;+ Add client&rdquo; to invite your first client.
+                  </td>
+                </tr>
+              )}
+              {!clientsLoading && filtered.map((c, i) => (
                 <tr
-                  key={c.id}
+                  key={String(c.id)}
                   onClick={() => navigate('client-detail')}
                   style={{
                     borderBottom: `1px solid ${B.borderLight}`,
@@ -502,7 +574,7 @@ export default function ClientList({
                   </td>
                   {cols.type && (
                     <td style={{ padding: '10px 14px' }}>
-                      <TypePills types={c.type} />
+                      {c.type.length > 0 ? <TypePills types={c.type} /> : <span style={{ fontSize: 12, color: B.light }}>—</span>}
                     </td>
                   )}
                   {cols.mtd && (
@@ -531,14 +603,29 @@ export default function ClientList({
                     </td>
                   )}
                   {cols.chase && (
-                    <td
-                      style={{
-                        padding: '10px 14px',
-                        fontSize: 12,
-                        color: c.chase === 'Complete' ? B.greenText : B.muted,
-                      }}
-                    >
-                      {c.chase}
+                    <td style={{ padding: '10px 14px' }} onClick={(e) => e.stopPropagation()}>
+                      {c.needsResend ? (
+                        <button
+                          type="button"
+                          disabled={resendingId === c.id}
+                          onClick={(e) => handleResend(c.id, e)}
+                          style={{
+                            fontSize: 11,
+                            fontWeight: 600,
+                            padding: '4px 10px',
+                            borderRadius: 6,
+                            border: `1px solid ${B.primary}`,
+                            background: B.blueBg,
+                            color: B.blueText,
+                            cursor: resendingId === c.id ? 'not-allowed' : 'pointer',
+                            opacity: resendingId === c.id ? 0.6 : 1,
+                          }}
+                        >
+                          {resendingId === c.id ? 'Sending…' : 'Resend invite'}
+                        </button>
+                      ) : (
+                        <span style={{ fontSize: 12, color: B.muted }}>—</span>
+                      )}
                     </td>
                   )}
                   {cols.income && (
