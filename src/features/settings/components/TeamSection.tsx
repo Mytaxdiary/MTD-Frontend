@@ -1,26 +1,25 @@
+'use client'
+
 import B from '@/styles/theme'
 import { Card, CardHeader as CardHead } from '@/components/ui/card'
-
-const MEMBERS = [
-  { n: 'Jane Walker', e: 'jane@walkerco.co.uk', r: 'Admin', s: 'Active', i: 'JW' },
-  { n: 'Tom Richards', e: 'tom@walkerco.co.uk', r: 'Accountant', s: 'Active', i: 'TR' },
-  { n: 'Suki Patel', e: 'suki@walkerco.co.uk', r: 'Bookkeeper', s: 'Invited', i: 'SP' },
-]
+import { useCurrentUser, userInitials } from '@/components/auth/CurrentUserProvider'
 
 export default function TeamSection() {
+  const { user, loading } = useCurrentUser()
+
   return (
     <Card>
       <CardHead titleSize={15} padding="16px 20px" title="Team members" />
       <div style={{ padding: '8px 20px 14px' }}>
-        {MEMBERS.map((m, idx) => (
+        {loading ? (
+          <div style={{ padding: '14px 0', fontSize: 13, color: B.muted }}>Loading…</div>
+        ) : user ? (
           <div
-            key={m.e}
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: 14,
               padding: '14px 0',
-              borderBottom: idx < MEMBERS.length - 1 ? `1px solid ${B.borderLight}` : 'none',
             }}
           >
             <div
@@ -38,11 +37,11 @@ export default function TeamSection() {
                 border: '1px solid #BAE6FD',
               }}
             >
-              {m.i}
+              {userInitials(user.name)}
             </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 13, fontWeight: 600 }}>{m.n}</div>
-              <div style={{ fontSize: 11, color: B.light }}>{m.e}</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 13, fontWeight: 600 }}>{user.name}</div>
+              <div style={{ fontSize: 11, color: B.light }}>{user.email}</div>
             </div>
             <span
               style={{
@@ -55,7 +54,7 @@ export default function TeamSection() {
                 border: `1px solid ${B.borderLight}`,
               }}
             >
-              {m.r}
+              Admin
             </span>
             <span
               style={{
@@ -63,16 +62,23 @@ export default function TeamSection() {
                 fontWeight: 600,
                 padding: '2px 8px',
                 borderRadius: 10,
-                background: m.s === 'Active' ? B.greenBg : B.amberBg,
-                color: m.s === 'Active' ? B.greenText : B.amberText,
+                background: user.isEmailVerified ? B.greenBg : B.amberBg,
+                color: user.isEmailVerified ? B.greenText : B.amberText,
               }}
             >
-              {m.s}
+              {user.isEmailVerified ? 'Active' : 'Pending'}
             </span>
           </div>
-        ))}
+        ) : (
+          <div style={{ padding: '14px 0', fontSize: 13, color: B.muted }}>
+            No account information available.
+          </div>
+        )}
+
         <div style={{ marginTop: 16 }}>
           <button
+            disabled
+            title="Team invites coming soon"
             style={{
               padding: '8px 16px',
               borderRadius: 8,
@@ -80,8 +86,9 @@ export default function TeamSection() {
               background: B.white,
               fontSize: 12,
               fontWeight: 500,
-              cursor: 'pointer',
-              color: B.text,
+              cursor: 'not-allowed',
+              color: B.muted,
+              opacity: 0.7,
             }}
           >
             + Invite team member

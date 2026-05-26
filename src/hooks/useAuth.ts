@@ -9,6 +9,7 @@ import {
   ForgotPasswordPayload,
   ResetPasswordPayload,
 } from '@/services/auth.service'
+import { setAccessTokenExpiry, clearAccessTokenExpiry } from '@/lib/auth/accessTokenExpiry'
 import { setSessionCookie, clearSessionCookie } from '@/lib/auth/tokenStorage'
 
 interface AuthState {
@@ -30,6 +31,7 @@ export function useAuth() {
       try {
         // Backend sets httpOnly cookies; no manual token handling needed
         const response = await authService.login(payload)
+        setAccessTokenExpiry(response.accessTokenExpiresAt)
         setSessionCookie()
 
         if (!response.user.isEmailVerified) {
@@ -54,6 +56,7 @@ export function useAuth() {
       try {
         // Backend sets httpOnly cookies; no manual token handling needed
         const response = await authService.register(payload)
+        setAccessTokenExpiry(response.accessTokenExpiresAt)
         setSessionCookie()
 
         if (!response.user.isEmailVerified) {
@@ -104,6 +107,7 @@ export function useAuth() {
     } catch {
       // Ignore logout API errors — always clear session and redirect
     } finally {
+      clearAccessTokenExpiry()
       clearSessionCookie()
       router.push('/login')
     }

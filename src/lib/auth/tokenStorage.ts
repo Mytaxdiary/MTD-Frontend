@@ -17,7 +17,7 @@ export const TOKEN_KEYS = {
 
 const IS_PROD = process.env.NODE_ENV === 'production'
 const SECURE_FLAG = IS_PROD ? '; Secure' : ''
-const SESSION_MAX_AGE = 60 * 60 * 24 // 1 day
+const SESSION_MAX_AGE = 60 * 60 * 24 * 7 // 7 days — aligned with refresh token TTL
 
 /** Call this after a successful login or register response. */
 export function setSessionCookie(): void {

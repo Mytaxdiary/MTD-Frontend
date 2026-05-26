@@ -84,6 +84,9 @@ export default function HmrcSection() {
   const [showModal, setShowModal] = useState(false)
   const [disconnecting, setDisconnecting] = useState(false)
   const [disconnectError, setDisconnectError] = useState<string | null>(null)
+  const [refreshing, setRefreshing] = useState(false)
+  const [refreshError, setRefreshError] = useState<string | null>(null)
+  const [refreshSuccess, setRefreshSuccess] = useState(false)
 
   // ARN inline edit state
   const [arnEditing, setArnEditing] = useState(false)
@@ -124,6 +127,27 @@ export default function HmrcSection() {
       setArnError(msg)
     } finally {
       setArnSaving(false)
+    }
+  }
+
+  async function handleRefreshToken() {
+    setRefreshing(true)
+    setRefreshError(null)
+    setRefreshSuccess(false)
+    try {
+      await hmrcService.refreshToken()
+      const latest = await hmrcService.getStatus()
+      setHmrcStatus(latest)
+      setRefreshSuccess(true)
+      setTimeout(() => setRefreshSuccess(false), 3000)
+    } catch (err: unknown) {
+      const msg =
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ??
+        (err as { message?: string })?.message ??
+        'Failed to refresh HMRC token. You may need to reconnect HMRC.'
+      setRefreshError(msg)
+    } finally {
+      setRefreshing(false)
     }
   }
 
@@ -445,12 +469,52 @@ export default function HmrcSection() {
                   </div>
                 )}
 
+                {/* Refresh feedback */}
+                {refreshError && (
+                  <div
+                    style={{
+                      marginTop: 12,
+                      padding: '8px 12px',
+                      background: B.redBg,
+                      border: '1px solid #FECACA',
+                      borderRadius: 8,
+                      fontSize: 12,
+                      color: B.redText,
+                    }}
+                  >
+                    {refreshError}
+                  </div>
+                )}
+                {refreshSuccess && (
+                  <div
+                    style={{
+                      marginTop: 12,
+                      padding: '8px 12px',
+                      background: B.greenBg,
+                      border: '1px solid #A7F3D0',
+                      borderRadius: 8,
+                      fontSize: 12,
+                      color: B.greenText,
+                    }}
+                  >
+                    HMRC access token refreshed successfully.
+                  </div>
+                )}
+
                 {/* Action buttons */}
                 <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>
                   {connected ? (
                     <>
-                      <button style={outlineBtn} disabled>
-                        Refresh token
+                      <button
+                        style={{
+                          ...outlineBtn,
+                          cursor: refreshing ? 'not-allowed' : 'pointer',
+                          opacity: refreshing ? 0.7 : 1,
+                        }}
+                        onClick={handleRefreshToken}
+                        disabled={refreshing}
+                      >
+                        {refreshing ? 'Refreshing…' : 'Refresh token'}
                       </button>
                       <button style={outlineBtn} disabled>
                         Test fraud headers

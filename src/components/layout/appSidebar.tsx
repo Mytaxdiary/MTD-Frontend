@@ -4,6 +4,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { PATH_ACTIVE_MAP, ROUTE_PATHS } from '@/config/routes'
 import B from '@/styles/theme'
 import { useAuth } from '@/hooks/useAuth'
+import { useCurrentUser, userInitials } from '@/components/auth/CurrentUserProvider'
 
 const C = B
 
@@ -57,9 +58,14 @@ export default function AppSidebar({ overdueCount = 2 }: { overdueCount?: number
   const router = useRouter()
   const pathname = usePathname()
   const { logout } = useAuth()
+  const { user, loading } = useCurrentUser()
 
   const active = PATH_ACTIVE_MAP[pathname] ?? 'dashboard'
   const go = (key: string) => router.push(ROUTE_PATHS[key] ?? `/${key}`)
+
+  const displayName = user?.name ?? (loading ? 'Loading…' : 'Account')
+  const displayFirm = user?.firmName ?? ''
+  const initials = userInitials(user?.name)
 
   return (
     <nav
@@ -183,14 +189,33 @@ export default function AppSidebar({ overdueCount = 2 }: { overdueCount?: number
               color: 'rgba(255,255,255,0.7)',
             }}
           >
-            JW
+            {initials}
           </div>
-          <div>
-            <div style={{ fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.85)' }}>
-              Jane Walker
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <div
+              style={{
+                fontSize: 12,
+                fontWeight: 600,
+                color: 'rgba(255,255,255,0.85)',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+              title={displayName}
+            >
+              {displayName}
             </div>
-            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)' }}>
-              Walker &amp; Co Accountants
+            <div
+              style={{
+                fontSize: 10,
+                color: 'rgba(255,255,255,0.35)',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+              title={displayFirm}
+            >
+              {displayFirm}
             </div>
           </div>
         </div>

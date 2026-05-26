@@ -37,6 +37,13 @@ export interface AuthUser {
 export interface AuthTokens {
   accessToken: string
   refreshToken: string
+  accessTokenExpiresAt: string
+}
+
+export interface SessionResponse {
+  user: AuthUser
+  accessTokenExpiresAt: string
+  refreshed: boolean
 }
 
 export interface AuthResponse extends AuthTokens {
@@ -79,11 +86,13 @@ export const authService = {
    * Silent refresh — no body needed.
    * The refresh token httpOnly cookie is sent automatically by the browser.
    */
-  refreshToken: async (): Promise<Pick<AuthResponse, 'accessToken' | 'refreshToken'>> => {
-    const { data } = await axiosClient.post<{
-      success: true
-      data: Pick<AuthResponse, 'accessToken' | 'refreshToken'>
-    }>('/auth/refresh')
+  refreshToken: async (): Promise<AuthTokens> => {
+    const { data } = await axiosClient.post<{ success: true; data: AuthTokens }>('/auth/refresh')
+    return data.data
+  },
+
+  getSession: async (): Promise<SessionResponse> => {
+    const { data } = await axiosClient.get<{ success: true; data: SessionResponse }>('/auth/session')
     return data.data
   },
 

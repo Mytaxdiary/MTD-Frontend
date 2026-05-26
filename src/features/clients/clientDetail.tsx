@@ -9,6 +9,7 @@ import {
 
 import B from '@/styles/theme'
 import { Card, CardHeader } from '@/components/ui/card'
+import { useCurrentUser } from '@/components/auth/CurrentUserProvider'
 
 export default function ClientDetail({
   navigate = () => {},
@@ -20,6 +21,7 @@ export default function ClientDetail({
   const totalIncome = filedQs.reduce((s, q) => s + (q.income || 0), 0)
   const totalExpenses = filedQs.reduce((s, q) => s + (q.expenses || 0), 0)
   const totalOutstanding = liabilities.reduce((s, l) => s + l.outstanding, 0)
+  const { user } = useCurrentUser()
 
   return (
     <div style={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
@@ -710,7 +712,7 @@ export default function ClientDetail({
                     and chase. 2nd POA due 31 Jul — remind client. May exceed £90k next year.
                   </div>
                   <div style={{ fontSize: 10, color: B.light, marginTop: 6 }}>
-                    Last edited 22 Apr 2026 by Jane Walker
+                    Last edited 22 Apr 2026 by {user?.name ?? 'you'}
                   </div>
                 </div>
               </Card>

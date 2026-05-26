@@ -38,4 +38,22 @@ export const hmrcService = {
   async disconnect(): Promise<void> {
     await apiClient.delete('/hmrc/disconnect');
   },
+
+  /** Manually refresh the HMRC access token using the stored refresh token. */
+  async refreshToken(): Promise<{
+    status: string;
+    accessTokenExpiresAt: string;
+    refreshTokenExpiresAt: string | null;
+    scope: string | null;
+  }> {
+    const res = await apiClient.post<{
+      data: {
+        status: string;
+        accessTokenExpiresAt: string;
+        refreshTokenExpiresAt: string | null;
+        scope: string | null;
+      };
+    }>('/hmrc/refresh-token');
+    return res.data.data;
+  },
 };

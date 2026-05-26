@@ -7,6 +7,14 @@ import {
 import TypePills from '@/components/common/typePills'
 import { matchesTypeFilter } from '@/lib/helpers/clientType'
 import B from '@/styles/theme'
+import { useCurrentUser, firstName } from '@/components/auth/CurrentUserProvider'
+
+function timeOfDayGreeting(): string {
+  const h = new Date().getHours()
+  if (h < 12) return 'Good morning'
+  if (h < 18) return 'Good afternoon'
+  return 'Good evening'
+}
 
 const QDot = ({ status }: { status: string }) => {
   const colors: Record<string, string> = {
@@ -140,6 +148,8 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
   const [typeFilter, setTypeFilter] = useState('all')
   const [quarterFilter, setQuarterFilter] = useState('all')
   const [activeMetric, setActiveMetric] = useState<string | null>(null)
+  const { user } = useCurrentUser()
+  const greetingName = firstName(user?.name) || 'there'
 
   const handleMetricClick = (filterKey: string) => {
     if (activeMetric === filterKey) {
@@ -195,7 +205,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
       >
         <div>
           <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.02em' }}>
-            Good morning, Jane
+            {timeOfDayGreeting()}, {greetingName}
           </div>
           <div style={{ fontSize: 13, color: B.muted, marginTop: 2 }}>
             Thursday 24 April 2026 — Tax year 2025-26, Q4

@@ -1,4 +1,8 @@
 import { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios'
+import { isAuthRoute } from './authRoutes'
+import { refreshAccessToken } from '@/lib/auth/refreshAccessToken'
+import { clearAccessTokenExpiry } from '@/lib/auth/accessTokenExpiry'
+import { clearSessionCookie } from '@/lib/auth/tokenStorage'
 
 type FailedRequest = {
   resolve: () => void
@@ -16,10 +20,17 @@ function processQueue(error: unknown): void {
   failedQueue = []
 }
 
-export function setupInterceptors(client: AxiosInstance): void {
-  // No request interceptor needed — browser sends httpOnly cookies automatically
-  // with withCredentials: true. No manual Authorization header required.
+function redirectToLogin(): void {
+  if (typeof window === 'undefined') return
+  clearAccessTokenExpiry()
+  clearSessionCookie()
+  const path = window.location.pathname
+  if (!path.startsWith('/login') && !path.startsWith('/register')) {
+    window.location.href = '/login'
+  }
+}
 
+export function setupInterceptors(client: AxiosInstance): void {
   client.interceptors.response.use(
     (response) => response,
     async (error: AxiosError<{ message?: string; statusCode?: number }>) => {
@@ -27,12 +38,11 @@ export function setupInterceptors(client: AxiosInstance): void {
         _retry?: boolean
       }
 
-      // Attempt silent refresh on 401, but not for the refresh endpoint itself
       if (
         error.response?.status === 401 &&
-        !originalRequest?._retry &&
-        originalRequest?.url !== '/auth/refresh' &&
-        originalRequest?.url !== '/auth/login'
+        originalRequest &&
+        !originalRequest._retry &&
+        !isAuthRoute(originalRequest.url)
       ) {
         if (isRefreshing) {
           return new Promise<void>((resolve, reject) => {
@@ -46,22 +56,19 @@ export function setupInterceptors(client: AxiosInstance): void {
         isRefreshing = true
 
         try {
-          // Refresh token is in the httpOnly cookie — no body needed
-          await client.post('/auth/refresh')
+          await refreshAccessToken()
           processQueue(null)
           return client(originalRequest)
         } catch (refreshError) {
           processQueue(refreshError)
-          if (typeof window !== 'undefined') {
-            window.location.href = '/login'
-          }
+          redirectToLogin()
           return Promise.reject(refreshError)
         } finally {
           isRefreshing = false
         }
       }
 
-      const raw = error.response?.data?.message
+      const raw = error.response?.data?.message as string | string[] | undefined
       const message =
         typeof raw === 'string'
           ? raw
@@ -72,6 +79,6 @@ export function setupInterceptors(client: AxiosInstance): void {
       const apiError = new Error(message) as Error & { statusCode?: number }
       apiError.statusCode = error.response?.status
       return Promise.reject(apiError)
-    }
+    },
   )
 }
