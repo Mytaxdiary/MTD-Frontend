@@ -92,9 +92,10 @@ export default function SandboxInvitationsSection() {
     setSuccessMsg(null)
     try {
       const updated = await clientsService.acceptInvitationSandbox(client.id)
-      setSuccessMsg(
-        `${updated.name} — HMRC status is now "${statusLabel(updated.invitationStatus)}". Check the client list.`,
-      )
+      const relLabel = updated.authorisedAt
+        ? 'Relationship verified with HMRC — you can now access MTD data for this client.'
+        : 'Invitation accepted — relationship verification is pending. Refresh status or check the client list.'
+      setSuccessMsg(`${updated.name} — ${relLabel}`)
       await load()
     } catch (err: unknown) {
       setError((err as Error)?.message ?? 'Failed to accept invitation.')

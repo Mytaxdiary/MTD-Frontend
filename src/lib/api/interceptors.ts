@@ -3,6 +3,10 @@ import { isAuthRoute } from './authRoutes'
 import { refreshAccessToken } from '@/lib/auth/refreshAccessToken'
 import { clearAccessTokenExpiry } from '@/lib/auth/accessTokenExpiry'
 import { clearSessionCookie } from '@/lib/auth/tokenStorage'
+import {
+  collectFraudPreventionPayloadAsync,
+  encodeFraudContextHeader,
+} from '@/lib/hmrc/collectFraudHeaders'
 
 type FailedRequest = {
   resolve: () => void
@@ -30,7 +34,24 @@ function redirectToLogin(): void {
   }
 }
 
+async function attachFraudContext(
+  config: InternalAxiosRequestConfig,
+): Promise<InternalAxiosRequestConfig> {
+  if (typeof window === 'undefined') return config
+  // Auth routes do not call HMRC — skip custom header to avoid unnecessary CORS preflight
+  if (isAuthRoute(config.url)) return config
+  try {
+    const payload = await collectFraudPreventionPayloadAsync()
+    config.headers.set('X-Hmrc-Fraud-Context', encodeFraudContextHeader(payload))
+  } catch {
+    // Best-effort — HMRC calls still work with vendor-only headers
+  }
+  return config
+}
+
 export function setupInterceptors(client: AxiosInstance): void {
+  client.interceptors.request.use(attachFraudContext)
+
   client.interceptors.response.use(
     (response) => response,
     async (error: AxiosError<{ message?: string; statusCode?: number }>) => {

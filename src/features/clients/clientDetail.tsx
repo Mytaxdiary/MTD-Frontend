@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   mockClientQuarters as quarters,
   mockClientLiabilities as liabilities,
@@ -10,18 +10,70 @@ import {
 import B from '@/styles/theme'
 import { Card, CardHeader } from '@/components/ui/card'
 import { useCurrentUser } from '@/components/auth/CurrentUserProvider'
+import { clientsService, type ClientRecord } from '@/services/clients.service'
+import ItsaStatusCard from '@/features/clients/ItsaStatusCard'
+
+function clientInitials(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase()
+}
+
+function fmtAuthDate(date?: string): string {
+  if (!date) return '—'
+  return new Date(date).toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  })
+}
 
 export default function ClientDetail({
+  clientId = null,
   navigate = () => {},
 }: {
+  clientId?: string | null
   navigate?: (route: string) => void
 }) {
   const [activeTab, setActiveTab] = useState('overview')
+  const [client, setClient] = useState<ClientRecord | null>(null)
+  const [clientLoading, setClientLoading] = useState(!!clientId)
+  const [clientError, setClientError] = useState<string | null>(null)
   const filedQs = quarters.filter((q) => q.status === 'filed')
   const totalIncome = filedQs.reduce((s, q) => s + (q.income || 0), 0)
   const totalExpenses = filedQs.reduce((s, q) => s + (q.expenses || 0), 0)
   const totalOutstanding = liabilities.reduce((s, l) => s + l.outstanding, 0)
   const { user } = useCurrentUser()
+
+  useEffect(() => {
+    if (!clientId) {
+      setClient(null)
+      setClientLoading(false)
+      return
+    }
+    setClientLoading(true)
+    setClientError(null)
+    clientsService
+      .getOne(clientId)
+      .then(setClient)
+      .catch((err: unknown) => {
+        setClientError((err as Error)?.message ?? 'Failed to load client.')
+        setClient(null)
+      })
+      .finally(() => setClientLoading(false))
+  }, [clientId])
+
+  const displayName = client?.name ?? 'Priya Sharma'
+  const displayNino = client?.nino ?? '—'
+  const mtdBadge = client?.authorisedAt
+    ? 'MTD Authorised'
+    : client?.invitationStatus === 'accepted'
+      ? 'Invite accepted'
+      : 'MTD Pending'
 
   return (
     <div style={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
@@ -37,9 +89,14 @@ export default function ClientDetail({
           flexShrink: 0,
         }}
       >
-        <span style={{ color: B.primary, cursor: 'pointer', fontWeight: 500 }}>Clients</span>
+        <span
+          style={{ color: B.primary, cursor: 'pointer', fontWeight: 500 }}
+          onClick={() => navigate('clients')}
+        >
+          Clients
+        </span>
         <span style={{ color: B.xlight }}>/</span>
-        <span style={{ fontWeight: 600 }}>Priya Sharma</span>
+        <span style={{ fontWeight: 600 }}>{clientLoading ? 'Loading…' : displayName}</span>
       </div>
 
       <div
@@ -66,11 +123,11 @@ export default function ClientDetail({
                 color: B.blueText,
               }}
             >
-              PS
+              {client ? clientInitials(client.name) : 'PS'}
             </div>
             <div>
               <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em' }}>
-                Priya Sharma
+                {displayName}
               </div>
               <div
                 style={{
@@ -96,7 +153,7 @@ export default function ClientDetail({
                     border: '1px solid #A7F3D0',
                   }}
                 >
-                  MTD Mandated
+                  {mtdBadge}
                 </span>
                 <span
                   style={{
@@ -248,9 +305,44 @@ export default function ClientDetail({
           ))}
         </div>
 
+        {clientError && (
+          <div
+            style={{
+              marginBottom: 16,
+              padding: '10px 12px',
+              background: B.redBg,
+              border: '1px solid #FECACA',
+              borderRadius: 8,
+              fontSize: 12,
+              color: B.redText,
+            }}
+          >
+            {clientError}
+          </div>
+        )}
+
+        {!clientId && (
+          <div
+            style={{
+              marginBottom: 16,
+              padding: '10px 12px',
+              background: B.amberBg,
+              border: '1px solid #FDE68A',
+              borderRadius: 8,
+              fontSize: 12,
+              color: B.amberText,
+            }}
+          >
+            Open a client from the Clients list to view live HMRC ITSA status. Demo layout below uses
+            sample data.
+          </div>
+        )}
+
         {activeTab === 'overview' && (
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20 }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              {client && <ItsaStatusCard client={client} />}
+
               {/* Submission history — read-only, not filing */}
               <Card>
                 <CardHeader
@@ -533,14 +625,12 @@ export default function ClientDetail({
                 <CardHeader title="Client details" />
                 <div style={{ padding: '12px 20px' }}>
                   {[
-                    ['NINO', 'QQ 12 34 56 C'],
-                    ['UTR', '12345 67890'],
-                    ['Business ID', 'XAIS12345678901'],
-                    ['Trading name', 'Sharma Design Studio'],
-                    ['Quarterly type', 'Standard'],
-                    ['Accounting period', '6 Apr – 5 Apr'],
-                    ['Agent type', 'Main agent'],
-                    ['Authorised since', '15 Mar 2025'],
+                    ['NINO', displayNino],
+                    ['Email', client?.email ?? '—'],
+                    ['Postcode', client?.postcode ?? '—'],
+                    ['Agent type', client?.agentType ?? 'Main agent'],
+                    ['Invitation status', client?.invitationStatus ?? '—'],
+                    ['Authorised since', fmtAuthDate(client?.authorisedAt)],
                   ].map(([k, v], i) => (
                     <div
                       key={i}
@@ -548,7 +638,7 @@ export default function ClientDetail({
                         display: 'flex',
                         justifyContent: 'space-between',
                         padding: '7px 0',
-                        borderBottom: i < 7 ? `1px solid ${B.borderLight}` : 'none',
+                        borderBottom: i < 5 ? `1px solid ${B.borderLight}` : 'none',
                       }}
                     >
                       <span style={{ fontSize: 12, color: B.muted }}>{k}</span>
@@ -556,9 +646,7 @@ export default function ClientDetail({
                         style={{
                           fontSize: 12,
                           fontWeight: 500,
-                          fontFamily: ['NINO', 'UTR', 'Business ID'].includes(k)
-                            ? 'monospace'
-                            : 'inherit',
+                          fontFamily: k === 'NINO' ? 'monospace' : 'inherit',
                         }}
                       >
                         {v}

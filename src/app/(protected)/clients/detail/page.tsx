@@ -1,11 +1,13 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { ROUTE_PATHS } from '@/config/routes'
 import ClientDetail from '@/features/clients/clientDetail'
 
 export default function ClientDetailPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const clientId = searchParams.get('id')
   const navigate = (route: string) => router.push(ROUTE_PATHS[route] ?? `/${route}`)
-  return <ClientDetail navigate={navigate} />
+  return <ClientDetail clientId={clientId} navigate={navigate} />
 }

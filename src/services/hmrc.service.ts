@@ -10,6 +10,23 @@ export interface HmrcStatus {
   arn?: string | null;
 }
 
+export interface FraudHeaderValidationResult {
+  valid: boolean;
+  hasWarnings?: boolean;
+  warningHeaders?: string[];
+  code?: string;
+  message?: string;
+  specVersion?: string;
+  headers?: Array<{
+    header: string;
+    value?: string;
+    code?: string;
+    errors?: unknown[];
+  }>;
+  errors?: unknown[];
+  warnings?: unknown[];
+}
+
 export const hmrcService = {
   /** Get the HMRC OAuth authorize URL from the backend. */
   async getConnectUrl(): Promise<string> {
@@ -54,6 +71,14 @@ export const hmrcService = {
         scope: string | null;
       };
     }>('/hmrc/refresh-token');
+    return res.data.data;
+  },
+
+  /** Validate Gov-* fraud prevention headers with HMRC test API. */
+  async validateFraudHeaders(): Promise<FraudHeaderValidationResult> {
+    const res = await apiClient.get<{ data: FraudHeaderValidationResult }>(
+      '/hmrc/validate-fraud-headers',
+    );
     return res.data.data;
   },
 };

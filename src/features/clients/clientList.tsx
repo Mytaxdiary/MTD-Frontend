@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { clientsService, type ClientRecord } from '@/services/clients.service'
 import TypePills from '@/components/common/typePills'
 import B from '@/styles/theme'
@@ -28,13 +29,19 @@ function mapToRow(c: ClientRecord) {
     business: c.nino,
     type: [] as string[],
     mtd:
-      c.invitationStatus === 'accepted'
+      c.authorisedAt
         ? 'Mandated'
-        : c.invitationStatus === 'partial-auth'
-          ? 'Partial auth'
-          : 'Pending',
+        : c.invitationStatus === 'accepted'
+          ? 'Invite accepted'
+          : c.invitationStatus === 'partial-auth'
+            ? 'Partial auth'
+            : 'Pending',
     deadline: '—',
-    filing: statusMap[c.invitationStatus] ?? c.invitationStatus,
+    filing: c.authorisedAt
+      ? 'filed'
+      : c.invitationStatus === 'accepted'
+        ? 'invite-accepted'
+        : statusMap[c.invitationStatus] ?? c.invitationStatus,
     chase: needsResend ? 'resend' : '—',
     agentType: c.agentType,
     income: 0,
@@ -49,6 +56,7 @@ const Badge = ({ status }: { status: string }) => {
     ready: { bg: B.greenBg, c: B.greenText, b: '#A7F3D0', l: 'Records ready' },
     filed: { bg: B.greenBg, c: B.greenText, b: '#A7F3D0', l: 'Authorised' },
     pending: { bg: B.purpleBg, c: B.purpleText, b: '#DDD6FE', l: 'Pending invite' },
+    'invite-accepted': { bg: B.amberBg, c: B.amberText, b: '#FDE68A', l: 'Invite accepted' },
     'partial-auth': { bg: B.amberBg, c: B.amberText, b: '#FDE68A', l: 'Partial auth' },
     rejected: { bg: B.redBg, c: B.redText, b: '#FECACA', l: 'Rejected' },
     expired: { bg: B.surface, c: B.muted, b: B.border, l: 'Expired' },
@@ -97,6 +105,7 @@ export default function ClientList({
 }: {
   navigate?: (route: string) => void
 }) {
+  const router = useRouter()
   const [allClients, setAllClients] = useState<ReturnType<typeof mapToRow>[]>([])
   const [clientsLoading, setClientsLoading] = useState(true)
 
@@ -548,7 +557,7 @@ export default function ClientList({
               {!clientsLoading && filtered.map((c, i) => (
                 <tr
                   key={String(c.id)}
-                  onClick={() => navigate('client-detail')}
+                  onClick={() => router.push(`/clients/detail?id=${c.id}`)}
                   style={{
                     borderBottom: `1px solid ${B.borderLight}`,
                     background: selected.has(c.id)

@@ -4,6 +4,18 @@ import B from '@/styles/theme'
 import { Card, CardHeader as CardHead } from '@/components/ui/card'
 import { hmrcService, type HmrcStatus } from '@/services/hmrc.service'
 
+function fraudHeadersLabel(
+  tested: boolean,
+  valid: boolean | null,
+  hasWarnings?: boolean,
+): string {
+  if (!tested) return 'Not tested yet'
+  if (valid === true && hasWarnings) return 'Valid (warnings)'
+  if (valid === true) return 'Valid'
+  if (valid === false) return 'Issues found'
+  return 'Tested'
+}
+
 const API_SUBSCRIPTIONS = [
   { api: 'SA Individual Details v2.0', s: 'live' },
   { api: 'Business Details v2.0', s: 'live' },
@@ -55,7 +67,16 @@ function tokenStatusLabel(status?: HmrcStatus): string {
 }
 
 /** ARN is rendered separately as an editable row — excluded from this list */
-function buildRows(status: HmrcStatus | null): [string, string][] {
+function buildRows(
+  status: HmrcStatus | null,
+  fraudTested: boolean,
+  fraudValid: boolean | null,
+  fraudHasWarnings?: boolean,
+): [string, string][] {
+  const fraudLabel = status?.connected
+    ? fraudHeadersLabel(fraudTested, fraudValid, fraudHasWarnings)
+    : '—'
+
   if (!status?.connected) {
     return [
       ['Gateway ID', '—'],
@@ -63,7 +84,7 @@ function buildRows(status: HmrcStatus | null): [string, string][] {
       ['Token expires', '—'],
       ['Refresh expires', '—'],
       ['Connected since', '—'],
-      ['Fraud headers', '—'],
+      ['Fraud headers', fraudLabel],
     ]
   }
   return [
@@ -72,7 +93,7 @@ function buildRows(status: HmrcStatus | null): [string, string][] {
     ['Token expires', fmt(status.accessTokenExpiresAt)],
     ['Refresh expires', fmtDate(status.refreshTokenExpiresAt)],
     ['Connected since', fmtDate(status.connectedAt)],
-    ['Fraud headers', 'Not tested yet'],
+    ['Fraud headers', fraudLabel],
   ]
 }
 
@@ -87,6 +108,13 @@ export default function HmrcSection() {
   const [refreshing, setRefreshing] = useState(false)
   const [refreshError, setRefreshError] = useState<string | null>(null)
   const [refreshSuccess, setRefreshSuccess] = useState(false)
+
+  const [fraudTesting, setFraudTesting] = useState(false)
+  const [fraudTested, setFraudTested] = useState(false)
+  const [fraudValid, setFraudValid] = useState<boolean | null>(null)
+  const [fraudHasWarnings, setFraudHasWarnings] = useState(false)
+  const [fraudError, setFraudError] = useState<string | null>(null)
+  const [fraudDetail, setFraudDetail] = useState<string | null>(null)
 
   // ARN inline edit state
   const [arnEditing, setArnEditing] = useState(false)
@@ -108,7 +136,7 @@ export default function HmrcSection() {
   }, [arnEditing])
 
   const connected = hmrcStatus?.connected ?? false
-  const rows = buildRows(hmrcStatus)
+  const rows = buildRows(hmrcStatus, fraudTested, fraudValid, fraudHasWarnings)
 
   async function handleSaveArn() {
     const trimmed = arnInput.trim()
@@ -148,6 +176,42 @@ export default function HmrcSection() {
       setRefreshError(msg)
     } finally {
       setRefreshing(false)
+    }
+  }
+
+  async function handleTestFraudHeaders() {
+    setFraudTesting(true)
+    setFraudError(null)
+    setFraudDetail(null)
+    try {
+      const result = await hmrcService.validateFraudHeaders()
+      setFraudTested(true)
+      setFraudValid(result.valid)
+      setFraudHasWarnings(result.hasWarnings ?? false)
+
+      if (result.valid && result.hasWarnings && result.warningHeaders?.length) {
+        const list = result.warningHeaders.join(', ')
+        setFraudDetail(
+          `Headers passed with warnings: ${list}. ` +
+            'gov-client-multi-factor is expected for password login. ' +
+            'Add HMRC_VENDOR_LICENSE_IDS to .env if you have a software license ID from HMRC Developer Hub.',
+        )
+      } else if (result.valid) {
+        setFraudDetail('HMRC accepted the fraud prevention headers for this session.')
+      } else if (result.message) {
+        setFraudDetail(result.message)
+      } else if (result.errors?.length) {
+        setFraudDetail('HMRC reported invalid headers — check API response for details.')
+      }
+    } catch (err: unknown) {
+      setFraudTested(true)
+      setFraudValid(false)
+      const msg =
+        (err as { message?: string })?.message ??
+        'Failed to validate fraud headers with HMRC.'
+      setFraudError(msg)
+    } finally {
+      setFraudTesting(false)
     }
   }
 
@@ -500,6 +564,36 @@ export default function HmrcSection() {
                     HMRC access token refreshed successfully.
                   </div>
                 )}
+                {fraudError && (
+                  <div
+                    style={{
+                      marginTop: 12,
+                      padding: '8px 12px',
+                      background: B.redBg,
+                      border: '1px solid #FECACA',
+                      borderRadius: 8,
+                      fontSize: 12,
+                      color: B.redText,
+                    }}
+                  >
+                    {fraudError}
+                  </div>
+                )}
+                {fraudDetail && !fraudError && (
+                  <div
+                    style={{
+                      marginTop: 12,
+                      padding: '8px 12px',
+                      background: fraudValid ? (fraudHasWarnings ? B.amberBg : B.greenBg) : B.amberBg,
+                      border: `1px solid ${fraudValid ? (fraudHasWarnings ? '#FDE68A' : '#A7F3D0') : '#FDE68A'}`,
+                      borderRadius: 8,
+                      fontSize: 12,
+                      color: fraudValid ? (fraudHasWarnings ? B.amberText : B.greenText) : B.amberText,
+                    }}
+                  >
+                    {fraudDetail}
+                  </div>
+                )}
 
                 {/* Action buttons */}
                 <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>
@@ -516,8 +610,16 @@ export default function HmrcSection() {
                       >
                         {refreshing ? 'Refreshing…' : 'Refresh token'}
                       </button>
-                      <button style={outlineBtn} disabled>
-                        Test fraud headers
+                      <button
+                        style={{
+                          ...outlineBtn,
+                          cursor: fraudTesting ? 'not-allowed' : 'pointer',
+                          opacity: fraudTesting ? 0.7 : 1,
+                        }}
+                        onClick={handleTestFraudHeaders}
+                        disabled={fraudTesting}
+                      >
+                        {fraudTesting ? 'Testing…' : 'Test fraud headers'}
                       </button>
                       <button
                         style={{

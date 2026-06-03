@@ -34,6 +34,28 @@ export interface CreateClientResult {
   warning?: string
 }
 
+export interface ItsaStatusDetail {
+  submittedOn?: string
+  status?: string
+  statusReason?: string
+  businessIncome2YearsPrior?: number
+}
+
+export interface ItsaStatusYear {
+  taxYear: string
+  itsaStatusDetails?: ItsaStatusDetail[]
+}
+
+export interface ItsaStatusResponse {
+  itsaStatuses?: ItsaStatusYear[]
+}
+
+export interface GetItsaStatusParams {
+  taxYear: string
+  history?: boolean
+  futureYears?: boolean
+}
+
 export const clientsService = {
   async create(payload: CreateClientPayload): Promise<CreateClientResult> {
     const res = await apiClient.post<{ data: CreateClientResult }>('/clients', payload)
@@ -52,6 +74,15 @@ export const clientsService = {
 
   async checkInvitationStatus(id: string): Promise<ClientRecord> {
     const res = await apiClient.get<{ data: ClientRecord }>(`/clients/${id}/invitation-status`)
+    return res.data.data
+  },
+
+  async checkRelationshipStatus(
+    id: string,
+  ): Promise<{ client: ClientRecord; relationshipActive: boolean }> {
+    const res = await apiClient.get<{
+      data: { client: ClientRecord; relationshipActive: boolean }
+    }>(`/clients/${id}/relationship-status`)
     return res.data.data
   },
 
@@ -76,6 +107,13 @@ export const clientsService = {
       `/clients/${id}/accept-invitation-sandbox`,
       {},
     )
+    return res.data.data
+  },
+
+  async getItsaStatus(id: string, params: GetItsaStatusParams): Promise<ItsaStatusResponse> {
+    const res = await apiClient.get<{ data: ItsaStatusResponse }>(`/clients/${id}/itsa-status`, {
+      params,
+    })
     return res.data.data
   },
 }
