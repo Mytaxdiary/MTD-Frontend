@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import B from '@/styles/theme'
 import { Card, CardHeader as CardHead } from '@/components/ui/card'
 import { hmrcService, type HmrcStatus } from '@/services/hmrc.service'
+import SandboxTestUsersCard from './SandboxTestUsersCard'
 
 function fraudHeadersLabel(
   tested: boolean,
@@ -323,6 +324,14 @@ export default function HmrcSection() {
       )}
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+        <SandboxTestUsersCard
+          hmrcConnected={connected}
+          onSaveArn={async (arn) => {
+            const result = await hmrcService.updateArn(arn)
+            setHmrcStatus((prev) => (prev ? { ...prev, arn: result.arn } : prev))
+          }}
+        />
+
         <Card>
           <CardHead
             titleSize={15}

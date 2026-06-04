@@ -12,6 +12,7 @@ import { Card, CardHeader } from '@/components/ui/card'
 import { useCurrentUser } from '@/components/auth/CurrentUserProvider'
 import { clientsService, type ClientRecord } from '@/services/clients.service'
 import ItsaStatusCard from '@/features/clients/ItsaStatusCard'
+import BusinessesCard from '@/features/clients/BusinessesCard'
 
 function clientInitials(name: string): string {
   return name
@@ -342,6 +343,7 @@ export default function ClientDetail({
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20 }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               {client && <ItsaStatusCard client={client} />}
+              {client && <BusinessesCard client={client} />}
 
               {/* Submission history — read-only, not filing */}
               <Card>

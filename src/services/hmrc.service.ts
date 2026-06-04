@@ -10,6 +10,47 @@ export interface HmrcStatus {
   arn?: string | null;
 }
 
+export interface HmrcSandboxAgentUser {
+  userId: string;
+  password: string;
+  userFullName: string;
+  emailAddress: string;
+  groupIdentifier: string;
+  agentServicesAccountNumber: string;
+  agentCode: string;
+}
+
+export interface HmrcSandboxIndividualAddress {
+  line1?: string;
+  line2?: string;
+  postcode?: string;
+}
+
+export interface HmrcSandboxIndividualDetails {
+  firstName?: string;
+  lastName?: string;
+  dateOfBirth?: string;
+  address?: HmrcSandboxIndividualAddress;
+}
+
+export interface HmrcSandboxIndividualUser {
+  userId: string;
+  password: string;
+  userFullName: string;
+  emailAddress: string;
+  groupIdentifier?: string;
+  nino: string;
+  mtdItId?: string;
+  postcode: string;
+  individualDetails?: HmrcSandboxIndividualDetails;
+}
+
+export interface SandboxTestUsersResult {
+  agent: HmrcSandboxAgentUser;
+  individual: HmrcSandboxIndividualUser;
+  nextSteps: string[];
+}
+
 export interface FraudHeaderValidationResult {
   valid: boolean;
   hasWarnings?: boolean;
@@ -71,6 +112,12 @@ export const hmrcService = {
         scope: string | null;
       };
     }>('/hmrc/refresh-token');
+    return res.data.data;
+  },
+
+  /** HMRC sandbox — create agent + individual test users. */
+  async createSandboxTestUsers(): Promise<SandboxTestUsersResult> {
+    const res = await apiClient.post<{ data: SandboxTestUsersResult }>('/hmrc/sandbox/test-users');
     return res.data.data;
   },
 

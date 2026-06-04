@@ -50,6 +50,45 @@ export interface ItsaStatusResponse {
   itsaStatuses?: ItsaStatusYear[]
 }
 
+export interface BusinessListItem {
+  typeOfBusiness: string
+  businessId: string
+  tradingName?: string
+}
+
+export interface BusinessListResponse {
+  listOfBusinesses: BusinessListItem[]
+}
+
+export interface BusinessAccountingPeriod {
+  start?: string
+  end?: string
+}
+
+export interface BusinessQuarterlyTypeChoice {
+  quarterlyPeriodType?: string
+  taxYearOfChoice?: string
+}
+
+export interface BusinessDetailsResponse {
+  businessId: string
+  typeOfBusiness: string
+  tradingName?: string
+  yearOfMigration?: string
+  firstAccountingPeriodStartDate?: string
+  firstAccountingPeriodEndDate?: string
+  accountingPeriods?: BusinessAccountingPeriod[]
+  quarterlyTypeChoice?: BusinessQuarterlyTypeChoice
+  commencementDate?: string
+  cessationDate?: string
+  businessAddressLineOne?: string
+  businessAddressLineTwo?: string
+  businessAddressLineThree?: string
+  businessAddressLineFour?: string
+  businessAddressPostcode?: string
+  businessAddressCountryCode?: string
+}
+
 export interface GetItsaStatusParams {
   taxYear: string
   history?: boolean
@@ -114,6 +153,18 @@ export const clientsService = {
     const res = await apiClient.get<{ data: ItsaStatusResponse }>(`/clients/${id}/itsa-status`, {
       params,
     })
+    return res.data.data
+  },
+
+  async listBusinesses(id: string): Promise<BusinessListResponse> {
+    const res = await apiClient.get<{ data: BusinessListResponse }>(`/clients/${id}/businesses`)
+    return res.data.data
+  },
+
+  async getBusinessDetails(id: string, businessId: string): Promise<BusinessDetailsResponse> {
+    const res = await apiClient.get<{ data: BusinessDetailsResponse }>(
+      `/clients/${id}/businesses/${encodeURIComponent(businessId)}`,
+    )
     return res.data.data
   },
 }
