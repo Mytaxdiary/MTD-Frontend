@@ -13,6 +13,7 @@ import { useCurrentUser } from '@/components/auth/CurrentUserProvider'
 import { clientsService, type ClientRecord } from '@/services/clients.service'
 import ItsaStatusCard from '@/features/clients/ItsaStatusCard'
 import BusinessesCard from '@/features/clients/BusinessesCard'
+import ObligationsCard from '@/features/clients/ObligationsCard'
 
 function clientInitials(name: string): string {
   return name
@@ -344,8 +345,10 @@ export default function ClientDetail({
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               {client && <ItsaStatusCard client={client} />}
               {client && <BusinessesCard client={client} />}
+              {client && <ObligationsCard client={client} />}
 
-              {/* Submission history — read-only, not filing */}
+              {/* Submission history — demo mock when client not yet HMRC-authorised */}
+              {(!client || !client.authorisedAt) && (
               <Card>
                 <CardHeader
                   title="Submission history — 2025-26"
@@ -468,6 +471,7 @@ export default function ClientDetail({
                   ))}
                 </div>
               </Card>
+              )}
 
               {/* Cumulative submitted figures */}
               <Card>

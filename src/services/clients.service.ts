@@ -89,6 +89,49 @@ export interface BusinessDetailsResponse {
   businessAddressCountryCode?: string
 }
 
+export interface ObligationDetail {
+  periodStartDate: string
+  periodEndDate: string
+  dueDate: string
+  receivedDate?: string
+  status: string
+}
+
+export interface BusinessObligationGroup {
+  typeOfBusiness: string
+  businessId: string
+  obligationDetails: ObligationDetail[]
+}
+
+export interface IncomeExpenditureObligationsResponse {
+  obligations: BusinessObligationGroup[]
+}
+
+export interface CrystallisationObligation {
+  periodStartDate: string
+  periodEndDate: string
+  dueDate: string
+  status: string
+  receivedDate?: string
+}
+
+export interface CrystallisationObligationsResponse {
+  obligations: CrystallisationObligation[]
+}
+
+export interface GetIncomeExpenditureObligationsParams {
+  typeOfBusiness?: string
+  businessId?: string
+  fromDate?: string
+  toDate?: string
+  status?: string
+}
+
+export interface GetCrystallisationObligationsParams {
+  taxYear?: string
+  status?: string
+}
+
 export interface GetItsaStatusParams {
   taxYear: string
   history?: boolean
@@ -164,6 +207,28 @@ export const clientsService = {
   async getBusinessDetails(id: string, businessId: string): Promise<BusinessDetailsResponse> {
     const res = await apiClient.get<{ data: BusinessDetailsResponse }>(
       `/clients/${id}/businesses/${encodeURIComponent(businessId)}`,
+    )
+    return res.data.data
+  },
+
+  async getIncomeAndExpenditureObligations(
+    id: string,
+    params: GetIncomeExpenditureObligationsParams,
+  ): Promise<IncomeExpenditureObligationsResponse> {
+    const res = await apiClient.get<{ data: IncomeExpenditureObligationsResponse }>(
+      `/clients/${id}/obligations/income-and-expenditure`,
+      { params },
+    )
+    return res.data.data
+  },
+
+  async getCrystallisationObligations(
+    id: string,
+    params: GetCrystallisationObligationsParams,
+  ): Promise<CrystallisationObligationsResponse> {
+    const res = await apiClient.get<{ data: CrystallisationObligationsResponse }>(
+      `/clients/${id}/obligations/crystallisation`,
+      { params },
     )
     return res.data.data
   },
