@@ -182,7 +182,7 @@ function BusinessRow({
         </div>
         <div style={{ textAlign: 'right', flexShrink: 0 }}>
           <div style={{ fontSize: 11, fontFamily: 'monospace', color: B.muted }}>{item.businessId}</div>
-          {/* <div style={{ fontSize: 11, color: B.primary, marginTop: 2 }}>{expanded ? 'Hide' : 'Details'}</div> */}
+          <div style={{ fontSize: 11, color: B.primary, marginTop: 2 }}>{expanded ? 'Hide' : 'Details'}</div>
         </div>
       </button>
 
