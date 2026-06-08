@@ -132,6 +132,52 @@ export interface GetCrystallisationObligationsParams {
   status?: string
 }
 
+export interface HmrcLatePaymentInterest {
+  accruingInterestAmount?: number
+  interestOutstandingAmount?: number
+  interestAmount?: number
+}
+
+export interface HmrcAccountDocumentDetail {
+  taxYear?: string
+  documentId?: string
+  documentDate?: string
+  documentText?: string
+  documentDueDate?: string
+  documentDescription?: string
+  originalAmount?: number
+  outstandingAmount?: number
+  creditReason?: string
+  latePaymentInterest?: HmrcLatePaymentInterest
+}
+
+export interface HmrcBalanceDetails {
+  payableAmount?: number
+  overdueAmount?: number
+  totalBalance?: number
+  totalBcdBalance?: number
+}
+
+export interface BalanceAndTransactionsResponse {
+  balanceDetails?: HmrcBalanceDetails
+  documentDetails?: HmrcAccountDocumentDetail[]
+}
+
+export interface GetBalanceAndTransactionsParams {
+  fromDate?: string
+  toDate?: string
+  docNumber?: string
+  onlyOpenItems?: boolean
+  calculateAccruedInterest?: boolean
+}
+
+export interface PaymentRecord {
+  date: string
+  amount: number
+  ref: string
+  method: string
+}
+
 export interface GetItsaStatusParams {
   taxYear: string
   history?: boolean
@@ -228,6 +274,17 @@ export const clientsService = {
   ): Promise<CrystallisationObligationsResponse> {
     const res = await apiClient.get<{ data: CrystallisationObligationsResponse }>(
       `/clients/${id}/obligations/crystallisation`,
+      { params },
+    )
+    return res.data.data
+  },
+
+  async getBalanceAndTransactions(
+    id: string,
+    params?: GetBalanceAndTransactionsParams,
+  ): Promise<BalanceAndTransactionsResponse> {
+    const res = await apiClient.get<{ data: BalanceAndTransactionsResponse }>(
+      `/clients/${id}/liabilities/balance-and-transactions`,
       { params },
     )
     return res.data.data

@@ -25,7 +25,7 @@ const API_SUBSCRIPTIONS = [
   { api: 'Self-Employment Business v4.0', s: 'live' },
   { api: 'Property Business v5.0', s: 'live' },
   { api: 'BISS v3.0', s: 'live' },
-  { api: 'SA Accounts v3.0', s: 'live' },
+  { api: 'SA Accounts v4.0', s: 'live' },
   { api: 'Individual Calculations v8.0', s: 'pending' },
 ]
 

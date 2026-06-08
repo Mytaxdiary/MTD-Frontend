@@ -14,6 +14,7 @@ import { clientsService, type ClientRecord } from '@/services/clients.service'
 import ItsaStatusCard from '@/features/clients/ItsaStatusCard'
 import BusinessesCard from '@/features/clients/BusinessesCard'
 import ObligationsCard from '@/features/clients/ObligationsCard'
+import LiabilitiesTab from '@/features/clients/LiabilitiesTab'
 
 function clientInitials(name: string): string {
   return name
@@ -814,219 +815,22 @@ export default function ClientDetail({
           </div>
         )}
 
-        {activeTab === 'liabilities' && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20 }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-              <Card>
-                <CardHeader
-                  title="HMRC liabilities"
-                  right={
-                    <span style={{ fontSize: 12, color: B.muted }}>Source: SA Accounts API</span>
-                  }
-                />
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-                  <thead>
-                    <tr style={{ borderBottom: `1px solid ${B.border}` }}>
-                      {[
-                        'Description',
-                        'Due date',
-                        'Original',
-                        'Outstanding',
-                        'Interest',
-                        'Status',
-                      ].map((h, i) => (
-                        <th
-                          key={i}
-                          style={{
-                            padding: '10px 16px',
-                            textAlign: i >= 2 && i <= 4 ? 'right' : 'left',
-                            fontSize: 11,
-                            fontWeight: 600,
-                            color: B.light,
-                          }}
-                        >
-                          {h}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {liabilities.map((l, i) => (
-                      <tr
-                        key={i}
-                        style={{
-                          borderBottom: `1px solid ${B.borderLight}`,
-                          background: i % 2 === 1 ? '#FAFBFC' : 'transparent',
-                        }}
-                      >
-                        <td style={{ padding: '12px 16px', fontWeight: 500 }}>{l.desc}</td>
-                        <td style={{ padding: '12px 16px', color: B.muted }}>{l.due}</td>
-                        <td
-                          style={{
-                            padding: '12px 16px',
-                            textAlign: 'right',
-                            fontVariantNumeric: 'tabular-nums',
-                          }}
-                        >
-                          £{l.original.toLocaleString()}
-                        </td>
-                        <td
-                          style={{
-                            padding: '12px 16px',
-                            textAlign: 'right',
-                            fontVariantNumeric: 'tabular-nums',
-                            fontWeight: 600,
-                            color: l.outstanding > 0 ? B.text : B.light,
-                          }}
-                        >
-                          {l.outstanding > 0 ? `£${l.outstanding.toLocaleString()}` : '—'}
-                        </td>
-                        <td style={{ padding: '12px 16px', textAlign: 'right', color: B.light }}>
-                          —
-                        </td>
-                        <td style={{ padding: '12px 16px' }}>
-                          <span
-                            style={{
-                              fontSize: 11,
-                              fontWeight: 600,
-                              padding: '2px 10px',
-                              borderRadius: 20,
-                              background: l.status === 'paid' ? B.greenBg : B.amberBg,
-                              color: l.status === 'paid' ? B.greenText : B.amberText,
-                              border: `1px solid ${l.status === 'paid' ? '#A7F3D0' : '#FDE68A'}`,
-                            }}
-                          >
-                            {l.status === 'paid' ? 'Paid' : 'Upcoming'}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </Card>
-              <Card>
-                <CardHeader title="Payment history" />
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-                  <thead>
-                    <tr style={{ borderBottom: `1px solid ${B.border}` }}>
-                      {['Date', 'Amount', 'Reference', 'Method'].map((h, i) => (
-                        <th
-                          key={i}
-                          style={{
-                            padding: '10px 16px',
-                            textAlign: i === 1 ? 'right' : 'left',
-                            fontSize: 11,
-                            fontWeight: 600,
-                            color: B.light,
-                          }}
-                        >
-                          {h}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {paymentHistory.map((p, i) => (
-                      <tr key={i} style={{ borderBottom: `1px solid ${B.borderLight}` }}>
-                        <td style={{ padding: '12px 16px' }}>{p.date}</td>
-                        <td
-                          style={{
-                            padding: '12px 16px',
-                            textAlign: 'right',
-                            fontWeight: 600,
-                            fontVariantNumeric: 'tabular-nums',
-                            color: B.greenText,
-                          }}
-                        >
-                          £{p.amount.toLocaleString()}
-                        </td>
-                        <td
-                          style={{
-                            padding: '12px 16px',
-                            fontFamily: 'monospace',
-                            fontSize: 11,
-                            color: B.muted,
-                          }}
-                        >
-                          {p.ref}
-                        </td>
-                        <td style={{ padding: '12px 16px', color: B.muted }}>{p.method}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </Card>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-              <Card>
-                <CardHeader title="HMRC payment details" />
-                <div style={{ padding: '12px 20px' }}>
-                  <div
-                    style={{
-                      padding: '14px',
-                      background: B.blueBg,
-                      borderRadius: 8,
-                      border: '1px solid #BAE6FD',
-                    }}
-                  >
-                    <div
-                      style={{ fontSize: 11, fontWeight: 600, color: B.blueText, marginBottom: 8 }}
-                    >
-                      Pay by bank transfer
-                    </div>
-                    {[
-                      ['Sort code', '08-32-10'],
-                      ['Account number', '12001039'],
-                      ['Reference', '12345 67890'],
-                    ].map(([k, v], i) => (
-                      <div
-                        key={i}
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          padding: '4px 0',
-                        }}
-                      >
-                        <span style={{ fontSize: 12, color: '#0369A1' }}>{k}</span>
-                        <span
-                          style={{
-                            fontSize: 13,
-                            fontWeight: 700,
-                            fontFamily: 'monospace',
-                            color: B.blueText,
-                          }}
-                        >
-                          {v}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </Card>
-              <Card>
-                <CardHeader title="Send to client" />
-                <div style={{ padding: '14px 20px' }}>
-                  <div style={{ fontSize: 12, color: B.muted, lineHeight: 1.6, marginBottom: 12 }}>
-                    Send liability summary and payment details to the client&#39;s portal.
-                  </div>
-                  <button
-                    style={{
-                      width: '100%',
-                      padding: '10px',
-                      borderRadius: 8,
-                      border: 'none',
-                      background: B.primary,
-                      color: '#fff',
-                      fontSize: 12,
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    Message client with payment details
-                  </button>
-                </div>
-              </Card>
-            </div>
+        {activeTab === 'liabilities' && client && (
+          <LiabilitiesTab client={client} paymentHistory={paymentHistory} />
+        )}
+
+        {activeTab === 'liabilities' && !client && (
+          <div
+            style={{
+              padding: '10px 12px',
+              background: B.amberBg,
+              border: '1px solid #FDE68A',
+              borderRadius: 8,
+              fontSize: 12,
+              color: B.amberText,
+            }}
+          >
+            Open a client from the Clients list to view HMRC liabilities.
           </div>
         )}
       </div>
