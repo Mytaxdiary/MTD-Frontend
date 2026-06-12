@@ -4,6 +4,7 @@ const SANDBOX_SENTINEL = 99999999999.99
 
 /** HMRC sandbox returns ±99999999999.99 as placeholder — treat as missing. */
 export function sanitizeHmrcAmount(value?: number | null): number | null {
+  console.log("sanitizeHmrcAmount", value)
   if (value == null || Number.isNaN(value)) return null
   if (Math.abs(value) >= SANDBOX_SENTINEL - 1) return null
   return value
@@ -11,15 +12,26 @@ export function sanitizeHmrcAmount(value?: number | null): number | null {
 
 export function formatLiabilityDescription(doc: HmrcAccountDocumentDetail): string {
   const taxYear = doc.taxYear ? ` ${doc.taxYear}` : ''
-  switch (doc.documentDescription) {
+  // HMRC sandbox sometimes puts the charge type in documentText rather than
+  // documentDescription — check both so the switch matches correctly.
+  const chargeType = doc.documentDescription ?? doc.documentText ?? ''
+  const fallback = doc.documentText ?? doc.documentDescription ?? 'Charge'
+  switch (chargeType) {
     case 'ITSA- POA 1':
       return `1st payment on account${taxYear}`
     case 'ITSA - POA 2':
       return `2nd payment on account${taxYear}`
     case 'ITSA- Bal Charge':
       return `Balancing payment${taxYear}`
-    default:
-      return `${doc.documentDescription ?? doc.documentText ?? 'Charge'}${taxYear}`
+    default: {
+      // If documentDescription is a generic placeholder (e.g. "document Description"),
+      // prefer documentText which typically carries the real charge label.
+      const label =
+        doc.documentText && doc.documentText !== doc.documentDescription
+          ? doc.documentText
+          : fallback
+      return `${label}${taxYear}`
+    }
   }
 }
 

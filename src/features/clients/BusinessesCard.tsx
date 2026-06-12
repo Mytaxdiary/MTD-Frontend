@@ -213,7 +213,13 @@ function BusinessRow({
   )
 }
 
-export default function BusinessesCard({ client }: { client: ClientRecord }) {
+export default function BusinessesCard({
+  client,
+  onFirstBusiness,
+}: {
+  client: ClientRecord
+  onFirstBusiness?: (b: BusinessListItem | null) => void
+}) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [businesses, setBusinesses] = useState<BusinessListItem[]>([])
@@ -227,15 +233,18 @@ export default function BusinessesCard({ client }: { client: ClientRecord }) {
     setError(null)
     try {
       const result = await clientsService.listBusinesses(client.id)
-      setBusinesses(result.listOfBusinesses ?? [])
+      const list = result.listOfBusinesses ?? []
+      setBusinesses(list)
       setExpandedId(null)
+      onFirstBusiness?.(list[0] ?? null)
     } catch (err: unknown) {
       setBusinesses([])
+      onFirstBusiness?.(null)
       setError((err as Error)?.message ?? 'Failed to load businesses from HMRC.')
     } finally {
       setLoading(false)
     }
-  }, [client.id, client.authorisedAt])
+  }, [client.id, client.authorisedAt, onFirstBusiness])
 
   useEffect(() => {
     if (!client.authorisedAt) {
@@ -243,6 +252,7 @@ export default function BusinessesCard({ client }: { client: ClientRecord }) {
       setError(null)
       setExpandedId(null)
       setLoading(false)
+      onFirstBusiness?.(null)
       return
     }
 
@@ -253,11 +263,16 @@ export default function BusinessesCard({ client }: { client: ClientRecord }) {
     clientsService
       .listBusinesses(client.id)
       .then((result) => {
-        if (!cancelled) setBusinesses(result.listOfBusinesses ?? [])
+        if (!cancelled) {
+          const list = result.listOfBusinesses ?? []
+          setBusinesses(list)
+          onFirstBusiness?.(list[0] ?? null)
+        }
       })
       .catch((err: unknown) => {
         if (!cancelled) {
           setBusinesses([])
+          onFirstBusiness?.(null)
           setError((err as Error)?.message ?? 'Failed to load businesses from HMRC.')
         }
       })
@@ -268,7 +283,7 @@ export default function BusinessesCard({ client }: { client: ClientRecord }) {
     return () => {
       cancelled = true
     }
-  }, [client.id, client.authorisedAt])
+  }, [client.id, client.authorisedAt, onFirstBusiness])
 
   return (
     <Card>

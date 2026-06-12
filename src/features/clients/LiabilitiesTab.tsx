@@ -14,7 +14,7 @@ import {
 import {
   clientsService,
   type ClientRecord,
-  type PaymentRecord,
+  type HmrcPayment,
 } from '@/services/clients.service'
 
 const outlineBtn: React.CSSProperties = {
@@ -85,25 +85,39 @@ function StatusBadge({ status }: { status: 'paid' | 'upcoming' | 'overdue' }) {
   )
 }
 
-interface Props {
-  client: ClientRecord
-  paymentHistory: PaymentRecord[]
+function fmtPaymentMethod(method?: string): string {
+  if (!method) return '—'
+  const map: Record<string, string> = {
+    A: 'Bank transfer',
+    B: 'Direct Debit',
+    C: 'Card',
+    D: 'Cheque',
+  }
+  return map[method] ?? method
 }
 
-export default function LiabilitiesTab({ client, paymentHistory }: Props) {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+interface Props {
+  client: ClientRecord
+}
+
+export default function LiabilitiesTab({ client }: Props) {
+  const [liabLoading, setLiabLoading] = useState(false)
+  const [liabError, setLiabError] = useState<string | null>(null)
   const [onlyOpen, setOnlyOpen] = useState(false)
   const [rows, setRows] = useState<ReturnType<typeof filterLiabilityDocuments>>([])
   const [totalBalance, setTotalBalance] = useState<number | null>(null)
   const [overdueAmount, setOverdueAmount] = useState<number | null>(null)
 
+  const [paymentsLoading, setPaymentsLoading] = useState(false)
+  const [paymentsError, setPaymentsError] = useState<string | null>(null)
+  const [payments, setPayments] = useState<HmrcPayment[]>([])
+
   const canFetch = !!client.authorisedAt
 
   const fetchLiabilities = useCallback(async () => {
     if (!client.authorisedAt) return
-    setLoading(true)
-    setError(null)
+    setLiabLoading(true)
+    setLiabError(null)
     try {
       const data = await clientsService.getBalanceAndTransactions(client.id, {
         onlyOpenItems: onlyOpen || undefined,
@@ -116,31 +130,50 @@ export default function LiabilitiesTab({ client, paymentHistory }: Props) {
       setRows([])
       setTotalBalance(null)
       setOverdueAmount(null)
-      setError((err as Error)?.message ?? 'Failed to load HMRC liabilities.')
+      setLiabError((err as Error)?.message ?? 'Failed to load HMRC liabilities.')
     } finally {
-      setLoading(false)
+      setLiabLoading(false)
     }
   }, [client.id, client.authorisedAt, onlyOpen])
+
+  const fetchPayments = useCallback(async () => {
+    if (!client.authorisedAt) return
+    setPaymentsLoading(true)
+    setPaymentsError(null)
+    try {
+      const data = await clientsService.getPaymentsAndAllocations(client.id)
+      setPayments(data.payments ?? [])
+    } catch (err: unknown) {
+      setPayments([])
+      setPaymentsError((err as Error)?.message ?? 'Failed to load payment history from HMRC.')
+    } finally {
+      setPaymentsLoading(false)
+    }
+  }, [client.id, client.authorisedAt])
 
   useEffect(() => {
     if (!canFetch) {
       setRows([])
-      setError(null)
+      setLiabError(null)
+      setPayments([])
+      setPaymentsError(null)
       return
     }
     void fetchLiabilities()
-  }, [canFetch, fetchLiabilities])
-
-  const showLiveTable = canFetch
+    void fetchPayments()
+  }, [canFetch, fetchLiabilities, fetchPayments])
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20 }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+        {/* ── Liabilities ─────────────────────────────── */}
         <Card>
           <CardHeader
             title="HMRC liabilities"
             right={<span style={{ fontSize: 12, color: B.muted }}>Source: SA Accounts API v4.0</span>}
           />
+
           {!canFetch && (
             <div
               style={{
@@ -157,7 +190,7 @@ export default function LiabilitiesTab({ client, paymentHistory }: Props) {
             </div>
           )}
 
-          {showLiveTable && (
+          {canFetch && (
             <div
               style={{
                 display: 'flex',
@@ -171,14 +204,12 @@ export default function LiabilitiesTab({ client, paymentHistory }: Props) {
                 <div style={{ display: 'flex', gap: 16, fontSize: 12, color: B.muted }}>
                   {totalBalance != null && (
                     <span>
-                      Total balance:{' '}
-                      <b style={{ color: B.text }}>{fmtMoney(totalBalance)}</b>
+                      Total balance: <b style={{ color: B.text }}>{fmtMoney(totalBalance)}</b>
                     </span>
                   )}
                   {overdueAmount != null && overdueAmount > 0 && (
                     <span>
-                      Overdue:{' '}
-                      <b style={{ color: B.redText }}>{fmtMoney(overdueAmount)}</b>
+                      Overdue: <b style={{ color: B.redText }}>{fmtMoney(overdueAmount)}</b>
                     </span>
                   )}
                 </div>
@@ -204,18 +235,18 @@ export default function LiabilitiesTab({ client, paymentHistory }: Props) {
                 type="button"
                 style={{
                   ...outlineBtn,
-                  opacity: loading ? 0.6 : 1,
-                  cursor: loading ? 'not-allowed' : 'pointer',
+                  opacity: liabLoading ? 0.6 : 1,
+                  cursor: liabLoading ? 'not-allowed' : 'pointer',
                 }}
-                disabled={loading}
+                disabled={liabLoading}
                 onClick={() => void fetchLiabilities()}
               >
-                {loading ? 'Loading…' : 'Refresh'}
+                {liabLoading ? 'Loading…' : 'Refresh'}
               </button>
             </div>
           )}
 
-          {error && (
+          {liabError && (
             <div
               style={{
                 margin: '12px 20px 0',
@@ -227,7 +258,7 @@ export default function LiabilitiesTab({ client, paymentHistory }: Props) {
                 color: B.redText,
               }}
             >
-              {error}
+              {liabError}
             </div>
           )}
 
@@ -253,7 +284,7 @@ export default function LiabilitiesTab({ client, paymentHistory }: Props) {
               </tr>
             </thead>
             <tbody>
-              {loading && rows.length === 0 ? (
+              {liabLoading && rows.length === 0 ? (
                 <tr>
                   <td colSpan={6} style={{ padding: '16px', color: B.muted, fontSize: 12 }}>
                     Loading liabilities from HMRC…
@@ -271,7 +302,6 @@ export default function LiabilitiesTab({ client, paymentHistory }: Props) {
                   const interest = liabilityInterestAmount(doc)
                   const original = sanitizeHmrcAmount(doc.originalAmount)
                   const outstanding = sanitizeHmrcAmount(doc.outstandingAmount)
-
                   return (
                     <tr
                       key={`${doc.documentId ?? i}-${doc.documentDueDate ?? i}`}
@@ -286,13 +316,7 @@ export default function LiabilitiesTab({ client, paymentHistory }: Props) {
                       <td style={{ padding: '12px 16px', color: B.muted }}>
                         {fmtUkShortDate(doc.documentDueDate)}
                       </td>
-                      <td
-                        style={{
-                          padding: '12px 16px',
-                          textAlign: 'right',
-                          fontVariantNumeric: 'tabular-nums',
-                        }}
-                      >
+                      <td style={{ padding: '12px 16px', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
                         {fmtMoney(original)}
                       </td>
                       <td
@@ -327,8 +351,44 @@ export default function LiabilitiesTab({ client, paymentHistory }: Props) {
           </table>
         </Card>
 
+        {/* ── Payment history ──────────────────────────── */}
         <Card>
-          <CardHeader title="Payment history" />
+          <CardHeader
+            title="Payment history"
+            right={
+              canFetch ? (
+                <button
+                  type="button"
+                  style={{
+                    ...outlineBtn,
+                    opacity: paymentsLoading ? 0.6 : 1,
+                    cursor: paymentsLoading ? 'not-allowed' : 'pointer',
+                  }}
+                  disabled={paymentsLoading}
+                  onClick={() => void fetchPayments()}
+                >
+                  {paymentsLoading ? 'Loading…' : 'Refresh'}
+                </button>
+              ) : undefined
+            }
+          />
+
+          {paymentsError && (
+            <div
+              style={{
+                margin: '12px 20px 0',
+                padding: '10px 12px',
+                background: B.redBg,
+                border: '1px solid #FECACA',
+                borderRadius: 8,
+                fontSize: 12,
+                color: B.redText,
+              }}
+            >
+              {paymentsError}
+            </div>
+          )}
+
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
               <tr style={{ borderBottom: `1px solid ${B.border}` }}>
@@ -349,38 +409,60 @@ export default function LiabilitiesTab({ client, paymentHistory }: Props) {
               </tr>
             </thead>
             <tbody>
-              {paymentHistory.map((p, i) => (
-                <tr key={i} style={{ borderBottom: `1px solid ${B.borderLight}` }}>
-                  <td style={{ padding: '12px 16px' }}>{p.date}</td>
-                  <td
-                    style={{
-                      padding: '12px 16px',
-                      textAlign: 'right',
-                      fontWeight: 600,
-                      fontVariantNumeric: 'tabular-nums',
-                      color: B.greenText,
-                    }}
-                  >
-                    £{p.amount.toLocaleString()}
+              {paymentsLoading && payments.length === 0 ? (
+                <tr>
+                  <td colSpan={4} style={{ padding: '16px', color: B.muted, fontSize: 12 }}>
+                    Loading payment history from HMRC…
                   </td>
-                  <td
-                    style={{
-                      padding: '12px 16px',
-                      fontFamily: 'monospace',
-                      fontSize: 11,
-                      color: B.muted,
-                    }}
-                  >
-                    {p.ref}
-                  </td>
-                  <td style={{ padding: '12px 16px', color: B.muted }}>{p.method}</td>
                 </tr>
-              ))}
+              ) : payments.length === 0 ? (
+                <tr>
+                  <td colSpan={4} style={{ padding: '16px', color: B.muted, fontSize: 12 }}>
+                    {canFetch ? 'No payments found for the last 2 years.' : '—'}
+                  </td>
+                </tr>
+              ) : (
+                payments.map((p, i) => {
+                  const amount = sanitizeHmrcAmount(p.paymentAmount)
+                  return (
+                    <tr key={`${p.paymentLot ?? i}-${p.paymentLotItem ?? i}`} style={{ borderBottom: `1px solid ${B.borderLight}` }}>
+                      <td style={{ padding: '12px 16px' }}>
+                        {fmtUkShortDate(p.transactionDate)}
+                      </td>
+                      <td
+                        style={{
+                          padding: '12px 16px',
+                          textAlign: 'right',
+                          fontWeight: 600,
+                          fontVariantNumeric: 'tabular-nums',
+                          color: B.greenText,
+                        }}
+                      >
+                        {amount != null ? fmtMoney(amount) : '—'}
+                      </td>
+                      <td
+                        style={{
+                          padding: '12px 16px',
+                          fontFamily: 'monospace',
+                          fontSize: 11,
+                          color: B.muted,
+                        }}
+                      >
+                        {p.paymentReference ?? '—'}
+                      </td>
+                      <td style={{ padding: '12px 16px', color: B.muted }}>
+                        {fmtPaymentMethod(p.paymentMethod)}
+                      </td>
+                    </tr>
+                  )
+                })
+              )}
             </tbody>
           </table>
         </Card>
       </div>
 
+      {/* ── Right sidebar ───────────────────────────────── */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
         <Card>
           <CardHeader title="HMRC payment details" />

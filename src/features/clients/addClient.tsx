@@ -31,6 +31,80 @@ function fmtDate(d?: string): string {
   return new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
+type InvBadge = { label: string; bg: string; c: string; border: string }
+
+function invitationBadge(inv: ClientRecord): InvBadge {
+  const map: Record<string, InvBadge> = {
+    pending_sent: {
+      label: 'Awaiting client',
+      bg: '#FFFBEB',
+      c: '#92400E',
+      border: '#FDE68A',
+    },
+    pending_unsent: {
+      label: 'Not sent',
+      bg: '#FEF2F2',
+      c: '#991B1B',
+      border: '#FECACA',
+    },
+    expired: {
+      label: 'Expired',
+      bg: '#F8FAFC',
+      c: '#64748B',
+      border: '#E2E8F0',
+    },
+    rejected: {
+      label: 'Declined',
+      bg: '#FEF2F2',
+      c: '#991B1B',
+      border: '#FECACA',
+    },
+    cancelled: {
+      label: 'Cancelled',
+      bg: '#F8FAFC',
+      c: '#64748B',
+      border: '#E2E8F0',
+    },
+    deauthorised: {
+      label: 'Deauthorised',
+      bg: '#FEF2F2',
+      c: '#991B1B',
+      border: '#FECACA',
+    },
+  }
+  if (inv.invitationStatus === 'pending') {
+    return inv.invitationId ? map.pending_sent : map.pending_unsent
+  }
+  return map[inv.invitationStatus] ?? { label: inv.invitationStatus, bg: '#F8FAFC', c: '#64748B', border: '#E2E8F0' }
+}
+
+function invitationHint(inv: ClientRecord): string {
+  switch (inv.invitationStatus) {
+    case 'pending':
+      if (!inv.invitationId) return 'Invitation was not sent to HMRC — send now to authorise.'
+      if (inv.invitationSentAt) {
+        const days = daysLeft(inv.invitationExpiresAt)
+        const sent = fmtDate(inv.invitationSentAt)
+        if (days === 0) return `Sent ${sent} — expires today`
+        if (days !== null && days > 0) return `Sent ${sent} — ${days}d left`
+        return `Sent ${sent}`
+      }
+      return 'Sent to HMRC — awaiting client acceptance'
+    case 'expired':
+      return inv.invitationSentAt
+        ? `Expired — originally sent ${fmtDate(inv.invitationSentAt)}`
+        : 'Invitation expired — resend to re-invite'
+    case 'rejected':
+      return 'Client declined the HMRC authorisation request'
+    case 'cancelled':
+      return 'Invitation was cancelled — resend to re-invite'
+    case 'deauthorised':
+      return 'Client removed your firm as their agent'
+    default:
+      return ''
+  }
+}
+
 export default function AddClient({ navigate = () => {} }: { navigate?: (route: string) => void }) {
   const [nino, setNino] = useState('')
   const [clientName, setClientName] = useState('')
@@ -57,14 +131,18 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
   const [resendingId, setResendingId] = useState<string | null>(null)
   const [resendPanelError, setResendPanelError] = useState<string | null>(null)
 
+  const ACTIONABLE_STATUSES = ['pending', 'expired', 'rejected', 'cancelled', 'deauthorised']
+
   const loadPending = useCallback(() => {
     setPendingLoading(true)
     clientsService
       .list()
-      .then((all) => setPendingClients(all.filter((c) => c.invitationStatus === 'pending')))
+      .then((all) =>
+        setPendingClients(all.filter((c) => ACTIONABLE_STATUSES.includes(c.invitationStatus))),
+      )
       .catch(() => setPendingClients([]))
       .finally(() => setPendingLoading(false))
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     loadPending()
@@ -616,7 +694,7 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
 
           {/* Right panel */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            {/* Pending invitations */}
+            {/* Invitations panel */}
             <div
               style={{
                 background: B.white,
@@ -634,21 +712,70 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                   alignItems: 'center',
                 }}
               >
-                <div style={{ fontSize: 14, fontWeight: 700 }}>Pending invitations</div>
-                <span
-                  style={{
-                    fontSize: 11,
-                    fontWeight: 600,
-                    padding: '2px 10px',
-                    borderRadius: 20,
-                    background: B.purpleBg,
-                    color: B.purpleText,
-                    border: '1px solid #DDD6FE',
-                  }}
-                >
-                  {pendingClients.length}
-                </span>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 700 }}>Invitations</div>
+                  <div style={{ fontSize: 11, color: B.muted, marginTop: 2 }}>
+                    Pending, expired &amp; declined
+                  </div>
+                </div>
+                {pendingClients.length > 0 && (
+                  <span
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 600,
+                      padding: '2px 10px',
+                      borderRadius: 20,
+                      background: B.purpleBg,
+                      color: B.purpleText,
+                      border: '1px solid #DDD6FE',
+                    }}
+                  >
+                    {pendingClients.length}
+                  </span>
+                )}
               </div>
+
+              {/* Status legend */}
+              <div
+                style={{
+                  padding: '8px 20px',
+                  borderBottom: `1px solid ${B.borderLight}`,
+                  display: 'flex',
+                  gap: 10,
+                  flexWrap: 'wrap',
+                }}
+              >
+                {(
+                  [
+                    { status: 'pending', label: 'Awaiting', bg: B.amberBg, c: B.amberText },
+                    { status: 'expired', label: 'Expired', bg: B.surface, c: B.muted },
+                    { status: 'rejected', label: 'Declined', bg: B.redBg, c: B.redText },
+                    { status: 'deauthorised', label: 'Deauthorised', bg: B.redBg, c: B.redText },
+                    { status: 'cancelled', label: 'Cancelled', bg: B.surface, c: B.muted },
+                  ] as { status: string; label: string; bg: string; c: string }[]
+                )
+                  .filter((s) => pendingClients.some((c) => c.invitationStatus === s.status))
+                  .map((s) => {
+                    const count = pendingClients.filter((c) => c.invitationStatus === s.status).length
+                    return (
+                      <span
+                        key={s.status}
+                        style={{
+                          fontSize: 10,
+                          fontWeight: 600,
+                          padding: '1px 7px',
+                          borderRadius: 10,
+                          background: s.bg,
+                          color: s.c,
+                          border: `1px solid ${s.bg === B.redBg ? '#FECACA' : B.border}`,
+                        }}
+                      >
+                        {count} {s.label}
+                      </span>
+                    )
+                  })}
+              </div>
+
               <div style={{ padding: '4px 20px 12px' }}>
                 {resendPanelError && (
                   <div
@@ -671,63 +798,102 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                     Loading…
                   </div>
                 ) : pendingClients.length === 0 ? (
-                  <div style={{ padding: '16px 0', textAlign: 'center', fontSize: 12, color: B.light }}>
-                    No pending invitations
+                  <div style={{ padding: '20px 0', textAlign: 'center' }}>
+                    <div style={{ fontSize: 20, marginBottom: 6 }}>✓</div>
+                    <div style={{ fontSize: 12, color: B.light }}>All invitations are up to date</div>
                   </div>
                 ) : (
-                  pendingClients.map((inv, i) => (
-                    <div
-                      key={inv.id}
-                      style={{
-                        padding: '12px 0',
-                        borderBottom: i < pendingClients.length - 1 ? `1px solid ${B.borderLight}` : 'none',
-                      }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontWeight: 600, fontSize: 13 }}>{inv.name}</span>
-                        <span
+                  pendingClients.map((inv, i) => {
+                    const badge = invitationBadge(inv)
+                    const hint = invitationHint(inv)
+                    const canResendNow =
+                      inv.invitationStatus !== 'pending' || !inv.invitationId
+                    return (
+                      <div
+                        key={inv.id}
+                        style={{
+                          padding: '12px 0',
+                          borderBottom:
+                            i < pendingClients.length - 1 ? `1px solid ${B.borderLight}` : 'none',
+                        }}
+                      >
+                        <div
                           style={{
-                            fontSize: 11,
-                            fontWeight: 600,
-                            padding: '2px 8px',
-                            borderRadius: 10,
-                            background: inv.invitationId ? B.amberBg : B.redBg,
-                            color: inv.invitationId ? B.amberText : B.redText,
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'flex-start',
+                            gap: 8,
                           }}
                         >
-                          {inv.invitationId ? 'Outstanding' : 'Not sent'}
-                        </span>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 2 }}>
+                              {inv.name}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: 11,
+                                fontFamily: 'monospace',
+                                color: B.muted,
+                                marginBottom: 4,
+                              }}
+                            >
+                              {formatNino(inv.nino)}
+                            </div>
+                            <div style={{ fontSize: 11, color: B.light, lineHeight: 1.5 }}>
+                              {hint}
+                            </div>
+                          </div>
+                          <div
+                            style={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'flex-end',
+                              gap: 6,
+                              flexShrink: 0,
+                            }}
+                          >
+                            <span
+                              style={{
+                                fontSize: 10,
+                                fontWeight: 600,
+                                padding: '2px 8px',
+                                borderRadius: 10,
+                                background: badge.bg,
+                                color: badge.c,
+                                border: `1px solid ${badge.border}`,
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
+                              {badge.label}
+                            </span>
+                            <button
+                              type="button"
+                              disabled={resendingId === inv.id}
+                              onClick={() => handleResend(inv)}
+                              style={{
+                                fontSize: 11,
+                                fontWeight: canResendNow ? 600 : 400,
+                                padding: '3px 10px',
+                                borderRadius: 6,
+                                border: `1px solid ${canResendNow ? B.primary : B.border}`,
+                                background: canResendNow ? B.blueBg : 'transparent',
+                                cursor: resendingId === inv.id ? 'not-allowed' : 'pointer',
+                                color: canResendNow ? B.blueText : B.muted,
+                                opacity: resendingId === inv.id ? 0.6 : 1,
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
+                              {resendingId === inv.id
+                                ? 'Sending…'
+                                : canResendNow
+                                  ? 'Send invite'
+                                  : 'Resend'}
+                            </button>
+                          </div>
+                        </div>
                       </div>
-                      <div style={{ fontSize: 11, fontFamily: 'monospace', color: B.muted, marginTop: 3 }}>
-                        {formatNino(inv.nino)}
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 6 }}>
-                        <span style={{ fontSize: 11, color: B.light }}>
-                          {inv.invitationSentAt
-                            ? `Sent ${fmtDate(inv.invitationSentAt)}${daysLeft(inv.invitationExpiresAt) !== null ? ` — ${daysLeft(inv.invitationExpiresAt)}d left` : ''}`
-                            : 'Invitation not sent to HMRC'}
-                        </span>
-                        <button
-                          type="button"
-                          disabled={resendingId === inv.id}
-                          onClick={() => handleResend(inv)}
-                          style={{
-                            fontSize: 11,
-                            fontWeight: 500,
-                            padding: '3px 10px',
-                            borderRadius: 6,
-                            border: `1px solid ${B.border}`,
-                            background: 'transparent',
-                            cursor: resendingId === inv.id ? 'not-allowed' : 'pointer',
-                            color: B.muted,
-                            opacity: resendingId === inv.id ? 0.6 : 1,
-                          }}
-                        >
-                          {resendingId === inv.id ? 'Sending…' : 'Resend'}
-                        </button>
-                      </div>
-                    </div>
-                  ))
+                    )
+                  })
                 )}
               </div>
             </div>

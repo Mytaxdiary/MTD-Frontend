@@ -171,6 +171,26 @@ export interface GetBalanceAndTransactionsParams {
   calculateAccruedInterest?: boolean
 }
 
+export interface HmrcPayment {
+  paymentLot?: string
+  paymentLotItem?: string
+  paymentReference?: string
+  paymentAmount?: number
+  paymentMethod?: string
+  transactionDate?: string
+}
+
+export interface PaymentsAndAllocationsResponse {
+  payments: HmrcPayment[]
+}
+
+export interface GetPaymentsAndAllocationsParams {
+  fromDate?: string
+  toDate?: string
+  paymentLot?: string
+  paymentLotItem?: string
+}
+
 export interface PaymentRecord {
   date: string
   amount: number
@@ -285,6 +305,17 @@ export const clientsService = {
   ): Promise<BalanceAndTransactionsResponse> {
     const res = await apiClient.get<{ data: BalanceAndTransactionsResponse }>(
       `/clients/${id}/liabilities/balance-and-transactions`,
+      { params },
+    )
+    return res.data.data
+  },
+
+  async getPaymentsAndAllocations(
+    id: string,
+    params?: GetPaymentsAndAllocationsParams,
+  ): Promise<PaymentsAndAllocationsResponse> {
+    const res = await apiClient.get<{ data: PaymentsAndAllocationsResponse }>(
+      `/clients/${id}/liabilities/payments-and-allocations`,
       { params },
     )
     return res.data.data

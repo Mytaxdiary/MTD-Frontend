@@ -91,7 +91,7 @@ function ObligationTimeline({ details }: { details: ObligationDetail[] }) {
                   <span style={{ fontSize: 14, fontWeight: 700 }}>{quarter}</span>
                   <span style={{ fontSize: 12, color: B.muted, marginLeft: 10 }}>{period}</span>
                 </div>
-                {fulfilled && ob.receivedDate && (
+                {fulfilled ? (
                   <span
                     style={{
                       fontSize: 11,
@@ -103,10 +103,9 @@ function ObligationTimeline({ details }: { details: ObligationDetail[] }) {
                       border: '1px solid #A7F3D0',
                     }}
                   >
-                    Submitted {fmtUkShortDate(ob.receivedDate)}
+                    {ob.receivedDate ? `Submitted ${fmtUkShortDate(ob.receivedDate)}` : 'Submitted'}
                   </span>
-                )}
-                {!fulfilled && (
+                ) : (
                   <span
                     style={{
                       fontSize: 11,
@@ -203,7 +202,7 @@ function CrystallisationTimeline({ items }: { items: CrystallisationObligation[]
                   <span style={{ fontSize: 14, fontWeight: 700 }}>Final declaration</span>
                   <span style={{ fontSize: 12, color: B.muted, marginLeft: 10 }}>{period}</span>
                 </div>
-                {fulfilled && ob.receivedDate && (
+                {fulfilled ? (
                   <span
                     style={{
                       fontSize: 11,
@@ -215,10 +214,9 @@ function CrystallisationTimeline({ items }: { items: CrystallisationObligation[]
                       border: '1px solid #A7F3D0',
                     }}
                   >
-                    Submitted {fmtUkShortDate(ob.receivedDate)}
+                    {ob.receivedDate ? `Submitted ${fmtUkShortDate(ob.receivedDate)}` : 'Submitted'}
                   </span>
-                )}
-                {!fulfilled && (
+                ) : (
                   <span
                     style={{
                       fontSize: 11,
