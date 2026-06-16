@@ -1,6 +1,6 @@
 import B from '@/styles/theme'
 
-export type SectionKey = 'firm' | 'hmrc' | 'sandbox-invitations' | 'team' | 'notifications' | 'billing'
+export type SectionKey = 'firm' | 'hmrc' | 'sandbox-invitations' | 'team' | 'notifications' | 'security' | 'billing'
 
 const SECTIONS: { k: SectionKey; l: string; i: string }[] = [
   { k: 'firm', l: 'Firm details', i: '⊡' },
@@ -8,6 +8,7 @@ const SECTIONS: { k: SectionKey; l: string; i: string }[] = [
   { k: 'sandbox-invitations', l: 'Sandbox invitations', i: '✉' },
   { k: 'team', l: 'Team members', i: '☷' },
   { k: 'notifications', l: 'Notifications', i: '⊙' },
+  { k: 'security', l: 'Security & 2FA', i: '⊛' },
   { k: 'billing', l: 'Plan & billing', i: '◇' },
 ]
 

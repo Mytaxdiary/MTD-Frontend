@@ -9,6 +9,7 @@ import TeamSection from './components/TeamSection'
 import NotificationsSection from './components/NotificationsSection'
 import BillingSection from './components/BillingSection'
 import SandboxInvitationsSection from './components/SandboxInvitationsSection'
+import SecuritySection from './components/SecuritySection'
 
 const VALID_SECTIONS: SectionKey[] = [
   'firm',
@@ -16,6 +17,7 @@ const VALID_SECTIONS: SectionKey[] = [
   'sandbox-invitations',
   'team',
   'notifications',
+  'security',
   'billing',
 ]
 
@@ -54,6 +56,7 @@ export default function Settings({ navigate = () => {} }: { navigate?: (route: s
             {section === 'sandbox-invitations' && <SandboxInvitationsSection />}
             {section === 'team' && <TeamSection />}
             {section === 'notifications' && <NotificationsSection />}
+            {section === 'security' && <SecuritySection />}
             {section === 'billing' && <BillingSection />}
           </div>
         </div>

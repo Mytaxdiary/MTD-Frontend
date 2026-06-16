@@ -32,6 +32,7 @@ export interface AuthUser {
   email: string
   firmName: string
   isEmailVerified: boolean
+  mfaEnabled?: boolean
 }
 
 export interface AuthTokens {
@@ -48,6 +49,14 @@ export interface SessionResponse {
 
 export interface AuthResponse extends AuthTokens {
   user: AuthUser
+  requiresMfa?: boolean
+  mfaToken?: string
+}
+
+export interface MfaSetupResponse {
+  secret: string
+  otpauthUrl: string
+  setupToken: string
 }
 
 // ── Service ────────────────────────────────────────────────────────────────
@@ -113,6 +122,27 @@ export const authService = {
 
   getProfile: async (): Promise<AuthUser> => {
     const { data } = await axiosClient.get<{ success: true; data: AuthUser }>('/auth/profile')
+    return data.data
+  },
+
+  mfaSetup: async (): Promise<MfaSetupResponse> => {
+    const { data } = await axiosClient.get<{ success: true; data: MfaSetupResponse }>('/auth/mfa/setup')
+    return data.data
+  },
+
+  mfaEnable: async (setupToken: string, code: string): Promise<void> => {
+    await axiosClient.post('/auth/mfa/enable', { setupToken, code })
+  },
+
+  mfaDisable: async (password: string, code: string): Promise<void> => {
+    await axiosClient.post('/auth/mfa/disable', { password, code })
+  },
+
+  mfaVerify: async (mfaToken: string, code: string): Promise<AuthResponse> => {
+    const { data } = await axiosClient.post<{ success: true; data: AuthResponse }>(
+      '/auth/mfa/verify',
+      { mfaToken, code },
+    )
     return data.data
   },
 }

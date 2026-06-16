@@ -29,8 +29,16 @@ export function useAuth() {
       setLoading(true)
       setError(null)
       try {
-        // Backend sets httpOnly cookies; no manual token handling needed
         const response = await authService.login(payload)
+
+        // MFA required — store challenge token and redirect to /mfa page
+        if (response.requiresMfa && response.mfaToken) {
+          sessionStorage.setItem('mfa_token', response.mfaToken)
+          router.push('/mfa')
+          return
+        }
+
+        // Backend sets httpOnly cookies; no manual token handling needed
         setAccessTokenExpiry(response.accessTokenExpiresAt)
         setSessionCookie()
 

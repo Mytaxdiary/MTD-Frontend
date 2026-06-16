@@ -191,12 +191,17 @@ export default function HmrcSection() {
       setFraudHasWarnings(result.hasWarnings ?? false)
 
       if (result.valid && result.hasWarnings && result.warningHeaders?.length) {
-        const list = result.warningHeaders.join(', ')
-        setFraudDetail(
-          `Headers passed with warnings: ${list}. ` +
-            'gov-client-multi-factor is expected for password login. ' +
-            'Add HMRC_VENDOR_LICENSE_IDS to .env if you have a software license ID from HMRC Developer Hub.',
+        const remaining = result.warningHeaders.filter(
+          (h: string) => h !== 'gov-client-multi-factor',
         )
+        if (remaining.length > 0) {
+          setFraudDetail(
+            `Headers passed with warnings: ${remaining.join(', ')}. ` +
+              'Add HMRC_VENDOR_LICENSE_IDS to .env if you have a software license ID from HMRC Developer Hub.',
+          )
+        } else {
+          setFraudDetail('HMRC accepted the fraud prevention headers for this session.')
+        }
       } else if (result.valid) {
         setFraudDetail('HMRC accepted the fraud prevention headers for this session.')
       } else if (result.message) {
