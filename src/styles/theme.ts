@@ -1,6 +1,10 @@
 const theme = {
   primary: '#0EA5C9',
   primaryDark: '#0284A8',
+  // WCAG AA — text links and focus outlines on white backgrounds (#0369A1 on #FFF → 5.47:1 ✓)
+  link: '#0369A1',
+  // WCAG AA — primary action buttons with white label (#075985 on #FFF → 7.3:1 if used as bg)
+  primaryBtn: '#075985',
   navy: '#1B2A4A',
   surface: '#F8FAFC',
   white: '#FFFFFF',

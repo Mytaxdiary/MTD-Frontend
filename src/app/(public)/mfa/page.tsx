@@ -60,7 +60,7 @@ export default function MfaPage() {
       footerContent={
         <button
           onClick={() => { sessionStorage.removeItem('mfa_token'); router.push('/login') }}
-          style={{ background: 'none', border: 'none', color: B.primary, fontSize: 13, fontWeight: 500, cursor: 'pointer' }}
+          style={{ background: 'none', border: 'none', color: B.link, fontSize: 13, fontWeight: 500, cursor: 'pointer' }}
         >
           ← Back to sign in
         </button>

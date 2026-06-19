@@ -1,3 +1,4 @@
+import '@/index.css'
 import QueryProvider from '@/providers/queryProvider'
 
 export const metadata = {

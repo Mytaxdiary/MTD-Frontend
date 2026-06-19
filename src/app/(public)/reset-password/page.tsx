@@ -62,7 +62,7 @@ function ResetPasswordContent() {
         <div style={{ textAlign: 'center', marginTop: 20, fontSize: 13 }}>
           <Link
             href="/login"
-            style={{ color: B.primary, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}
+            style={{ color: B.link, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}
           >
             ← Back to sign in
           </Link>
@@ -78,7 +78,7 @@ function ResetPasswordContent() {
         !done ? (
           <Link
             href="/login"
-            style={{ color: B.primary, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}
+            style={{ color: B.link, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}
           >
             ← Back to sign in
           </Link>

@@ -15,7 +15,7 @@ export default function CheckEmailPage() {
       footerContent={
         <Link
           href="/login"
-          style={{ color: B.primary, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}
+          style={{ color: B.link, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}
         >
           ← Back to sign in
         </Link>

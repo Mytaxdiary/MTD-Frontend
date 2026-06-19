@@ -31,7 +31,7 @@ export default function ForgotPasswordPage() {
       footerContent={
         <Link
           href="/login"
-          style={{ color: B.primary, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}
+          style={{ color: B.link, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}
         >
           ← Back to sign in
         </Link>
@@ -125,7 +125,7 @@ export default function ForgotPasswordPage() {
             onClick={() => setSubmitted(false)}
             style={{
               fontSize: 12,
-              color: B.primary,
+              color: B.link,
               background: 'transparent',
               border: 'none',
               cursor: 'pointer',

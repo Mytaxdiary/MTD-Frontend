@@ -33,7 +33,7 @@ export default function LoginPage() {
           Don&#39;t have an account?{' '}
           <Link
             href="/register"
-            style={{ color: B.primary, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}
+            style={{ color: B.link, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}
           >
             Create account
           </Link>
@@ -86,7 +86,7 @@ export default function LoginPage() {
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 24 }}>
           <Link
             href="/forgot-password"
-            style={{ fontSize: 12, color: B.primary, fontWeight: 500, textDecoration: 'none' }}
+            style={{ fontSize: 12, color: B.link, fontWeight: 500, textDecoration: 'none' }}
           >
             Forgot password?
           </Link>

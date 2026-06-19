@@ -14,7 +14,10 @@ export default function AuthPageLayout({
   footerContent,
 }: AuthPageLayoutProps) {
   return (
-    <div
+    // WCAG 1.3.6 — <main> identifies the primary content region on auth pages.
+    <main
+      id="main-content"
+      tabIndex={-1}
       style={{
         minHeight: '100vh',
         background: B.surface,
@@ -23,11 +26,13 @@ export default function AuthPageLayout({
         justifyContent: 'center',
         fontFamily: "'DM Sans','Segoe UI',system-ui,sans-serif",
         padding: '24px 16px',
+        outline: 'none',
       }}
     >
       <div style={{ width: '100%', maxWidth }}>
-        {/* Logo */}
+        {/* Logo — aria-hidden: decorative branding, screen readers don't need it */}
         <div
+          aria-hidden="true"
           style={{
             display: 'flex',
             flexDirection: 'column',
@@ -53,13 +58,15 @@ export default function AuthPageLayout({
           >
             NE
           </div>
+          {/* WCAG 1.4.3 — app name: #1B2A4A on #F8FAFC → 12.6:1 ✓ */}
           <div style={{ fontSize: 22, fontWeight: 700, color: B.navy, letterSpacing: '-0.02em' }}>
             NewEffect MTD ITSA
           </div>
+          {/* WCAG 1.4.3 — subtitle: #64748B on #F8FAFC → 4.6:1 ✓ */}
           <div style={{ fontSize: 13, color: B.muted, marginTop: 4 }}>{subtitle}</div>
         </div>
 
-        {/* Card */}
+        {/* Card — heading inside provides page-level context for screen readers */}
         <div
           style={{
             background: B.white,
@@ -69,6 +76,8 @@ export default function AuthPageLayout({
             boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
           }}
         >
+          {/* Visually hidden page heading for screen reader navigation */}
+          <h1 className="sr-only">{subtitle}</h1>
           {children}
         </div>
 
@@ -78,6 +87,6 @@ export default function AuthPageLayout({
           </div>
         )}
       </div>
-    </div>
+    </main>
   )
 }

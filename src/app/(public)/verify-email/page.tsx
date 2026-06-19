@@ -50,7 +50,7 @@ export default function VerifyEmailPage() {
       footerContent={
         <Link
           href="/login"
-          style={{ color: B.primary, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}
+          style={{ color: B.link, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}
         >
           ← Back to sign in
         </Link>
@@ -63,7 +63,7 @@ export default function VerifyEmailPage() {
               width: 40,
               height: 40,
               border: `3px solid ${B.xlight}`,
-              borderTopColor: B.primary,
+              borderTopColor: B.link,
               borderRadius: '50%',
               margin: '0 auto 16px',
               animation: 'spin 0.8s linear infinite',

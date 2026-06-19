@@ -54,7 +54,7 @@ export default function RegisterPage() {
           Already have an account?{' '}
           <Link
             href="/login"
-            style={{ color: B.primary, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}
+            style={{ color: B.link, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}
           >
             Sign in
           </Link>

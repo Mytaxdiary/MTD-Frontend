@@ -8,6 +8,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <TokenRefreshProvider>
       <CurrentUserProvider>
+        {/* WCAG 2.4.1 — Skip navigation link */}
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
         <div
           style={{
             display: 'flex',
@@ -18,7 +22,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           }}
         >
           <AppSidebar />
-          {children}
+          <main
+            id="main-content"
+            tabIndex={-1}
+            style={{ flex: 1, minWidth: 0, overflowY: 'auto', outline: 'none' }}
+          >
+            {children}
+          </main>
         </div>
       </CurrentUserProvider>
     </TokenRefreshProvider>
