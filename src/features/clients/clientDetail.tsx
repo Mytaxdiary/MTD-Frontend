@@ -17,6 +17,8 @@ import ItsaStatusCard from '@/features/clients/ItsaStatusCard'
 import BusinessesCard from '@/features/clients/BusinessesCard'
 import ObligationsCard from '@/features/clients/ObligationsCard'
 import LiabilitiesTab from '@/features/clients/LiabilitiesTab'
+import ChasingTab from '@/features/clients/ChasingTab'
+import NotesTab from '@/features/clients/NotesTab'
 
 function clientInitials(name: string): string {
   return name
@@ -825,6 +827,10 @@ export default function ClientDetail({
             Open a client from the Clients list to view HMRC liabilities.
           </div>
         )}
+
+        {activeTab === 'chasing' && <ChasingTab />}
+
+        {activeTab === 'notes' && <NotesTab />}
       </div>
     </div>
   )
