@@ -3,7 +3,7 @@ import QueryProvider from '@/providers/queryProvider'
 
 export const metadata = {
   title: 'NewEffect MTD ITSA',
-  description: 'MTD ITSA agent platform — manage quarterly submissions and client filings',
+  description: 'MTD ITSA agent platform. Manage quarterly submissions and client filings.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

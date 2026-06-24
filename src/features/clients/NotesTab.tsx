@@ -15,7 +15,7 @@ type NoteEntry = {
 const INITIAL_NOTES: NoteEntry[] = [
   {
     id: 1,
-    text: 'Client uses Xero for bookkeeping. Submits own quarterly updates via Xero — we monitor and chase. 2nd POA due 31 Jul — remind client. May exceed £90k next year.',
+    text: 'Client uses Xero for bookkeeping. Submits own quarterly updates via Xero. We monitor and chase. 2nd POA due 31 Jul, remind client. May exceed £90k next year.',
     author: 'You',
     timestamp: '22 Apr 2026, 10:14',
     isPinned: true,

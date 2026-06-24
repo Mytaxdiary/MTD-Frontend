@@ -1,21 +1,28 @@
 'use client'
 import { useCallback, useEffect, useState } from 'react'
-import { mockChaseClients as chaseClients } from '@/mocks/chase/chaseData'
 import {
   chaseTemplatesService,
-  ChaseTemplateRecord,
-  CreateChaseTemplatePayload,
+  type ChaseTemplateRecord,
+  type CreateChaseTemplatePayload,
 } from '@/services/chaseTemplates.service'
+import {
+  chaseService,
+  renderTemplate,
+  type ChaseClientRecord,
+} from '@/services/chase.service'
+import { useCurrentUser } from '@/components/auth/CurrentUserProvider'
 import B from '@/styles/theme'
 
 const ResponseBadge = ({ status }: { status: string }) => {
   const m: Record<string, { bg: string; c: string; b: string; l: string }> = {
-    'no-response': { bg: B.redBg, c: B.redText, b: '#FECACA', l: 'No response' },
-    opened: { bg: B.amberBg, c: B.amberText, b: '#FDE68A', l: 'Opened' },
-    responded: { bg: B.greenBg, c: B.greenText, b: '#A7F3D0', l: 'Responded' },
-    'not-started': { bg: B.surface, c: B.light, b: B.border, l: 'Not chased' },
+    'no-response': { bg: B.redBg,    c: B.redText,    b: '#FECACA', l: 'No response' },
+    opened:        { bg: B.amberBg,  c: B.amberText,  b: '#FDE68A', l: 'Opened'      },
+    responded:     { bg: B.greenBg,  c: B.greenText,  b: '#A7F3D0', l: 'Responded'   },
+    sent:          { bg: B.blueBg,   c: B.blueText,   b: '#BAE6FD', l: 'Sent'        },
+    bounced:       { bg: B.redBg,    c: B.redText,    b: '#FECACA', l: 'Bounced'     },
+    'not-started': { bg: B.surface,  c: B.light,      b: B.border,  l: 'Not chased'  },
   }
-  const s = m[status]
+  const s = m[status] ?? { bg: B.surface, c: B.muted, b: B.border, l: status }
   return (
     <span
       style={{
@@ -40,12 +47,18 @@ export default function ChaseManager({
 }: {
   navigate?: (route: string) => void
 }) {
+  const { user } = useCurrentUser()
+
   /* ── client list state ── */
-  const [selected, setSelected] = useState(new Set<number>())
-  const [sent, setSent] = useState(new Set<number>())
-  const [clientChannels, setClientChannels] = useState<Record<number, string>>(
-    Object.fromEntries(chaseClients.map((c) => [c.id, c.channel])),
-  )
+  const [chaseClients, setChaseClients] = useState<ChaseClientRecord[]>([])
+  const [clientsLoading, setClientsLoading] = useState(true)
+  const [clientsError, setClientsError] = useState<string | null>(null)
+
+  const [selected, setSelected] = useState(new Set<string>())
+  const [sending, setSending] = useState(false)
+  // `sent` removed — we reload clients after send instead of local optimistic state
+  const [sendError, setSendError] = useState<string | null>(null)
+  const [clientChannels, setClientChannels] = useState<Record<string, string>>({})
   const [typeFilter, setTypeFilter] = useState('all')
 
   /* ── template state ── */
@@ -62,6 +75,21 @@ export default function ChaseManager({
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+
+  /* ── load chase clients ── */
+  const loadClients = useCallback(async () => {
+    setClientsLoading(true)
+    setClientsError(null)
+    try {
+      const data = await chaseService.listChaseClients()
+      setChaseClients(data)
+      setClientChannels(Object.fromEntries(data.map((c) => [c.id, c.channel])))
+    } catch {
+      setClientsError('Failed to load chase clients')
+    } finally {
+      setClientsLoading(false)
+    }
+  }, [])
 
   /* ── load templates ── */
   const loadTemplates = useCallback(async () => {
@@ -81,6 +109,7 @@ export default function ChaseManager({
   }, [selectedTemplateId])
 
   useEffect(() => {
+    void loadClients()
     loadTemplates()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -92,19 +121,79 @@ export default function ChaseManager({
   const filteredUpcoming =
     typeFilter === 'all' ? upcomingClients : upcomingClients.filter((c) => c.workflowType === typeFilter)
 
-  const toggleSelect = (id: number) =>
+  const toggleSelect = (id: string) =>
     setSelected((p) => {
       const n = new Set(p)
       n.has(id) ? n.delete(id) : n.add(id)
       return n
     })
-  const handleSend = () => {
-    setSent(new Set([...sent, ...selected]))
-    setSelected(new Set())
+
+  const handleSend = async () => {
+    if (!selectedTemplateId || !currentTemplate) {
+      setSendError('Please select a template before sending.')
+      return
+    }
+    setSending(true)
+    setSendError(null)
+    const selectedClients = chaseClients.filter((c) => selected.has(c.id))
+    try {
+      await Promise.all(
+        selectedClients.map((c) => {
+          const vars = {
+            name: c.name,
+            business: c.business,
+            quarter: c.quarter,
+            deadline: c.deadline,
+            agent_name: user?.name ?? 'Your accountant',
+            firm_name: (user as { firmName?: string })?.firmName ?? 'Your firm',
+          }
+          return chaseService.sendChase({
+            clientId: c.id,
+            templateId: selectedTemplateId,
+            channel: clientChannels[c.id] ?? 'email',
+            subject: renderTemplate(currentTemplate.subject, vars),
+            body: renderTemplate(currentTemplate.body, vars),
+          })
+        }),
+      )
+      setSelected(new Set())
+      // Reload to refresh chase counts / last chase dates
+      void loadClients()
+    } catch {
+      setSendError('Some chases failed to send. Please try again.')
+    } finally {
+      setSending(false)
+    }
   }
 
   /* ── template helpers ── */
   const currentTemplate = templates.find((t) => t.id === selectedTemplateId) ?? null
+
+  // First selected client — used to render a live preview with real variable values
+  const previewClient = chaseClients.find((c) => selected.has(c.id)) ?? null
+
+  const previewVars = previewClient
+    ? {
+        name:       previewClient.name,
+        business:   previewClient.business,
+        quarter:    previewClient.quarter,
+        deadline:   previewClient.deadline,
+        agent_name: (user as { name?: string })?.name ?? 'Your accountant',
+        firm_name:  (user as { firmName?: string })?.firmName ?? 'Your firm',
+      }
+    : null
+
+  const previewSubject = currentTemplate
+    ? previewVars
+      ? renderTemplate(currentTemplate.subject, previewVars)
+      : currentTemplate.subject
+    : ''
+
+  const previewBody = currentTemplate
+    ? previewVars
+      ? renderTemplate(currentTemplate.body, previewVars)
+      : currentTemplate.body
+    : ''
 
   const openEdit = (t: ChaseTemplateRecord) => {
     setEditMode('edit')
@@ -202,8 +291,11 @@ export default function ChaseManager({
             Chase manager
           </div>
           <div style={{ fontSize: 13, color: B.muted, marginTop: 2 }}>
-            {chaseClients.length} clients needing records — {overdueClients.length} overdue,{' '}
-            {upcomingClients.length} upcoming
+            {clientsLoading
+              ? 'Loading clients…'
+              : clientsError
+                ? clientsError
+                : `${chaseClients.length} authorised clients: ${overdueClients.length} overdue, ${upcomingClients.length} upcoming`}
           </div>
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
@@ -225,21 +317,29 @@ export default function ChaseManager({
             <option value="data-request">Data request</option>
           </select>
           {selected.size > 0 && (
-            <button
-              onClick={handleSend}
-              style={{
-                padding: '8px 20px',
-                borderRadius: 8,
-                border: 'none',
-                background: B.primary,
-                color: '#fff',
-                fontSize: 13,
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              Send to {selected.size} client{selected.size > 1 ? 's' : ''}
-            </button>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
+              <button
+                onClick={handleSend}
+                disabled={sending}
+                style={{
+                  padding: '8px 20px',
+                  borderRadius: 8,
+                  border: 'none',
+                  background: sending ? B.muted : B.primary,
+                  color: '#fff',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: sending ? 'not-allowed' : 'pointer',
+                }}
+              >
+                {sending
+                  ? 'Sending…'
+                  : `Send to ${selected.size} client${selected.size > 1 ? 's' : ''}`}
+              </button>
+              {sendError && (
+                <span style={{ fontSize: 11, color: B.redText }}>{sendError}</span>
+              )}
+            </div>
           )}
         </div>
       </div>
@@ -248,19 +348,68 @@ export default function ChaseManager({
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 20 }}>
           {/* ─────────── Left: client list ─────────── */}
           <div>
+            {/* Send error banner */}
+            {sendError && (
+              <div style={{
+                marginBottom: 12,
+                padding: '8px 12px',
+                background: B.redBg,
+                border: '1px solid #FECACA',
+                borderRadius: 8,
+                fontSize: 12,
+                color: B.redText,
+              }}>
+                {sendError}
+              </div>
+            )}
+
+            {/* No template selected warning */}
+            {selected.size > 0 && !selectedTemplateId && (
+              <div style={{
+                marginBottom: 12,
+                padding: '8px 12px',
+                background: B.amberBg,
+                border: '1px solid #FDE68A',
+                borderRadius: 8,
+                fontSize: 12,
+                color: B.amberText,
+              }}>
+                Select a template on the right before sending.
+              </div>
+            )}
+
+            {clientsLoading && (
+              <div style={{ padding: '32px', textAlign: 'center', fontSize: 13, color: B.muted }}>
+                Loading clients…
+              </div>
+            )}
+
+            {!clientsLoading && chaseClients.length === 0 && (
+              <div style={{
+                padding: '32px',
+                textAlign: 'center',
+                fontSize: 13,
+                color: B.light,
+                background: B.white,
+                borderRadius: 12,
+                border: `1px solid ${B.border}`,
+              }}>
+                No authorised clients yet. Add and authorise clients to start chasing.
+              </div>
+            )}
+
             {filteredOverdue.length > 0 && (
               <div style={{ marginBottom: 20 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
                   <div style={{ width: 8, height: 8, borderRadius: 4, background: B.red }} />
                   <span style={{ fontSize: 13, fontWeight: 700, color: B.redText }}>
-                    Overdue — deadline passed
+                    Overdue: deadline passed
                   </span>
                   <span style={{ fontSize: 11, color: B.muted }}>({filteredOverdue.length})</span>
                 </div>
                 <ClientTable
                   clients={filteredOverdue}
                   selected={selected}
-                  sent={sent}
                   clientChannels={clientChannels}
                   onToggle={toggleSelect}
                   onChannelChange={(id, ch) =>
@@ -274,14 +423,13 @@ export default function ChaseManager({
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
                   <div style={{ width: 8, height: 8, borderRadius: 4, background: B.amber }} />
                   <span style={{ fontSize: 13, fontWeight: 700, color: B.amberText }}>
-                    Upcoming — chase window open
+                    Upcoming: chase window open
                   </span>
                   <span style={{ fontSize: 11, color: B.muted }}>({filteredUpcoming.length})</span>
                 </div>
                 <ClientTable
                   clients={filteredUpcoming}
                   selected={selected}
-                  sent={sent}
                   clientChannels={clientChannels}
                   onToggle={toggleSelect}
                   onChannelChange={(id, ch) =>
@@ -427,8 +575,33 @@ export default function ChaseManager({
                   alignItems: 'center',
                 }}
               >
-                <div style={{ fontSize: 14, fontWeight: 700 }}>
-                  {editMode === 'new' ? 'New template' : editMode === 'edit' ? 'Edit template' : 'Preview'}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700 }}>
+                    {editMode === 'new' ? 'New template' : editMode === 'edit' ? 'Edit template' : 'Preview'}
+                  </div>
+                  {!editMode && previewClient && (
+                    <span
+                      style={{
+                        fontSize: 10,
+                        fontWeight: 600,
+                        padding: '2px 8px',
+                        borderRadius: 10,
+                        background: B.greenBg,
+                        color: B.greenText,
+                        border: '1px solid #A7F3D0',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {selected.size > 1
+                        ? `${previewClient.name} +${selected.size - 1} more`
+                        : previewClient.name}
+                    </span>
+                  )}
+                  {!editMode && !previewClient && currentTemplate && (
+                    <span style={{ fontSize: 10, color: B.light }}>
+                      select a client to preview with real data
+                    </span>
+                  )}
                 </div>
                 <div style={{ display: 'flex', gap: 6 }}>
                   {!editMode && currentTemplate && (
@@ -489,9 +662,7 @@ export default function ChaseManager({
                 {/* Preview mode */}
                 {!editMode && currentTemplate && (
                   <>
-                    <div
-                      style={{ fontSize: 11, fontWeight: 600, color: B.muted, marginBottom: 4 }}
-                    >
+                    <div style={{ fontSize: 11, fontWeight: 600, color: B.muted, marginBottom: 4 }}>
                       Subject
                     </div>
                     <div
@@ -499,31 +670,30 @@ export default function ChaseManager({
                         fontSize: 12,
                         marginBottom: 14,
                         padding: '8px 12px',
-                        background: B.surface,
+                        background: previewClient ? B.white : B.surface,
                         borderRadius: 6,
-                        border: `1px solid ${B.borderLight}`,
+                        border: `1px solid ${previewClient ? B.border : B.borderLight}`,
+                        color: B.text,
                       }}
                     >
-                      {currentTemplate.subject}
+                      {previewSubject}
                     </div>
-                    <div
-                      style={{ fontSize: 11, fontWeight: 600, color: B.muted, marginBottom: 4 }}
-                    >
+                    <div style={{ fontSize: 11, fontWeight: 600, color: B.muted, marginBottom: 4 }}>
                       Body
                     </div>
                     <div
                       style={{
                         fontSize: 12,
-                        color: B.muted,
+                        color: previewClient ? B.text : B.muted,
                         lineHeight: 1.7,
                         padding: '12px',
-                        background: B.surface,
+                        background: previewClient ? B.white : B.surface,
                         borderRadius: 6,
-                        border: `1px solid ${B.borderLight}`,
+                        border: `1px solid ${previewClient ? B.border : B.borderLight}`,
                         whiteSpace: 'pre-wrap',
                       }}
                     >
-                      {currentTemplate.body}
+                      {previewBody}
                     </div>
                   </>
                 )}
@@ -677,7 +847,7 @@ function TypeBadge({ type }: { type: string }) {
 }
 
 type ChaseClientRow = {
-  id: number
+  id: string
   name: string
   business: string
   deadline: string
@@ -691,17 +861,15 @@ type ChaseClientRow = {
 function ClientTable({
   clients,
   selected,
-  sent,
   clientChannels,
   onToggle,
   onChannelChange,
 }: {
   clients: ChaseClientRow[]
-  selected: Set<number>
-  sent: Set<number>
-  clientChannels: Record<number, string>
-  onToggle: (id: number) => void
-  onChannelChange: (id: number, ch: string) => void
+  selected: Set<string>
+  clientChannels: Record<string, string>
+  onToggle: (id: string) => void
+  onChannelChange: (id: string, ch: string) => void
 }) {
   return (
     <div
@@ -721,7 +889,7 @@ function ClientTable({
             gap: 12,
             padding: '14px 16px',
             borderBottom: i < clients.length - 1 ? `1px solid ${B.borderLight}` : 'none',
-            background: sent.has(c.id) ? B.greenBg : selected.has(c.id) ? '#F0F9FF' : 'transparent',
+            background: selected.has(c.id) ? '#F0F9FF' : 'transparent',
           }}
         >
           <input
@@ -738,7 +906,7 @@ function ClientTable({
                 <span style={{ fontWeight: 600, fontSize: 13 }}>{c.name}</span>
                 <span style={{ color: B.muted, fontSize: 12, marginLeft: 8 }}>{c.business}</span>
               </div>
-              <ResponseBadge status={sent.has(c.id) ? 'responded' : c.status} />
+              <ResponseBadge status={c.status} />
             </div>
             <div
               style={{

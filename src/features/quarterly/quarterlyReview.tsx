@@ -70,7 +70,7 @@ export default function QuarterlyReview({
                 Review quarterly update
               </div>
               <div style={{ fontSize: 13, color: B.muted, marginTop: 3 }}>
-                Priya Sharma — Sharma Design Studio — Q4 (6 Jan – 5 Apr 2026) — Due 7 May 2026
+                Priya Sharma · Sharma Design Studio · Q4 (6 Jan – 5 Apr 2026) · Due 7 May 2026
               </div>
             </div>
             {!submitted && (
@@ -406,7 +406,7 @@ export default function QuarterlyReview({
                             color: r.q4 > 0 ? B.text : B.light,
                           }}
                         >
-                          {r.q4 > 0 ? `£${r.q4.toLocaleString()}` : '—'}
+                          {r.q4 > 0 ? `£${r.q4.toLocaleString()}` : '-'}
                         </td>
                         <td
                           style={{
@@ -416,7 +416,7 @@ export default function QuarterlyReview({
                             color: r.ytd > 0 ? B.text : B.light,
                           }}
                         >
-                          {r.ytd > 0 ? `£${r.ytd.toLocaleString()}` : '—'}
+                          {r.ytd > 0 ? `£${r.ytd.toLocaleString()}` : '-'}
                         </td>
                         <td
                           style={{
@@ -426,7 +426,7 @@ export default function QuarterlyReview({
                             color: B.muted,
                           }}
                         >
-                          {r.prior > 0 ? `£${r.prior.toLocaleString()}` : '—'}
+                          {r.prior > 0 ? `£${r.prior.toLocaleString()}` : '-'}
                           {r.q4 > 0 && r.prior > 0 && (
                             <span
                               style={{
@@ -509,7 +509,7 @@ export default function QuarterlyReview({
                       letterSpacing: '0.02em',
                     }}
                   >
-                    YTD NET PROFIT — SENT TO HMRC
+                    YTD NET PROFIT (SENT TO HMRC)
                   </div>
                   <div
                     style={{

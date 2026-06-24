@@ -7,7 +7,7 @@ import { clientsService, type ClientRecord, type ItsaStatusResponse } from '@/se
 import { currentUkTaxYear } from '@/lib/hmrc/taxYear'
 
 function fmtDate(iso?: string): string {
-  if (!iso) return '—'
+  if (!iso) return '-'
   return new Date(iso).toLocaleString('en-GB', {
     day: '2-digit',
     month: 'short',
@@ -98,7 +98,7 @@ export default function ItsaStatusCard({ client }: { client: ClientRecord }) {
     <Card>
       <CardHeader
         title="HMRC ITSA status"
-        sub="Self Assessment Individual Details v2.0 — live data from HMRC"
+        sub="Self Assessment Individual Details v2.0, live data from HMRC"
       />
       <div style={{ padding: '12px 20px 16px' }}>
         {!canFetch && (
@@ -212,7 +212,7 @@ export default function ItsaStatusCard({ client }: { client: ClientRecord }) {
                     }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
-                      <span style={{ fontWeight: 600 }}>{detail.status ?? '—'}</span>
+                      <span style={{ fontWeight: 600 }}>{detail.status ?? 'No status'}</span>
                       <span style={{ color: B.muted }}>{fmtDate(detail.submittedOn)}</span>
                     </div>
                     {detail.statusReason && (

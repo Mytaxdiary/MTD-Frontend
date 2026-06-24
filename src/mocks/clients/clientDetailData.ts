@@ -101,10 +101,10 @@ export const mockPaymentHistory: PaymentRecord[] = [
   {
     date: '28 Jan 2026',
     amount: 4860,
-    ref: '1234567890 — POA1 + balancing',
+    ref: '1234567890 (POA1 + balancing)',
     method: 'Bank transfer',
   },
-  { date: '30 Jan 2025', amount: 3200, ref: '1234567890 — POA1 2024-25', method: 'Bank transfer' },
+  { date: '30 Jan 2025', amount: 3200, ref: '1234567890 (POA1 2024-25)', method: 'Bank transfer' },
 ]
 
 export const mockChaseLog: ChaseLogEntry[] = [
@@ -112,7 +112,7 @@ export const mockChaseLog: ChaseLogEntry[] = [
   {
     date: '10 Apr 2026',
     type: 'email',
-    msg: 'Q4 deadline approaching — records needed',
+    msg: 'Q4 deadline approaching, records needed',
     status: 'Opened',
   },
   { date: '2 Feb 2026', type: 'email', msg: 'Q3 records reminder sent', status: 'Responded' },

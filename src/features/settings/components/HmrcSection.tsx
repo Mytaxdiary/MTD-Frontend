@@ -41,7 +41,7 @@ const outlineBtn: React.CSSProperties = {
 }
 
 function fmt(date?: string | null): string {
-  if (!date) return '—'
+  if (!date) return '-'
   return new Date(date).toLocaleString('en-GB', {
     day: '2-digit',
     month: 'short',
@@ -52,7 +52,7 @@ function fmt(date?: string | null): string {
 }
 
 function fmtDate(date?: string | null): string {
-  if (!date) return '—'
+  if (!date) return '-'
   return new Date(date).toLocaleDateString('en-GB', {
     day: '2-digit',
     month: 'short',
@@ -76,20 +76,20 @@ function buildRows(
 ): [string, string][] {
   const fraudLabel = status?.connected
     ? fraudHeadersLabel(fraudTested, fraudValid, fraudHasWarnings)
-    : '—'
+    : '-'
 
   if (!status?.connected) {
     return [
-      ['Gateway ID', '—'],
+      ['Gateway ID', 'Not connected'],
       ['Token status', 'Inactive'],
-      ['Token expires', '—'],
-      ['Refresh expires', '—'],
-      ['Connected since', '—'],
+      ['Token expires', '-'],
+      ['Refresh expires', '-'],
+      ['Connected since', '-'],
       ['Fraud headers', fraudLabel],
     ]
   }
   return [
-    ['Gateway ID', '—'],
+    ['Gateway ID', '-'],
     ['Token status', tokenStatusLabel(status)],
     ['Token expires', fmt(status.accessTokenExpiresAt)],
     ['Refresh expires', fmtDate(status.refreshTokenExpiresAt)],
@@ -207,7 +207,7 @@ export default function HmrcSection() {
       } else if (result.message) {
         setFraudDetail(result.message)
       } else if (result.errors?.length) {
-        setFraudDetail('HMRC reported invalid headers — check API response for details.')
+        setFraudDetail('HMRC reported invalid headers. Check API response for details.')
       }
     } catch (err: unknown) {
       setFraudTested(true)
@@ -414,7 +414,7 @@ export default function HmrcSection() {
                 >
                   <span style={{ fontSize: 12, color: B.muted }}>ARN</span>
                   {!connected ? (
-                    <span style={{ fontSize: 12, fontWeight: 500, color: B.light }}>—</span>
+                    <span style={{ fontSize: 12, fontWeight: 500, color: B.light }}>Not set</span>
                   ) : arnEditing ? (
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                       <input
@@ -522,7 +522,7 @@ export default function HmrcSection() {
                       style={{
                         fontSize: 12,
                         fontWeight: 500,
-                        color: v === '—' || v === 'Inactive' ? B.light : 'inherit',
+                        color: v === '-' || v === 'Not connected' || v === 'Inactive' ? B.light : 'inherit',
                         fontFamily: k === 'Gateway ID' ? 'monospace' : 'inherit',
                       }}
                     >

@@ -223,7 +223,7 @@ export default function SecuritySection() {
                 }}
               >
                 <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>
-                  Step 1 — Scan this QR code with your authenticator app
+                  Step 1: Scan this QR code with your authenticator app
                 </div>
                 <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }}>
                   {qrDataUrl && (
@@ -262,7 +262,7 @@ export default function SecuritySection() {
 
               <div style={{ marginBottom: 12 }}>
                 <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}>
-                  Step 2 — Enter the 6-digit code to confirm setup
+                  Step 2: Enter the 6-digit code to confirm setup
                 </div>
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                   <input

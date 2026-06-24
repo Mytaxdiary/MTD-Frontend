@@ -30,7 +30,7 @@ export const mockExpenseRows: ExpenseRow[] = [
 export const mockReviewChecks: ReviewCheck[] = [
   { ok: true, msg: 'All mandatory income fields populated' },
   { ok: true, msg: 'Expense categories within expected ranges' },
-  { ok: true, msg: 'Turnover below £90,000 — consolidated expenses eligible' },
+  { ok: true, msg: 'Turnover below £90,000, consolidated expenses eligible' },
   { ok: true, msg: 'Cumulative totals consistent with prior submissions' },
-  { ok: false, warn: true, msg: 'Travel costs 5% below Q3 — verify no missing claims' },
+  { ok: false, warn: true, msg: 'Travel costs 5% below Q3, verify no missing claims' },
 ]

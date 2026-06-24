@@ -29,7 +29,7 @@ const outlineBtn: React.CSSProperties = {
 }
 
 function fmtMoney(amount: number | null | undefined): string {
-  if (amount == null) return '—'
+  if (amount == null) return '-'
   return `£${amount.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`
 }
 
@@ -86,7 +86,7 @@ function StatusBadge({ status }: { status: 'paid' | 'upcoming' | 'overdue' }) {
 }
 
 function fmtPaymentMethod(method?: string): string {
-  if (!method) return '—'
+  if (!method) return '-'
   const map: Record<string, string> = {
     A: 'Bank transfer',
     B: 'Direct Debit',
@@ -293,7 +293,7 @@ export default function LiabilitiesTab({ client }: Props) {
               ) : rows.length === 0 ? (
                 <tr>
                   <td colSpan={6} style={{ padding: '16px', color: B.muted, fontSize: 12 }}>
-                    {canFetch ? 'No liability charges returned for this period.' : '—'}
+                    {canFetch ? 'No liability charges returned for this period.' : 'Authorise client to load data.'}
                   </td>
                 </tr>
               ) : (
@@ -328,7 +328,7 @@ export default function LiabilitiesTab({ client }: Props) {
                           color: outstanding != null && outstanding > 0 ? B.text : B.light,
                         }}
                       >
-                        {outstanding != null && outstanding > 0 ? fmtMoney(outstanding) : '—'}
+                        {outstanding != null && outstanding > 0 ? fmtMoney(outstanding) : '-'}
                       </td>
                       <td
                         style={{
@@ -338,7 +338,7 @@ export default function LiabilitiesTab({ client }: Props) {
                           color: interest != null && interest > 0 ? B.text : B.light,
                         }}
                       >
-                        {interest != null && interest > 0 ? fmtMoney(interest) : '—'}
+                        {interest != null && interest > 0 ? fmtMoney(interest) : '-'}
                       </td>
                       <td style={{ padding: '12px 16px' }}>
                         <StatusBadge status={status} />
@@ -418,7 +418,7 @@ export default function LiabilitiesTab({ client }: Props) {
               ) : payments.length === 0 ? (
                 <tr>
                   <td colSpan={4} style={{ padding: '16px', color: B.muted, fontSize: 12 }}>
-                    {canFetch ? 'No payments found for the last 2 years.' : '—'}
+                    {canFetch ? 'No payments found for the last 2 years.' : 'Authorise client to load data.'}
                   </td>
                 </tr>
               ) : (
@@ -438,7 +438,7 @@ export default function LiabilitiesTab({ client }: Props) {
                           color: B.greenText,
                         }}
                       >
-                        {amount != null ? fmtMoney(amount) : '—'}
+                        {amount != null ? fmtMoney(amount) : '-'}
                       </td>
                       <td
                         style={{
@@ -448,7 +448,7 @@ export default function LiabilitiesTab({ client }: Props) {
                           color: B.muted,
                         }}
                       >
-                        {p.paymentReference ?? '—'}
+                        {p.paymentReference ?? '-'}
                       </td>
                       <td style={{ padding: '12px 16px', color: B.muted }}>
                         {fmtPaymentMethod(p.paymentMethod)}

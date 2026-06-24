@@ -22,7 +22,7 @@ const QDot = ({ status }: { status: string }) => {
     ready: B.primary,
     pending: B.light,
     overdue: B.red,
-    '—': '#E2E8F0',
+    'N/A': '#E2E8F0',
   }
   return (
     <div
@@ -171,7 +171,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
   let filtered = clients.filter((c) => {
     if (quarterFilter !== 'all') {
       const qStatus = getQStatus(c, quarterFilter)
-      if (qStatus === '—') return false // client has no MTD data for this quarter yet
+      if (qStatus === 'N/A') return false // client has no MTD data for this quarter yet
       if (statusFilter !== 'all') {
         if (statusFilter === 'filed' && qStatus !== 'filed') return false
         if (statusFilter === 'overdue' && qStatus !== 'overdue') return false
@@ -208,7 +208,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
             {timeOfDayGreeting()}, {greetingName}
           </div>
           <div style={{ fontSize: 13, color: B.muted, marginTop: 2 }}>
-            Thursday 24 April 2026 — Tax year 2025-26, Q4
+            Thursday 24 April 2026 · Tax year 2025-26, Q4
           </div>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
@@ -251,7 +251,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
           <MetricCard
             label="OVERDUE"
             value={overdueCount}
-            sub="Past deadline — act now"
+            sub="Past deadline, act now"
             color={B.red}
             icon={<span style={{ color: B.red }}>!</span>}
             active={activeMetric === 'overdue'}

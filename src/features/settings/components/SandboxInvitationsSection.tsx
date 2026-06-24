@@ -5,7 +5,7 @@ import { Card, CardHeader as CardHead } from '@/components/ui/card'
 import { clientsService, type ClientRecord } from '@/services/clients.service'
 
 function fmtDate(date?: string | null): string {
-  if (!date) return '—'
+  if (!date) return '-'
   return new Date(date).toLocaleDateString('en-GB', {
     day: '2-digit',
     month: 'short',
@@ -93,9 +93,9 @@ export default function SandboxInvitationsSection() {
     try {
       const updated = await clientsService.acceptInvitationSandbox(client.id)
       const relLabel = updated.authorisedAt
-        ? 'Relationship verified with HMRC — you can now access MTD data for this client.'
-        : 'Invitation accepted — relationship verification is pending. Refresh status or check the client list.'
-      setSuccessMsg(`${updated.name} — ${relLabel}`)
+        ? 'Relationship verified with HMRC. You can now access MTD data for this client.'
+        : 'Invitation accepted. Relationship verification is pending. Refresh status or check the client list.'
+      setSuccessMsg(`${updated.name}: ${relLabel}`)
       await load()
     } catch (err: unknown) {
       setError((err as Error)?.message ?? 'Failed to accept invitation.')
@@ -123,7 +123,7 @@ export default function SandboxInvitationsSection() {
         titleSize={15}
         padding="16px 20px"
         title="Sandbox invitations"
-        sub="HMRC test environment only — simulates a client accepting your authorisation invite (Postman step 9)"
+        sub="HMRC test environment only. Simulates a client accepting your authorisation invite (Postman step 9)."
       />
 
       <div
@@ -139,7 +139,7 @@ export default function SandboxInvitationsSection() {
         }}
       >
         When you send an invitation from Add Client, it appears here. Use <strong>Accept (sandbox)</strong>{' '}
-        instead of Postman — then refresh the client list to see Authorised / Partial auth status.
+        instead of Postman. Refresh the client list to see Authorised / Partial auth status.
       </div>
 
       {successMsg && (

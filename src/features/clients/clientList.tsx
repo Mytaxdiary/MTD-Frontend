@@ -4,13 +4,19 @@ import { useRouter } from 'next/navigation'
 import { clientsService, type ClientRecord } from '@/services/clients.service'
 import TypePills from '@/components/common/typePills'
 import B from '@/styles/theme'
+import {
+  downloadCsv,
+  printPdf,
+  type ColKeys,
+  type ClientListRow,
+} from '@/features/clients/clientListExport'
 
 function apiErrorMessage(err: unknown): string {
   const msg = (err as { message?: string })?.message
   return msg ?? 'Something went wrong.'
 }
 
-function mapToRow(c: ClientRecord) {
+function mapToRow(c: ClientRecord): ClientListRow {
   const statusMap: Record<string, string> = {
     pending: 'pending',
     'partial-auth': 'partial-auth',
@@ -36,13 +42,13 @@ function mapToRow(c: ClientRecord) {
           : c.invitationStatus === 'partial-auth'
             ? 'Partial auth'
             : 'Pending',
-    deadline: '—',
+    deadline: 'N/A',
     filing: c.authorisedAt
       ? 'filed'
       : c.invitationStatus === 'accepted'
         ? 'invite-accepted'
         : statusMap[c.invitationStatus] ?? c.invitationStatus,
-    chase: needsResend ? 'resend' : '—',
+    chase: needsResend ? 'resend' : '',
     agentType: c.agentType,
     income: 0,
     needsResend,
@@ -90,115 +96,7 @@ const Badge = ({ status }: { status: string }) => {
   )
 }
 
-// ── Export helpers ────────────────────────────────────────────────────────
-
-function escapeCsvCell(value: unknown): string {
-  const s = value == null ? '' : String(value)
-  // Wrap in quotes if it contains comma, newline, or quote
-  if (s.includes(',') || s.includes('\n') || s.includes('"')) {
-    return `"${s.replace(/"/g, '""')}"`
-  }
-  return s
-}
-
-function downloadCsv(rows: ReturnType<typeof mapToRow>[], cols: Record<ColKeys, boolean>) {
-  const headers = [
-    'Client name',
-    'NINO',
-    cols.type ? 'Business type' : null,
-    cols.mtd ? 'MTD status' : null,
-    cols.deadline ? 'Next deadline' : null,
-    cols.filing ? 'Filing status' : null,
-    cols.chase ? 'Chase' : null,
-    cols.income ? 'YTD income (£)' : null,
-  ].filter(Boolean) as string[]
-
-  const lines = [
-    headers.join(','),
-    ...rows.map((c) =>
-      [
-        escapeCsvCell(c.name),
-        escapeCsvCell(c.business),
-        cols.type ? escapeCsvCell(c.type.join(', ') || '—') : null,
-        cols.mtd ? escapeCsvCell(c.mtd) : null,
-        cols.deadline ? escapeCsvCell(c.deadline) : null,
-        cols.filing
-          ? escapeCsvCell(
-              c.filing
-                .split('-')
-                .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-                .join(' '),
-            )
-          : null,
-        cols.chase ? escapeCsvCell(c.needsResend ? 'Resend invite' : '—') : null,
-        cols.income ? escapeCsvCell(c.income > 0 ? c.income : '—') : null,
-      ]
-        .filter((v) => v !== null)
-        .join(','),
-    ),
-  ]
-
-  const blob = new Blob([lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `clients_${new Date().toISOString().slice(0, 10)}.csv`
-  a.click()
-  URL.revokeObjectURL(url)
-}
-
-function printPdf(rows: ReturnType<typeof mapToRow>[], cols: Record<ColKeys, boolean>) {
-  const colDefs = [
-    { key: 'name', label: 'Client', always: true },
-    { key: 'business', label: 'NINO', always: true },
-    { key: 'type', label: 'Type', show: cols.type },
-    { key: 'mtd', label: 'MTD', show: cols.mtd },
-    { key: 'deadline', label: 'Deadline', show: cols.deadline },
-    { key: 'filing', label: 'Status', show: cols.filing },
-  ].filter((c) => c.always || c.show)
-
-  const thead = colDefs.map((c) => `<th>${c.label}</th>`).join('')
-  const tbody = rows
-    .map(
-      (r) =>
-        `<tr>${colDefs
-          .map((c) => {
-            const val = (r as Record<string, unknown>)[c.key]
-            const display = Array.isArray(val) ? val.join(', ') || '—' : String(val ?? '—')
-            return `<td>${display}</td>`
-          })
-          .join('')}</tr>`,
-    )
-    .join('')
-
-  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Client list</title>
-<style>
-  body{font-family:system-ui,sans-serif;font-size:12px;margin:24px}
-  h2{margin:0 0 4px;font-size:16px}
-  p{margin:0 0 16px;color:#64748B;font-size:11px}
-  table{width:100%;border-collapse:collapse}
-  th{background:#F8FAFC;padding:8px 10px;text-align:left;font-size:10px;font-weight:600;color:#94A3B8;border-bottom:1px solid #E2E8F0;letter-spacing:.04em}
-  td{padding:8px 10px;border-bottom:1px solid #F1F5F9;font-size:12px}
-  tr:last-child td{border-bottom:none}
-  @media print{body{margin:0}}
-</style></head><body>
-<h2>Client list</h2>
-<p>Exported ${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })} — ${rows.length} clients</p>
-<table><thead><tr>${thead}</tr></thead><tbody>${tbody}</tbody></table>
-</body></html>`
-
-  const win = window.open('', '_blank')
-  if (!win) return
-  win.document.write(html)
-  win.document.close()
-  win.focus()
-  win.print()
-  win.close()
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-
-type ColKeys = 'type' | 'mtd' | 'deadline' | 'filing' | 'chase' | 'income'
+// ColKeys and export helpers live in clientListExport.ts
 const defaultCols: Record<ColKeys, boolean> = {
   type: true,
   mtd: true,
@@ -316,7 +214,7 @@ export default function ClientList({
           <div style={{ fontSize: 13, color: B.muted, marginTop: 2 }}>
             {clientsLoading
               ? 'Loading…'
-              : `${allClients.length} clients — ${allClients.filter((c) => c.filing === 'filed').length} authorised, ${allClients.filter((c) => c.filing === 'pending').length} pending`}
+              : `${allClients.length} clients: ${allClients.filter((c) => c.filing === 'filed').length} authorised, ${allClients.filter((c) => c.filing === 'pending').length} pending`}
           </div>
         </div>
         <button
@@ -693,7 +591,7 @@ export default function ClientList({
                   </td>
                   {cols.type && (
                     <td style={{ padding: '10px 14px' }}>
-                      {c.type.length > 0 ? <TypePills types={c.type} /> : <span style={{ fontSize: 12, color: B.light }}>—</span>}
+                      {c.type.length > 0 ? <TypePills types={c.type} /> : null}
                     </td>
                   )}
                   {cols.mtd && (
@@ -743,7 +641,7 @@ export default function ClientList({
                           {resendingId === c.id ? 'Sending…' : 'Resend invite'}
                         </button>
                       ) : (
-                        <span style={{ fontSize: 12, color: B.muted }}>—</span>
+                        <span style={{ fontSize: 12, color: B.muted }}>No action</span>
                       )}
                     </td>
                   )}
@@ -757,7 +655,7 @@ export default function ClientList({
                         fontSize: 12,
                       }}
                     >
-                      {c.income > 0 ? `£${c.income.toLocaleString()}` : '—'}
+                      {c.income > 0 ? `£${c.income.toLocaleString()}` : ''}
                     </td>
                   )}
                 </tr>

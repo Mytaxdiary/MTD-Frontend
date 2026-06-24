@@ -31,7 +31,7 @@ function clientInitials(name: string): string {
 }
 
 function fmtAuthDate(date?: string): string {
-  if (!date) return '—'
+  if (!date) return '-'
   return new Date(date).toLocaleDateString('en-GB', {
     day: '2-digit',
     month: 'short',
@@ -98,7 +98,7 @@ export default function ClientDetail({
   }, [client?.id, client?.authorisedAt, fetchOutstanding])
 
   const displayName = client?.name ?? 'Priya Sharma'
-  const displayNino = client?.nino ?? '—'
+  const displayNino = client?.nino ?? '-'
   const mtdBadge = client?.authorisedAt
     ? 'MTD Authorised'
     : client?.invitationStatus === 'accepted'
@@ -292,19 +292,19 @@ export default function ClientDetail({
             const metrics = [
               {
                 label: 'Submitted income (YTD)',
-                value: '—',
+                value: 'N/A',
                 sub: 'Available via Income Sources API',
                 color: B.green,
               },
               {
                 label: 'Submitted expenses (YTD)',
-                value: '—',
+                value: 'N/A',
                 sub: 'Available via Income Sources API',
                 color: B.amber,
               },
               {
                 label: 'Submitted net profit',
-                value: '—',
+                value: 'N/A',
                 sub: 'Available via Income Sources API',
                 color: B.primary,
               },
@@ -313,7 +313,7 @@ export default function ClientDetail({
                 value:
                   outstanding != null
                     ? `£${outstanding.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`
-                    : '—',
+                    : 'N/A',
                 sub:
                   outstanding == null
                     ? client?.authorisedAt
@@ -410,10 +410,10 @@ export default function ClientDetail({
               {(!client || !client.authorisedAt) && (
               <Card>
                 <CardHeader
-                  title="Submission history — 2025-26"
+                  title="Submission history 2025-26"
                   right={
                     <span style={{ fontSize: 11, color: B.light }}>
-                      Read-only — filed via your accounting software
+                      Read-only. Filed via your accounting software.
                     </span>
                   }
                 />
@@ -522,7 +522,7 @@ export default function ClientDetail({
                         )}
                         {q.status === 'pending' && (
                           <div style={{ marginTop: 8, fontSize: 12, color: B.light }}>
-                            Due: {q.due} — no data submitted yet
+                            Due: {q.due}, no data submitted yet
                           </div>
                         )}
                       </div>
@@ -567,7 +567,7 @@ export default function ClientDetail({
                           letterSpacing: '-0.02em',
                         }}
                       >
-                        —
+                        N/A
                       </div>
                     </div>
                     <div style={{ display: 'flex', gap: 24 }}>
@@ -582,7 +582,7 @@ export default function ClientDetail({
                               fontVariantNumeric: 'tabular-nums',
                             }}
                           >
-                            —
+                            N/A
                           </div>
                         </div>
                       ))}
@@ -613,10 +613,10 @@ export default function ClientDetail({
                 <div style={{ padding: '12px 20px' }}>
                   {[
                     ['NINO', displayNino],
-                    ['Email', client?.email ?? '—'],
-                    ['Postcode', client?.postcode ?? '—'],
+                    ['Email', client?.email ?? 'Not set'],
+                    ['Postcode', client?.postcode ?? 'Not set'],
                     ['Agent type', client?.agentType ?? 'Main agent'],
-                    ['Invitation status', client?.invitationStatus ?? '—'],
+                    ['Invitation status', client?.invitationStatus ?? 'Unknown'],
                     ['Authorised since', fmtAuthDate(client?.authorisedAt)],
                   ].map(([k, v], i) => (
                     <div
@@ -797,8 +797,7 @@ export default function ClientDetail({
                       border: `1px solid ${B.borderLight}`,
                     }}
                   >
-                    Client uses Xero for bookkeeping. Submits own Q updates via Xero — we monitor
-                    and chase. 2nd POA due 31 Jul — remind client. May exceed £90k next year.
+                    Client uses Xero for bookkeeping. Submits own Q updates via Xero. We monitor and chase. 2nd POA due 31 Jul, remind client. May exceed £90k next year.
                   </div>
                   <div style={{ fontSize: 10, color: B.light, marginTop: 6 }}>
                     Last edited 22 Apr 2026 by {user?.name ?? 'you'}
@@ -828,7 +827,7 @@ export default function ClientDetail({
           </div>
         )}
 
-        {activeTab === 'chasing' && <ChasingTab />}
+        {activeTab === 'chasing' && <ChasingTab clientId={clientId} />}
 
         {activeTab === 'notes' && <NotesTab />}
       </div>

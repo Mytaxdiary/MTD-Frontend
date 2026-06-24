@@ -138,7 +138,7 @@ function ObligationTimeline({ details }: { details: ObligationDetail[] }) {
               )}
               {!fulfilled && (
                 <div style={{ marginTop: 8, fontSize: 12, color: B.light }}>
-                  Due: {fmtUkShortDate(ob.dueDate)} — no data submitted yet
+                  Due: {fmtUkShortDate(ob.dueDate)}, no data submitted yet
                 </div>
               )}
             </div>
@@ -238,7 +238,7 @@ function CrystallisationTimeline({ items }: { items: CrystallisationObligation[]
                 </div>
               ) : (
                 <div style={{ marginTop: 8, fontSize: 12, color: B.light }}>
-                  Due: {fmtUkShortDate(ob.dueDate)} — no data submitted yet
+                  Due: {fmtUkShortDate(ob.dueDate)}, no data submitted yet
                 </div>
               )}
             </div>
@@ -358,10 +358,10 @@ export default function ObligationsCard({ client }: { client: ClientRecord }) {
   return (
     <Card>
       <CardHeader
-        title={`Submission history — ${displayTaxYear}`}
+        title={`Submission history ${displayTaxYear}`}
         right={
           <span style={{ fontSize: 11, color: B.light }}>
-            Read-only — filed via your accounting software
+            Read-only. Filed via your accounting software.
           </span>
         }
       />

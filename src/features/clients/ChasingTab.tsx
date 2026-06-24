@@ -1,24 +1,21 @@
 'use client'
-import { useState } from 'react'
-import { mockChaseLog, type ChaseLogEntry } from '@/mocks/clients/clientDetailData'
+import { useCallback, useEffect, useState } from 'react'
+import { chaseService, type ChaseLogRecord } from '@/services/chase.service'
 import { Card, CardHeader } from '@/components/ui/card'
 import B from '@/styles/theme'
 
-const TYPE_ICON: Record<string, string> = {
-  email: '✉',
-  sms: '✆',
-  letter: '◻',
-}
+const CHANNEL_ICON: Record<string, string> = { email: '✉', sms: '✆' }
 
 const STATUS_STYLE: Record<string, { bg: string; c: string; b: string }> = {
-  Opened:    { bg: B.amberBg,  c: B.amberText,  b: '#FDE68A' },
-  Responded: { bg: B.greenBg,  c: B.greenText,  b: '#A7F3D0' },
-  Sent:      { bg: B.blueBg,   c: B.blueText,   b: '#BAE6FD' },
-  Bounced:   { bg: B.redBg,    c: B.redText,    b: '#FECACA' },
+  opened:    { bg: B.amberBg,  c: B.amberText,  b: '#FDE68A' },
+  responded: { bg: B.greenBg,  c: B.greenText,  b: '#A7F3D0' },
+  sent:      { bg: B.blueBg,   c: B.blueText,   b: '#BAE6FD' },
+  bounced:   { bg: B.redBg,    c: B.redText,    b: '#FECACA' },
 }
 
 function StatusBadge({ status }: { status: string }) {
   const s = STATUS_STYLE[status] ?? { bg: B.surface, c: B.muted, b: B.border }
+  const label = status.charAt(0).toUpperCase() + status.slice(1)
   return (
     <span
       style={{
@@ -32,34 +29,20 @@ function StatusBadge({ status }: { status: string }) {
         whiteSpace: 'nowrap',
       }}
     >
-      {status}
+      {label}
     </span>
   )
 }
 
-function TypeIcon({ type }: { type: string }) {
-  return (
-    <span
-      style={{
-        width: 28,
-        height: 28,
-        borderRadius: 6,
-        background: B.blueBg,
-        border: `1px solid #BAE6FD`,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: 12,
-        color: B.blueText,
-        flexShrink: 0,
-      }}
-    >
-      {TYPE_ICON[type] ?? '✉'}
-    </span>
-  )
+function fmtDate(iso: string): string {
+  return new Date(iso).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })
 }
 
-function ChaseRow({ entry, last }: { entry: ChaseLogEntry; last: boolean }) {
+function ChaseRow({ entry, last }: { entry: ChaseLogRecord; last: boolean }) {
   return (
     <div
       style={{
@@ -70,14 +53,36 @@ function ChaseRow({ entry, last }: { entry: ChaseLogEntry; last: boolean }) {
         borderBottom: last ? 'none' : `1px solid ${B.borderLight}`,
       }}
     >
-      <TypeIcon type={entry.type} />
+      {/* Channel icon */}
+      <span
+        style={{
+          width: 28,
+          height: 28,
+          borderRadius: 6,
+          background: B.blueBg,
+          border: '1px solid #BAE6FD',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 12,
+          color: B.blueText,
+          flexShrink: 0,
+        }}
+      >
+        {CHANNEL_ICON[entry.channel] ?? '✉'}
+      </span>
+
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 13, fontWeight: 500, color: B.text }}>{entry.msg}</span>
+          <span
+            style={{ fontSize: 13, fontWeight: 500, color: B.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+          >
+            {entry.subject}
+          </span>
           <StatusBadge status={entry.status} />
         </div>
         <div style={{ fontSize: 11, color: B.light, marginTop: 3 }}>
-          {entry.date}
+          {fmtDate(entry.sentAt)}
           <span
             style={{
               marginLeft: 8,
@@ -87,10 +92,10 @@ function ChaseRow({ entry, last }: { entry: ChaseLogEntry; last: boolean }) {
               border: `1px solid ${B.border}`,
               fontSize: 10,
               color: B.muted,
-              textTransform: 'capitalize',
+              textTransform: 'uppercase',
             }}
           >
-            {entry.type}
+            {entry.channel}
           </span>
         </div>
       </div>
@@ -98,29 +103,49 @@ function ChaseRow({ entry, last }: { entry: ChaseLogEntry; last: boolean }) {
   )
 }
 
-export default function ChasingTab() {
-  // Using mock data — replace with live chase log API when available
-  const entries: ChaseLogEntry[] = mockChaseLog
-  const [filter, setFilter] = useState<'all' | 'email' | 'sms'>('all')
+type FilterType = 'all' | 'email' | 'sms'
 
-  const filtered =
-    filter === 'all' ? entries : entries.filter((e) => e.type === filter)
+export default function ChasingTab({ clientId }: { clientId?: string | null }) {
+  const [logs, setLogs] = useState<ChaseLogRecord[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [filter, setFilter] = useState<FilterType>('all')
+
+  const load = useCallback(async () => {
+    if (!clientId) return
+    setLoading(true)
+    setError(null)
+    try {
+      const data = await chaseService.getClientChaseLog(clientId)
+      setLogs(data)
+    } catch {
+      setError('Failed to load chase history.')
+    } finally {
+      setLoading(false)
+    }
+  }, [clientId])
+
+  useEffect(() => {
+    void load()
+  }, [load])
+
+  const filtered = filter === 'all' ? logs : logs.filter((l) => l.channel === filter)
 
   const counts = {
-    all: entries.length,
-    email: entries.filter((e) => e.type === 'email').length,
-    sms: entries.filter((e) => e.type === 'sms').length,
+    all: logs.length,
+    email: logs.filter((l) => l.channel === 'email').length,
+    sms: logs.filter((l) => l.channel === 'sms').length,
   }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      {/* Summary row */}
+      {/* Summary strip */}
       <div style={{ display: 'flex', gap: 12 }}>
         {[
-          { label: 'Total chases', value: entries.length, color: B.primary },
-          { label: 'Responded', value: entries.filter((e) => e.status === 'Responded').length, color: B.green },
-          { label: 'Opened', value: entries.filter((e) => e.status === 'Opened').length, color: B.amber },
-          { label: 'Sent (pending)', value: entries.filter((e) => e.status === 'Sent').length, color: B.muted },
+          { label: 'Total chases',   value: logs.length,                                              color: B.primary },
+          { label: 'Responded',      value: logs.filter((l) => l.status === 'responded').length,      color: B.green   },
+          { label: 'Opened',         value: logs.filter((l) => l.status === 'opened').length,         color: B.amber   },
+          { label: 'Sent (pending)', value: logs.filter((l) => l.status === 'sent').length,           color: B.muted   },
         ].map((m) => (
           <div
             key={m.label}
@@ -135,7 +160,9 @@ export default function ChasingTab() {
             }}
           >
             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: m.color }} />
-            <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em', color: B.text }}>{m.value}</div>
+            <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em', color: B.text }}>
+              {loading ? '0' : m.value}
+            </div>
             <div style={{ fontSize: 11, color: B.muted, marginTop: 2 }}>{m.label}</div>
           </div>
         ))}
@@ -147,8 +174,7 @@ export default function ChasingTab() {
           title="Chase history"
           right={
             <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-              {/* Filter pills */}
-              {(['all', 'email', 'sms'] as const).map((f) => (
+              {(['all', 'email', 'sms'] as FilterType[]).map((f) => (
                 <button
                   key={f}
                   type="button"
@@ -168,57 +194,43 @@ export default function ChasingTab() {
                   {f === 'all' ? `All (${counts.all})` : `${f.toUpperCase()} (${counts[f]})`}
                 </button>
               ))}
-              <button
-                type="button"
-                style={{
-                  marginLeft: 4,
-                  padding: '4px 12px',
-                  borderRadius: 6,
-                  border: 'none',
-                  background: B.navy,
-                  color: '#fff',
-                  fontSize: 11,
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                }}
-              >
-                + Send chase
-              </button>
             </div>
           }
         />
         <div style={{ padding: '4px 20px 4px' }}>
-          {filtered.length === 0 ? (
-            <div
-              style={{
-                padding: '32px 0',
-                textAlign: 'center',
-                fontSize: 13,
-                color: B.light,
-              }}
-            >
-              No chases recorded yet for this client.
+          {loading && (
+            <div style={{ padding: '28px 0', textAlign: 'center', fontSize: 13, color: B.muted }}>
+              Loading chase history…
             </div>
-          ) : (
-            filtered.map((entry, i) => (
-              <ChaseRow key={i} entry={entry} last={i === filtered.length - 1} />
-            ))
           )}
+          {!loading && error && (
+            <div style={{ padding: '12px', fontSize: 12, color: B.redText }}>{error}</div>
+          )}
+          {!loading && !error && filtered.length === 0 && (
+            <div style={{ padding: '32px 0', textAlign: 'center', fontSize: 13, color: B.light }}>
+              {logs.length === 0
+                ? 'No chases sent yet. Use Chase Manager to send the first chase.'
+                : 'No chases match the selected filter.'}
+            </div>
+          )}
+          {!loading && !error && filtered.map((entry, i) => (
+            <ChaseRow key={entry.id} entry={entry} last={i === filtered.length - 1} />
+          ))}
         </div>
       </Card>
 
-      {/* Info note */}
+      {/* Link to chase manager */}
       <div
         style={{
           padding: '10px 14px',
-          background: B.amberBg,
-          border: `1px solid #FDE68A`,
+          background: B.blueBg,
+          border: '1px solid #BAE6FD',
           borderRadius: 8,
           fontSize: 12,
-          color: B.amberText,
+          color: B.blueText,
         }}
       >
-        Chase sending is coming soon. Chases will be sent directly from this screen using your saved templates.
+        To send a new chase, go to <b>Chase Manager</b> → select this client → pick a template → Send.
       </div>
     </div>
   )

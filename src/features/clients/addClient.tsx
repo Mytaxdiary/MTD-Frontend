@@ -27,7 +27,7 @@ function daysLeft(expiresAt?: string): number | null {
 }
 
 function fmtDate(d?: string): string {
-  if (!d) return '—'
+  if (!d) return '-'
   return new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
@@ -81,23 +81,23 @@ function invitationBadge(inv: ClientRecord): InvBadge {
 function invitationHint(inv: ClientRecord): string {
   switch (inv.invitationStatus) {
     case 'pending':
-      if (!inv.invitationId) return 'Invitation was not sent to HMRC — send now to authorise.'
+      if (!inv.invitationId) return 'Invitation was not sent to HMRC. Send now to authorise.'
       if (inv.invitationSentAt) {
         const days = daysLeft(inv.invitationExpiresAt)
         const sent = fmtDate(inv.invitationSentAt)
-        if (days === 0) return `Sent ${sent} — expires today`
-        if (days !== null && days > 0) return `Sent ${sent} — ${days}d left`
+        if (days === 0) return `Sent ${sent}, expires today`
+        if (days !== null && days > 0) return `Sent ${sent}, ${days}d left`
         return `Sent ${sent}`
       }
-      return 'Sent to HMRC — awaiting client acceptance'
+      return 'Sent to HMRC, awaiting client acceptance'
     case 'expired':
       return inv.invitationSentAt
-        ? `Expired — originally sent ${fmtDate(inv.invitationSentAt)}`
-        : 'Invitation expired — resend to re-invite'
+        ? `Expired (originally sent ${fmtDate(inv.invitationSentAt)})`
+        : 'Invitation expired. Resend to re-invite.'
     case 'rejected':
       return 'Client declined the HMRC authorisation request'
     case 'cancelled':
-      return 'Invitation was cancelled — resend to re-invite'
+      return 'Invitation was cancelled. Resend to re-invite.'
     case 'deauthorised':
       return 'Client removed your firm as their agent'
     default:
@@ -112,7 +112,7 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
   const [clientEmail, setClientEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [personalMsg, setPersonalMsg] = useState(
-    "Hi {name}, we're setting up your Making Tax Digital account. You'll receive an email from HMRC shortly — please accept the authorisation link so we can manage your quarterly updates."
+    "Hi {name}, we're setting up your Making Tax Digital account. You'll receive an email from HMRC shortly. Please accept the authorisation link so we can manage your quarterly updates."
   )
   const [agentType, setAgentType] = useState('main')
   const [showAdvanced, setShowAdvanced] = useState(false)
@@ -575,7 +575,7 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                 <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>
                   {invitationSent
                     ? `Invitation sent to ${sentClient.name}`
-                    : `Client saved — invitation not sent`}
+                    : `Client saved (invitation not sent)`}
                 </div>
                 {invitationSent ? (
                   <>
@@ -921,7 +921,7 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                 {[
                   { n: '1', t: 'You send the invitation', d: 'We create an HMRC authorisation request and send your personal message' },
                   { n: '2', t: 'Client receives email', d: "They get your message plus a separate link from HMRC's Government Gateway" },
-                  { n: '3', t: 'Client accepts', d: 'They sign in and confirm — you get notified instantly' },
+                  { n: '3', t: 'Client accepts', d: 'They sign in and confirm. You get notified instantly.' },
                   { n: '4', t: 'Client appears on dashboard', d: 'We fetch their business details, obligations, and liabilities' },
                 ].map((s, i) => (
                   <div key={i} style={{ display: 'flex', gap: 12, marginBottom: i < 3 ? 14 : 0 }}>

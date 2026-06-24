@@ -1,6 +1,6 @@
 /** Short UK date: "2 Aug 2025" (no leading zero on day) */
 export function fmtUkShortDate(iso?: string): string {
-  if (!iso) return '—'
+  if (!iso) return '-'
   const d = new Date(iso)
   const day = d.getDate()
   const month = d.toLocaleDateString('en-GB', { month: 'short' })

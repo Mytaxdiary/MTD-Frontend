@@ -26,7 +26,7 @@ function fmtType(type: string): string {
 }
 
 function fmtDate(iso?: string): string {
-  if (!iso) return '—'
+  if (!iso) return '-'
   return new Date(iso).toLocaleDateString('en-GB', {
     day: '2-digit',
     month: 'short',
@@ -96,7 +96,7 @@ function BusinessDetailsPanel({ details }: { details: BusinessDetailsResponse })
         label="Quarterly period type"
         value={
           details.quarterlyTypeChoice?.quarterlyPeriodType
-            ? `${details.quarterlyTypeChoice.quarterlyPeriodType} (${details.quarterlyTypeChoice.taxYearOfChoice ?? '—'})`
+            ? `${details.quarterlyTypeChoice.quarterlyPeriodType} (${details.quarterlyTypeChoice.taxYearOfChoice ?? 'N/A'})`
             : undefined
         }
       />
@@ -289,7 +289,7 @@ export default function BusinessesCard({
     <Card>
       <CardHeader
         title="HMRC businesses"
-        sub="Business Details v2.0 — income sources for this client"
+        sub="Business Details v2.0, income sources for this client"
       />
       <div style={{ padding: '12px 20px 16px' }}>
         {!canFetch && (
