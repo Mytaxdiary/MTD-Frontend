@@ -192,6 +192,36 @@ function UserBlock({
   )
 }
 
+function downloadBulkCsv(individuals: HmrcSandboxIndividualUser[]): void {
+  const headers = 'name,nino,postcode,email,phone,agent_type,personal_message'
+
+  const escCsv = (v: string) =>
+    v.includes(',') || v.includes('"') || v.includes('\n')
+      ? `"${v.replace(/"/g, '""')}"`
+      : v
+
+  const dataRows = individuals.map((ind) =>
+    [
+      escCsv(ind.userFullName),
+      ind.nino,
+      ind.postcode,
+      escCsv(ind.emailAddress),
+      '',
+      'main',
+      '',
+    ].join(','),
+  )
+
+  const csv = [headers, ...dataRows].join('\n')
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'sandbox-bulk-import-test.csv'
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 export default function SandboxTestUsersCard({ hmrcConnected, onSaveArn }: Props) {
   const [creating, setCreating] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -207,6 +237,8 @@ export default function SandboxTestUsersCard({ hmrcConnected, onSaveArn }: Props
     try {
       const data = await hmrcService.createSandboxTestUsers()
       setResult(data)
+      // Auto-download the CSV with all 5 real sandbox individuals
+      downloadBulkCsv(data.individuals)
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { message?: string } } })?.response?.data?.message ??
@@ -293,6 +325,52 @@ export default function SandboxTestUsersCard({ hmrcConnected, onSaveArn }: Props
               copyLabel="Copy client"
               copyText={formatClientCopy(result.individual)}
             />
+
+            {/* Bulk import test CSV */}
+            <div
+              style={{
+                padding: '14px 16px',
+                background: B.blueBg,
+                borderRadius: 8,
+                border: `1px solid #BAE6FD`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 12,
+              }}
+            >
+              <div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: B.blueText, marginBottom: 2 }}>
+                  Bulk import test CSV
+                </div>
+                <div style={{ fontSize: 11, color: B.blueText, opacity: 0.8 }}>
+                  5 real HMRC sandbox clients — ready to use for bulk import testing
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => downloadBulkCsv(result.individuals)}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: 6,
+                  border: `1px solid #BAE6FD`,
+                  background: B.white,
+                  fontSize: 11,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  color: B.blueText,
+                  flexShrink: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 5,
+                }}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M12 5v14M5 12l7 7 7-7" />
+                </svg>
+                Download CSV
+              </button>
+            </div>
 
             <div
               style={{

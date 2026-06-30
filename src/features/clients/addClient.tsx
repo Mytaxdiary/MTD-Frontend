@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import B from '@/styles/theme'
 import { clientsService, type ClientRecord } from '@/services/clients.service'
+import BulkImportTab from './BulkImportTab'
 
 function apiErrorMessage(err: unknown): string {
   const raw = (err as { response?: { data?: { message?: string | string[] } } })?.response?.data
@@ -651,43 +652,11 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                   padding: '24px',
                 }}
               >
-                <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 8 }}>Bulk import clients</div>
+                <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4 }}>Bulk import clients</div>
                 <div style={{ fontSize: 13, color: B.muted, marginBottom: 20, lineHeight: 1.6 }}>
-                  Upload a CSV file with your client NINOs to send multiple invitations at once.
+                  Upload a CSV file to add multiple clients at once. All rows are validated before any client is created.
                 </div>
-                <div
-                  style={{
-                    border: `2px dashed ${B.border}`,
-                    borderRadius: 12,
-                    padding: '40px 20px',
-                    textAlign: 'center',
-                    background: B.surface,
-                  }}
-                >
-                  <div style={{ fontSize: 32, color: B.xlight, marginBottom: 12 }}>+</div>
-                  <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>
-                    Drop your CSV file here or click to browse
-                  </div>
-                  <div style={{ fontSize: 12, color: B.light }}>
-                    Required columns: NINO, Client name, Postcode, Email
-                  </div>
-                </div>
-                <div style={{ marginTop: 16 }}>
-                  <button
-                    style={{
-                      padding: '6px 14px',
-                      borderRadius: 6,
-                      border: `1px solid ${B.border}`,
-                      background: 'transparent',
-                      fontSize: 12,
-                      fontWeight: 500,
-                      cursor: 'pointer',
-                      color: B.primary,
-                    }}
-                  >
-                    Download CSV template
-                  </button>
-                </div>
+                <BulkImportTab onSuccess={loadPending} />
               </div>
             )}
           </div>

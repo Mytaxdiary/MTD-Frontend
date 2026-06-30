@@ -89,7 +89,7 @@ export function setupInterceptors(client: AxiosInstance): void {
         }
       }
 
-      const raw = error.response?.data?.message as string | string[] | undefined
+      const raw = error.response?.data?.message as string | string[] | Record<string, unknown> | undefined
       const message =
         typeof raw === 'string'
           ? raw
@@ -97,8 +97,9 @@ export function setupInterceptors(client: AxiosInstance): void {
             ? raw.join(' ')
             : error.message || 'An unexpected error occurred'
 
-      const apiError = new Error(message) as Error & { statusCode?: number }
+      const apiError = new Error(message) as Error & { statusCode?: number; responseData?: unknown }
       apiError.statusCode = error.response?.status
+      apiError.responseData = error.response?.data
       return Promise.reject(apiError)
     },
   )

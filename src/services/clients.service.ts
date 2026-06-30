@@ -34,6 +34,19 @@ export interface CreateClientResult {
   warning?: string
 }
 
+export interface BulkImportRowError {
+  row: number
+  field: string
+  message: string
+}
+
+export interface BulkImportResult {
+  valid: true
+  created: number
+  invitationsSent: number
+  warnings: Array<{ row: number; name: string; message: string }>
+}
+
 export interface ItsaStatusDetail {
   submittedOn?: string
   status?: string
@@ -318,6 +331,16 @@ export const clientsService = {
       `/clients/${id}/liabilities/payments-and-allocations`,
       { params },
     )
+    return res.data.data
+  },
+
+  /** Bulk import clients from a CSV file. Returns success summary or throws with validation errors. */
+  async bulkImport(file: File): Promise<BulkImportResult> {
+    const form = new FormData()
+    form.append('file', file)
+    const res = await apiClient.post<{ data: BulkImportResult }>('/clients/import', form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
     return res.data.data
   },
 }

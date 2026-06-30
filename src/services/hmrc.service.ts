@@ -48,6 +48,7 @@ export interface HmrcSandboxIndividualUser {
 export interface SandboxTestUsersResult {
   agent: HmrcSandboxAgentUser;
   individual: HmrcSandboxIndividualUser;
+  individuals: HmrcSandboxIndividualUser[];
   nextSteps: string[];
 }
 
