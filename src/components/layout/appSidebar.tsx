@@ -5,6 +5,7 @@ import { PATH_ACTIVE_MAP, ROUTE_PATHS } from '@/config/routes'
 import B from '@/styles/theme'
 import { useAuth } from '@/hooks/useAuth'
 import { useCurrentUser, userInitials } from '@/components/auth/CurrentUserProvider'
+import NotificationBell from '@/components/ui/NotificationBell'
 
 const C = B
 
@@ -240,6 +241,7 @@ export default function AppSidebar({ overdueCount = 2 }: { overdueCount?: number
               {displayFirm}
             </div>
           </div>
+          <NotificationBell />
         </div>
 
         {/* WCAG 1.4.3 — sign-out: rgba(255,255,255,0.75) on rgba(255,255,255,0.08) on navy → ~5.4:1 ✓ */}
