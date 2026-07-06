@@ -223,8 +223,22 @@ export const clientsService = {
     return res.data.data
   },
 
-  async list(): Promise<ClientRecord[]> {
-    const res = await apiClient.get<{ data: ClientRecord[] }>('/clients')
+  async getPortalFiles(clientId: string): Promise<Array<{
+    id: string; originalName: string; mimeType: string; size: number; viewedByAgent: boolean; createdAt: string
+  }>> {
+    const res = await apiClient.get<{ data: Array<{ id: string; originalName: string; mimeType: string; size: number; viewedByAgent: boolean; createdAt: string }> }>(`/clients/${clientId}/portal-files`)
+    return res.data.data
+  },
+
+  async list(params?: {
+    page?: number
+    limit?: number
+    status?: string
+    search?: string
+  }): Promise<{ clients: ClientRecord[]; total: number; page: number; limit: number; totalPages: number }> {
+    const res = await apiClient.get<{
+      data: { clients: ClientRecord[]; total: number; page: number; limit: number; totalPages: number }
+    }>('/clients', { params })
     return res.data.data
   },
 

@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { clientsService, type ClientRecord } from '@/services/clients.service'
 import TypePills from '@/components/common/typePills'
@@ -106,43 +106,88 @@ const defaultCols: Record<ColKeys, boolean> = {
   income: false,
 }
 
+const PAGE_SIZE = 20
+
 export default function ClientList({
   navigate = () => {},
 }: {
   navigate?: (route: string) => void
 }) {
   const router = useRouter()
-  const [allClients, setAllClients] = useState<ReturnType<typeof mapToRow>[]>([])
+
+  // Server-driven state
+  const [clients, setClients]       = useState<ReturnType<typeof mapToRow>[]>([])
+  const [total, setTotal]           = useState(0)
+  const [totalPages, setTotalPages] = useState(1)
+  const [page, setPage]             = useState(1)
   const [clientsLoading, setClientsLoading] = useState(true)
 
-  const [search, setSearch] = useState('')
+  // Filter / sort state
+  const [search, setSearch]           = useState('')
+  const [searchInput, setSearchInput] = useState('')   // controlled input before debounce
   const [statusFilter, setStatusFilter] = useState('all')
-  const [sortCol, setSortCol] = useState('name')
-  const [sortDir, setSortDir] = useState('asc')
-  const [selected, setSelected] = useState(new Set<string>())
-  const [cols, setCols] = useState<Record<ColKeys, boolean>>(defaultCols)
+  const [sortCol, setSortCol]         = useState('name')
+  const [sortDir, setSortDir]         = useState('asc')
+
+  // UI state
+  const [selected, setSelected]       = useState(new Set<string>())
+  const [cols, setCols]               = useState<Record<ColKeys, boolean>>(defaultCols)
   const [showColPicker, setShowColPicker] = useState(false)
   const [resendingId, setResendingId] = useState<string | null>(null)
 
-  const reloadClients = () => {
-    setClientsLoading(true)
-    clientsService
-      .list()
-      .then((clients) => setAllClients(clients.map(mapToRow)))
-      .catch(() => setAllClients([]))
-      .finally(() => setClientsLoading(false))
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // ── Data loading ──────────────────────────────────────────────────────────
+
+  const loadPage = useCallback(
+    (p: number, status: string, q: string) => {
+      setClientsLoading(true)
+      clientsService
+        .list({ page: p, limit: PAGE_SIZE, status: status !== 'all' ? status : undefined, search: q || undefined })
+        .then((res) => {
+          setClients(res.clients.map(mapToRow))
+          setTotal(res.total)
+          setTotalPages(res.totalPages)
+          setPage(res.page)
+          setSelected(new Set())
+        })
+        .catch(() => {
+          setClients([])
+          setTotal(0)
+          setTotalPages(1)
+        })
+        .finally(() => setClientsLoading(false))
+    },
+    [],
+  )
+
+  // Initial load
+  useEffect(() => { loadPage(1, 'all', '') }, [loadPage])
+
+  // When status filter changes → reset to page 1
+  const handleStatusChange = (val: string) => {
+    setStatusFilter(val)
+    loadPage(1, val, search)
   }
 
-  useEffect(() => {
-    reloadClients()
-  }, [])
+  // Debounce search input → trigger server fetch
+  const handleSearchInput = (val: string) => {
+    setSearchInput(val)
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => {
+      setSearch(val)
+      loadPage(1, statusFilter, val)
+    }, 400)
+  }
+
+  const reloadCurrent = () => loadPage(page, statusFilter, search)
 
   async function handleResend(clientId: string, e: { stopPropagation: () => void }) {
     e.stopPropagation()
     setResendingId(clientId)
     try {
       await clientsService.resendInvitation(clientId)
-      reloadClients()
+      reloadCurrent()
     } catch (err: unknown) {
       alert(apiErrorMessage(err))
     } finally {
@@ -150,46 +195,26 @@ export default function ClientList({
     }
   }
 
-  let filtered = allClients.filter((c) => {
-    if (search && !c.name.toLowerCase().includes(search.toLowerCase()) && !c.business.toLowerCase().includes(search.toLowerCase()))
-      return false
-    if (statusFilter !== 'all' && c.filing !== statusFilter) return false
-    return true
-  })
-  filtered = [...filtered].sort((a, b) => {
+  // ── Client-side sort within current page ─────────────────────────────────
+
+  const filtered = [...clients].sort((a, b) => {
     const va = (a as Record<string, unknown>)[sortCol]
     const vb = (b as Record<string, unknown>)[sortCol]
-    const sa = Array.isArray(va)
-      ? va.join(',').toLowerCase()
-      : typeof va === 'string'
-        ? va.toLowerCase()
-        : va
-    const sb = Array.isArray(vb)
-      ? vb.join(',').toLowerCase()
-      : typeof vb === 'string'
-        ? vb.toLowerCase()
-        : vb
+    const sa = Array.isArray(va) ? va.join(',').toLowerCase() : typeof va === 'string' ? va.toLowerCase() : va
+    const sb = Array.isArray(vb) ? vb.join(',').toLowerCase() : typeof vb === 'string' ? vb.toLowerCase() : vb
     if (sa! < sb!) return sortDir === 'asc' ? -1 : 1
     if (sa! > sb!) return sortDir === 'asc' ? 1 : -1
     return 0
   })
+
   const toggleSort = (col: string) => {
     if (sortCol === col) setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))
-    else {
-      setSortCol(col)
-      setSortDir('asc')
-    }
+    else { setSortCol(col); setSortDir('asc') }
   }
   const toggleSelect = (id: string) =>
-    setSelected((p) => {
-      const n = new Set(p)
-      n.has(id) ? n.delete(id) : n.add(id)
-      return n
-    })
+    setSelected((p) => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n })
   const toggleAll = () =>
-    setSelected((p) =>
-      p.size === filtered.length ? new Set<string>() : new Set(filtered.map((c) => c.id))
-    )
+    setSelected((p) => p.size === filtered.length ? new Set<string>() : new Set(filtered.map((c) => c.id)))
   const SortIcon = ({ col }: { col: string }) => (
     <span style={{ fontSize: 10, marginLeft: 4, opacity: sortCol === col ? 1 : 0.3 }}>
       {sortCol === col && sortDir === 'desc' ? '▼' : '▲'}
@@ -214,7 +239,7 @@ export default function ClientList({
           <div style={{ fontSize: 13, color: B.muted, marginTop: 2 }}>
             {clientsLoading
               ? 'Loading…'
-              : `${allClients.length} clients: ${allClients.filter((c) => c.filing === 'filed').length} authorised, ${allClients.filter((c) => c.filing === 'pending').length} pending`}
+              : `${total} client${total !== 1 ? 's' : ''} · Page ${page} of ${totalPages}`}
           </div>
         </div>
         <button
@@ -246,8 +271,8 @@ export default function ClientList({
         >
           <div style={{ position: 'relative', flex: 1, maxWidth: 280 }}>
             <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              value={searchInput}
+              onChange={(e) => handleSearchInput(e.target.value)}
               placeholder="Search clients..."
               style={{
                 width: '100%',
@@ -275,7 +300,7 @@ export default function ClientList({
           </div>
           <select
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
+            onChange={(e) => handleStatusChange(e.target.value)}
             style={{
               padding: '8px 10px',
               borderRadius: 8,
@@ -287,12 +312,12 @@ export default function ClientList({
             }}
           >
             <option value="all">All statuses</option>
-            <option value="overdue">Overdue</option>
-            <option value="due-soon">Due soon</option>
-            <option value="ready">Records ready</option>
-            <option value="filed">Submitted</option>
+            <option value="filed">Authorised</option>
             <option value="pending">Pending invite</option>
+            <option value="invite-accepted">Invite accepted</option>
             <option value="partial-auth">Partial auth</option>
+            <option value="rejected">Rejected</option>
+            <option value="expired">Expired / cancelled</option>
           </select>
           <div style={{ marginLeft: 'auto', display: 'flex', gap: 6, alignItems: 'center' }}>
             {selected.size > 0 && (
@@ -674,7 +699,9 @@ export default function ClientList({
             }}
           >
             <span>
-              Showing {filtered.length} of {allClients.length} clients
+              {total === 0
+                ? 'No clients'
+                : `Showing ${(page - 1) * PAGE_SIZE + 1}–${Math.min(page * PAGE_SIZE, total)} of ${total} client${total !== 1 ? 's' : ''}`}
             </span>
             {cols.income && (
               <span>
@@ -685,6 +712,100 @@ export default function ClientList({
               </span>
             )}
           </div>
+
+          {/* Pagination controls */}
+          {totalPages > 1 && (
+            <div
+              style={{
+                padding: '10px 20px',
+                borderTop: `1px solid ${B.borderLight}`,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: 6,
+              }}
+            >
+              <button
+                onClick={() => loadPage(1, statusFilter, search)}
+                disabled={page === 1 || clientsLoading}
+                style={{
+                  padding: '5px 10px', borderRadius: 6, border: `1px solid ${B.border}`,
+                  background: B.white, fontSize: 11, cursor: page === 1 ? 'default' : 'pointer',
+                  color: page === 1 ? B.light : B.text, opacity: page === 1 ? 0.5 : 1,
+                }}
+              >
+                «
+              </button>
+              <button
+                onClick={() => loadPage(page - 1, statusFilter, search)}
+                disabled={page === 1 || clientsLoading}
+                style={{
+                  padding: '5px 10px', borderRadius: 6, border: `1px solid ${B.border}`,
+                  background: B.white, fontSize: 11, cursor: page === 1 ? 'default' : 'pointer',
+                  color: page === 1 ? B.light : B.text, opacity: page === 1 ? 0.5 : 1,
+                }}
+              >
+                ‹ Prev
+              </button>
+
+              {/* Page number buttons — show up to 5 around current page */}
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 2)
+                .reduce<(number | 'ellipsis')[]>((acc, p, idx, arr) => {
+                  if (idx > 0 && p - (arr[idx - 1] as number) > 1) acc.push('ellipsis')
+                  acc.push(p)
+                  return acc
+                }, [])
+                .map((p, i) =>
+                  p === 'ellipsis' ? (
+                    <span key={`e${i}`} style={{ fontSize: 11, color: B.light, padding: '0 4px' }}>…</span>
+                  ) : (
+                    <button
+                      key={p}
+                      onClick={() => loadPage(p as number, statusFilter, search)}
+                      disabled={clientsLoading}
+                      style={{
+                        padding: '5px 10px', borderRadius: 6,
+                        border: `1px solid ${page === p ? B.primary : B.border}`,
+                        background: page === p ? B.primary : B.white,
+                        color: page === p ? '#fff' : B.text,
+                        fontSize: 11, fontWeight: page === p ? 600 : 400,
+                        cursor: 'pointer', minWidth: 32,
+                      }}
+                    >
+                      {p}
+                    </button>
+                  )
+                )}
+
+              <button
+                onClick={() => loadPage(page + 1, statusFilter, search)}
+                disabled={page === totalPages || clientsLoading}
+                style={{
+                  padding: '5px 10px', borderRadius: 6, border: `1px solid ${B.border}`,
+                  background: B.white, fontSize: 11,
+                  cursor: page === totalPages ? 'default' : 'pointer',
+                  color: page === totalPages ? B.light : B.text,
+                  opacity: page === totalPages ? 0.5 : 1,
+                }}
+              >
+                Next ›
+              </button>
+              <button
+                onClick={() => loadPage(totalPages, statusFilter, search)}
+                disabled={page === totalPages || clientsLoading}
+                style={{
+                  padding: '5px 10px', borderRadius: 6, border: `1px solid ${B.border}`,
+                  background: B.white, fontSize: 11,
+                  cursor: page === totalPages ? 'default' : 'pointer',
+                  color: page === totalPages ? B.light : B.text,
+                  opacity: page === totalPages ? 0.5 : 1,
+                }}
+              >
+                »
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
