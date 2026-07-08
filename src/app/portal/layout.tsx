@@ -7,41 +7,39 @@ const NAV_LINKS = [
   { href: '/portal/messages',  label: 'Messages' },
   { href: '/portal/files',     label: 'Files' },
 ]
-/**
- * Client portal layout — intentionally minimal (no agent sidebar).
- * Clients see a completely separate UI from the agent portal.
- */
+
 export default function PortalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const isAuthPage = pathname === '/portal/login' || pathname === '/portal/setup'
+  const isAuthPage = pathname === '/portal/login' || pathname === '/portal/setup' || pathname === '/portal/preview'
 
   return (
     <div
       style={{
         minHeight: '100vh',
-        background: '#F8FAFC',
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        background: '#F1F5F9',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        fontSize: 15,
       }}
     >
       {/* Top bar */}
       <header
         style={{
           background: '#1E3A5F',
-          padding: '0 32px',
-          height: 52,
+          padding: '0 36px',
+          height: 60,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           position: 'sticky',
           top: 0,
           zIndex: 50,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.18)',
         }}
       >
-        <span style={{ color: '#fff', fontWeight: 700, fontSize: 15 }}>
-          NewEffect · Client Portal
+        <span style={{ color: '#fff', fontWeight: 800, fontSize: 17, letterSpacing: '-0.2px' }}>
+          NewEffect Client Portal
         </span>
 
-        {/* Nav links — only show on authenticated pages */}
         {!isAuthPage && (
           <nav style={{ display: 'flex', gap: 4 }}>
             {NAV_LINKS.map(({ href, label }) => {
@@ -51,12 +49,12 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
                   key={href}
                   href={href}
                   style={{
-                    padding: '6px 14px',
-                    borderRadius: 6,
-                    fontSize: 13,
-                    fontWeight: active ? 600 : 400,
-                    color: active ? '#fff' : 'rgba(255,255,255,0.65)',
-                    background: active ? 'rgba(255,255,255,0.15)' : 'transparent',
+                    padding: '7px 18px',
+                    borderRadius: 7,
+                    fontSize: 14,
+                    fontWeight: active ? 700 : 400,
+                    color: active ? '#fff' : 'rgba(255,255,255,0.70)',
+                    background: active ? 'rgba(255,255,255,0.18)' : 'transparent',
                     textDecoration: 'none',
                     transition: 'background 0.15s',
                   }}
@@ -69,7 +67,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
         )}
       </header>
 
-      <main style={{ maxWidth: 900, margin: '0 auto', padding: '32px 16px' }}>
+      <main style={{ maxWidth: 920, margin: '0 auto', padding: '28px 20px' }}>
         {children}
       </main>
     </div>

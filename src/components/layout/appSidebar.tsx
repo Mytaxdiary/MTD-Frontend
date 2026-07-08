@@ -30,12 +30,12 @@ const NavItem = ({ label, active, icon, count = 0, onClick }: NavItemProps) => (
       display: 'flex',
       alignItems: 'center',
       gap: 10,
-      padding: '9px 14px',
+      padding: '10px 14px',
       borderRadius: 8,
       cursor: 'pointer',
       background: active ? 'rgba(14,165,201,0.15)' : 'transparent',
       color: active ? '#fff' : 'rgba(255,255,255,0.75)',
-      fontSize: 13,
+      fontSize: 14,
       fontWeight: active ? 600 : 400,
       marginBottom: 2,
       width: '100%',
@@ -44,7 +44,7 @@ const NavItem = ({ label, active, icon, count = 0, onClick }: NavItemProps) => (
       transition: 'background 0.1s, color 0.1s',
     }}
   >
-    <span style={{ fontSize: 15, opacity: active ? 1 : 0.75 }} aria-hidden="true">
+    <span style={{ fontSize: 16, opacity: active ? 1 : 0.75 }} aria-hidden="true">
       {icon}
     </span>
     <span style={{ flex: 1 }}>{label}</span>
@@ -52,14 +52,14 @@ const NavItem = ({ label, active, icon, count = 0, onClick }: NavItemProps) => (
       <span
         aria-label={`${count} overdue`}
         style={{
-          fontSize: 10,
-          fontWeight: 700,
-          background: C.red,
-          color: '#fff',
-          borderRadius: 10,
-          padding: '1px 7px',
-          minWidth: 18,
-          textAlign: 'center',
+        fontSize: 11,
+        fontWeight: 700,
+        background: C.red,
+        color: '#fff',
+        borderRadius: 10,
+        padding: '2px 7px',
+        minWidth: 18,
+        textAlign: 'center',
         }}
       >
         {count}
@@ -74,7 +74,7 @@ const SectionLabel = ({ children }: { children: string }) => (
   <div
     role="presentation"
     style={{
-      fontSize: 10,
+      fontSize: 11,
       fontWeight: 700,
       color: 'rgba(255,255,255,0.55)',
       letterSpacing: '0.08em',
@@ -95,16 +95,16 @@ export default function AppSidebar({ overdueCount = 2 }: { overdueCount?: number
   const active = PATH_ACTIVE_MAP[pathname] ?? 'dashboard'
   const go = (key: string) => router.push(ROUTE_PATHS[key] ?? `/${key}`)
 
-  const displayName = user?.name ?? (loading ? 'Loading…' : 'Account')
+  const displayName = user?.name ?? (loading ? 'Loading...' : 'Account')
   const displayFirm = user?.firmName ?? ''
   const initials = userInitials(user?.name)
 
   return (
     <nav
       aria-label="Main navigation"
-      style={{
-        width: 230,
-        background: C.navy,
+    style={{
+      width: 244,
+      background: C.navy,
         display: 'flex',
         flexDirection: 'column',
         flexShrink: 0,
@@ -134,10 +134,10 @@ export default function AppSidebar({ overdueCount = 2 }: { overdueCount?: number
             NE
           </div>
           <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: '#fff', letterSpacing: '-0.01em' }}>
+            <div style={{ fontSize: 15, fontWeight: 700, color: '#fff', letterSpacing: '-0.01em' }}>
               NewEffect
             </div>
-            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', fontWeight: 500 }}>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', fontWeight: 500 }}>
               MTD ITSA
             </div>
           </div>
@@ -217,7 +217,7 @@ export default function AppSidebar({ overdueCount = 2 }: { overdueCount?: number
           <div style={{ minWidth: 0, flex: 1 }} aria-hidden="true">
             <div
               style={{
-                fontSize: 12,
+                fontSize: 13,
                 fontWeight: 600,
                 color: 'rgba(255,255,255,0.88)',
                 whiteSpace: 'nowrap',
@@ -230,7 +230,7 @@ export default function AppSidebar({ overdueCount = 2 }: { overdueCount?: number
             </div>
             <div
               style={{
-                fontSize: 10,
+                fontSize: 11,
                 color: 'rgba(255,255,255,0.60)',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
@@ -249,13 +249,13 @@ export default function AppSidebar({ overdueCount = 2 }: { overdueCount?: number
           type="button"
           onClick={logout}
           style={{
-            width: '100%',
-            padding: '7px 14px',
-            borderRadius: 7,
-            background: 'rgba(255,255,255,0.06)',
-            border: '1px solid rgba(255,255,255,0.12)',
-            color: 'rgba(255,255,255,0.75)',
-            fontSize: 12,
+          width: '100%',
+          padding: '8px 14px',
+          borderRadius: 7,
+          background: 'rgba(255,255,255,0.06)',
+          border: '1px solid rgba(255,255,255,0.12)',
+          color: 'rgba(255,255,255,0.75)',
+          fontSize: 13,
             fontWeight: 500,
             cursor: 'pointer',
             textAlign: 'left',

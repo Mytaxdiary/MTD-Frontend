@@ -231,8 +231,8 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
           flexShrink: 0,
         }}
       >
-        <div style={{ fontSize: 20, fontWeight: 700 }}>Add client</div>
-        <div style={{ fontSize: 13, color: B.muted, marginTop: 2 }}>
+        <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.01em' }}>Add client</div>
+        <div style={{ fontSize: 14, color: B.muted, marginTop: 3 }}>
           Send an HMRC authorisation invitation to a new client
         </div>
       </div>
@@ -541,7 +541,7 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                       opacity: submitting ? 0.7 : 1,
                     }}
                   >
-                    {submitting ? 'Sending invitation…' : 'Send HMRC invitation'}
+                    {submitting ? 'Sending invitation...' : 'Send HMRC invitation'}
                   </button>
                 </div>
               </div>
@@ -764,7 +764,7 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                 )}
                 {pendingLoading ? (
                   <div style={{ padding: '16px 0', textAlign: 'center', fontSize: 12, color: B.muted }}>
-                    Loading…
+                    Loading...
                   </div>
                 ) : pendingClients.length === 0 ? (
                   <div style={{ padding: '20px 0', textAlign: 'center' }}>
@@ -853,7 +853,7 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                               }}
                             >
                               {resendingId === inv.id
-                                ? 'Sending…'
+                                ? 'Sending...'
                                 : canResendNow
                                   ? 'Send invite'
                                   : 'Resend'}

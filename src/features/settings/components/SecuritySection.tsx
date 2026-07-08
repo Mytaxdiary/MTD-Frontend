@@ -207,7 +207,7 @@ export default function SecuritySection() {
 
           {/* ─── Setup loading ─── */}
           {phase === 'setup-loading' && (
-            <div style={{ marginTop: 20, fontSize: 13, color: B.muted }}>Generating QR code…</div>
+            <div style={{ marginTop: 20, fontSize: 14, color: B.muted }}>Generating QR code...</div>
           )}
 
           {/* ─── Setup ready — show QR + secret + code input ─── */}
@@ -234,7 +234,7 @@ export default function SecuritySection() {
                     />
                   )}
                   <div>
-                    <div style={{ fontSize: 12, color: B.muted, marginBottom: 6 }}>
+                    <div style={{ fontSize: 13, color: B.muted, marginBottom: 6 }}>
                       Can&apos;t scan? Enter this key manually:
                     </div>
                     <div
@@ -324,7 +324,7 @@ export default function SecuritySection() {
 
           {/* ─── Enabling spinner ─── */}
           {phase === 'enabling' && (
-            <div style={{ marginTop: 16, fontSize: 13, color: B.muted }}>Enabling 2FA…</div>
+            <div style={{ marginTop: 16, fontSize: 14, color: B.muted }}>Enabling 2FA...</div>
           )}
 
           {/* ─── Disable confirmation ─── */}
@@ -341,7 +341,7 @@ export default function SecuritySection() {
               <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 12, color: B.redText }}>
                 Disable two-step verification
               </div>
-              <div style={{ fontSize: 12, color: B.muted, marginBottom: 14, lineHeight: 1.6 }}>
+              <div style={{ fontSize: 13, color: B.muted, marginBottom: 14, lineHeight: 1.6 }}>
                 Enter your account password and current authenticator code to confirm.
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 320 }}>
@@ -416,7 +416,7 @@ export default function SecuritySection() {
 
           {/* ─── Disabling spinner ─── */}
           {phase === 'disabling' && (
-            <div style={{ marginTop: 16, fontSize: 13, color: B.muted }}>Disabling 2FA…</div>
+            <div style={{ marginTop: 16, fontSize: 14, color: B.muted }}>Disabling 2FA...</div>
           )}
         </div>
       </div>
@@ -439,7 +439,7 @@ export default function SecuritySection() {
         ].map((a) => (
           <div
             key={a.name}
-            style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: B.text, marginBottom: 6 }}
+            style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: B.text, marginBottom: 6 }}
           >
             <span>{a.name}</span>
             <span style={{ color: B.muted }}>{a.note}</span>

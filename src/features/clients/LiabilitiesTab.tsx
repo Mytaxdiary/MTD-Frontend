@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useCallback, useEffect, useState } from 'react'
 import B from '@/styles/theme'
@@ -241,7 +241,7 @@ export default function LiabilitiesTab({ client }: Props) {
                 disabled={liabLoading}
                 onClick={() => void fetchLiabilities()}
               >
-                {liabLoading ? 'Loading…' : 'Refresh'}
+                {liabLoading ? 'Loading...' : 'Refresh'}
               </button>
             </div>
           )}
@@ -287,7 +287,7 @@ export default function LiabilitiesTab({ client }: Props) {
               {liabLoading && rows.length === 0 ? (
                 <tr>
                   <td colSpan={6} style={{ padding: '16px', color: B.muted, fontSize: 12 }}>
-                    Loading liabilities from HMRC…
+                    Loading liabilities from HMRC...
                   </td>
                 </tr>
               ) : rows.length === 0 ? (
@@ -367,7 +367,7 @@ export default function LiabilitiesTab({ client }: Props) {
                   disabled={paymentsLoading}
                   onClick={() => void fetchPayments()}
                 >
-                  {paymentsLoading ? 'Loading…' : 'Refresh'}
+                  {paymentsLoading ? 'Loading...' : 'Refresh'}
                 </button>
               ) : undefined
             }
@@ -412,7 +412,7 @@ export default function LiabilitiesTab({ client }: Props) {
               {paymentsLoading && payments.length === 0 ? (
                 <tr>
                   <td colSpan={4} style={{ padding: '16px', color: B.muted, fontSize: 12 }}>
-                    Loading payment history from HMRC…
+                    Loading payment history from HMRC...
                   </td>
                 </tr>
               ) : payments.length === 0 ? (

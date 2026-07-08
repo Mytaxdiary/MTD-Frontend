@@ -26,9 +26,9 @@ const ResponseBadge = ({ status }: { status: string }) => {
   return (
     <span
       style={{
-        fontSize: 11,
-        fontWeight: 600,
-        padding: '3px 10px',
+        fontSize: 12,
+        fontWeight: 700,
+        padding: '3px 11px',
         borderRadius: 20,
         background: s.bg,
         color: s.c,
@@ -287,12 +287,12 @@ export default function ChaseManager({
         }}
       >
         <div>
-          <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.02em' }}>
+          <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.01em' }}>
             Chase manager
           </div>
-          <div style={{ fontSize: 13, color: B.muted, marginTop: 2 }}>
+          <div style={{ fontSize: 14, color: B.muted, marginTop: 3 }}>
             {clientsLoading
-              ? 'Loading clients…'
+              ? 'Loading clients...'
               : clientsError
                 ? clientsError
                 : `${chaseClients.length} authorised clients: ${overdueClients.length} overdue, ${upcomingClients.length} upcoming`}
@@ -303,10 +303,10 @@ export default function ChaseManager({
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
             style={{
-              padding: '6px 10px',
-              borderRadius: 6,
+              padding: '8px 11px',
+              borderRadius: 7,
               border: `1px solid ${B.border}`,
-              fontSize: 12,
+              fontSize: 13,
               color: B.text,
               background: B.white,
               cursor: 'pointer',
@@ -327,17 +327,17 @@ export default function ChaseManager({
                   border: 'none',
                   background: sending ? B.muted : B.primary,
                   color: '#fff',
-                  fontSize: 13,
+                  fontSize: 14,
                   fontWeight: 600,
                   cursor: sending ? 'not-allowed' : 'pointer',
                 }}
               >
                 {sending
-                  ? 'Sending…'
+                  ? 'Sending...'
                   : `Send to ${selected.size} client${selected.size > 1 ? 's' : ''}`}
               </button>
               {sendError && (
-                <span style={{ fontSize: 11, color: B.redText }}>{sendError}</span>
+                <span style={{ fontSize: 12, color: B.redText }}>{sendError}</span>
               )}
             </div>
           )}
@@ -352,11 +352,11 @@ export default function ChaseManager({
             {sendError && (
               <div style={{
                 marginBottom: 12,
-                padding: '8px 12px',
+                padding: '10px 14px',
                 background: B.redBg,
                 border: '1px solid #FECACA',
                 borderRadius: 8,
-                fontSize: 12,
+                fontSize: 13,
                 color: B.redText,
               }}>
                 {sendError}
@@ -367,11 +367,11 @@ export default function ChaseManager({
             {selected.size > 0 && !selectedTemplateId && (
               <div style={{
                 marginBottom: 12,
-                padding: '8px 12px',
+                padding: '10px 14px',
                 background: B.amberBg,
                 border: '1px solid #FDE68A',
                 borderRadius: 8,
-                fontSize: 12,
+                fontSize: 13,
                 color: B.amberText,
               }}>
                 Select a template on the right before sending.
@@ -379,16 +379,16 @@ export default function ChaseManager({
             )}
 
             {clientsLoading && (
-              <div style={{ padding: '32px', textAlign: 'center', fontSize: 13, color: B.muted }}>
-                Loading clients…
+              <div style={{ padding: '36px', textAlign: 'center', fontSize: 14, color: B.muted }}>
+                Loading clients...
               </div>
             )}
 
             {!clientsLoading && chaseClients.length === 0 && (
               <div style={{
-                padding: '32px',
+                padding: '36px',
                 textAlign: 'center',
-                fontSize: 13,
+                fontSize: 14,
                 color: B.light,
                 background: B.white,
                 borderRadius: 12,
@@ -402,10 +402,10 @@ export default function ChaseManager({
               <div style={{ marginBottom: 20 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
                   <div style={{ width: 8, height: 8, borderRadius: 4, background: B.red }} />
-                  <span style={{ fontSize: 13, fontWeight: 700, color: B.redText }}>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: B.redText }}>
                     Overdue: deadline passed
                   </span>
-                  <span style={{ fontSize: 11, color: B.muted }}>({filteredOverdue.length})</span>
+                  <span style={{ fontSize: 12, color: B.muted }}>({filteredOverdue.length})</span>
                 </div>
                 <ClientTable
                   clients={filteredOverdue}
@@ -422,10 +422,10 @@ export default function ChaseManager({
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
                   <div style={{ width: 8, height: 8, borderRadius: 4, background: B.amber }} />
-                  <span style={{ fontSize: 13, fontWeight: 700, color: B.amberText }}>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: B.amberText }}>
                     Upcoming: chase window open
                   </span>
-                  <span style={{ fontSize: 11, color: B.muted }}>({filteredUpcoming.length})</span>
+                  <span style={{ fontSize: 12, color: B.muted }}>({filteredUpcoming.length})</span>
                 </div>
                 <ClientTable
                   clients={filteredUpcoming}
@@ -460,13 +460,13 @@ export default function ChaseManager({
                   alignItems: 'center',
                 }}
               >
-                <div style={{ fontSize: 14, fontWeight: 700 }}>Chase templates</div>
+                <div style={{ fontSize: 15, fontWeight: 700 }}>Chase templates</div>
                 <button
                   onClick={openNew}
                   style={{
-                    fontSize: 11,
+                    fontSize: 12,
                     fontWeight: 500,
-                    padding: '4px 10px',
+                    padding: '5px 12px',
                     borderRadius: 6,
                     border: `1px solid ${B.border}`,
                     background: 'transparent',
@@ -480,12 +480,12 @@ export default function ChaseManager({
 
               <div style={{ padding: '8px 12px' }}>
                 {templatesLoading && (
-                  <div style={{ padding: '12px', fontSize: 12, color: B.muted, textAlign: 'center' }}>
-                    Loading templates…
+                  <div style={{ padding: '14px', fontSize: 13, color: B.muted, textAlign: 'center' }}>
+                    Loading templates...
                   </div>
                 )}
                 {templatesError && (
-                  <div style={{ padding: '12px', fontSize: 12, color: B.redText, textAlign: 'center' }}>
+                  <div style={{ padding: '14px', fontSize: 13, color: B.redText, textAlign: 'center' }}>
                     {templatesError}
                   </div>
                 )}
@@ -518,7 +518,7 @@ export default function ChaseManager({
                       >
                         <div
                           style={{
-                            fontSize: 12,
+                            fontSize: 13,
                             fontWeight: 600,
                             color:
                               selectedTemplateId === t.id && editMode !== 'new'
@@ -538,9 +538,9 @@ export default function ChaseManager({
                             disabled={deletingId === t.id}
                             title="Delete template"
                             style={{
-                              fontSize: 11,
-                              padding: '1px 5px',
-                              borderRadius: 4,
+                              fontSize: 12,
+                              padding: '2px 6px',
+                              borderRadius: 5,
                               border: `1px solid ${B.borderLight}`,
                               background: 'transparent',
                               color: B.light,
@@ -576,15 +576,15 @@ export default function ChaseManager({
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <div style={{ fontSize: 14, fontWeight: 700 }}>
+                  <div style={{ fontSize: 15, fontWeight: 700 }}>
                     {editMode === 'new' ? 'New template' : editMode === 'edit' ? 'Edit template' : 'Preview'}
                   </div>
                   {!editMode && previewClient && (
                     <span
                       style={{
-                        fontSize: 10,
+                        fontSize: 11,
                         fontWeight: 600,
-                        padding: '2px 8px',
+                        padding: '3px 9px',
                         borderRadius: 10,
                         background: B.greenBg,
                         color: B.greenText,
@@ -598,7 +598,7 @@ export default function ChaseManager({
                     </span>
                   )}
                   {!editMode && !previewClient && currentTemplate && (
-                    <span style={{ fontSize: 10, color: B.light }}>
+                    <span style={{ fontSize: 11, color: B.light }}>
                       select a client to preview with real data
                     </span>
                   )}
@@ -608,10 +608,10 @@ export default function ChaseManager({
                     <button
                       onClick={() => openEdit(currentTemplate)}
                       style={{
-                        fontSize: 11,
+                        fontSize: 12,
                         fontWeight: 500,
-                        padding: '4px 10px',
-                        borderRadius: 6,
+                        padding: '5px 12px',
+                        borderRadius: 7,
                         border: `1px solid ${B.border}`,
                         background: 'transparent',
                         cursor: 'pointer',
@@ -626,9 +626,9 @@ export default function ChaseManager({
                       <button
                         onClick={cancelEdit}
                         style={{
-                          fontSize: 11,
-                          padding: '4px 10px',
-                          borderRadius: 6,
+                          fontSize: 12,
+                          padding: '5px 12px',
+                          borderRadius: 7,
                           border: `1px solid ${B.border}`,
                           background: 'transparent',
                           cursor: 'pointer',
@@ -641,17 +641,17 @@ export default function ChaseManager({
                         onClick={handleSave}
                         disabled={saving}
                         style={{
-                          fontSize: 11,
+                          fontSize: 12,
                           fontWeight: 600,
-                          padding: '4px 10px',
-                          borderRadius: 6,
+                          padding: '5px 12px',
+                          borderRadius: 7,
                           border: 'none',
                           background: saving ? B.muted : B.green,
                           color: '#fff',
                           cursor: saving ? 'not-allowed' : 'pointer',
                         }}
                       >
-                        {saving ? 'Saving…' : 'Save'}
+                        {saving ? 'Saving...' : 'Save'}
                       </button>
                     </>
                   )}
@@ -662,33 +662,33 @@ export default function ChaseManager({
                 {/* Preview mode */}
                 {!editMode && currentTemplate && (
                   <>
-                    <div style={{ fontSize: 11, fontWeight: 600, color: B.muted, marginBottom: 4 }}>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: B.muted, marginBottom: 4, textTransform: 'uppercase' as const, letterSpacing: '0.04em' }}>
                       Subject
                     </div>
                     <div
                       style={{
-                        fontSize: 12,
+                        fontSize: 13,
                         marginBottom: 14,
-                        padding: '8px 12px',
+                        padding: '9px 13px',
                         background: previewClient ? B.white : B.surface,
-                        borderRadius: 6,
+                        borderRadius: 7,
                         border: `1px solid ${previewClient ? B.border : B.borderLight}`,
                         color: B.text,
                       }}
                     >
                       {previewSubject}
                     </div>
-                    <div style={{ fontSize: 11, fontWeight: 600, color: B.muted, marginBottom: 4 }}>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: B.muted, marginBottom: 4, textTransform: 'uppercase' as const, letterSpacing: '0.04em' }}>
                       Body
                     </div>
                     <div
                       style={{
-                        fontSize: 12,
+                        fontSize: 13,
                         color: previewClient ? B.text : B.muted,
                         lineHeight: 1.7,
                         padding: '12px',
                         background: previewClient ? B.white : B.surface,
-                        borderRadius: 6,
+                        borderRadius: 7,
                         border: `1px solid ${previewClient ? B.border : B.borderLight}`,
                         whiteSpace: 'pre-wrap',
                       }}
@@ -707,7 +707,7 @@ export default function ChaseManager({
                     >
                       <div>
                         <div
-                          style={{ fontSize: 11, fontWeight: 600, color: B.muted, marginBottom: 4 }}
+                          style={{ fontSize: 12, fontWeight: 600, color: B.muted, marginBottom: 4, textTransform: 'uppercase' as const, letterSpacing: '0.04em' }}
                         >
                           Name
                         </div>
@@ -717,10 +717,10 @@ export default function ChaseManager({
                           placeholder="Template name"
                           style={{
                             width: '100%',
-                            padding: '8px 10px',
-                            borderRadius: 6,
+                            padding: '9px 12px',
+                            borderRadius: 7,
                             border: `1px solid ${B.border}`,
-                            fontSize: 12,
+                            fontSize: 13,
                             outline: 'none',
                             boxSizing: 'border-box',
                           }}
@@ -728,7 +728,7 @@ export default function ChaseManager({
                       </div>
                       <div>
                         <div
-                          style={{ fontSize: 11, fontWeight: 600, color: B.muted, marginBottom: 4 }}
+                          style={{ fontSize: 12, fontWeight: 600, color: B.muted, marginBottom: 4, textTransform: 'uppercase' as const, letterSpacing: '0.04em' }}
                         >
                           Type
                         </div>
@@ -737,10 +737,10 @@ export default function ChaseManager({
                           onChange={(e) => setEditType(e.target.value)}
                           style={{
                             width: '100%',
-                            padding: '8px 10px',
-                            borderRadius: 6,
+                            padding: '9px 12px',
+                            borderRadius: 7,
                             border: `1px solid ${B.border}`,
-                            fontSize: 12,
+                            fontSize: 13,
                             color: B.text,
                             background: B.white,
                             outline: 'none',
@@ -755,7 +755,7 @@ export default function ChaseManager({
 
                     {/* Subject */}
                     <div
-                      style={{ fontSize: 11, fontWeight: 600, color: B.muted, marginBottom: 4 }}
+                      style={{ fontSize: 12, fontWeight: 600, color: B.muted, marginBottom: 4, textTransform: 'uppercase' as const, letterSpacing: '0.04em' }}
                     >
                       Subject
                     </div>
@@ -765,10 +765,10 @@ export default function ChaseManager({
                       placeholder="Email subject"
                       style={{
                         width: '100%',
-                        padding: '8px 12px',
-                        borderRadius: 6,
+                        padding: '9px 12px',
+                        borderRadius: 7,
                         border: `1px solid ${B.border}`,
-                        fontSize: 12,
+                        fontSize: 13,
                         marginBottom: 14,
                         outline: 'none',
                         boxSizing: 'border-box',
@@ -777,21 +777,21 @@ export default function ChaseManager({
 
                     {/* Body */}
                     <div
-                      style={{ fontSize: 11, fontWeight: 600, color: B.muted, marginBottom: 4 }}
+                      style={{ fontSize: 12, fontWeight: 600, color: B.muted, marginBottom: 4, textTransform: 'uppercase' as const, letterSpacing: '0.04em' }}
                     >
                       Body
                     </div>
                     <textarea
                       value={editBody}
                       onChange={(e) => setEditBody(e.target.value)}
-                      placeholder="Email body…"
+                      placeholder="Email body..."
                       rows={10}
                       style={{
                         width: '100%',
                         padding: '12px',
-                        borderRadius: 6,
+                        borderRadius: 7,
                         border: `1px solid ${B.border}`,
-                        fontSize: 12,
+                        fontSize: 13,
                         lineHeight: 1.7,
                         outline: 'none',
                         resize: 'vertical',
@@ -802,7 +802,7 @@ export default function ChaseManager({
 
                     {saveError && (
                       <div
-                        style={{ fontSize: 11, color: B.redText, marginTop: 8 }}
+                        style={{ fontSize: 12, color: B.redText, marginTop: 8 }}
                       >
                         {saveError}
                       </div>
@@ -810,7 +810,7 @@ export default function ChaseManager({
                   </>
                 )}
 
-                <div style={{ fontSize: 10, color: B.light, marginTop: 10 }}>
+                <div style={{ fontSize: 11, color: B.light, marginTop: 12 }}>
                   Variables: {'{name}'}, {'{business}'}, {'{quarter}'}, {'{deadline}'},{' '}
                   {'{agent_name}'}, {'{firm_name}'}
                 </div>
@@ -834,11 +834,12 @@ function TypeBadge({ type }: { type: string }) {
   return (
     <span
       style={{
-        fontSize: 9,
-        padding: '1px 6px',
-        borderRadius: 4,
+        fontSize: 10,
+        padding: '2px 7px',
+        borderRadius: 5,
         background: bg,
         color,
+        fontWeight: 600,
       }}
     >
       {label}
@@ -903,8 +904,8 @@ function ClientTable({
               style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
             >
               <div>
-                <span style={{ fontWeight: 600, fontSize: 13 }}>{c.name}</span>
-                <span style={{ color: B.muted, fontSize: 12, marginLeft: 8 }}>{c.business}</span>
+                <span style={{ fontWeight: 600, fontSize: 14 }}>{c.name}</span>
+                <span style={{ color: B.muted, fontSize: 13, marginLeft: 8 }}>{c.business}</span>
               </div>
               <ResponseBadge status={c.status} />
             </div>
@@ -913,7 +914,7 @@ function ClientTable({
                 display: 'flex',
                 gap: 16,
                 marginTop: 6,
-                fontSize: 11,
+                fontSize: 12,
                 color: B.light,
                 alignItems: 'center',
               }}
@@ -932,9 +933,9 @@ function ClientTable({
               </span>
               <span
                 style={{
-                  fontSize: 10,
-                  padding: '1px 7px',
-                  borderRadius: 4,
+                  fontSize: 11,
+                  padding: '2px 8px',
+                  borderRadius: 5,
                   background: c.workflowType === 'bookkeeping' ? B.purpleBg : B.blueBg,
                   color: c.workflowType === 'bookkeeping' ? B.purpleText : B.blueText,
                 }}
@@ -945,9 +946,9 @@ function ClientTable({
                 value={clientChannels[c.id]}
                 onChange={(e) => onChannelChange(c.id, e.target.value)}
                 style={{
-                  fontSize: 10,
-                  padding: '2px 6px',
-                  borderRadius: 4,
+                  fontSize: 11,
+                  padding: '3px 7px',
+                  borderRadius: 5,
                   border: `1px solid ${B.borderLight}`,
                   background: B.white,
                   color: B.muted,

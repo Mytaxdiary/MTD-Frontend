@@ -12,7 +12,7 @@ export default function TeamSection() {
       <CardHead titleSize={15} padding="16px 20px" title="Team members" />
       <div style={{ padding: '8px 20px 14px' }}>
         {loading ? (
-          <div style={{ padding: '14px 0', fontSize: 13, color: B.muted }}>Loading…</div>
+          <div style={{ padding: '14px 0', fontSize: 14, color: B.muted }}>Loading...</div>
         ) : user ? (
           <div
             style={{
@@ -24,14 +24,14 @@ export default function TeamSection() {
           >
             <div
               style={{
-                width: 38,
-                height: 38,
-                borderRadius: 19,
+                width: 40,
+                height: 40,
+                borderRadius: 20,
                 background: B.blueBg,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: 13,
+                fontSize: 14,
                 fontWeight: 700,
                 color: B.blueText,
                 border: '1px solid #BAE6FD',
@@ -40,15 +40,15 @@ export default function TeamSection() {
               {userInitials(user.name)}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 13, fontWeight: 600 }}>{user.name}</div>
-              <div style={{ fontSize: 11, color: B.light }}>{user.email}</div>
+              <div style={{ fontSize: 14, fontWeight: 600 }}>{user.name}</div>
+              <div style={{ fontSize: 12, color: B.light }}>{user.email}</div>
             </div>
             <span
               style={{
-                fontSize: 11,
+                fontSize: 12,
                 fontWeight: 500,
                 color: B.muted,
-                padding: '2px 10px',
+                padding: '3px 11px',
                 borderRadius: 20,
                 background: B.surface,
                 border: `1px solid ${B.borderLight}`,
@@ -58,9 +58,9 @@ export default function TeamSection() {
             </span>
             <span
               style={{
-                fontSize: 10,
+                fontSize: 11,
                 fontWeight: 600,
-                padding: '2px 8px',
+                padding: '3px 9px',
                 borderRadius: 10,
                 background: user.isEmailVerified ? B.greenBg : B.amberBg,
                 color: user.isEmailVerified ? B.greenText : B.amberText,
@@ -70,7 +70,7 @@ export default function TeamSection() {
             </span>
           </div>
         ) : (
-          <div style={{ padding: '14px 0', fontSize: 13, color: B.muted }}>
+          <div style={{ padding: '14px 0', fontSize: 14, color: B.muted }}>
             No account information available.
           </div>
         )}
@@ -80,11 +80,11 @@ export default function TeamSection() {
             disabled
             title="Team invites coming soon"
             style={{
-              padding: '8px 16px',
+              padding: '9px 18px',
               borderRadius: 8,
               border: `1px solid ${B.border}`,
               background: B.white,
-              fontSize: 12,
+              fontSize: 13,
               fontWeight: 500,
               cursor: 'not-allowed',
               color: B.muted,

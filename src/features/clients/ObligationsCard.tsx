@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useCallback, useEffect, useState } from 'react'
 import B from '@/styles/theme'
@@ -450,7 +450,7 @@ export default function ObligationsCard({ client }: { client: ClientRecord }) {
               void loadCrystallisation()
             }}
           >
-            {obligationsLoading || crystalLoading ? 'Loading…' : 'Refresh'}
+            {obligationsLoading || crystalLoading ? 'Loading...' : 'Refresh'}
           </button>
         </div>
 
@@ -487,7 +487,7 @@ export default function ObligationsCard({ client }: { client: ClientRecord }) {
         )}
 
         {obligationsLoading ? (
-          <p style={{ fontSize: 12, color: B.muted, margin: 0 }}>Loading obligations from HMRC…</p>
+          <p style={{ fontSize: 12, color: B.muted, margin: 0 }}>Loading obligations from HMRC...</p>
         ) : (
           <ObligationTimeline details={obligationDetails} />
         )}
@@ -539,7 +539,7 @@ export default function ObligationsCard({ client }: { client: ClientRecord }) {
 
           {crystalLoading ? (
             <p style={{ fontSize: 12, color: B.muted, margin: 0 }}>
-              Loading final declaration obligations…
+              Loading final declaration obligations...
             </p>
           ) : (
             <CrystallisationTimeline items={crystalObligations} />

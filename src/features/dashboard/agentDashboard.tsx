@@ -61,9 +61,9 @@ const Badge = ({ status }: { status: string }) => {
   return (
     <span
       style={{
-        fontSize: 11,
-        fontWeight: 600,
-        padding: '3px 10px',
+        fontSize: 12,
+        fontWeight: 700,
+        padding: '3px 11px',
         borderRadius: 20,
         background: s.bg,
         color: s.c,
@@ -110,13 +110,13 @@ const MetricCard = ({
     <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: color }} />
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
       <div>
-        <div style={{ fontSize: 11, fontWeight: 500, color: B.muted, letterSpacing: '0.02em', marginBottom: 3 }}>
+        <div style={{ fontSize: 12, fontWeight: 600, color: B.muted, letterSpacing: '0.03em', marginBottom: 4 }}>
           {label}
         </div>
-        <div style={{ fontSize: 26, fontWeight: 700, color: B.text, lineHeight: 1, letterSpacing: '-0.02em' }}>
+        <div style={{ fontSize: 28, fontWeight: 800, color: B.text, lineHeight: 1, letterSpacing: '-0.02em' }}>
           {value}
         </div>
-        <div style={{ fontSize: 11, color: B.light, marginTop: 3 }}>{sub}</div>
+        <div style={{ fontSize: 12, color: B.light, marginTop: 4 }}>{sub}</div>
       </div>
       <div
         style={{
@@ -219,10 +219,10 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
         }}
       >
         <div>
-          <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.02em' }}>
+          <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.02em' }}>
             {timeOfDayGreeting()}, {greetingName}
           </div>
-          <div style={{ fontSize: 13, color: B.muted, marginTop: 2 }}>
+          <div style={{ fontSize: 14, color: B.muted, marginTop: 3 }}>
             {liveDateSubtitle(summary)}
           </div>
         </div>
@@ -318,7 +318,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
             <select
               value={statusFilter}
               onChange={(e) => { setStatusFilter(e.target.value); setActiveMetric(null) }}
-              style={{ padding: '6px 10px', borderRadius: 6, border: `1px solid ${B.border}`, fontSize: 12, color: B.text, background: B.white, cursor: 'pointer' }}
+              style={{ padding: '7px 11px', borderRadius: 7, border: `1px solid ${B.border}`, fontSize: 13, color: B.text, background: B.white, cursor: 'pointer' }}
             >
               <option value="all">All statuses</option>
               <option value="overdue">Overdue</option>
@@ -329,7 +329,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              style={{ padding: '6px 10px', borderRadius: 6, border: `1px solid ${B.border}`, fontSize: 12, color: B.text, background: B.white, cursor: 'pointer' }}
+              style={{ padding: '7px 11px', borderRadius: 7, border: `1px solid ${B.border}`, fontSize: 13, color: B.text, background: B.white, cursor: 'pointer' }}
             >
               <option value="all">All types</option>
               <option value="SE">Self-employment</option>
@@ -340,7 +340,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
               <select
                 value={quarterFilter}
                 onChange={(e) => setQuarterFilter(e.target.value)}
-                style={{ padding: '6px 10px', borderRadius: 6, border: `1px solid ${B.border}`, fontSize: 12, color: B.text, background: B.white, cursor: 'pointer' }}
+                style={{ padding: '7px 11px', borderRadius: 7, border: `1px solid ${B.border}`, fontSize: 13, color: B.text, background: B.white, cursor: 'pointer' }}
               >
                 <option value="all">All quarters</option>
                 <option value="Q1">Q1</option>
@@ -349,13 +349,13 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                 <option value="Q4">Q4</option>
               </select>
             )}
-            <span style={{ fontSize: 12, color: B.light, marginLeft: 4 }}>
+            <span style={{ fontSize: 13, color: B.light, marginLeft: 4 }}>
               {loading ? 'Loading...' : `${filtered.length} of ${clients.length}`}
             </span>
           </div>
           <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
             <button
-              style={{ padding: '6px 10px', borderRadius: 6, border: `1px solid ${B.border}`, fontSize: 11, cursor: 'pointer', background: B.white, color: B.muted }}
+              style={{ padding: '7px 13px', borderRadius: 7, border: `1px solid ${B.border}`, fontSize: 13, cursor: 'pointer', background: B.white, color: B.muted }}
             >
               Export
             </button>
@@ -387,15 +387,15 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
         {view === 'list' && (
           <div style={{ background: B.white, borderRadius: '0 0 12px 12px', border: `1px solid ${B.border}`, overflow: 'hidden' }}>
             {loading ? (
-              <div style={{ padding: 40, textAlign: 'center', fontSize: 13, color: B.muted }}>
+              <div style={{ padding: 40, textAlign: 'center', fontSize: 14, color: B.muted }}>
                 Loading clients...
               </div>
             ) : (
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
                 <thead>
-                  <tr style={{ borderBottom: `1px solid ${B.border}` }}>
+                  <tr style={{ borderBottom: `2px solid ${B.border}`, background: B.surface }}>
                     {['Client', 'Type', 'Quarter', 'Deadline', 'Status', 'Chase status', ''].map((h, i) => (
-                      <th key={i} style={{ padding: '10px 16px', textAlign: 'left', fontSize: 11, fontWeight: 600, color: B.light, letterSpacing: '0.04em' }}>
+                      <th key={i} style={{ padding: '11px 16px', textAlign: 'left', fontSize: 12, fontWeight: 700, color: B.muted, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
                         {h}
                       </th>
                     ))}
@@ -427,10 +427,10 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                         <td style={{ padding: '12px 16px' }}>
                           <div>{c.deadline}</div>
                           {c.daysLeft < 0 && (
-                            <div style={{ fontSize: 11, color: B.red, fontWeight: 600 }}>{Math.abs(c.daysLeft)}d overdue</div>
+                            <div style={{ fontSize: 12, color: B.red, fontWeight: 600 }}>{Math.abs(c.daysLeft)}d overdue</div>
                           )}
                           {c.daysLeft > 0 && (
-                            <div style={{ fontSize: 11, color: B.light }}>{c.daysLeft}d left</div>
+                            <div style={{ fontSize: 12, color: B.light }}>{c.daysLeft}d left</div>
                           )}
                         </td>
                         <td style={{ padding: '12px 16px' }}>
@@ -441,26 +441,26 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                             {c.records && (
                               <span style={{ width: 6, height: 6, borderRadius: 3, background: B.green }} />
                             )}
-                            <span style={{ color: c.records ? B.greenText : B.muted, fontSize: 12 }}>
+                            <span style={{ color: c.records ? B.greenText : B.muted, fontSize: 13 }}>
                               {c.chase}
                             </span>
                           </div>
                         </td>
                         <td style={{ padding: '12px 16px' }}>
                           {c.status === 'overdue' && (
-                            <button style={{ padding: '5px 12px', borderRadius: 6, border: 'none', background: B.red, color: '#fff', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}
+                            <button style={{ padding: '5px 14px', borderRadius: 6, border: 'none', background: B.red, color: '#fff', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}
                               onClick={(e) => { e.stopPropagation(); navigate('chase') }}>
                               Chase
                             </button>
                           )}
                           {c.status === 'due-soon' && (
-                            <button style={{ padding: '5px 12px', borderRadius: 6, border: `1px solid ${B.border}`, background: 'transparent', color: B.muted, fontSize: 11, cursor: 'pointer' }}
+                            <button style={{ padding: '5px 14px', borderRadius: 6, border: `1px solid ${B.border}`, background: 'transparent', color: B.muted, fontSize: 12, cursor: 'pointer' }}
                               onClick={(e) => { e.stopPropagation(); navigate('chase') }}>
                               Chase
                             </button>
                           )}
                           {c.status === 'pending-invite' && (
-                            <button style={{ padding: '5px 12px', borderRadius: 6, border: `1px solid ${B.border}`, background: 'transparent', color: B.muted, fontSize: 11, cursor: 'pointer' }}
+                            <button style={{ padding: '5px 14px', borderRadius: 6, border: `1px solid ${B.border}`, background: 'transparent', color: B.muted, fontSize: 12, cursor: 'pointer' }}
                               onClick={(e) => { e.stopPropagation(); goToClient(c.id) }}>
                               Resend
                             </button>
@@ -497,7 +497,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                       <div style={{ width: 8, height: 8, borderRadius: 4, background: col.color }} />
                       <span style={{ fontSize: 12, fontWeight: 600, color: B.text }}>{col.label}</span>
                     </div>
-                    <span style={{ fontSize: 11, fontWeight: 600, color: B.muted, background: B.white, borderRadius: 10, padding: '1px 8px', border: `1px solid ${B.border}` }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: B.muted, background: B.white, borderRadius: 10, padding: '2px 9px', border: `1px solid ${B.border}` }}>
                       {colClients.length}
                     </span>
                   </div>
@@ -509,22 +509,22 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                         style={{ background: B.white, borderRadius: 8, padding: '12px 14px', border: `1px solid ${B.border}`, cursor: 'pointer' }}
                       >
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
-                          <div style={{ fontWeight: 600, fontSize: 12, lineHeight: 1.3 }}>{c.name}</div>
+                          <div style={{ fontWeight: 600, fontSize: 13, lineHeight: 1.3 }}>{c.name}</div>
                           <Badge status={c.status} />
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <div style={{ display: 'flex', gap: 3, alignItems: 'center' }}>
-                            <span style={{ fontSize: 10, color: B.light, marginRight: 2 }}>Q1-4:</span>
+                            <span style={{ fontSize: 11, color: B.light, marginRight: 2 }}>Q1-4:</span>
                             <QDot status={c.q1} />
                             <QDot status={c.q2} />
                             <QDot status={c.q3} />
                             <QDot status={c.q4} />
                           </div>
                           {c.daysLeft < 0 && (
-                            <span style={{ fontSize: 10, fontWeight: 600, color: B.red }}>{Math.abs(c.daysLeft)}d late</span>
+                            <span style={{ fontSize: 11, fontWeight: 600, color: B.red }}>{Math.abs(c.daysLeft)}d late</span>
                           )}
                           {c.daysLeft > 0 && (
-                            <span style={{ fontSize: 10, color: B.light }}>{c.daysLeft}d left</span>
+                            <span style={{ fontSize: 11, color: B.light }}>{c.daysLeft}d left</span>
                           )}
                         </div>
                       </div>
@@ -543,7 +543,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
               <thead>
                 <tr style={{ borderBottom: `1px solid ${B.border}` }}>
                   {['Client', 'Q1', 'Q2', 'Q3', 'Q4', 'Final dec.', 'Overall'].map((h, i) => (
-                    <th key={i} style={{ padding: '10px 16px', textAlign: i >= 1 ? 'center' : 'left', fontSize: 11, fontWeight: 600, color: B.light, letterSpacing: '0.04em' }}>
+                    <th key={i} style={{ padding: '11px 16px', textAlign: i >= 1 ? 'center' : 'left', fontSize: 12, fontWeight: 700, color: B.muted, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
                       {h}
                     </th>
                   ))}
@@ -581,7 +581,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                         </div>
                       </td>
                       <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                        <span style={{ fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 20, background: allFiled ? B.greenBg : hasOverdue ? B.redBg : B.amberBg, color: allFiled ? B.greenText : hasOverdue ? B.redText : B.amberText, border: `1px solid ${allFiled ? '#A7F3D0' : hasOverdue ? '#FECACA' : '#FDE68A'}` }}>
+                        <span style={{ fontSize: 12, fontWeight: 700, padding: '3px 11px', borderRadius: 20, background: allFiled ? B.greenBg : hasOverdue ? B.redBg : B.amberBg, color: allFiled ? B.greenText : hasOverdue ? B.redText : B.amberText, border: `1px solid ${allFiled ? '#A7F3D0' : hasOverdue ? '#FECACA' : '#FDE68A'}` }}>
                           {allFiled ? 'On track' : hasOverdue ? 'Action needed' : 'In progress'}
                         </span>
                       </td>
@@ -590,7 +590,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                 })}
               </tbody>
             </table>
-            <div style={{ padding: '10px 20px', borderTop: `1px solid ${B.border}`, display: 'flex', gap: 16, fontSize: 11, color: B.muted }}>
+            <div style={{ padding: '10px 20px', borderTop: `1px solid ${B.border}`, display: 'flex', gap: 16, fontSize: 12, color: B.muted }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                 <div style={{ width: 10, height: 10, borderRadius: 5, background: B.green }} /> Filed
               </span>

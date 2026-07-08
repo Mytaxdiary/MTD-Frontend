@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   mockClientQuarters as quarters,
@@ -83,7 +83,7 @@ function ReceivedFilesCard({ clientId }: { clientId: string }) {
       />
       <div style={{ padding: '4px 20px 12px' }}>
         {loading ? (
-          <p style={{ fontSize: 12, color: B.muted, margin: '8px 0' }}>Loading…</p>
+          <p style={{ fontSize: 13, color: B.muted, margin: '8px 0' }}>Loading...</p>
         ) : files.length === 0 ? (
           <p style={{ fontSize: 12, color: B.muted, margin: '8px 0' }}>No files uploaded by client yet.</p>
         ) : (
@@ -224,7 +224,7 @@ export default function ClientDetail({
           Clients
         </span>
         <span style={{ color: B.xlight }}>/</span>
-        <span style={{ fontWeight: 600 }}>{clientLoading ? 'Loading…' : displayName}</span>
+        <span style={{ fontWeight: 600 }}>{clientLoading ? 'Loading...' : displayName}</span>
       </div>
 
       <div
@@ -370,7 +370,7 @@ export default function ClientDetail({
                 opacity: previewLoading ? 0.7 : 1,
               }}
             >
-              {previewLoading ? 'Opening…' : 'View client portal'}
+              {previewLoading ? 'Opening...' : 'View client portal'}
             </button>
           </div>
         </div>
@@ -433,7 +433,7 @@ export default function ClientDetail({
                 sub:
                   outstanding == null
                     ? client?.authorisedAt
-                      ? 'Loading…'
+                      ? 'Loading...'
                       : 'Authorise client to load'
                     : outstanding > 0
                       ? 'Payment due'
@@ -1003,7 +1003,7 @@ export default function ClientDetail({
                       value={msgBody}
                       onChange={(e) => setMsgBody(e.target.value)}
                       rows={6}
-                      placeholder="Write your message here…"
+                      placeholder="Write your message here..."
                       style={{ display: 'block', width: '100%', marginTop: 5, padding: '9px 12px', borderRadius: 8, border: `1px solid ${B.border}`, fontSize: 13, boxSizing: 'border-box', resize: 'vertical', outline: 'none' }}
                     />
                   </label>
@@ -1031,7 +1031,7 @@ export default function ClientDetail({
                       }}
                       style={{ padding: '8px 20px', background: '#1E3A5F', color: '#fff', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: msgSending ? 'not-allowed' : 'pointer', opacity: msgSending ? 0.7 : 1 }}
                     >
-                      {msgSending ? 'Sending…' : 'Send message'}
+                      {msgSending ? 'Sending...' : 'Send message'}
                     </button>
                   </div>
                 </>

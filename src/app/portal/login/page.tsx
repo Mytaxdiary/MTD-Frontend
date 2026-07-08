@@ -28,26 +28,41 @@ export default function PortalLoginPage() {
   }
 
   return (
-    <div style={{ maxWidth: 420, margin: '60px auto' }}>
-      <div
-        style={{
-          background: B.white,
-          borderRadius: 12,
-          border: `1px solid ${B.border}`,
-          padding: '36px 32px',
-          boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-        }}
-      >
-        <h1 style={{ margin: '0 0 6px', fontSize: 22, fontWeight: 700, color: B.text }}>
-          Client Portal
+    <div style={{ maxWidth: 440, margin: '48px auto' }}>
+      <div style={{ textAlign: 'center', marginBottom: 28 }}>
+        <div style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: 52,
+          height: 52,
+          borderRadius: 14,
+          background: '#1E3A5F',
+          marginBottom: 16,
+          fontSize: 24,
+        }}>
+          🔒
+        </div>
+        <h1 style={{ margin: '0 0 6px', fontSize: 24, fontWeight: 800, color: B.text }}>
+          Sign in to your portal
         </h1>
-        <p style={{ margin: '0 0 28px', fontSize: 14, color: B.muted }}>
-          Sign in to view your tax submissions and messages from your accountant.
+        <p style={{ margin: 0, fontSize: 14, color: B.muted }}>
+          View your tax submissions and messages from your accountant.
         </p>
+      </div>
 
+      <div style={{
+        background: B.white,
+        borderRadius: 14,
+        border: `1px solid ${B.border}`,
+        padding: '32px 32px',
+        boxShadow: '0 4px 16px rgba(0,0,0,0.07)',
+      }}>
         <form onSubmit={handleSubmit}>
-          <label style={{ display: 'block', marginBottom: 16 }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: B.text }}>Email address</span>
+          <div style={{ marginBottom: 18 }}>
+            <label style={{ display: 'block', fontSize: 14, fontWeight: 600, color: B.text, marginBottom: 7 }}>
+              Email address
+            </label>
             <input
               type="email"
               value={email}
@@ -57,10 +72,12 @@ export default function PortalLoginPage() {
               style={inputStyle}
               placeholder="you@example.com"
             />
-          </label>
+          </div>
 
-          <label style={{ display: 'block', marginBottom: 24 }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: B.text }}>Password</span>
+          <div style={{ marginBottom: 26 }}>
+            <label style={{ display: 'block', fontSize: 14, fontWeight: 600, color: B.text, marginBottom: 7 }}>
+              Password
+            </label>
             <input
               type="password"
               value={password}
@@ -68,22 +85,21 @@ export default function PortalLoginPage() {
               required
               autoComplete="current-password"
               style={inputStyle}
-              placeholder="••••••••"
+              placeholder="Enter your password"
             />
-          </label>
+          </div>
 
           {error && (
-            <div
-              style={{
-                background: B.redBg,
-                border: `1px solid #FECACA`,
-                borderRadius: 8,
-                padding: '10px 14px',
-                fontSize: 13,
-                color: B.redText,
-                marginBottom: 20,
-              }}
-            >
+            <div style={{
+              background: B.redBg,
+              border: `1px solid #FECACA`,
+              borderRadius: 9,
+              padding: '11px 16px',
+              fontSize: 14,
+              color: B.redText,
+              marginBottom: 20,
+              fontWeight: 500,
+            }}>
               {error}
             </div>
           )}
@@ -93,18 +109,18 @@ export default function PortalLoginPage() {
             disabled={loading}
             style={{
               width: '100%',
-              padding: '12px 0',
-              background: '#1E3A5F',
+              padding: '13px 0',
+              background: loading ? B.muted : '#1E3A5F',
               color: '#fff',
               border: 'none',
-              borderRadius: 8,
+              borderRadius: 9,
               fontSize: 15,
-              fontWeight: 600,
+              fontWeight: 700,
               cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.7 : 1,
+              letterSpacing: '0.1px',
             }}
           >
-            {loading ? 'Signing in…' : 'Sign in'}
+            {loading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
       </div>
@@ -115,11 +131,12 @@ export default function PortalLoginPage() {
 const inputStyle: React.CSSProperties = {
   display: 'block',
   width: '100%',
-  marginTop: 6,
-  padding: '10px 12px',
-  borderRadius: 8,
-  border: `1px solid #CBD5E1`,
-  fontSize: 14,
+  padding: '11px 14px',
+  borderRadius: 9,
+  border: `1.5px solid #CBD5E1`,
+  fontSize: 15,
   outline: 'none',
   boxSizing: 'border-box',
+  color: '#0F172A',
+  background: '#fff',
 }

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useRef, useState } from 'react'
 import B from '@/styles/theme'
 import { clientsService, type BulkImportResult, type BulkImportRowError } from '@/services/clients.service'
@@ -472,7 +472,7 @@ export default function BulkImportTab({ onSuccess }: Props) {
                 animation: 'spin 0.7s linear infinite',
               }}
             />
-            Importing…
+            Importing...
           </>
         ) : (
           'Import clients'

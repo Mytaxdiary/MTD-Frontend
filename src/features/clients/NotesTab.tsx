@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState } from 'react'
 import { Card, CardHeader } from '@/components/ui/card'
 import { useCurrentUser } from '@/components/auth/CurrentUserProvider'
@@ -123,7 +123,7 @@ export default function NotesTab() {
               autoFocus
               value={newText}
               onChange={(e) => setNewText(e.target.value)}
-              placeholder="Type your note here…"
+              placeholder="Type your note here..."
               rows={4}
               style={{
                 width: '100%',

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useCallback, useEffect, useState } from 'react'
 import B from '@/styles/theme'
@@ -161,7 +161,7 @@ export default function ItsaStatusCard({ client }: { client: ClientRecord }) {
             disabled={!canFetch || loading}
             onClick={() => void fetchItsaStatus()}
           >
-            {loading ? 'Loading…' : data ? 'Refresh' : 'Fetch from HMRC'}
+            {loading ? 'Loading...' : data ? 'Refresh' : 'Fetch from HMRC'}
           </button>
         </div>
 
@@ -224,7 +224,7 @@ export default function ItsaStatusCard({ client }: { client: ClientRecord }) {
             ))}
           </div>
         ) : loading ? (
-          <p style={{ fontSize: 12, color: B.muted, margin: 0 }}>Loading ITSA status from HMRC…</p>
+          <p style={{ fontSize: 12, color: B.muted, margin: 0 }}>Loading ITSA status from HMRC...</p>
         ) : (
           !error && (
             <p style={{ fontSize: 12, color: B.muted, margin: 0 }}>

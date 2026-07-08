@@ -31,7 +31,7 @@ function PreviewExchange() {
         router.replace('/portal/dashboard')
       })
       .catch(() => {
-        setError('This preview link has expired or is invalid. Please click "View client portal" again.')
+        setError('This preview link has expired or is invalid. Please click "View client portal" again from the client detail page.')
       })
   }, [token, router])
 
@@ -71,9 +71,9 @@ function PreviewExchange() {
 
   return (
     <div style={{ maxWidth: 480, margin: '80px auto', textAlign: 'center' }}>
-      <div style={{ fontSize: 28, marginBottom: 14 }}>⏳</div>
-      <p style={{ fontSize: 14, color: B.muted, margin: 0 }}>
-        Opening client portal preview…
+      <div style={{ fontSize: 36, marginBottom: 16 }}>⏳</div>
+      <p style={{ fontSize: 15, color: B.muted, margin: 0 }}>
+        Opening client portal preview...
       </p>
     </div>
   )

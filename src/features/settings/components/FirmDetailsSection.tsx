@@ -52,16 +52,16 @@ export default function FirmDetailsSection() {
 
   const inputStyle: React.CSSProperties = {
     width: '100%',
-    padding: '9px 14px',
+    padding: '10px 14px',
     borderRadius: 8,
     border: `1px solid ${B.border}`,
-    fontSize: 13,
+    fontSize: 14,
     outline: 'none',
     boxSizing: 'border-box',
   }
 
   const labelStyle: React.CSSProperties = {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: 600,
     color: B.muted,
     display: 'block',
@@ -78,7 +78,7 @@ export default function FirmDetailsSection() {
       />
       <div style={{ padding: '20px' }}>
         {loading ? (
-          <div style={{ fontSize: 13, color: B.muted, padding: '12px 0' }}>Loading…</div>
+          <div style={{ fontSize: 14, color: B.muted, padding: '12px 0' }}>Loading...</div>
         ) : (
           <>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
@@ -125,10 +125,10 @@ export default function FirmDetailsSection() {
             </div>
 
             {error && (
-              <div style={{ fontSize: 12, color: B.redText, marginTop: 10 }}>{error}</div>
+              <div style={{ fontSize: 13, color: B.redText, marginTop: 10 }}>{error}</div>
             )}
             {success && (
-              <div style={{ fontSize: 12, color: B.greenText, marginTop: 10 }}>Changes saved.</div>
+              <div style={{ fontSize: 13, color: B.greenText, marginTop: 10 }}>Changes saved.</div>
             )}
 
             <div
@@ -144,17 +144,17 @@ export default function FirmDetailsSection() {
                 onClick={handleSave}
                 disabled={saving}
                 style={{
-                  padding: '8px 20px',
+                  padding: '9px 22px',
                   borderRadius: 8,
                   border: 'none',
                   background: saving ? B.light : B.primary,
                   color: '#fff',
-                  fontSize: 13,
+                  fontSize: 14,
                   fontWeight: 600,
                   cursor: saving ? 'not-allowed' : 'pointer',
                 }}
               >
-                {saving ? 'Saving…' : 'Save changes'}
+                {saving ? 'Saving...' : 'Save changes'}
               </button>
             </div>
           </>

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useCallback, useEffect, useState } from 'react'
 import { chaseService, type ChaseLogRecord } from '@/services/chase.service'
 import { Card, CardHeader } from '@/components/ui/card'
@@ -200,7 +200,7 @@ export default function ChasingTab({ clientId }: { clientId?: string | null }) {
         <div style={{ padding: '4px 20px 4px' }}>
           {loading && (
             <div style={{ padding: '28px 0', textAlign: 'center', fontSize: 13, color: B.muted }}>
-              Loading chase history…
+              Loading chase history...
             </div>
           )}
           {!loading && error && (

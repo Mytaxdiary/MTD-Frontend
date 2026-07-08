@@ -81,9 +81,9 @@ const Badge = ({ status }: { status: string }) => {
   return (
     <span
       style={{
-        fontSize: 11,
-        fontWeight: 600,
-        padding: '3px 10px',
+        fontSize: 12,
+        fontWeight: 700,
+        padding: '3px 11px',
         borderRadius: 20,
         background: s.bg,
         color: s.c,
@@ -235,22 +235,22 @@ export default function ClientList({
         }}
       >
         <div>
-          <div style={{ fontSize: 20, fontWeight: 700 }}>Clients</div>
-          <div style={{ fontSize: 13, color: B.muted, marginTop: 2 }}>
+          <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.01em' }}>Clients</div>
+          <div style={{ fontSize: 14, color: B.muted, marginTop: 3 }}>
             {clientsLoading
-              ? 'Loading…'
+              ? 'Loading...'
               : `${total} client${total !== 1 ? 's' : ''} · Page ${page} of ${totalPages}`}
           </div>
         </div>
         <button
           onClick={() => navigate('add-client')}
           style={{
-            padding: '8px 16px',
+            padding: '9px 18px',
             borderRadius: 8,
             border: 'none',
             background: B.primary,
             color: '#fff',
-            fontSize: 13,
+            fontSize: 14,
             fontWeight: 600,
             cursor: 'pointer',
           }}
@@ -276,10 +276,10 @@ export default function ClientList({
               placeholder="Search clients..."
               style={{
                 width: '100%',
-                padding: '8px 14px 8px 34px',
+                padding: '9px 14px 9px 36px',
                 borderRadius: 8,
                 border: `1px solid ${B.border}`,
-                fontSize: 13,
+                fontSize: 14,
                 outline: 'none',
                 background: B.white,
                 color: B.text,
@@ -302,10 +302,10 @@ export default function ClientList({
             value={statusFilter}
             onChange={(e) => handleStatusChange(e.target.value)}
             style={{
-              padding: '8px 10px',
+              padding: '8px 11px',
               borderRadius: 8,
               border: `1px solid ${B.border}`,
-              fontSize: 12,
+              fontSize: 13,
               color: B.text,
               background: B.white,
               cursor: 'pointer',
@@ -322,15 +322,15 @@ export default function ClientList({
           <div style={{ marginLeft: 'auto', display: 'flex', gap: 6, alignItems: 'center' }}>
             {selected.size > 0 && (
               <>
-                <span style={{ fontSize: 12, color: B.muted }}>{selected.size} selected</span>
+                <span style={{ fontSize: 13, color: B.muted }}>{selected.size} selected</span>
                 <button
                   style={{
-                    padding: '6px 14px',
-                    borderRadius: 6,
+                    padding: '7px 14px',
+                    borderRadius: 7,
                     border: 'none',
                     background: B.navy,
                     color: '#fff',
-                    fontSize: 11,
+                    fontSize: 12,
                     fontWeight: 600,
                     cursor: 'pointer',
                   }}
@@ -340,11 +340,11 @@ export default function ClientList({
                 <button
                   onClick={() => setSelected(new Set())}
                   style={{
-                    padding: '6px 8px',
-                    borderRadius: 6,
+                    padding: '7px 10px',
+                    borderRadius: 7,
                     border: `1px solid ${B.border}`,
                     background: 'transparent',
-                    fontSize: 11,
+                    fontSize: 12,
                     cursor: 'pointer',
                     color: B.muted,
                   }}
@@ -356,10 +356,10 @@ export default function ClientList({
             <button
               onClick={() => downloadCsv(filtered, cols)}
               style={{
-                padding: '6px 10px',
-                borderRadius: 6,
+                padding: '7px 12px',
+                borderRadius: 7,
                 border: `1px solid ${B.border}`,
-                fontSize: 11,
+                fontSize: 12,
                 cursor: 'pointer',
                 background: B.white,
                 color: B.muted,
@@ -370,10 +370,10 @@ export default function ClientList({
             <button
               onClick={() => printPdf(filtered, cols)}
               style={{
-                padding: '6px 10px',
-                borderRadius: 6,
+                padding: '7px 12px',
+                borderRadius: 7,
                 border: `1px solid ${B.border}`,
-                fontSize: 11,
+                fontSize: 12,
                 cursor: 'pointer',
                 background: B.white,
                 color: B.muted,
@@ -385,10 +385,10 @@ export default function ClientList({
               <button
                 onClick={() => setShowColPicker(!showColPicker)}
                 style={{
-                  padding: '6px 10px',
-                  borderRadius: 6,
+                  padding: '7px 12px',
+                  borderRadius: 7,
                   border: `1px solid ${showColPicker ? B.primary : B.border}`,
-                  fontSize: 11,
+                  fontSize: 12,
                   cursor: 'pointer',
                   background: showColPicker ? B.blueBg : B.white,
                   color: showColPicker ? B.blueText : B.muted,
@@ -428,8 +428,8 @@ export default function ClientList({
                         display: 'flex',
                         alignItems: 'center',
                         gap: 8,
-                        padding: '6px 14px',
-                        fontSize: 12,
+                        padding: '7px 14px',
+                        fontSize: 13,
                         cursor: 'pointer',
                         color: B.text,
                       }}
@@ -457,10 +457,10 @@ export default function ClientList({
             overflow: 'hidden',
           }}
         >
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
             <thead>
-              <tr style={{ borderBottom: `1px solid ${B.border}` }}>
-                <th style={{ padding: '10px 16px', width: 36 }}>
+              <tr style={{ borderBottom: `2px solid ${B.border}`, background: B.surface }}>
+                <th style={{ padding: '11px 16px', width: 36 }}>
                   <input
                     type="checkbox"
                     checked={selected.size === filtered.length && filtered.length > 0}
@@ -471,12 +471,13 @@ export default function ClientList({
                 <th
                   onClick={() => toggleSort('name')}
                   style={{
-                    padding: '10px 14px',
+                    padding: '11px 14px',
                     textAlign: 'left',
-                    fontSize: 11,
-                    fontWeight: 600,
-                    color: B.light,
+                    fontSize: 12,
+                    fontWeight: 700,
+                    color: B.muted,
                     letterSpacing: '0.04em',
+                    textTransform: 'uppercase' as const,
                     cursor: 'pointer',
                   }}
                 >
@@ -487,11 +488,12 @@ export default function ClientList({
                   <th
                     onClick={() => toggleSort('type')}
                     style={{
-                      padding: '10px 14px',
+                      padding: '11px 14px',
                       textAlign: 'left',
-                      fontSize: 11,
-                      fontWeight: 600,
-                      color: B.light,
+                      fontSize: 12,
+                      fontWeight: 700,
+                      color: B.muted,
+                      textTransform: 'uppercase' as const,
                       cursor: 'pointer',
                     }}
                   >
@@ -502,11 +504,12 @@ export default function ClientList({
                 {cols.mtd && (
                   <th
                     style={{
-                      padding: '10px 14px',
+                      padding: '11px 14px',
                       textAlign: 'left',
-                      fontSize: 11,
-                      fontWeight: 600,
-                      color: B.light,
+                      fontSize: 12,
+                      fontWeight: 700,
+                      color: B.muted,
+                      textTransform: 'uppercase' as const,
                     }}
                   >
                     MTD
@@ -516,11 +519,12 @@ export default function ClientList({
                   <th
                     onClick={() => toggleSort('deadline')}
                     style={{
-                      padding: '10px 14px',
+                      padding: '11px 14px',
                       textAlign: 'left',
-                      fontSize: 11,
-                      fontWeight: 600,
-                      color: B.light,
+                      fontSize: 12,
+                      fontWeight: 700,
+                      color: B.muted,
+                      textTransform: 'uppercase' as const,
                       cursor: 'pointer',
                     }}
                   >
@@ -531,11 +535,12 @@ export default function ClientList({
                 {cols.filing && (
                   <th
                     style={{
-                      padding: '10px 14px',
+                      padding: '11px 14px',
                       textAlign: 'left',
-                      fontSize: 11,
-                      fontWeight: 600,
-                      color: B.light,
+                      fontSize: 12,
+                      fontWeight: 700,
+                      color: B.muted,
+                      textTransform: 'uppercase' as const,
                     }}
                   >
                     Status
@@ -544,11 +549,12 @@ export default function ClientList({
                 {cols.chase && (
                   <th
                     style={{
-                      padding: '10px 14px',
+                      padding: '11px 14px',
                       textAlign: 'left',
-                      fontSize: 11,
-                      fontWeight: 600,
-                      color: B.light,
+                      fontSize: 12,
+                      fontWeight: 700,
+                      color: B.muted,
+                      textTransform: 'uppercase' as const,
                     }}
                   >
                     Chase
@@ -558,11 +564,12 @@ export default function ClientList({
                   <th
                     onClick={() => toggleSort('income')}
                     style={{
-                      padding: '10px 14px',
+                      padding: '11px 14px',
                       textAlign: 'right',
-                      fontSize: 11,
-                      fontWeight: 600,
-                      color: B.light,
+                      fontSize: 12,
+                      fontWeight: 700,
+                      color: B.muted,
+                      textTransform: 'uppercase' as const,
                       cursor: 'pointer',
                     }}
                   >
@@ -575,14 +582,14 @@ export default function ClientList({
             <tbody>
               {clientsLoading && (
                 <tr>
-                  <td colSpan={10} style={{ padding: '24px', textAlign: 'center', fontSize: 13, color: B.muted }}>
-                    Loading clients…
+                  <td colSpan={10} style={{ padding: '28px', textAlign: 'center', fontSize: 14, color: B.muted }}>
+                    Loading clients...
                   </td>
                 </tr>
               )}
               {!clientsLoading && filtered.length === 0 && (
                 <tr>
-                  <td colSpan={10} style={{ padding: '24px', textAlign: 'center', fontSize: 13, color: B.light }}>
+                  <td colSpan={10} style={{ padding: '28px', textAlign: 'center', fontSize: 14, color: B.light }}>
                     No clients yet. Click &ldquo;+ Add client&rdquo; to invite your first client.
                   </td>
                 </tr>
@@ -601,7 +608,7 @@ export default function ClientList({
                     cursor: 'pointer',
                   }}
                 >
-                  <td style={{ padding: '10px 16px' }}>
+                  <td style={{ padding: '11px 16px' }}>
                     <input
                       type="checkbox"
                       checked={selected.has(c.id)}
@@ -610,22 +617,22 @@ export default function ClientList({
                       style={{ cursor: 'pointer', accentColor: B.primary }}
                     />
                   </td>
-                  <td style={{ padding: '10px 14px' }}>
-                    <div style={{ fontWeight: 600, fontSize: 13 }}>{c.name}</div>
-                    <div style={{ fontSize: 11, color: B.light, marginTop: 1 }}>{c.business}</div>
+                  <td style={{ padding: '11px 14px' }}>
+                    <div style={{ fontWeight: 600, fontSize: 14 }}>{c.name}</div>
+                    <div style={{ fontSize: 12, color: B.light, marginTop: 2 }}>{c.business}</div>
                   </td>
                   {cols.type && (
-                    <td style={{ padding: '10px 14px' }}>
+                    <td style={{ padding: '11px 14px' }}>
                       {c.type.length > 0 ? <TypePills types={c.type} /> : null}
                     </td>
                   )}
                   {cols.mtd && (
-                    <td style={{ padding: '10px 14px' }}>
+                    <td style={{ padding: '11px 14px' }}>
                       <span
                         style={{
-                          fontSize: 11,
-                          fontWeight: 600,
-                          padding: '2px 9px',
+                          fontSize: 12,
+                          fontWeight: 700,
+                          padding: '3px 10px',
                           borderRadius: 20,
                           background: c.mtd === 'Mandated' ? B.greenBg : B.blueBg,
                           color: c.mtd === 'Mandated' ? B.greenText : B.blueText,
@@ -637,25 +644,25 @@ export default function ClientList({
                     </td>
                   )}
                   {cols.deadline && (
-                    <td style={{ padding: '10px 14px', fontSize: 12 }}>{c.deadline}</td>
+                    <td style={{ padding: '11px 14px', fontSize: 13 }}>{c.deadline}</td>
                   )}
                   {cols.filing && (
-                    <td style={{ padding: '10px 14px' }}>
+                    <td style={{ padding: '11px 14px' }}>
                       <Badge status={c.filing} />
                     </td>
                   )}
                   {cols.chase && (
-                    <td style={{ padding: '10px 14px' }} onClick={(e) => e.stopPropagation()}>
+                    <td style={{ padding: '11px 14px' }} onClick={(e) => e.stopPropagation()}>
                       {c.needsResend ? (
                         <button
                           type="button"
                           disabled={resendingId === c.id}
                           onClick={(e) => handleResend(c.id, e)}
                           style={{
-                            fontSize: 11,
+                            fontSize: 12,
                             fontWeight: 600,
-                            padding: '4px 10px',
-                            borderRadius: 6,
+                            padding: '5px 12px',
+                            borderRadius: 7,
                             border: `1px solid ${B.primary}`,
                             background: B.blueBg,
                             color: B.blueText,
@@ -663,21 +670,21 @@ export default function ClientList({
                             opacity: resendingId === c.id ? 0.6 : 1,
                           }}
                         >
-                          {resendingId === c.id ? 'Sending…' : 'Resend invite'}
+                          {resendingId === c.id ? 'Sending...' : 'Resend invite'}
                         </button>
                       ) : (
-                        <span style={{ fontSize: 12, color: B.muted }}>No action</span>
+                        <span style={{ fontSize: 13, color: B.muted }}>No action</span>
                       )}
                     </td>
                   )}
                   {cols.income && (
                     <td
                       style={{
-                        padding: '10px 14px',
+                        padding: '11px 14px',
                         textAlign: 'right',
                         fontVariantNumeric: 'tabular-nums',
                         fontWeight: 500,
-                        fontSize: 12,
+                        fontSize: 13,
                       }}
                     >
                       {c.income > 0 ? `£${c.income.toLocaleString()}` : ''}
@@ -689,12 +696,12 @@ export default function ClientList({
           </table>
           <div
             style={{
-              padding: '12px 20px',
+              padding: '13px 20px',
               borderTop: `1px solid ${B.border}`,
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              fontSize: 12,
+              fontSize: 13,
               color: B.muted,
             }}
           >
@@ -729,8 +736,8 @@ export default function ClientList({
                 onClick={() => loadPage(1, statusFilter, search)}
                 disabled={page === 1 || clientsLoading}
                 style={{
-                  padding: '5px 10px', borderRadius: 6, border: `1px solid ${B.border}`,
-                  background: B.white, fontSize: 11, cursor: page === 1 ? 'default' : 'pointer',
+                  padding: '6px 11px', borderRadius: 7, border: `1px solid ${B.border}`,
+                  background: B.white, fontSize: 12, cursor: page === 1 ? 'default' : 'pointer',
                   color: page === 1 ? B.light : B.text, opacity: page === 1 ? 0.5 : 1,
                 }}
               >
@@ -740,12 +747,12 @@ export default function ClientList({
                 onClick={() => loadPage(page - 1, statusFilter, search)}
                 disabled={page === 1 || clientsLoading}
                 style={{
-                  padding: '5px 10px', borderRadius: 6, border: `1px solid ${B.border}`,
-                  background: B.white, fontSize: 11, cursor: page === 1 ? 'default' : 'pointer',
+                  padding: '6px 11px', borderRadius: 7, border: `1px solid ${B.border}`,
+                  background: B.white, fontSize: 12, cursor: page === 1 ? 'default' : 'pointer',
                   color: page === 1 ? B.light : B.text, opacity: page === 1 ? 0.5 : 1,
                 }}
               >
-                ‹ Prev
+                Prev
               </button>
 
               {/* Page number buttons — show up to 5 around current page */}
@@ -758,7 +765,7 @@ export default function ClientList({
                 }, [])
                 .map((p, i) =>
                   p === 'ellipsis' ? (
-                    <span key={`e${i}`} style={{ fontSize: 11, color: B.light, padding: '0 4px' }}>…</span>
+                    <span key={`e${i}`} style={{ fontSize: 12, color: B.light, padding: '0 4px' }}>...</span>
                   ) : (
                     <button
                       key={p}
@@ -769,8 +776,8 @@ export default function ClientList({
                         border: `1px solid ${page === p ? B.primary : B.border}`,
                         background: page === p ? B.primary : B.white,
                         color: page === p ? '#fff' : B.text,
-                        fontSize: 11, fontWeight: page === p ? 600 : 400,
-                        cursor: 'pointer', minWidth: 32,
+                        fontSize: 12, fontWeight: page === p ? 700 : 400,
+                        cursor: 'pointer', minWidth: 34,
                       }}
                     >
                       {p}
@@ -782,21 +789,21 @@ export default function ClientList({
                 onClick={() => loadPage(page + 1, statusFilter, search)}
                 disabled={page === totalPages || clientsLoading}
                 style={{
-                  padding: '5px 10px', borderRadius: 6, border: `1px solid ${B.border}`,
-                  background: B.white, fontSize: 11,
+                  padding: '6px 11px', borderRadius: 7, border: `1px solid ${B.border}`,
+                  background: B.white, fontSize: 12,
                   cursor: page === totalPages ? 'default' : 'pointer',
                   color: page === totalPages ? B.light : B.text,
                   opacity: page === totalPages ? 0.5 : 1,
                 }}
               >
-                Next ›
+                Next
               </button>
               <button
                 onClick={() => loadPage(totalPages, statusFilter, search)}
                 disabled={page === totalPages || clientsLoading}
                 style={{
-                  padding: '5px 10px', borderRadius: 6, border: `1px solid ${B.border}`,
-                  background: B.white, fontSize: 11,
+                  padding: '6px 11px', borderRadius: 7, border: `1px solid ${B.border}`,
+                  background: B.white, fontSize: 12,
                   cursor: page === totalPages ? 'default' : 'pointer',
                   color: page === totalPages ? B.light : B.text,
                   opacity: page === totalPages ? 0.5 : 1,

@@ -40,8 +40,8 @@ export default function Settings({ navigate = () => {} }: { navigate?: (route: s
           flexShrink: 0,
         }}
       >
-        <div style={{ fontSize: 20, fontWeight: 700 }}>Settings</div>
-        <div style={{ fontSize: 13, color: B.muted, marginTop: 2 }}>
+        <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.01em' }}>Settings</div>
+        <div style={{ fontSize: 14, color: B.muted, marginTop: 3 }}>
           Manage your firm, HMRC connection, team, and preferences
         </div>
       </div>

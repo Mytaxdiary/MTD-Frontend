@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useCallback, useEffect, useState } from 'react'
 import B from '@/styles/theme'
@@ -189,7 +189,7 @@ function BusinessRow({
       {expanded && (
         <div style={{ padding: '0 14px 14px', background: B.surface }}>
           {loadingDetails && (
-            <p style={{ fontSize: 12, color: B.muted, margin: '8px 0 0' }}>Loading business details…</p>
+            <p style={{ fontSize: 12, color: B.muted, margin: '8px 0 0' }}>Loading business details...</p>
           )}
           {detailError && (
             <div
@@ -319,7 +319,7 @@ export default function BusinessesCard({
             disabled={!canFetch || loading}
             onClick={() => void fetchBusinesses()}
           >
-            {loading ? 'Loading…' : businesses.length > 0 ? 'Refresh' : 'Fetch from HMRC'}
+            {loading ? 'Loading...' : businesses.length > 0 ? 'Refresh' : 'Fetch from HMRC'}
           </button>
         </div>
 
@@ -354,7 +354,7 @@ export default function BusinessesCard({
             ))}
           </div>
         ) : loading ? (
-          <p style={{ fontSize: 12, color: B.muted, margin: 0 }}>Loading businesses from HMRC…</p>
+          <p style={{ fontSize: 12, color: B.muted, margin: 0 }}>Loading businesses from HMRC...</p>
         ) : (
           !error && (
             <p style={{ fontSize: 12, color: B.muted, margin: 0 }}>

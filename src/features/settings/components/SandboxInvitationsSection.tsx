@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useCallback, useEffect, useState } from 'react'
 import B from '@/styles/theme'
 import { Card, CardHeader as CardHead } from '@/components/ui/card'
@@ -180,7 +180,7 @@ export default function SandboxInvitationsSection() {
         </div>
 
         {loading ? (
-          <div style={{ fontSize: 13, color: B.muted }}>Loading invitations…</div>
+          <div style={{ fontSize: 13, color: B.muted }}>Loading invitations...</div>
         ) : invitations.length === 0 ? (
           <div style={{ fontSize: 13, color: B.muted }}>
             No outstanding invitations. Send one from Clients → Add client.
@@ -238,7 +238,7 @@ export default function SandboxInvitationsSection() {
                     disabled={actionId !== null}
                     onClick={() => handleRefresh(inv)}
                   >
-                    {actionId === `refresh-${inv.id}` ? 'Checking…' : 'Check status'}
+                    {actionId === `refresh-${inv.id}` ? 'Checking...' : 'Check status'}
                   </button>
                   <button
                     type="button"
@@ -250,7 +250,7 @@ export default function SandboxInvitationsSection() {
                     disabled={actionId !== null}
                     onClick={() => handleAccept(inv)}
                   >
-                    {actionId === inv.id ? 'Accepting…' : 'Accept (sandbox)'}
+                    {actionId === inv.id ? 'Accepting...' : 'Accept (sandbox)'}
                   </button>
                 </div>
               </div>

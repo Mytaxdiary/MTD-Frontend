@@ -57,7 +57,7 @@ export default function NotificationsSection() {
   }
 
   const groupLabel = (text: string, mt = 4) => (
-    <div style={{ fontSize: 12, fontWeight: 600, color: B.muted, marginBottom: 8, marginTop: mt }}>
+    <div style={{ fontSize: 13, fontWeight: 600, color: B.muted, marginBottom: 8, marginTop: mt }}>
       {text}
     </div>
   )
@@ -72,7 +72,7 @@ export default function NotificationsSection() {
       />
       <div style={{ padding: '12px 20px 20px' }}>
         {loading ? (
-          <div style={{ fontSize: 13, color: B.muted, padding: '12px 0' }}>Loading…</div>
+          <div style={{ fontSize: 14, color: B.muted, padding: '12px 0' }}>Loading...</div>
         ) : (
           <>
             {groupLabel('Chase delivery channels')}
@@ -80,7 +80,7 @@ export default function NotificationsSection() {
             <SettingsToggle on={prefs.chaseSms} onChange={(v) => set('chaseSms', v)} label="Send client chases via SMS" />
             <div
               style={{
-                fontSize: 10,
+                fontSize: 11,
                 color: B.light,
                 padding: '6px 0 0',
                 borderBottom: `1px solid ${B.borderLight}`,
@@ -98,7 +98,7 @@ export default function NotificationsSection() {
             <div style={{ marginTop: 16 }}>
               <label
                 style={{
-                  fontSize: 12,
+                  fontSize: 13,
                   fontWeight: 600,
                   color: B.muted,
                   display: 'block',
@@ -111,10 +111,10 @@ export default function NotificationsSection() {
                 value={String(prefs.reminderDays)}
                 onChange={(e) => set('reminderDays', Number(e.target.value))}
                 style={{
-                  padding: '8px 12px',
+                  padding: '9px 12px',
                   borderRadius: 8,
                   border: `1px solid ${B.border}`,
-                  fontSize: 12,
+                  fontSize: 13,
                   background: B.white,
                   cursor: 'pointer',
                 }}
@@ -127,10 +127,10 @@ export default function NotificationsSection() {
             </div>
 
             {error && (
-              <div style={{ fontSize: 12, color: B.redText, marginTop: 10 }}>{error}</div>
+              <div style={{ fontSize: 13, color: B.redText, marginTop: 10 }}>{error}</div>
             )}
             {success && (
-              <div style={{ fontSize: 12, color: B.greenText, marginTop: 10 }}>Preferences saved.</div>
+              <div style={{ fontSize: 13, color: B.greenText, marginTop: 10 }}>Preferences saved.</div>
             )}
 
             <div
@@ -146,17 +146,17 @@ export default function NotificationsSection() {
                 onClick={handleSave}
                 disabled={saving}
                 style={{
-                  padding: '8px 20px',
+                  padding: '9px 22px',
                   borderRadius: 8,
                   border: 'none',
                   background: saving ? B.light : B.primary,
                   color: '#fff',
-                  fontSize: 13,
+                  fontSize: 14,
                   fontWeight: 600,
                   cursor: saving ? 'not-allowed' : 'pointer',
                 }}
               >
-                {saving ? 'Saving…' : 'Save preferences'}
+                {saving ? 'Saving...' : 'Save preferences'}
               </button>
             </div>
           </>

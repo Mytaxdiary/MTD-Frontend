@@ -30,11 +30,11 @@ const API_SUBSCRIPTIONS = [
 ]
 
 const outlineBtn: React.CSSProperties = {
-  padding: '8px 16px',
+  padding: '9px 18px',
   borderRadius: 8,
   border: `1px solid ${B.border}`,
   background: B.white,
-  fontSize: 12,
+  fontSize: 13,
   fontWeight: 500,
   cursor: 'pointer',
   color: B.text,
@@ -275,11 +275,11 @@ export default function HmrcSection() {
               <div
                 style={{
                   marginBottom: 12,
-                  padding: '8px 12px',
+                  padding: '10px 14px',
                   background: B.redBg,
                   border: '1px solid #FECACA',
                   borderRadius: 8,
-                  fontSize: 12,
+                  fontSize: 13,
                   color: B.redText,
                 }}
               >
@@ -292,11 +292,11 @@ export default function HmrcSection() {
               </button>
               <button
                 style={{
-                  padding: '8px 16px',
+                  padding: '9px 18px',
                   borderRadius: 8,
                   border: '1px solid #FECACA',
                   background: B.redBg,
-                  fontSize: 12,
+                  fontSize: 13,
                   fontWeight: 600,
                   cursor: disconnecting ? 'not-allowed' : 'pointer',
                   color: B.redText,
@@ -321,7 +321,7 @@ export default function HmrcSection() {
                   }
                 }}
               >
-                {disconnecting ? 'Disconnecting…' : 'Disconnect HMRC'}
+                {disconnecting ? 'Disconnecting...' : 'Disconnect HMRC'}
               </button>
             </div>
           </div>
@@ -346,8 +346,8 @@ export default function HmrcSection() {
           />
           <div style={{ padding: '20px' }}>
             {loading ? (
-              <div style={{ textAlign: 'center', padding: '24px 0', color: B.muted, fontSize: 13 }}>
-                Loading…
+              <div style={{ textAlign: 'center', padding: '24px 0', color: B.muted, fontSize: 14 }}>
+                Loading...
               </div>
             ) : (
               <>
@@ -367,10 +367,10 @@ export default function HmrcSection() {
                   >
                     <div style={{ width: 10, height: 10, borderRadius: 5, background: B.green }} />
                     <div>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: B.greenText }}>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: B.greenText }}>
                         Connected to HMRC
                       </div>
-                      <div style={{ fontSize: 11, color: '#047857' }}>
+                      <div style={{ fontSize: 12, color: '#047857' }}>
                         Agent Services Account linked and active
                       </div>
                     </div>
@@ -392,10 +392,10 @@ export default function HmrcSection() {
                       style={{ width: 10, height: 10, borderRadius: 5, background: B.light }}
                     />
                     <div>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: B.text }}>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: B.text }}>
                         Not connected to HMRC
                       </div>
-                      <div style={{ fontSize: 11, color: B.muted }}>
+                      <div style={{ fontSize: 12, color: B.muted }}>
                         No active Government Gateway connection
                       </div>
                     </div>
@@ -412,9 +412,9 @@ export default function HmrcSection() {
                     borderBottom: `1px solid ${B.borderLight}`,
                   }}
                 >
-                  <span style={{ fontSize: 12, color: B.muted }}>ARN</span>
+                  <span style={{ fontSize: 13, color: B.muted }}>ARN</span>
                   {!connected ? (
-                    <span style={{ fontSize: 12, fontWeight: 500, color: B.light }}>Not set</span>
+                    <span style={{ fontSize: 13, fontWeight: 500, color: B.light }}>Not set</span>
                   ) : arnEditing ? (
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                       <input
@@ -428,9 +428,9 @@ export default function HmrcSection() {
                         placeholder="e.g. EARN0713416"
                         style={{
                           fontFamily: 'monospace',
-                          fontSize: 12,
-                          padding: '4px 8px',
-                          borderRadius: 6,
+                          fontSize: 13,
+                          padding: '6px 10px',
+                          borderRadius: 7,
                           border: `1px solid ${arnError ? '#FECACA' : B.border}`,
                           outline: 'none',
                           width: 160,
@@ -440,17 +440,17 @@ export default function HmrcSection() {
                         onClick={handleSaveArn}
                         disabled={arnSaving || !arnInput.trim()}
                         style={{
-                          padding: '4px 10px',
-                          borderRadius: 6,
+                          padding: '6px 12px',
+                          borderRadius: 7,
                           border: 'none',
                           background: arnSaving || !arnInput.trim() ? B.light : B.primary,
                           color: '#fff',
-                          fontSize: 11,
+                          fontSize: 12,
                           fontWeight: 600,
                           cursor: arnSaving || !arnInput.trim() ? 'not-allowed' : 'pointer',
                         }}
                       >
-                        {arnSaving ? '…' : 'Save'}
+                        {arnSaving ? '...' : 'Save'}
                       </button>
                       <button
                         onClick={() => { setArnEditing(false); setArnError(null) }}
@@ -517,10 +517,10 @@ export default function HmrcSection() {
                       borderBottom: i < rows.length - 1 ? `1px solid ${B.borderLight}` : 'none',
                     }}
                   >
-                    <span style={{ fontSize: 12, color: B.muted }}>{k}</span>
+                    <span style={{ fontSize: 13, color: B.muted }}>{k}</span>
                     <span
                       style={{
-                        fontSize: 12,
+                        fontSize: 13,
                         fontWeight: 500,
                         color: v === '-' || v === 'Not connected' || v === 'Inactive' ? B.light : 'inherit',
                         fontFamily: k === 'Gateway ID' ? 'monospace' : 'inherit',
@@ -535,11 +535,11 @@ export default function HmrcSection() {
                   <div
                     style={{
                       marginTop: 12,
-                      padding: '8px 12px',
+                      padding: '10px 14px',
                       background: B.redBg,
                       border: '1px solid #FECACA',
                       borderRadius: 8,
-                      fontSize: 12,
+                      fontSize: 13,
                       color: B.redText,
                     }}
                   >
@@ -552,11 +552,11 @@ export default function HmrcSection() {
                   <div
                     style={{
                       marginTop: 12,
-                      padding: '8px 12px',
+                      padding: '10px 14px',
                       background: B.redBg,
                       border: '1px solid #FECACA',
                       borderRadius: 8,
-                      fontSize: 12,
+                      fontSize: 13,
                       color: B.redText,
                     }}
                   >
@@ -567,11 +567,11 @@ export default function HmrcSection() {
                   <div
                     style={{
                       marginTop: 12,
-                      padding: '8px 12px',
+                      padding: '10px 14px',
                       background: B.greenBg,
                       border: '1px solid #A7F3D0',
                       borderRadius: 8,
-                      fontSize: 12,
+                      fontSize: 13,
                       color: B.greenText,
                     }}
                   >
@@ -582,11 +582,11 @@ export default function HmrcSection() {
                   <div
                     style={{
                       marginTop: 12,
-                      padding: '8px 12px',
+                      padding: '10px 14px',
                       background: B.redBg,
                       border: '1px solid #FECACA',
                       borderRadius: 8,
-                      fontSize: 12,
+                      fontSize: 13,
                       color: B.redText,
                     }}
                   >
@@ -597,11 +597,11 @@ export default function HmrcSection() {
                   <div
                     style={{
                       marginTop: 12,
-                      padding: '8px 12px',
+                      padding: '10px 14px',
                       background: fraudValid ? (fraudHasWarnings ? B.amberBg : B.greenBg) : B.amberBg,
                       border: `1px solid ${fraudValid ? (fraudHasWarnings ? '#FDE68A' : '#A7F3D0') : '#FDE68A'}`,
                       borderRadius: 8,
-                      fontSize: 12,
+                      fontSize: 13,
                       color: fraudValid ? (fraudHasWarnings ? B.amberText : B.greenText) : B.amberText,
                     }}
                   >
@@ -622,7 +622,7 @@ export default function HmrcSection() {
                         onClick={handleRefreshToken}
                         disabled={refreshing}
                       >
-                        {refreshing ? 'Refreshing…' : 'Refresh token'}
+                        {refreshing ? 'Refreshing...' : 'Refresh token'}
                       </button>
                       <button
                         style={{
@@ -633,15 +633,15 @@ export default function HmrcSection() {
                         onClick={handleTestFraudHeaders}
                         disabled={fraudTesting}
                       >
-                        {fraudTesting ? 'Testing…' : 'Test fraud headers'}
+                        {fraudTesting ? 'Testing...' : 'Test fraud headers'}
                       </button>
                       <button
                         style={{
-                          padding: '8px 16px',
+                          padding: '9px 18px',
                           borderRadius: 8,
                           border: '1px solid #FECACA',
                           background: B.redBg,
-                          fontSize: 12,
+                          fontSize: 13,
                           fontWeight: 500,
                           cursor: 'pointer',
                           color: B.redText,
@@ -654,11 +654,11 @@ export default function HmrcSection() {
                   ) : (
                     <button
                       style={{
-                        padding: '8px 16px',
+                        padding: '9px 20px',
                         borderRadius: 8,
                         border: 'none',
                         background: connecting ? B.light : B.primary,
-                        fontSize: 12,
+                        fontSize: 13,
                         fontWeight: 600,
                         cursor: connecting ? 'not-allowed' : 'pointer',
                         color: '#fff',
@@ -667,7 +667,7 @@ export default function HmrcSection() {
                       onClick={handleConnect}
                       disabled={connecting}
                     >
-                      {connecting ? 'Redirecting to HMRC…' : 'Connect to HMRC'}
+                      {connecting ? 'Redirecting to HMRC...' : 'Connect to HMRC'}
                     </button>
                   )}
                 </div>
@@ -691,12 +691,12 @@ export default function HmrcSection() {
                     i < API_SUBSCRIPTIONS.length - 1 ? `1px solid ${B.borderLight}` : 'none',
                 }}
               >
-                <span style={{ fontSize: 12, fontFamily: 'monospace' }}>{a.api}</span>
+                <span style={{ fontSize: 13, fontFamily: 'monospace' }}>{a.api}</span>
                 <span
                   style={{
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: 600,
-                    padding: '2px 8px',
+                    padding: '3px 9px',
                     borderRadius: 10,
                     background: a.s === 'live' ? B.greenBg : B.amberBg,
                     color: a.s === 'live' ? B.greenText : B.amberText,

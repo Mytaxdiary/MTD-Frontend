@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState } from 'react'
 import B from '@/styles/theme'
 import { Card, CardHeader as CardHead } from '@/components/ui/card'
@@ -291,7 +291,7 @@ export default function SandboxTestUsersCard({ hmrcConnected, onSaveArn }: Props
           disabled={creating}
           onClick={handleCreate}
         >
-          {creating ? 'Creating test users…' : 'Create sandbox agent & client'}
+          {creating ? 'Creating test users...' : 'Create sandbox agent & client'}
         </button>
 
         {error && (
@@ -410,7 +410,7 @@ export default function SandboxTestUsersCard({ hmrcConnected, onSaveArn }: Props
                   disabled={savingArn || arnSaved}
                   onClick={handleSaveArn}
                 >
-                  {savingArn ? 'Saving ARN…' : arnSaved ? 'ARN saved' : 'Save ARN to this firm'}
+                  {savingArn ? 'Saving ARN...' : arnSaved ? 'ARN saved' : 'Save ARN to this firm'}
                 </button>
                 {arnSaved && (
                   <span style={{ fontSize: 12, color: B.greenText }}>
