@@ -211,10 +211,39 @@ export interface PaymentRecord {
   method: string
 }
 
+export interface NoteRecord {
+  id: string
+  clientId: string
+  text: string
+  authorName: string
+  isPinned: boolean
+  createdAt: string
+  updatedAt: string
+}
+
 export interface GetItsaStatusParams {
   taxYear: string
   history?: boolean
   futureYears?: boolean
+}
+
+export interface IncomeSummaryBusiness {
+  businessId: string
+  typeOfBusiness: string
+  tradingName?: string
+  totalIncome: number
+  totalExpenses: number
+  netProfit: number
+  netLoss: number
+}
+
+export interface IncomeSummaryResponse {
+  taxYear: string
+  totalIncome: number
+  totalExpenses: number
+  netProfit: number
+  netLoss: number
+  businesses: IncomeSummaryBusiness[]
 }
 
 export const clientsService = {
@@ -346,6 +375,40 @@ export const clientsService = {
       { params },
     )
     return res.data.data
+  },
+
+  /**
+   * Aggregated BISS v3.0 income summary for all businesses.
+   * Returns YTD totalIncome, totalExpenses, netProfit, netLoss.
+   * Defaults to the current running UK tax year if taxYear is omitted.
+   */
+  async getIncomeSummary(id: string, taxYear?: string): Promise<IncomeSummaryResponse> {
+    const res = await apiClient.get<{ data: IncomeSummaryResponse }>(
+      `/clients/${id}/income-summary`,
+      taxYear ? { params: { taxYear } } : undefined,
+    )
+    return res.data.data
+  },
+
+  // ── Client Notes ──────────────────────────────────────────────────────────
+
+  async getNotes(clientId: string): Promise<NoteRecord[]> {
+    const res = await apiClient.get<{ data: NoteRecord[] }>(`/clients/${clientId}/notes`)
+    return res.data.data
+  },
+
+  async createNote(clientId: string, text: string): Promise<NoteRecord> {
+    const res = await apiClient.post<{ data: NoteRecord }>(`/clients/${clientId}/notes`, { text })
+    return res.data.data
+  },
+
+  async updateNote(clientId: string, noteId: string, patch: { text?: string; isPinned?: boolean }): Promise<NoteRecord> {
+    const res = await apiClient.patch<{ data: NoteRecord }>(`/clients/${clientId}/notes/${noteId}`, patch)
+    return res.data.data
+  },
+
+  async deleteNote(clientId: string, noteId: string): Promise<void> {
+    await apiClient.delete(`/clients/${clientId}/notes/${noteId}`)
   },
 
   /** Bulk import clients from a CSV file. Returns success summary or throws with validation errors. */

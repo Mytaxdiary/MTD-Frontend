@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import portalService from '@/services/portal.service'
 import { setPortalSessionCookie } from '@/lib/auth/portalTokenStorage'
 import B from '@/styles/theme'
+import LegalFooter from '@/components/ui/LegalFooter'
 
 function SetupForm() {
   const router  = useRouter()
@@ -133,6 +134,8 @@ function SetupForm() {
           </button>
         </form>
       </div>
+
+      <LegalFooter />
     </div>
   )
 }

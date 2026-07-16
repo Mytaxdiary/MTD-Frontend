@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import portalService from '@/services/portal.service'
 import { setPortalSessionCookie } from '@/lib/auth/portalTokenStorage'
 import B from '@/styles/theme'
+import LegalFooter from '@/components/ui/LegalFooter'
 
 export default function PortalLoginPage() {
   const router = useRouter()
@@ -124,6 +125,7 @@ export default function PortalLoginPage() {
           </button>
         </form>
       </div>
+      <LegalFooter />
     </div>
   )
 }

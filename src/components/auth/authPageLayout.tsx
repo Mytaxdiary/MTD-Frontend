@@ -1,4 +1,5 @@
 import B from '@/styles/theme'
+import LegalFooter from '@/components/ui/LegalFooter'
 
 type AuthPageLayoutProps = {
   subtitle: string
@@ -86,6 +87,8 @@ export default function AuthPageLayout({
             {footerContent}
           </div>
         )}
+
+        <LegalFooter />
       </div>
     </main>
   )
