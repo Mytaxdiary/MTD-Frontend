@@ -187,6 +187,10 @@ export default function TermsPage() {
               For any questions about these Terms, contact us at{' '}
               <a href="mailto:info@mytaxdiary.co.uk" style={{ color: '#2563EB' }}>info@mytaxdiary.co.uk</a>.
             </P>
+            <P>
+              To report a security risk or incident, email{' '}
+              <a href="mailto:info@mytaxdiary.co.uk" style={{ color: '#2563EB' }}>info@mytaxdiary.co.uk</a>.
+            </P>
           </Section>
 
         </div>
