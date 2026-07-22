@@ -8,6 +8,7 @@ export type SectionKey =
   | 'notifications'
   | 'security'
   | 'billing'
+  | 'data-privacy'
 
 const SECTIONS: { k: SectionKey; l: string; i: string }[] = [
   { k: 'firm', l: 'Firm details', i: '⊡' },
@@ -17,6 +18,7 @@ const SECTIONS: { k: SectionKey; l: string; i: string }[] = [
   { k: 'notifications', l: 'Notifications', i: '⊙' },
   { k: 'security', l: 'Security & 2FA', i: '⊛' },
   { k: 'billing', l: 'Plan & billing', i: '◇' },
+  { k: 'data-privacy', l: 'Data & Privacy', i: '⊕' },
 ]
 
 interface Props {

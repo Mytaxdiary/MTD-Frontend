@@ -5,21 +5,6 @@ export const metadata: Metadata = {
   title: 'Privacy Policy | My Tax Diary',
 }
 
-const PENDING_STYLE: React.CSSProperties = {
-  display: 'inline-block',
-  background: '#FEF3C7',
-  color: '#92400E',
-  border: '1px solid #FDE68A',
-  borderRadius: 4,
-  padding: '1px 6px',
-  fontSize: 12,
-  fontWeight: 600,
-}
-
-function Pending({ label }: { label: string }) {
-  return <span style={PENDING_STYLE}>{label}</span>
-}
-
 export default function PrivacyPolicyPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#F8FAFC', fontFamily: "'DM Sans','Segoe UI',system-ui,sans-serif" }}>
@@ -44,7 +29,7 @@ export default function PrivacyPolicyPage() {
             Privacy Policy
           </h1>
           <p style={{ margin: 0, fontSize: 15, color: '#64748B' }}>
-            Effective date: <Pending label="[Effective date to be inserted]" />
+            Effective date: 20 July 2026
           </p>
         </div>
 
@@ -52,7 +37,7 @@ export default function PrivacyPolicyPage() {
 
           <Section num="1" title="Who We Are">
             <P>
-              This Privacy Policy explains how My Tax Diary Ltd (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;), a company registered in England and Wales under company number <strong>17312332</strong> with its registered office at <Pending label="[Registered office address to be inserted]" />, collects and uses personal data in connection with the My Tax Diary website and platform (the &quot;Service&quot;).
+              This Privacy Policy explains how My Tax Diary Ltd (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;), a company registered in England and Wales under company number <strong>17312332</strong> with its registered office at Suite 6, Earl Business Centre, Dowry St, Oldham OL8 2PF, collects and uses personal data in connection with the My Tax Diary website and platform (the &quot;Service&quot;).
             </P>
             <P>
               We are registered with the Information Commissioner&apos;s Office (ICO) under registration number <strong>ZC190729</strong>.

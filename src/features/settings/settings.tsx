@@ -10,6 +10,7 @@ import NotificationsSection from './components/NotificationsSection'
 import BillingSection from './components/BillingSection'
 import SandboxInvitationsSection from './components/SandboxInvitationsSection'
 import SecuritySection from './components/SecuritySection'
+import DataPrivacySection from './components/DataPrivacySection'
 
 const VALID_SECTIONS: SectionKey[] = [
   'firm',
@@ -19,6 +20,7 @@ const VALID_SECTIONS: SectionKey[] = [
   'notifications',
   'security',
   'billing',
+  'data-privacy',
 ]
 
 export default function Settings({ navigate = () => {} }: { navigate?: (route: string) => void }) {
@@ -58,6 +60,7 @@ export default function Settings({ navigate = () => {} }: { navigate?: (route: s
             {section === 'notifications' && <NotificationsSection />}
             {section === 'security' && <SecuritySection />}
             {section === 'billing' && <BillingSection />}
+            {section === 'data-privacy' && <DataPrivacySection />}
           </div>
         </div>
       </div>
