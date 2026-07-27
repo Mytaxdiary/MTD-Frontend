@@ -79,6 +79,9 @@ jobs:
             echo "==> Fetching latest main"
             git fetch origin main
             git checkout main
+            # Discard local edits to tracked files (e.g. package-lock.json drift from npm install).
+            # Untracked files like .env and uploads are left untouched.
+            git restore .
             git merge --ff-only origin/main
 
             echo "==> Installing dependencies"
