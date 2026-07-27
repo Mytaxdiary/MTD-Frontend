@@ -4,13 +4,14 @@ import { usePathname } from 'next/navigation'
 
 const NAV_LINKS = [
   { href: '/portal/dashboard', label: 'Dashboard' },
-  { href: '/portal/messages',  label: 'Messages' },
-  { href: '/portal/files',     label: 'Files' },
+  { href: '/portal/messages', label: 'Messages' },
+  { href: '/portal/files', label: 'Files' },
 ]
 
 export default function PortalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const isAuthPage = pathname === '/portal/login' || pathname === '/portal/setup' || pathname === '/portal/preview'
+  const isAuthPage =
+    pathname === '/portal/login' || pathname === '/portal/setup' || pathname === '/portal/preview'
 
   return (
     <div
@@ -67,9 +68,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
         )}
       </header>
 
-      <main style={{ maxWidth: 920, margin: '0 auto', padding: '28px 20px' }}>
-        {children}
-      </main>
+      <main style={{ maxWidth: 920, margin: '0 auto', padding: '28px 20px' }}>{children}</main>
     </div>
   )
 }

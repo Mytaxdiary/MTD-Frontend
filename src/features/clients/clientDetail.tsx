@@ -40,7 +40,11 @@ export default function ClientDetail({
   // ── Data fetching ───────────────────────────────────────────────────────────
 
   useEffect(() => {
-    if (!clientId) { setClient(null); setClientLoading(false); return }
+    if (!clientId) {
+      setClient(null)
+      setClientLoading(false)
+      return
+    }
     setClientLoading(true)
     setClientError(null)
     setFirstBusiness(null)
@@ -126,14 +130,35 @@ export default function ClientDetail({
         />
 
         {clientError && (
-          <div style={{ marginBottom: 16, padding: '10px 12px', background: B.redBg, border: '1px solid #FECACA', borderRadius: 8, fontSize: 12, color: B.redText }}>
+          <div
+            style={{
+              marginBottom: 16,
+              padding: '10px 12px',
+              background: B.redBg,
+              border: '1px solid #FECACA',
+              borderRadius: 8,
+              fontSize: 12,
+              color: B.redText,
+            }}
+          >
             {clientError}
           </div>
         )}
 
         {!clientId && (
-          <div style={{ marginBottom: 16, padding: '10px 12px', background: B.amberBg, border: '1px solid #FDE68A', borderRadius: 8, fontSize: 12, color: B.amberText }}>
-            Open a client from the Clients list to view live HMRC ITSA status. Demo layout below uses sample data.
+          <div
+            style={{
+              marginBottom: 16,
+              padding: '10px 12px',
+              background: B.amberBg,
+              border: '1px solid #FDE68A',
+              borderRadius: 8,
+              fontSize: 12,
+              color: B.amberText,
+            }}
+          >
+            Open a client from the Clients list to view live HMRC ITSA status. Demo layout below
+            uses sample data.
           </div>
         )}
 
@@ -149,7 +174,16 @@ export default function ClientDetail({
         {activeTab === 'liabilities' && client && <LiabilitiesTab client={client} />}
 
         {activeTab === 'liabilities' && !client && (
-          <div style={{ padding: '10px 12px', background: B.amberBg, border: '1px solid #FDE68A', borderRadius: 8, fontSize: 12, color: B.amberText }}>
+          <div
+            style={{
+              padding: '10px 12px',
+              background: B.amberBg,
+              border: '1px solid #FDE68A',
+              borderRadius: 8,
+              fontSize: 12,
+              color: B.amberText,
+            }}
+          >
             Open a client from the Clients list to view HMRC liabilities.
           </div>
         )}

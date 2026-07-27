@@ -42,11 +42,11 @@ export default function CheckEmailPage() {
           Verify your email address
         </div>
         <div style={{ fontSize: 13, color: B.muted, lineHeight: 1.6, marginBottom: 20 }}>
-          We've sent a verification link to <b style={{ color: B.text }}>{email}</b>. 
-          Click the link to activate your account and start using MTD ITSA.
+          We&apos;ve sent a verification link to <b style={{ color: B.text }}>{email}</b>. Click the link
+          to activate your account and start using MTD ITSA.
         </div>
         <div style={{ fontSize: 12, color: B.muted, lineHeight: 1.6, marginBottom: 24 }}>
-          Didn't receive the email? Check your spam folder or try registering again.
+          Didn&apos;t receive the email? Check your spam folder or try registering again.
         </div>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
           <Link

@@ -89,10 +89,7 @@ function clientRows(ind: HmrcSandboxIndividualUser): [string, string][] {
     ['Postcode', ind.postcode],
   ]
   if (ind.mtdItId) rows.push(['MTD IT ID', ind.mtdItId])
-  rows.push(
-    ['User ID', ind.userId],
-    ['Password', ind.password],
-  )
+  rows.push(['User ID', ind.userId], ['Password', ind.password])
   if (ind.groupIdentifier) rows.push(['Group ID', ind.groupIdentifier])
   rows.push(['Email', ind.emailAddress], ['Name', ind.userFullName])
   if (addressParts) rows.push(['Address', addressParts])
@@ -196,9 +193,7 @@ function downloadBulkCsv(individuals: HmrcSandboxIndividualUser[]): void {
   const headers = 'name,nino,postcode,email,phone,agent_type,personal_message'
 
   const escCsv = (v: string) =>
-    v.includes(',') || v.includes('"') || v.includes('\n')
-      ? `"${v.replace(/"/g, '""')}"`
-      : v
+    v.includes(',') || v.includes('"') || v.includes('\n') ? `"${v.replace(/"/g, '""')}"` : v
 
   const dataRows = individuals.map((ind) =>
     [
@@ -209,7 +204,7 @@ function downloadBulkCsv(individuals: HmrcSandboxIndividualUser[]): void {
       '',
       'main',
       '',
-    ].join(','),
+    ].join(',')
   )
 
   const csv = [headers, ...dataRows].join('\n')
@@ -258,8 +253,7 @@ export default function SandboxTestUsersCard({ hmrcConnected, onSaveArn }: Props
       await onSaveArn(result.agent.agentServicesAccountNumber)
       setArnSaved(true)
     } catch (err: unknown) {
-      const msg =
-        (err as { message?: string })?.message ?? 'Failed to save ARN.'
+      const msg = (err as { message?: string })?.message ?? 'Failed to save ARN.'
       setError(msg)
     } finally {
       setSavingArn(false)
@@ -276,9 +270,9 @@ export default function SandboxTestUsersCard({ hmrcConnected, onSaveArn }: Props
       />
       <div style={{ padding: '20px' }}>
         <p style={{ fontSize: 13, color: B.muted, lineHeight: 1.6, margin: '0 0 16px' }}>
-          One click creates a sandbox agent and individual in HMRC, same as the
-          Postman &quot;00 - Test Users&quot; folder. Use the agent credentials to connect HMRC,
-          then add a client with the individual NINO and postcode.
+          One click creates a sandbox agent and individual in HMRC, same as the Postman &quot;00 -
+          Test Users&quot; folder. Use the agent credentials to connect HMRC, then add a client with
+          the individual NINO and postcode.
         </p>
 
         <button
@@ -365,7 +359,14 @@ export default function SandboxTestUsersCard({ hmrcConnected, onSaveArn }: Props
                   gap: 5,
                 }}
               >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
                   <path d="M12 5v14M5 12l7 7 7-7" />
                 </svg>
                 Download CSV

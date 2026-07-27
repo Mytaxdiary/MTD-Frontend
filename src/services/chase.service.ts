@@ -69,10 +69,9 @@ export const chaseService = {
 
   /** Update chase log status (e.g. mark as responded) */
   async updateStatus(logId: string, status: string): Promise<ChaseLogRecord> {
-    const res = await apiClient.patch<{ data: ChaseLogRecord }>(
-      `/chase-logs/${logId}/status`,
-      { status },
-    )
+    const res = await apiClient.patch<{ data: ChaseLogRecord }>(`/chase-logs/${logId}/status`, {
+      status,
+    })
     return res.data.data
   },
 }

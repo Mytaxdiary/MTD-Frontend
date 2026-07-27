@@ -38,7 +38,10 @@ export const chaseTemplatesService = {
   },
 
   async update(id: string, payload: UpdateChaseTemplatePayload): Promise<ChaseTemplateRecord> {
-    const res = await apiClient.patch<{ data: ChaseTemplateRecord }>(`/chase-templates/${id}`, payload)
+    const res = await apiClient.patch<{ data: ChaseTemplateRecord }>(
+      `/chase-templates/${id}`,
+      payload
+    )
     return res.data.data
   },
 

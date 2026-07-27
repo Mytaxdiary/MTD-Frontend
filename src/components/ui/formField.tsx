@@ -37,7 +37,7 @@ export default function FormField({ label, error, hint, mb = 18, children }: For
           id,
           ...(describedBy ? { 'aria-describedby': describedBy } : {}),
           ...(error ? { 'aria-invalid': 'true' as const } : {}),
-        },
+        }
       )
     }
     return child
@@ -54,10 +54,7 @@ export default function FormField({ label, error, hint, mb = 18, children }: For
       </label>
 
       {hint && (
-        <div
-          id={hintId}
-          style={{ fontSize: 11, color: B.muted, marginBottom: 6, lineHeight: 1.5 }}
-        >
+        <div id={hintId} style={{ fontSize: 11, color: B.muted, marginBottom: 6, lineHeight: 1.5 }}>
           {hint}
         </div>
       )}

@@ -17,7 +17,7 @@ const accountService = {
     const res = await apiClient.post<Blob>(
       '/account/data-export',
       { password },
-      { responseType: 'blob' },
+      { responseType: 'blob' }
     )
     const today = new Date().toISOString().slice(0, 10)
     return {
@@ -36,7 +36,10 @@ const accountService = {
   async requestDeletion(password: string, mfaCode?: string): Promise<{ executeAt: string }> {
     const body: Record<string, string> = { password }
     if (mfaCode) body.mfaCode = mfaCode
-    const res = await apiClient.post<{ data: { executeAt: string } }>('/account/deletion-request', body)
+    const res = await apiClient.post<{ data: { executeAt: string } }>(
+      '/account/deletion-request',
+      body
+    )
     return res.data.data
   },
 

@@ -252,10 +252,26 @@ export const clientsService = {
     return res.data.data
   },
 
-  async getPortalFiles(clientId: string): Promise<Array<{
-    id: string; originalName: string; mimeType: string; size: number; viewedByAgent: boolean; createdAt: string
-  }>> {
-    const res = await apiClient.get<{ data: Array<{ id: string; originalName: string; mimeType: string; size: number; viewedByAgent: boolean; createdAt: string }> }>(`/clients/${clientId}/portal-files`)
+  async getPortalFiles(clientId: string): Promise<
+    Array<{
+      id: string
+      originalName: string
+      mimeType: string
+      size: number
+      viewedByAgent: boolean
+      createdAt: string
+    }>
+  > {
+    const res = await apiClient.get<{
+      data: Array<{
+        id: string
+        originalName: string
+        mimeType: string
+        size: number
+        viewedByAgent: boolean
+        createdAt: string
+      }>
+    }>(`/clients/${clientId}/portal-files`)
     return res.data.data
   },
 
@@ -264,9 +280,21 @@ export const clientsService = {
     limit?: number
     status?: string
     search?: string
-  }): Promise<{ clients: ClientRecord[]; total: number; page: number; limit: number; totalPages: number }> {
+  }): Promise<{
+    clients: ClientRecord[]
+    total: number
+    page: number
+    limit: number
+    totalPages: number
+  }> {
     const res = await apiClient.get<{
-      data: { clients: ClientRecord[]; total: number; page: number; limit: number; totalPages: number }
+      data: {
+        clients: ClientRecord[]
+        total: number
+        page: number
+        limit: number
+        totalPages: number
+      }
     }>('/clients', { params })
     return res.data.data
   },
@@ -282,7 +310,7 @@ export const clientsService = {
   },
 
   async checkRelationshipStatus(
-    id: string,
+    id: string
   ): Promise<{ client: ClientRecord; relationshipActive: boolean }> {
     const res = await apiClient.get<{
       data: { client: ClientRecord; relationshipActive: boolean }
@@ -292,11 +320,11 @@ export const clientsService = {
 
   async resendInvitation(
     id: string,
-    payload?: { personalMessage?: string },
+    payload?: { personalMessage?: string }
   ): Promise<CreateClientResult> {
     const res = await apiClient.post<{ data: CreateClientResult }>(
       `/clients/${id}/resend-invitation`,
-      payload ?? {},
+      payload ?? {}
     )
     return res.data.data
   },
@@ -309,7 +337,7 @@ export const clientsService = {
   async acceptInvitationSandbox(id: string): Promise<ClientRecord> {
     const res = await apiClient.post<{ data: ClientRecord }>(
       `/clients/${id}/accept-invitation-sandbox`,
-      {},
+      {}
     )
     return res.data.data
   },
@@ -328,51 +356,51 @@ export const clientsService = {
 
   async getBusinessDetails(id: string, businessId: string): Promise<BusinessDetailsResponse> {
     const res = await apiClient.get<{ data: BusinessDetailsResponse }>(
-      `/clients/${id}/businesses/${encodeURIComponent(businessId)}`,
+      `/clients/${id}/businesses/${encodeURIComponent(businessId)}`
     )
     return res.data.data
   },
 
   async getIncomeAndExpenditureObligations(
     id: string,
-    params: GetIncomeExpenditureObligationsParams,
+    params: GetIncomeExpenditureObligationsParams
   ): Promise<IncomeExpenditureObligationsResponse> {
     const res = await apiClient.get<{ data: IncomeExpenditureObligationsResponse }>(
       `/clients/${id}/obligations/income-and-expenditure`,
-      { params },
+      { params }
     )
     return res.data.data
   },
 
   async getCrystallisationObligations(
     id: string,
-    params: GetCrystallisationObligationsParams,
+    params: GetCrystallisationObligationsParams
   ): Promise<CrystallisationObligationsResponse> {
     const res = await apiClient.get<{ data: CrystallisationObligationsResponse }>(
       `/clients/${id}/obligations/crystallisation`,
-      { params },
+      { params }
     )
     return res.data.data
   },
 
   async getBalanceAndTransactions(
     id: string,
-    params?: GetBalanceAndTransactionsParams,
+    params?: GetBalanceAndTransactionsParams
   ): Promise<BalanceAndTransactionsResponse> {
     const res = await apiClient.get<{ data: BalanceAndTransactionsResponse }>(
       `/clients/${id}/liabilities/balance-and-transactions`,
-      { params },
+      { params }
     )
     return res.data.data
   },
 
   async getPaymentsAndAllocations(
     id: string,
-    params?: GetPaymentsAndAllocationsParams,
+    params?: GetPaymentsAndAllocationsParams
   ): Promise<PaymentsAndAllocationsResponse> {
     const res = await apiClient.get<{ data: PaymentsAndAllocationsResponse }>(
       `/clients/${id}/liabilities/payments-and-allocations`,
-      { params },
+      { params }
     )
     return res.data.data
   },
@@ -385,7 +413,7 @@ export const clientsService = {
   async getIncomeSummary(id: string, taxYear?: string): Promise<IncomeSummaryResponse> {
     const res = await apiClient.get<{ data: IncomeSummaryResponse }>(
       `/clients/${id}/income-summary`,
-      taxYear ? { params: { taxYear } } : undefined,
+      taxYear ? { params: { taxYear } } : undefined
     )
     return res.data.data
   },
@@ -402,8 +430,15 @@ export const clientsService = {
     return res.data.data
   },
 
-  async updateNote(clientId: string, noteId: string, patch: { text?: string; isPinned?: boolean }): Promise<NoteRecord> {
-    const res = await apiClient.patch<{ data: NoteRecord }>(`/clients/${clientId}/notes/${noteId}`, patch)
+  async updateNote(
+    clientId: string,
+    noteId: string,
+    patch: { text?: string; isPinned?: boolean }
+  ): Promise<NoteRecord> {
+    const res = await apiClient.patch<{ data: NoteRecord }>(
+      `/clients/${clientId}/notes/${noteId}`,
+      patch
+    )
     return res.data.data
   },
 

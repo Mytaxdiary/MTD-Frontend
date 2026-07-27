@@ -22,7 +22,7 @@ portalAxiosClient.interceptors.response.use(
       }
     }
     return Promise.reject(err as Error)
-  },
+  }
 )
 
 export default portalAxiosClient

@@ -6,7 +6,10 @@ import TypePills from '@/components/common/typePills'
 import { matchesTypeFilter } from '@/lib/helpers/clientType'
 import B from '@/styles/theme'
 import { useCurrentUser, firstName } from '@/components/auth/CurrentUserProvider'
-import dashboardService, { type DashboardClientRow, type DashboardSummary } from '@/services/dashboard.service'
+import dashboardService, {
+  type DashboardClientRow,
+  type DashboardSummary,
+} from '@/services/dashboard.service'
 
 function timeOfDayGreeting(): string {
   const h = new Date().getHours()
@@ -51,11 +54,11 @@ const QDot = ({ status }: { status: string }) => {
 
 const Badge = ({ status }: { status: string }) => {
   const m: Record<string, { bg: string; c: string; b: string; l: string }> = {
-    overdue:        { bg: B.redBg,    c: B.redText,    b: '#FECACA', l: 'Overdue'    },
-    'due-soon':     { bg: B.amberBg,  c: B.amberText,  b: '#FDE68A', l: 'Due soon'   },
-    filed:          { bg: B.greenBg,  c: B.greenText,  b: '#A7F3D0', l: 'Filed'      },
-    authorized:     { bg: B.greenBg,  c: B.greenText,  b: '#A7F3D0', l: 'Authorised' },
-    'pending-invite': { bg: B.purpleBg, c: B.purpleText, b: '#DDD6FE', l: 'Pending'  },
+    overdue: { bg: B.redBg, c: B.redText, b: '#FECACA', l: 'Overdue' },
+    'due-soon': { bg: B.amberBg, c: B.amberText, b: '#FDE68A', l: 'Due soon' },
+    filed: { bg: B.greenBg, c: B.greenText, b: '#A7F3D0', l: 'Filed' },
+    authorized: { bg: B.greenBg, c: B.greenText, b: '#A7F3D0', l: 'Authorised' },
+    'pending-invite': { bg: B.purpleBg, c: B.purpleText, b: '#DDD6FE', l: 'Pending' },
   }
   const s = m[status] ?? m.filed
   return (
@@ -107,13 +110,31 @@ const MetricCard = ({
       transition: 'all 0.15s',
     }}
   >
-    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: color }} />
+    <div
+      style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: color }}
+    />
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
       <div>
-        <div style={{ fontSize: 12, fontWeight: 600, color: B.muted, letterSpacing: '0.03em', marginBottom: 4 }}>
+        <div
+          style={{
+            fontSize: 12,
+            fontWeight: 600,
+            color: B.muted,
+            letterSpacing: '0.03em',
+            marginBottom: 4,
+          }}
+        >
           {label}
         </div>
-        <div style={{ fontSize: 28, fontWeight: 800, color: B.text, lineHeight: 1, letterSpacing: '-0.02em' }}>
+        <div
+          style={{
+            fontSize: 28,
+            fontWeight: 800,
+            color: B.text,
+            lineHeight: 1,
+            letterSpacing: '-0.02em',
+          }}
+        >
           {value}
         </div>
         <div style={{ fontSize: 12, color: B.light, marginTop: 4 }}>{sub}</div>
@@ -160,7 +181,9 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
     }
   }, [])
 
-  useEffect(() => { loadSummary() }, [loadSummary])
+  useEffect(() => {
+    loadSummary()
+  }, [loadSummary])
 
   const clients: DashboardClientRow[] = summary?.clients ?? []
 
@@ -196,11 +219,11 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
     return true
   })
 
-  const overdueCount   = summary?.metrics.overdue       ?? 0
-  const dueSoonCount   = summary?.metrics.dueSoon        ?? 0
+  const overdueCount = summary?.metrics.overdue ?? 0
+  const dueSoonCount = summary?.metrics.dueSoon ?? 0
   const pendingInvites = summary?.metrics.pendingInvites ?? 0
   // Records Ready has no live backend model — always 0 from live data
-  const recordsReady   = clients.filter((c) => c.records && c.status !== 'filed').length
+  const recordsReady = clients.filter((c) => c.records && c.status !== 'filed').length
 
   const goToClient = (id: string) => router.push(`/clients/detail?id=${id}`)
 
@@ -317,8 +340,19 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <select
               value={statusFilter}
-              onChange={(e) => { setStatusFilter(e.target.value); setActiveMetric(null) }}
-              style={{ padding: '7px 11px', borderRadius: 7, border: `1px solid ${B.border}`, fontSize: 13, color: B.text, background: B.white, cursor: 'pointer' }}
+              onChange={(e) => {
+                setStatusFilter(e.target.value)
+                setActiveMetric(null)
+              }}
+              style={{
+                padding: '7px 11px',
+                borderRadius: 7,
+                border: `1px solid ${B.border}`,
+                fontSize: 13,
+                color: B.text,
+                background: B.white,
+                cursor: 'pointer',
+              }}
             >
               <option value="all">All statuses</option>
               <option value="overdue">Overdue</option>
@@ -329,7 +363,15 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              style={{ padding: '7px 11px', borderRadius: 7, border: `1px solid ${B.border}`, fontSize: 13, color: B.text, background: B.white, cursor: 'pointer' }}
+              style={{
+                padding: '7px 11px',
+                borderRadius: 7,
+                border: `1px solid ${B.border}`,
+                fontSize: 13,
+                color: B.text,
+                background: B.white,
+                cursor: 'pointer',
+              }}
             >
               <option value="all">All types</option>
               <option value="SE">Self-employment</option>
@@ -340,7 +382,15 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
               <select
                 value={quarterFilter}
                 onChange={(e) => setQuarterFilter(e.target.value)}
-                style={{ padding: '7px 11px', borderRadius: 7, border: `1px solid ${B.border}`, fontSize: 13, color: B.text, background: B.white, cursor: 'pointer' }}
+                style={{
+                  padding: '7px 11px',
+                  borderRadius: 7,
+                  border: `1px solid ${B.border}`,
+                  fontSize: 13,
+                  color: B.text,
+                  background: B.white,
+                  cursor: 'pointer',
+                }}
               >
                 <option value="all">All quarters</option>
                 <option value="Q1">Q1</option>
@@ -355,15 +405,30 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
           </div>
           <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
             <button
-              style={{ padding: '7px 13px', borderRadius: 7, border: `1px solid ${B.border}`, fontSize: 13, cursor: 'pointer', background: B.white, color: B.muted }}
+              style={{
+                padding: '7px 13px',
+                borderRadius: 7,
+                border: `1px solid ${B.border}`,
+                fontSize: 13,
+                cursor: 'pointer',
+                background: B.white,
+                color: B.muted,
+              }}
             >
               Export
             </button>
             <div style={{ display: 'flex', gap: 0, marginLeft: 8 }}>
-              {[{ k: 'list', l: '☰' }, { k: 'kanban', l: '▥' }, { k: 'year', l: '▦' }].map((v) => (
+              {[
+                { k: 'list', l: '☰' },
+                { k: 'kanban', l: '▥' },
+                { k: 'year', l: '▦' },
+              ].map((v) => (
                 <button
                   key={v.k}
-                  onClick={() => { setView(v.k); if (v.k !== 'list') setQuarterFilter('all') }}
+                  onClick={() => {
+                    setView(v.k)
+                    if (v.k !== 'list') setQuarterFilter('all')
+                  }}
                   style={{
                     padding: '6px 10px',
                     border: `1px solid ${B.border}`,
@@ -371,10 +436,13 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                     cursor: 'pointer',
                     background: view === v.k ? B.navy : 'transparent',
                     color: view === v.k ? '#fff' : B.muted,
-                    borderRadius: v.k === 'list' ? '6px 0 0 6px' : v.k === 'year' ? '0 6px 6px 0' : '0',
+                    borderRadius:
+                      v.k === 'list' ? '6px 0 0 6px' : v.k === 'year' ? '0 6px 6px 0' : '0',
                     marginLeft: v.k !== 'list' ? '-1px' : '0',
                   }}
-                  title={v.k === 'list' ? 'List view' : v.k === 'kanban' ? 'Kanban view' : 'Year view'}
+                  title={
+                    v.k === 'list' ? 'List view' : v.k === 'kanban' ? 'Kanban view' : 'Year view'
+                  }
                 >
                   {v.l}
                 </button>
@@ -385,7 +453,14 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
 
         {/* LIST VIEW */}
         {view === 'list' && (
-          <div style={{ background: B.white, borderRadius: '0 0 12px 12px', border: `1px solid ${B.border}`, overflow: 'hidden' }}>
+          <div
+            style={{
+              background: B.white,
+              borderRadius: '0 0 12px 12px',
+              border: `1px solid ${B.border}`,
+              overflow: 'hidden',
+            }}
+          >
             {loading ? (
               <div style={{ padding: 40, textAlign: 'center', fontSize: 14, color: B.muted }}>
                 Loading clients...
@@ -394,17 +469,38 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
                 <thead>
                   <tr style={{ borderBottom: `2px solid ${B.border}`, background: B.surface }}>
-                    {['Client', 'Type', 'Quarter', 'Deadline', 'Status', 'Chase status', ''].map((h, i) => (
-                      <th key={i} style={{ padding: '11px 16px', textAlign: 'left', fontSize: 12, fontWeight: 700, color: B.muted, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-                        {h}
-                      </th>
-                    ))}
+                    {['Client', 'Type', 'Quarter', 'Deadline', 'Status', 'Chase status', ''].map(
+                      (h, i) => (
+                        <th
+                          key={i}
+                          style={{
+                            padding: '11px 16px',
+                            textAlign: 'left',
+                            fontSize: 12,
+                            fontWeight: 700,
+                            color: B.muted,
+                            letterSpacing: '0.04em',
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          {h}
+                        </th>
+                      )
+                    )}
                   </tr>
                 </thead>
                 <tbody>
                   {filtered.length === 0 ? (
                     <tr>
-                      <td colSpan={7} style={{ padding: '32px 16px', textAlign: 'center', color: B.muted, fontSize: 13 }}>
+                      <td
+                        colSpan={7}
+                        style={{
+                          padding: '32px 16px',
+                          textAlign: 'center',
+                          color: B.muted,
+                          fontSize: 13,
+                        }}
+                      >
                         No clients match the current filter.
                       </td>
                     </tr>
@@ -413,7 +509,11 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                       <tr
                         key={c.id}
                         onClick={() => goToClient(c.id)}
-                        style={{ borderBottom: `1px solid ${B.borderLight}`, cursor: 'pointer', background: i % 2 === 1 ? '#FAFBFC' : 'transparent' }}
+                        style={{
+                          borderBottom: `1px solid ${B.borderLight}`,
+                          cursor: 'pointer',
+                          background: i % 2 === 1 ? '#FAFBFC' : 'transparent',
+                        }}
                       >
                         <td style={{ padding: '12px 16px' }}>
                           <div style={{ fontWeight: 600 }}>{c.name}</div>
@@ -427,7 +527,9 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                         <td style={{ padding: '12px 16px' }}>
                           <div>{c.deadline}</div>
                           {c.daysLeft < 0 && (
-                            <div style={{ fontSize: 12, color: B.red, fontWeight: 600 }}>{Math.abs(c.daysLeft)}d overdue</div>
+                            <div style={{ fontSize: 12, color: B.red, fontWeight: 600 }}>
+                              {Math.abs(c.daysLeft)}d overdue
+                            </div>
                           )}
                           {c.daysLeft > 0 && (
                             <div style={{ fontSize: 12, color: B.light }}>{c.daysLeft}d left</div>
@@ -439,29 +541,78 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                         <td style={{ padding: '12px 16px' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                             {c.records && (
-                              <span style={{ width: 6, height: 6, borderRadius: 3, background: B.green }} />
+                              <span
+                                style={{
+                                  width: 6,
+                                  height: 6,
+                                  borderRadius: 3,
+                                  background: B.green,
+                                }}
+                              />
                             )}
-                            <span style={{ color: c.records ? B.greenText : B.muted, fontSize: 13 }}>
+                            <span
+                              style={{ color: c.records ? B.greenText : B.muted, fontSize: 13 }}
+                            >
                               {c.chase}
                             </span>
                           </div>
                         </td>
                         <td style={{ padding: '12px 16px' }}>
                           {c.status === 'overdue' && (
-                            <button style={{ padding: '5px 14px', borderRadius: 6, border: 'none', background: B.red, color: '#fff', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}
-                              onClick={(e) => { e.stopPropagation(); navigate('chase') }}>
+                            <button
+                              style={{
+                                padding: '5px 14px',
+                                borderRadius: 6,
+                                border: 'none',
+                                background: B.red,
+                                color: '#fff',
+                                fontSize: 12,
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                              }}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                navigate('chase')
+                              }}
+                            >
                               Chase
                             </button>
                           )}
                           {c.status === 'due-soon' && (
-                            <button style={{ padding: '5px 14px', borderRadius: 6, border: `1px solid ${B.border}`, background: 'transparent', color: B.muted, fontSize: 12, cursor: 'pointer' }}
-                              onClick={(e) => { e.stopPropagation(); navigate('chase') }}>
+                            <button
+                              style={{
+                                padding: '5px 14px',
+                                borderRadius: 6,
+                                border: `1px solid ${B.border}`,
+                                background: 'transparent',
+                                color: B.muted,
+                                fontSize: 12,
+                                cursor: 'pointer',
+                              }}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                navigate('chase')
+                              }}
+                            >
                               Chase
                             </button>
                           )}
                           {c.status === 'pending-invite' && (
-                            <button style={{ padding: '5px 14px', borderRadius: 6, border: `1px solid ${B.border}`, background: 'transparent', color: B.muted, fontSize: 12, cursor: 'pointer' }}
-                              onClick={(e) => { e.stopPropagation(); goToClient(c.id) }}>
+                            <button
+                              style={{
+                                padding: '5px 14px',
+                                borderRadius: 6,
+                                border: `1px solid ${B.border}`,
+                                background: 'transparent',
+                                color: B.muted,
+                                fontSize: 12,
+                                cursor: 'pointer',
+                              }}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                goToClient(c.id)
+                              }}
+                            >
                               Resend
                             </button>
                           )}
@@ -491,13 +642,38 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
             {mockKanbanCols.map((col) => {
               const colClients = filtered.filter((c) => c.stage === col.key)
               return (
-                <div key={col.key} style={{ background: col.bg, borderRadius: 10, padding: 10, minHeight: 300 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, padding: '0 4px' }}>
+                <div
+                  key={col.key}
+                  style={{ background: col.bg, borderRadius: 10, padding: 10, minHeight: 300 }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: 10,
+                      padding: '0 4px',
+                    }}
+                  >
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <div style={{ width: 8, height: 8, borderRadius: 4, background: col.color }} />
-                      <span style={{ fontSize: 12, fontWeight: 600, color: B.text }}>{col.label}</span>
+                      <div
+                        style={{ width: 8, height: 8, borderRadius: 4, background: col.color }}
+                      />
+                      <span style={{ fontSize: 12, fontWeight: 600, color: B.text }}>
+                        {col.label}
+                      </span>
                     </div>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: B.muted, background: B.white, borderRadius: 10, padding: '2px 9px', border: `1px solid ${B.border}` }}>
+                    <span
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 700,
+                        color: B.muted,
+                        background: B.white,
+                        borderRadius: 10,
+                        padding: '2px 9px',
+                        border: `1px solid ${B.border}`,
+                      }}
+                    >
                       {colClients.length}
                     </span>
                   </div>
@@ -506,22 +682,47 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                       <div
                         key={c.id}
                         onClick={() => goToClient(c.id)}
-                        style={{ background: B.white, borderRadius: 8, padding: '12px 14px', border: `1px solid ${B.border}`, cursor: 'pointer' }}
+                        style={{
+                          background: B.white,
+                          borderRadius: 8,
+                          padding: '12px 14px',
+                          border: `1px solid ${B.border}`,
+                          cursor: 'pointer',
+                        }}
                       >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
-                          <div style={{ fontWeight: 600, fontSize: 13, lineHeight: 1.3 }}>{c.name}</div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'flex-start',
+                            marginBottom: 6,
+                          }}
+                        >
+                          <div style={{ fontWeight: 600, fontSize: 13, lineHeight: 1.3 }}>
+                            {c.name}
+                          </div>
                           <Badge status={c.status} />
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
                           <div style={{ display: 'flex', gap: 3, alignItems: 'center' }}>
-                            <span style={{ fontSize: 11, color: B.light, marginRight: 2 }}>Q1-4:</span>
+                            <span style={{ fontSize: 11, color: B.light, marginRight: 2 }}>
+                              Q1-4:
+                            </span>
                             <QDot status={c.q1} />
                             <QDot status={c.q2} />
                             <QDot status={c.q3} />
                             <QDot status={c.q4} />
                           </div>
                           {c.daysLeft < 0 && (
-                            <span style={{ fontSize: 11, fontWeight: 600, color: B.red }}>{Math.abs(c.daysLeft)}d late</span>
+                            <span style={{ fontSize: 11, fontWeight: 600, color: B.red }}>
+                              {Math.abs(c.daysLeft)}d late
+                            </span>
                           )}
                           {c.daysLeft > 0 && (
                             <span style={{ fontSize: 11, color: B.light }}>{c.daysLeft}d left</span>
@@ -538,70 +739,160 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
 
         {/* YEAR VIEW */}
         {view === 'year' && (
-          <div style={{ background: B.white, borderRadius: '0 0 12px 12px', border: `1px solid ${B.border}`, overflow: 'hidden' }}>
+          <div
+            style={{
+              background: B.white,
+              borderRadius: '0 0 12px 12px',
+              border: `1px solid ${B.border}`,
+              overflow: 'hidden',
+            }}
+          >
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
                 <tr style={{ borderBottom: `1px solid ${B.border}` }}>
                   {['Client', 'Q1', 'Q2', 'Q3', 'Q4', 'Final dec.', 'Overall'].map((h, i) => (
-                    <th key={i} style={{ padding: '11px 16px', textAlign: i >= 1 ? 'center' : 'left', fontSize: 12, fontWeight: 700, color: B.muted, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                    <th
+                      key={i}
+                      style={{
+                        padding: '11px 16px',
+                        textAlign: i >= 1 ? 'center' : 'left',
+                        fontSize: 12,
+                        fontWeight: 700,
+                        color: B.muted,
+                        letterSpacing: '0.04em',
+                        textTransform: 'uppercase',
+                      }}
+                    >
                       {h}
                     </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {filtered.filter((c) => c.status !== 'pending-invite').map((c, i) => {
-                  const qs = [c.q1, c.q2, c.q3, c.q4]
-                  const allFiled   = qs.every((q) => q === 'filed')
-                  const hasOverdue = qs.some((q) => q === 'overdue')
-                  return (
-                    <tr
-                      key={c.id}
-                      onClick={() => goToClient(c.id)}
-                      style={{ borderBottom: `1px solid ${B.borderLight}`, background: i % 2 === 1 ? '#FAFBFC' : 'transparent', cursor: 'pointer' }}
-                    >
-                      <td style={{ padding: '12px 16px', fontWeight: 600 }}>{c.name}</td>
-                      {qs.map((q, qi) => (
-                        <td key={qi} style={{ padding: '12px 16px', textAlign: 'center' }}>
-                          <div style={{
-                            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                            width: 28, height: 28, borderRadius: 14,
-                            background: q === 'filed' ? B.greenBg : q === 'overdue' ? B.redBg : q === 'ready' ? `${B.primary}18` : B.surface,
-                            border: `1px solid ${q === 'filed' ? '#A7F3D0' : q === 'overdue' ? '#FECACA' : q === 'ready' ? '#BAE6FD' : B.borderLight}`,
-                          }}>
-                            <span style={{ fontSize: 11, fontWeight: 700, color: q === 'filed' ? B.greenText : q === 'overdue' ? B.redText : q === 'ready' ? B.primary : B.light }}>
-                              {q === 'filed' ? '✓' : q === 'overdue' ? '!' : q === 'ready' ? '●' : '○'}
-                            </span>
+                {filtered
+                  .filter((c) => c.status !== 'pending-invite')
+                  .map((c, i) => {
+                    const qs = [c.q1, c.q2, c.q3, c.q4]
+                    const allFiled = qs.every((q) => q === 'filed')
+                    const hasOverdue = qs.some((q) => q === 'overdue')
+                    return (
+                      <tr
+                        key={c.id}
+                        onClick={() => goToClient(c.id)}
+                        style={{
+                          borderBottom: `1px solid ${B.borderLight}`,
+                          background: i % 2 === 1 ? '#FAFBFC' : 'transparent',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <td style={{ padding: '12px 16px', fontWeight: 600 }}>{c.name}</td>
+                        {qs.map((q, qi) => (
+                          <td key={qi} style={{ padding: '12px 16px', textAlign: 'center' }}>
+                            <div
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: 28,
+                                height: 28,
+                                borderRadius: 14,
+                                background:
+                                  q === 'filed'
+                                    ? B.greenBg
+                                    : q === 'overdue'
+                                      ? B.redBg
+                                      : q === 'ready'
+                                        ? `${B.primary}18`
+                                        : B.surface,
+                                border: `1px solid ${q === 'filed' ? '#A7F3D0' : q === 'overdue' ? '#FECACA' : q === 'ready' ? '#BAE6FD' : B.borderLight}`,
+                              }}
+                            >
+                              <span
+                                style={{
+                                  fontSize: 11,
+                                  fontWeight: 700,
+                                  color:
+                                    q === 'filed'
+                                      ? B.greenText
+                                      : q === 'overdue'
+                                        ? B.redText
+                                        : q === 'ready'
+                                          ? B.primary
+                                          : B.light,
+                                }}
+                              >
+                                {q === 'filed'
+                                  ? '✓'
+                                  : q === 'overdue'
+                                    ? '!'
+                                    : q === 'ready'
+                                      ? '●'
+                                      : '○'}
+                              </span>
+                            </div>
+                          </td>
+                        ))}
+                        <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                          <div
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              width: 28,
+                              height: 28,
+                              borderRadius: 14,
+                              background: B.surface,
+                              border: `1px solid ${B.borderLight}`,
+                            }}
+                          >
+                            <span style={{ fontSize: 11, color: B.light }}>○</span>
                           </div>
                         </td>
-                      ))}
-                      <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                        <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: 14, background: B.surface, border: `1px solid ${B.borderLight}` }}>
-                          <span style={{ fontSize: 11, color: B.light }}>○</span>
-                        </div>
-                      </td>
-                      <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                        <span style={{ fontSize: 12, fontWeight: 700, padding: '3px 11px', borderRadius: 20, background: allFiled ? B.greenBg : hasOverdue ? B.redBg : B.amberBg, color: allFiled ? B.greenText : hasOverdue ? B.redText : B.amberText, border: `1px solid ${allFiled ? '#A7F3D0' : hasOverdue ? '#FECACA' : '#FDE68A'}` }}>
-                          {allFiled ? 'On track' : hasOverdue ? 'Action needed' : 'In progress'}
-                        </span>
-                      </td>
-                    </tr>
-                  )
-                })}
+                        <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                          <span
+                            style={{
+                              fontSize: 12,
+                              fontWeight: 700,
+                              padding: '3px 11px',
+                              borderRadius: 20,
+                              background: allFiled ? B.greenBg : hasOverdue ? B.redBg : B.amberBg,
+                              color: allFiled ? B.greenText : hasOverdue ? B.redText : B.amberText,
+                              border: `1px solid ${allFiled ? '#A7F3D0' : hasOverdue ? '#FECACA' : '#FDE68A'}`,
+                            }}
+                          >
+                            {allFiled ? 'On track' : hasOverdue ? 'Action needed' : 'In progress'}
+                          </span>
+                        </td>
+                      </tr>
+                    )
+                  })}
               </tbody>
             </table>
-            <div style={{ padding: '10px 20px', borderTop: `1px solid ${B.border}`, display: 'flex', gap: 16, fontSize: 12, color: B.muted }}>
+            <div
+              style={{
+                padding: '10px 20px',
+                borderTop: `1px solid ${B.border}`,
+                display: 'flex',
+                gap: 16,
+                fontSize: 12,
+                color: B.muted,
+              }}
+            >
               <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                <div style={{ width: 10, height: 10, borderRadius: 5, background: B.green }} /> Filed
+                <div style={{ width: 10, height: 10, borderRadius: 5, background: B.green }} />{' '}
+                Filed
               </span>
               <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                <div style={{ width: 10, height: 10, borderRadius: 5, background: B.primary }} /> Records ready
+                <div style={{ width: 10, height: 10, borderRadius: 5, background: B.primary }} />{' '}
+                Records ready
               </span>
               <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                <div style={{ width: 10, height: 10, borderRadius: 5, background: B.light }} /> Pending
+                <div style={{ width: 10, height: 10, borderRadius: 5, background: B.light }} />{' '}
+                Pending
               </span>
               <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                <div style={{ width: 10, height: 10, borderRadius: 5, background: B.red }} /> Overdue
+                <div style={{ width: 10, height: 10, borderRadius: 5, background: B.red }} />{' '}
+                Overdue
               </span>
             </div>
           </div>

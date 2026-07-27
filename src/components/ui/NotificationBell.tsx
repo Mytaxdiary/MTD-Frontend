@@ -2,9 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import appNotificationsService, {
-  type AppNotification,
-} from '@/services/appNotifications.service'
+import appNotificationsService, { type AppNotification } from '@/services/appNotifications.service'
 
 function timeAgo(iso: string): string {
   const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000)
@@ -68,7 +66,9 @@ export default function NotificationBell() {
 
   const handleMarkRead = async (id: string) => {
     await appNotificationsService.markRead(id)
-    setItems((prev) => prev.map((n) => (n.id === id ? { ...n, readAt: new Date().toISOString() } : n)))
+    setItems((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, readAt: new Date().toISOString() } : n))
+    )
     setCount((c) => Math.max(0, c - 1))
   }
 

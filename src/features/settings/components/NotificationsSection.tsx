@@ -35,7 +35,9 @@ export default function NotificationsSection() {
     }
   }, [])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => {
+    load()
+  }, [load])
 
   const set = <K extends keyof NotificationPrefs>(key: K, val: NotificationPrefs[K]) =>
     setPrefs((p) => ({ ...p, [key]: val }))
@@ -76,8 +78,16 @@ export default function NotificationsSection() {
         ) : (
           <>
             {groupLabel('Chase delivery channels')}
-            <SettingsToggle on={prefs.chaseEmail} onChange={(v) => set('chaseEmail', v)} label="Send client chases via email" />
-            <SettingsToggle on={prefs.chaseSms} onChange={(v) => set('chaseSms', v)} label="Send client chases via SMS" />
+            <SettingsToggle
+              on={prefs.chaseEmail}
+              onChange={(v) => set('chaseEmail', v)}
+              label="Send client chases via email"
+            />
+            <SettingsToggle
+              on={prefs.chaseSms}
+              onChange={(v) => set('chaseSms', v)}
+              label="Send client chases via SMS"
+            />
             <div
               style={{
                 fontSize: 11,
@@ -90,10 +100,28 @@ export default function NotificationsSection() {
             </div>
 
             {groupLabel('Agent alerts', 20)}
-            <SettingsToggle on={prefs.overdueAlert} onChange={(v) => set('overdueAlert', v)} label="Email me when a client obligation becomes overdue" />
-            <SettingsToggle on={prefs.deadlineReminder} onChange={(v) => set('deadlineReminder', v)} label="Email me before upcoming deadlines" />
-            <SettingsToggle on={prefs.inviteAccepted} onChange={(v) => set('inviteAccepted', v)} label="Notify me when a client accepts an invitation" isNew />
-            <SettingsToggle on={prefs.liabilityAlert} onChange={(v) => set('liabilityAlert', v)} label="Alert me when a client has overdue HMRC liabilities" isNew />
+            <SettingsToggle
+              on={prefs.overdueAlert}
+              onChange={(v) => set('overdueAlert', v)}
+              label="Email me when a client obligation becomes overdue"
+            />
+            <SettingsToggle
+              on={prefs.deadlineReminder}
+              onChange={(v) => set('deadlineReminder', v)}
+              label="Email me before upcoming deadlines"
+            />
+            <SettingsToggle
+              on={prefs.inviteAccepted}
+              onChange={(v) => set('inviteAccepted', v)}
+              label="Notify me when a client accepts an invitation"
+              isNew
+            />
+            <SettingsToggle
+              on={prefs.liabilityAlert}
+              onChange={(v) => set('liabilityAlert', v)}
+              label="Alert me when a client has overdue HMRC liabilities"
+              isNew
+            />
 
             <div style={{ marginTop: 16 }}>
               <label
@@ -126,11 +154,11 @@ export default function NotificationsSection() {
               </select>
             </div>
 
-            {error && (
-              <div style={{ fontSize: 13, color: B.redText, marginTop: 10 }}>{error}</div>
-            )}
+            {error && <div style={{ fontSize: 13, color: B.redText, marginTop: 10 }}>{error}</div>}
             {success && (
-              <div style={{ fontSize: 13, color: B.greenText, marginTop: 10 }}>Preferences saved.</div>
+              <div style={{ fontSize: 13, color: B.greenText, marginTop: 10 }}>
+                Preferences saved.
+              </div>
             )}
 
             <div

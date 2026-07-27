@@ -11,11 +11,7 @@ import {
   liabilityRowStatus,
   sanitizeHmrcAmount,
 } from '@/lib/hmrc/liabilityLabel'
-import {
-  clientsService,
-  type ClientRecord,
-  type HmrcPayment,
-} from '@/services/clients.service'
+import { clientsService, type ClientRecord, type HmrcPayment } from '@/services/clients.service'
 
 const outlineBtn: React.CSSProperties = {
   padding: '7px 14px',
@@ -166,12 +162,13 @@ export default function LiabilitiesTab({ client }: Props) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20 }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-
         {/* ── Liabilities ─────────────────────────────── */}
         <Card>
           <CardHeader
             title="HMRC liabilities"
-            right={<span style={{ fontSize: 12, color: B.muted }}>Source: SA Accounts API v4.0</span>}
+            right={
+              <span style={{ fontSize: 12, color: B.muted }}>Source: SA Accounts API v4.0</span>
+            }
           />
 
           {!canFetch && (
@@ -279,7 +276,7 @@ export default function LiabilitiesTab({ client }: Props) {
                     >
                       {h}
                     </th>
-                  ),
+                  )
                 )}
               </tr>
             </thead>
@@ -293,7 +290,9 @@ export default function LiabilitiesTab({ client }: Props) {
               ) : rows.length === 0 ? (
                 <tr>
                   <td colSpan={6} style={{ padding: '16px', color: B.muted, fontSize: 12 }}>
-                    {canFetch ? 'No liability charges returned for this period.' : 'Authorise client to load data.'}
+                    {canFetch
+                      ? 'No liability charges returned for this period.'
+                      : 'Authorise client to load data.'}
                   </td>
                 </tr>
               ) : (
@@ -316,7 +315,13 @@ export default function LiabilitiesTab({ client }: Props) {
                       <td style={{ padding: '12px 16px', color: B.muted }}>
                         {fmtUkShortDate(doc.documentDueDate)}
                       </td>
-                      <td style={{ padding: '12px 16px', textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
+                      <td
+                        style={{
+                          padding: '12px 16px',
+                          textAlign: 'right',
+                          fontVariantNumeric: 'tabular-nums',
+                        }}
+                      >
                         {fmtMoney(original)}
                       </td>
                       <td
@@ -418,17 +423,20 @@ export default function LiabilitiesTab({ client }: Props) {
               ) : payments.length === 0 ? (
                 <tr>
                   <td colSpan={4} style={{ padding: '16px', color: B.muted, fontSize: 12 }}>
-                    {canFetch ? 'No payments found for the last 2 years.' : 'Authorise client to load data.'}
+                    {canFetch
+                      ? 'No payments found for the last 2 years.'
+                      : 'Authorise client to load data.'}
                   </td>
                 </tr>
               ) : (
                 payments.map((p, i) => {
                   const amount = sanitizeHmrcAmount(p.paymentAmount)
                   return (
-                    <tr key={`${p.paymentLot ?? i}-${p.paymentLotItem ?? i}`} style={{ borderBottom: `1px solid ${B.borderLight}` }}>
-                      <td style={{ padding: '12px 16px' }}>
-                        {fmtUkShortDate(p.transactionDate)}
-                      </td>
+                    <tr
+                      key={`${p.paymentLot ?? i}-${p.paymentLotItem ?? i}`}
+                      style={{ borderBottom: `1px solid ${B.borderLight}` }}
+                    >
+                      <td style={{ padding: '12px 16px' }}>{fmtUkShortDate(p.transactionDate)}</td>
                       <td
                         style={{
                           padding: '12px 16px',

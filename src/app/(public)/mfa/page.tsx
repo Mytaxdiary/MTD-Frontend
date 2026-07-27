@@ -24,7 +24,10 @@ export default function MfaPage() {
   const handleSubmit = async (ev: React.FormEvent) => {
     ev.preventDefault()
     const mfaToken = sessionStorage.getItem('mfa_token')
-    if (!mfaToken) { router.replace('/login'); return }
+    if (!mfaToken) {
+      router.replace('/login')
+      return
+    }
 
     const clean = code.replace(/\s/g, '')
     if (clean.length !== 6) {
@@ -59,8 +62,18 @@ export default function MfaPage() {
       subtitle="Two-step verification"
       footerContent={
         <button
-          onClick={() => { sessionStorage.removeItem('mfa_token'); router.push('/login') }}
-          style={{ background: 'none', border: 'none', color: B.link, fontSize: 13, fontWeight: 500, cursor: 'pointer' }}
+          onClick={() => {
+            sessionStorage.removeItem('mfa_token')
+            router.push('/login')
+          }}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: B.link,
+            fontSize: 13,
+            fontWeight: 500,
+            cursor: 'pointer',
+          }}
         >
           ← Back to sign in
         </button>

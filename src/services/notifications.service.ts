@@ -12,7 +12,9 @@ export interface NotificationPrefs {
 
 const notificationsService = {
   async getPrefs(): Promise<NotificationPrefs> {
-    const res = await axiosClient.get<{ data: Record<string, unknown> }>('/tenants/me/notifications')
+    const res = await axiosClient.get<{ data: Record<string, unknown> }>(
+      '/tenants/me/notifications'
+    )
     const d = res.data.data
     return {
       chaseEmail: d.chaseEmail as boolean,
@@ -26,7 +28,10 @@ const notificationsService = {
   },
 
   async updatePrefs(payload: Partial<NotificationPrefs>): Promise<NotificationPrefs> {
-    const res = await axiosClient.patch<{ data: NotificationPrefs }>('/tenants/me/notifications', payload)
+    const res = await axiosClient.patch<{ data: NotificationPrefs }>(
+      '/tenants/me/notifications',
+      payload
+    )
     return res.data.data
   },
 }

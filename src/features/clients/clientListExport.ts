@@ -40,25 +40,22 @@ export function downloadCsv(rows: ClientListRow[], cols: Record<ColKeys, boolean
   const headers: string[] = [
     'Client name',
     'NINO',
-    ...(cols.type     ? ['Business type']  : []),
-    ...(cols.mtd      ? ['MTD status']     : []),
-    ...(cols.deadline ? ['Next deadline']  : []),
-    ...(cols.filing   ? ['Filing status']  : []),
-    ...(cols.chase    ? ['Chase']          : []),
-    ...(cols.income   ? ['YTD income (£)'] : []),
+    ...(cols.type ? ['Business type'] : []),
+    ...(cols.mtd ? ['MTD status'] : []),
+    ...(cols.deadline ? ['Next deadline'] : []),
+    ...(cols.filing ? ['Filing status'] : []),
+    ...(cols.chase ? ['Chase'] : []),
+    ...(cols.income ? ['YTD income (£)'] : []),
   ]
 
   const dataRows = rows.map((c) => {
-    const cells: (string | number)[] = [
-      escapeCsvCell(c.name),
-      escapeCsvCell(c.business),
-    ]
-    if (cols.type)     cells.push(escapeCsvCell(c.type.join(', ') || '-'))
-    if (cols.mtd)      cells.push(escapeCsvCell(c.mtd))
+    const cells: (string | number)[] = [escapeCsvCell(c.name), escapeCsvCell(c.business)]
+    if (cols.type) cells.push(escapeCsvCell(c.type.join(', ') || '-'))
+    if (cols.mtd) cells.push(escapeCsvCell(c.mtd))
     if (cols.deadline) cells.push(escapeCsvCell(c.deadline))
-    if (cols.filing)   cells.push(escapeCsvCell(titleCase(c.filing)))
-    if (cols.chase)    cells.push(escapeCsvCell(c.needsResend ? 'Resend invite' : '-'))
-    if (cols.income)   cells.push(escapeCsvCell(c.income > 0 ? c.income : '-'))
+    if (cols.filing) cells.push(escapeCsvCell(titleCase(c.filing)))
+    if (cols.chase) cells.push(escapeCsvCell(c.needsResend ? 'Resend invite' : '-'))
+    if (cols.income) cells.push(escapeCsvCell(c.income > 0 ? c.income : '-'))
     return cells.join(',')
   })
 
@@ -88,15 +85,15 @@ const PDF_STYLES = `
 `
 
 const ALWAYS_COLS = [
-  { key: 'name',     label: 'Client' },
-  { key: 'business', label: 'NINO'   },
+  { key: 'name', label: 'Client' },
+  { key: 'business', label: 'NINO' },
 ] as const
 
 const OPTIONAL_COLS: { key: keyof ClientListRow; label: string; flag: ColKeys }[] = [
-  { key: 'type',     label: 'Type',     flag: 'type'     },
-  { key: 'mtd',      label: 'MTD',      flag: 'mtd'      },
+  { key: 'type', label: 'Type', flag: 'type' },
+  { key: 'mtd', label: 'MTD', flag: 'mtd' },
   { key: 'deadline', label: 'Deadline', flag: 'deadline' },
-  { key: 'filing',   label: 'Status',   flag: 'filing'   },
+  { key: 'filing', label: 'Status', flag: 'filing' },
 ]
 
 export function printPdf(rows: ClientListRow[], cols: Record<ColKeys, boolean>): void {
@@ -118,7 +115,9 @@ export function printPdf(rows: ClientListRow[], cols: Record<ColKeys, boolean>):
     .join('')
 
   const exportDate = new Date().toLocaleDateString('en-GB', {
-    day: '2-digit', month: 'short', year: 'numeric',
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
   })
 
   const html = `<!DOCTYPE html>

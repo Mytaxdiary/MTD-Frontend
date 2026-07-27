@@ -10,8 +10,11 @@ interface Props {
 
 function fmtDate(iso: string): string {
   return new Date(iso).toLocaleString('en-GB', {
-    day: '2-digit', month: 'short', year: 'numeric',
-    hour: '2-digit', minute: '2-digit',
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   })
 }
 
@@ -41,7 +44,9 @@ export default function NotesTab({ clientId }: Props) {
     }
   }, [clientId])
 
-  useEffect(() => { void load() }, [load])
+  useEffect(() => {
+    void load()
+  }, [load])
 
   async function handleCreate() {
     if (!clientId || !newText.trim()) return
@@ -75,7 +80,9 @@ export default function NotesTab({ clientId }: Props) {
   async function handleTogglePin(note: NoteRecord) {
     if (!clientId) return
     try {
-      const updated = await clientsService.updateNote(clientId, note.id, { isPinned: !note.isPinned })
+      const updated = await clientsService.updateNote(clientId, note.id, {
+        isPinned: !note.isPinned,
+      })
       setNotes((prev) => prev.map((n) => (n.id === note.id ? updated : n)))
     } catch {
       setError('Failed to update note.')
@@ -100,7 +107,16 @@ export default function NotesTab({ clientId }: Props) {
 
   if (!clientId) {
     return (
-      <div style={{ padding: '10px 12px', background: B.amberBg, border: '1px solid #FDE68A', borderRadius: 8, fontSize: 12, color: B.amberText }}>
+      <div
+        style={{
+          padding: '10px 12px',
+          background: B.amberBg,
+          border: '1px solid #FDE68A',
+          borderRadius: 8,
+          fontSize: 12,
+          color: B.amberText,
+        }}
+      >
         Open a client to view and add notes.
       </div>
     )
@@ -109,7 +125,16 @@ export default function NotesTab({ clientId }: Props) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20, maxWidth: 780 }}>
       {error && (
-        <div style={{ padding: '8px 12px', background: B.redBg, border: '1px solid #FECACA', borderRadius: 8, fontSize: 12, color: B.redText }}>
+        <div
+          style={{
+            padding: '8px 12px',
+            background: B.redBg,
+            border: '1px solid #FECACA',
+            borderRadius: 8,
+            fontSize: 12,
+            color: B.redText,
+          }}
+        >
           {error}
         </div>
       )}
@@ -121,8 +146,20 @@ export default function NotesTab({ clientId }: Props) {
             !showNewForm ? (
               <button
                 type="button"
-                onClick={() => { setShowNewForm(true); setError(null) }}
-                style={{ padding: '5px 14px', borderRadius: 6, border: 'none', background: B.navy, color: '#fff', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}
+                onClick={() => {
+                  setShowNewForm(true)
+                  setError(null)
+                }}
+                style={{
+                  padding: '5px 14px',
+                  borderRadius: 6,
+                  border: 'none',
+                  background: B.navy,
+                  color: '#fff',
+                  fontSize: 11,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
               >
                 + Add note
               </button>
@@ -138,23 +175,59 @@ export default function NotesTab({ clientId }: Props) {
               onChange={(e) => setNewText(e.target.value)}
               placeholder="Type your note here..."
               rows={4}
-              style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: `1.5px solid ${B.border}`, fontSize: 13, color: B.text, resize: 'vertical', outline: 'none', fontFamily: 'inherit', lineHeight: 1.6, boxSizing: 'border-box' }}
-              onFocus={(e) => { e.target.style.borderColor = B.primary }}
-              onBlur={(e) => { e.target.style.borderColor = B.border }}
+              style={{
+                width: '100%',
+                padding: '10px 12px',
+                borderRadius: 8,
+                border: `1.5px solid ${B.border}`,
+                fontSize: 13,
+                color: B.text,
+                resize: 'vertical',
+                outline: 'none',
+                fontFamily: 'inherit',
+                lineHeight: 1.6,
+                boxSizing: 'border-box',
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = B.primary
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = B.border
+              }}
             />
             <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
               <button
                 type="button"
                 onClick={handleCreate}
                 disabled={creating || !newText.trim()}
-                style={{ padding: '6px 16px', borderRadius: 6, border: 'none', background: newText.trim() ? B.navy : B.xlight, color: newText.trim() ? '#fff' : B.muted, fontSize: 12, fontWeight: 600, cursor: newText.trim() && !creating ? 'pointer' : 'not-allowed' }}
+                style={{
+                  padding: '6px 16px',
+                  borderRadius: 6,
+                  border: 'none',
+                  background: newText.trim() ? B.navy : B.xlight,
+                  color: newText.trim() ? '#fff' : B.muted,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  cursor: newText.trim() && !creating ? 'pointer' : 'not-allowed',
+                }}
               >
                 {creating ? 'Saving...' : 'Save note'}
               </button>
               <button
                 type="button"
-                onClick={() => { setShowNewForm(false); setNewText('') }}
-                style={{ padding: '6px 12px', borderRadius: 6, border: `1px solid ${B.border}`, background: 'transparent', fontSize: 12, cursor: 'pointer', color: B.muted }}
+                onClick={() => {
+                  setShowNewForm(false)
+                  setNewText('')
+                }}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: 6,
+                  border: `1px solid ${B.border}`,
+                  background: 'transparent',
+                  fontSize: 12,
+                  cursor: 'pointer',
+                  color: B.muted,
+                }}
               >
                 Cancel
               </button>
@@ -175,11 +248,16 @@ export default function NotesTab({ clientId }: Props) {
             sorted.map((note, i) => (
               <div
                 key={note.id}
-                style={{ padding: '14px 0', borderBottom: i < sorted.length - 1 ? `1px solid ${B.borderLight}` : 'none' }}
+                style={{
+                  padding: '14px 0',
+                  borderBottom: i < sorted.length - 1 ? `1px solid ${B.borderLight}` : 'none',
+                }}
               >
                 {note.isPinned && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 6 }}>
-                    <span style={{ fontSize: 10, color: B.amberText, fontWeight: 600 }}>Pinned</span>
+                    <span style={{ fontSize: 10, color: B.amberText, fontWeight: 600 }}>
+                      Pinned
+                    </span>
                   </div>
                 )}
 
@@ -190,21 +268,50 @@ export default function NotesTab({ clientId }: Props) {
                       value={editText}
                       onChange={(e) => setEditText(e.target.value)}
                       rows={4}
-                      style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: `1.5px solid ${B.primary}`, fontSize: 13, color: B.text, resize: 'vertical', outline: 'none', fontFamily: 'inherit', lineHeight: 1.6, boxSizing: 'border-box' }}
+                      style={{
+                        width: '100%',
+                        padding: '10px 12px',
+                        borderRadius: 8,
+                        border: `1.5px solid ${B.primary}`,
+                        fontSize: 13,
+                        color: B.text,
+                        resize: 'vertical',
+                        outline: 'none',
+                        fontFamily: 'inherit',
+                        lineHeight: 1.6,
+                        boxSizing: 'border-box',
+                      }}
                     />
                     <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
                       <button
                         type="button"
                         onClick={() => handleSaveEdit(note.id)}
                         disabled={saving || !editText.trim()}
-                        style={{ padding: '5px 14px', borderRadius: 6, border: 'none', background: editText.trim() ? B.navy : B.xlight, color: editText.trim() ? '#fff' : B.muted, fontSize: 12, fontWeight: 600, cursor: editText.trim() && !saving ? 'pointer' : 'not-allowed' }}
+                        style={{
+                          padding: '5px 14px',
+                          borderRadius: 6,
+                          border: 'none',
+                          background: editText.trim() ? B.navy : B.xlight,
+                          color: editText.trim() ? '#fff' : B.muted,
+                          fontSize: 12,
+                          fontWeight: 600,
+                          cursor: editText.trim() && !saving ? 'pointer' : 'not-allowed',
+                        }}
                       >
                         {saving ? 'Saving...' : 'Save'}
                       </button>
                       <button
                         type="button"
                         onClick={() => setEditingId(null)}
-                        style={{ padding: '5px 10px', borderRadius: 6, border: `1px solid ${B.border}`, background: 'transparent', fontSize: 12, cursor: 'pointer', color: B.muted }}
+                        style={{
+                          padding: '5px 10px',
+                          borderRadius: 6,
+                          border: `1px solid ${B.border}`,
+                          background: 'transparent',
+                          fontSize: 12,
+                          cursor: 'pointer',
+                          color: B.muted,
+                        }}
                       >
                         Cancel
                       </button>
@@ -212,33 +319,78 @@ export default function NotesTab({ clientId }: Props) {
                   </div>
                 ) : (
                   <div>
-                    <div style={{ fontSize: 13, color: B.text, lineHeight: 1.65, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                    <div
+                      style={{
+                        fontSize: 13,
+                        color: B.text,
+                        lineHeight: 1.65,
+                        whiteSpace: 'pre-wrap',
+                        wordBreak: 'break-word',
+                      }}
+                    >
                       {note.text}
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginTop: 8,
+                      }}
+                    >
                       <span style={{ fontSize: 11, color: B.light }}>
-                        {fmtDate(note.updatedAt !== note.createdAt ? note.updatedAt : note.createdAt)} · {note.authorName}
+                        {fmtDate(
+                          note.updatedAt !== note.createdAt ? note.updatedAt : note.createdAt
+                        )}{' '}
+                        · {note.authorName}
                       </span>
                       <div style={{ display: 'flex', gap: 6 }}>
                         <button
                           type="button"
                           onClick={() => handleTogglePin(note)}
                           title={note.isPinned ? 'Unpin' : 'Pin note'}
-                          style={{ padding: '3px 8px', borderRadius: 5, border: `1px solid ${B.border}`, background: note.isPinned ? B.amberBg : 'transparent', fontSize: 11, cursor: 'pointer', color: note.isPinned ? B.amberText : B.muted }}
+                          style={{
+                            padding: '3px 8px',
+                            borderRadius: 5,
+                            border: `1px solid ${B.border}`,
+                            background: note.isPinned ? B.amberBg : 'transparent',
+                            fontSize: 11,
+                            cursor: 'pointer',
+                            color: note.isPinned ? B.amberText : B.muted,
+                          }}
                         >
                           {note.isPinned ? 'Unpin' : 'Pin'}
                         </button>
                         <button
                           type="button"
-                          onClick={() => { setEditingId(note.id); setEditText(note.text) }}
-                          style={{ padding: '3px 8px', borderRadius: 5, border: `1px solid ${B.border}`, background: 'transparent', fontSize: 11, cursor: 'pointer', color: B.muted }}
+                          onClick={() => {
+                            setEditingId(note.id)
+                            setEditText(note.text)
+                          }}
+                          style={{
+                            padding: '3px 8px',
+                            borderRadius: 5,
+                            border: `1px solid ${B.border}`,
+                            background: 'transparent',
+                            fontSize: 11,
+                            cursor: 'pointer',
+                            color: B.muted,
+                          }}
                         >
                           Edit
                         </button>
                         <button
                           type="button"
                           onClick={() => handleDelete(note.id)}
-                          style={{ padding: '3px 8px', borderRadius: 5, border: '1px solid #FECACA', background: 'transparent', fontSize: 11, cursor: 'pointer', color: B.redText }}
+                          style={{
+                            padding: '3px 8px',
+                            borderRadius: 5,
+                            border: '1px solid #FECACA',
+                            background: 'transparent',
+                            fontSize: 11,
+                            cursor: 'pointer',
+                            color: B.redText,
+                          }}
                         >
                           Delete
                         </button>

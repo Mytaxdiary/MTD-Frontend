@@ -3,7 +3,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import B from '@/styles/theme'
 import { Card, CardHeader } from '@/components/ui/card'
-import { clientsService, type ClientRecord, type ItsaStatusResponse } from '@/services/clients.service'
+import {
+  clientsService,
+  type ClientRecord,
+  type ItsaStatusResponse,
+} from '@/services/clients.service'
 import { currentUkTaxYear } from '@/lib/hmrc/taxYear'
 
 function fmtDate(iso?: string): string {
@@ -118,7 +122,15 @@ export default function ItsaStatusCard({ client }: { client: ClientRecord }) {
           </div>
         )}
 
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center', marginBottom: 12 }}>
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: 10,
+            alignItems: 'center',
+            marginBottom: 12,
+          }}
+        >
           <label style={{ fontSize: 12, color: B.muted }}>
             Tax year{' '}
             <input
@@ -135,7 +147,9 @@ export default function ItsaStatusCard({ client }: { client: ClientRecord }) {
               }}
             />
           </label>
-          <label style={{ fontSize: 12, color: B.text, display: 'flex', alignItems: 'center', gap: 4 }}>
+          <label
+            style={{ fontSize: 12, color: B.text, display: 'flex', alignItems: 'center', gap: 4 }}
+          >
             <input
               type="checkbox"
               checked={history}
@@ -143,7 +157,9 @@ export default function ItsaStatusCard({ client }: { client: ClientRecord }) {
             />
             History
           </label>
-          <label style={{ fontSize: 12, color: B.text, display: 'flex', alignItems: 'center', gap: 4 }}>
+          <label
+            style={{ fontSize: 12, color: B.text, display: 'flex', alignItems: 'center', gap: 4 }}
+          >
             <input
               type="checkbox"
               checked={futureYears}
@@ -224,7 +240,9 @@ export default function ItsaStatusCard({ client }: { client: ClientRecord }) {
             ))}
           </div>
         ) : loading ? (
-          <p style={{ fontSize: 12, color: B.muted, margin: 0 }}>Loading ITSA status from HMRC...</p>
+          <p style={{ fontSize: 12, color: B.muted, margin: 0 }}>
+            Loading ITSA status from HMRC...
+          </p>
         ) : (
           !error && (
             <p style={{ fontSize: 12, color: B.muted, margin: 0 }}>

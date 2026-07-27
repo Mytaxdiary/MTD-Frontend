@@ -7,10 +7,10 @@ import B from '@/styles/theme'
 const CHANNEL_ICON: Record<string, string> = { email: '✉', sms: '✆' }
 
 const STATUS_STYLE: Record<string, { bg: string; c: string; b: string }> = {
-  opened:    { bg: B.amberBg,  c: B.amberText,  b: '#FDE68A' },
-  responded: { bg: B.greenBg,  c: B.greenText,  b: '#A7F3D0' },
-  sent:      { bg: B.blueBg,   c: B.blueText,   b: '#BAE6FD' },
-  bounced:   { bg: B.redBg,    c: B.redText,    b: '#FECACA' },
+  opened: { bg: B.amberBg, c: B.amberText, b: '#FDE68A' },
+  responded: { bg: B.greenBg, c: B.greenText, b: '#A7F3D0' },
+  sent: { bg: B.blueBg, c: B.blueText, b: '#BAE6FD' },
+  bounced: { bg: B.redBg, c: B.redText, b: '#FECACA' },
 }
 
 function StatusBadge({ status }: { status: string }) {
@@ -73,9 +73,18 @@ function ChaseRow({ entry, last }: { entry: ChaseLogRecord; last: boolean }) {
       </span>
 
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+        <div
+          style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}
+        >
           <span
-            style={{ fontSize: 13, fontWeight: 500, color: B.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+            style={{
+              fontSize: 13,
+              fontWeight: 500,
+              color: B.text,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
           >
             {entry.subject}
           </span>
@@ -142,10 +151,22 @@ export default function ChasingTab({ clientId }: { clientId?: string | null }) {
       {/* Summary strip */}
       <div style={{ display: 'flex', gap: 12 }}>
         {[
-          { label: 'Total chases',   value: logs.length,                                              color: B.primary },
-          { label: 'Responded',      value: logs.filter((l) => l.status === 'responded').length,      color: B.green   },
-          { label: 'Opened',         value: logs.filter((l) => l.status === 'opened').length,         color: B.amber   },
-          { label: 'Sent (pending)', value: logs.filter((l) => l.status === 'sent').length,           color: B.muted   },
+          { label: 'Total chases', value: logs.length, color: B.primary },
+          {
+            label: 'Responded',
+            value: logs.filter((l) => l.status === 'responded').length,
+            color: B.green,
+          },
+          {
+            label: 'Opened',
+            value: logs.filter((l) => l.status === 'opened').length,
+            color: B.amber,
+          },
+          {
+            label: 'Sent (pending)',
+            value: logs.filter((l) => l.status === 'sent').length,
+            color: B.muted,
+          },
         ].map((m) => (
           <div
             key={m.label}
@@ -159,7 +180,16 @@ export default function ChasingTab({ clientId }: { clientId?: string | null }) {
               overflow: 'hidden',
             }}
           >
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: m.color }} />
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: 2,
+                background: m.color,
+              }}
+            />
             <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em', color: B.text }}>
               {loading ? '0' : m.value}
             </div>
@@ -213,9 +243,11 @@ export default function ChasingTab({ clientId }: { clientId?: string | null }) {
                 : 'No chases match the selected filter.'}
             </div>
           )}
-          {!loading && !error && filtered.map((entry, i) => (
-            <ChaseRow key={entry.id} entry={entry} last={i === filtered.length - 1} />
-          ))}
+          {!loading &&
+            !error &&
+            filtered.map((entry, i) => (
+              <ChaseRow key={entry.id} entry={entry} last={i === filtered.length - 1} />
+            ))}
         </div>
       </Card>
 
@@ -230,7 +262,8 @@ export default function ChasingTab({ clientId }: { clientId?: string | null }) {
           color: B.blueText,
         }}
       >
-        To send a new chase, go to <b>Chase Manager</b> → select this client → pick a template → Send.
+        To send a new chase, go to <b>Chase Manager</b> → select this client → pick a template →
+        Send.
       </div>
     </div>
   )

@@ -12,12 +12,12 @@ Create these in **GitHub → MTD-Frontend → Settings → Secrets and variables
 
 Also create a GitHub Environment named `production` (Settings → Environments → New environment) and add the same secrets there if you prefer environment-scoped secrets. The workflow uses `environment: production`.
 
-| Secret | Example | Notes |
-|---|---|---|
-| `DEPLOY_HOST` | `1.2.3.4` or `app.mytaxdiary.co.uk` | Server IP or hostname |
-| `DEPLOY_USER` | `deploy` | Non-root SSH user |
-| `DEPLOY_SSH_KEY` | full private key PEM | Includes `-----BEGIN ... KEY-----` lines |
-| `DEPLOY_PORT` | `22` | SSH port |
+| Secret           | Example                             | Notes                                    |
+| ---------------- | ----------------------------------- | ---------------------------------------- |
+| `DEPLOY_HOST`    | `1.2.3.4` or `app.mytaxdiary.co.uk` | Server IP or hostname                    |
+| `DEPLOY_USER`    | `deploy`                            | Non-root SSH user                        |
+| `DEPLOY_SSH_KEY` | full private key PEM                | Includes `-----BEGIN ... KEY-----` lines |
+| `DEPLOY_PORT`    | `22`                                | SSH port                                 |
 
 Do not put `.env` values in GitHub. The server keeps its existing `.env` and the pipeline never overwrites it.
 

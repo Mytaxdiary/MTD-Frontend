@@ -173,7 +173,9 @@ function BusinessRow({
         }}
       >
         <div>
-          <div style={{ fontSize: 13, fontWeight: 600, color: B.text, textTransform: 'capitalize' }}>
+          <div
+            style={{ fontSize: 13, fontWeight: 600, color: B.text, textTransform: 'capitalize' }}
+          >
             {fmtType(item.typeOfBusiness)}
           </div>
           {item.tradingName && (
@@ -181,15 +183,21 @@ function BusinessRow({
           )}
         </div>
         <div style={{ textAlign: 'right', flexShrink: 0 }}>
-          <div style={{ fontSize: 11, fontFamily: 'monospace', color: B.muted }}>{item.businessId}</div>
-          <div style={{ fontSize: 11, color: B.primary, marginTop: 2 }}>{expanded ? 'Hide' : 'Details'}</div>
+          <div style={{ fontSize: 11, fontFamily: 'monospace', color: B.muted }}>
+            {item.businessId}
+          </div>
+          <div style={{ fontSize: 11, color: B.primary, marginTop: 2 }}>
+            {expanded ? 'Hide' : 'Details'}
+          </div>
         </div>
       </button>
 
       {expanded && (
         <div style={{ padding: '0 14px 14px', background: B.surface }}>
           {loadingDetails && (
-            <p style={{ fontSize: 12, color: B.muted, margin: '8px 0 0' }}>Loading business details...</p>
+            <p style={{ fontSize: 12, color: B.muted, margin: '8px 0 0' }}>
+              Loading business details...
+            </p>
           )}
           {detailError && (
             <div

@@ -44,7 +44,7 @@ export default function ClientDetailHeader({
     setPreviewLoading(true)
     try {
       const res = await axiosClient.post<{ data: { previewToken: string } }>(
-        `/clients/${clientId}/portal-preview-token`,
+        `/clients/${clientId}/portal-preview-token`
       )
       const token = res.data.data.previewToken
       window.open(`/portal/preview?token=${token}`, '_blank')
@@ -88,14 +88,24 @@ export default function ClientDetailHeader({
               {displayName}
             </div>
             <div
-              style={{ display: 'flex', gap: 12, alignItems: 'center', marginTop: 4, flexWrap: 'wrap' }}
+              style={{
+                display: 'flex',
+                gap: 12,
+                alignItems: 'center',
+                marginTop: 4,
+                flexWrap: 'wrap',
+              }}
             >
               {firstBusiness && (
                 <>
                   {firstBusiness.tradingName && (
                     <>
-                      <span style={{ fontSize: 13, color: B.muted }}>{firstBusiness.tradingName}</span>
-                      <span style={{ width: 4, height: 4, borderRadius: 2, background: B.xlight }} />
+                      <span style={{ fontSize: 13, color: B.muted }}>
+                        {firstBusiness.tradingName}
+                      </span>
+                      <span
+                        style={{ width: 4, height: 4, borderRadius: 2, background: B.xlight }}
+                      />
                     </>
                   )}
                   <span style={{ fontSize: 12, color: B.muted, textTransform: 'capitalize' }}>
@@ -106,16 +116,26 @@ export default function ClientDetailHeader({
               )}
               <span
                 style={{
-                  fontSize: 11, fontWeight: 600, padding: '2px 10px', borderRadius: 20,
-                  background: B.greenBg, color: B.greenText, border: '1px solid #A7F3D0',
+                  fontSize: 11,
+                  fontWeight: 600,
+                  padding: '2px 10px',
+                  borderRadius: 20,
+                  background: B.greenBg,
+                  color: B.greenText,
+                  border: '1px solid #A7F3D0',
                 }}
               >
                 {mtdBadge}
               </span>
               <span
                 style={{
-                  fontSize: 11, fontWeight: 600, padding: '2px 10px', borderRadius: 20,
-                  background: B.blueBg, color: B.blueText, border: '1px solid #BAE6FD',
+                  fontSize: 11,
+                  fontWeight: 600,
+                  padding: '2px 10px',
+                  borderRadius: 20,
+                  background: B.blueBg,
+                  color: B.blueText,
+                  border: '1px solid #BAE6FD',
                 }}
               >
                 Main agent
@@ -128,8 +148,14 @@ export default function ClientDetailHeader({
         <div style={{ display: 'flex', gap: 8 }}>
           <button
             style={{
-              padding: '8px 16px', borderRadius: 8, border: `1px solid ${B.border}`,
-              background: B.white, fontSize: 12, fontWeight: 500, cursor: 'pointer', color: B.text,
+              padding: '8px 16px',
+              borderRadius: 8,
+              border: `1px solid ${B.border}`,
+              background: B.white,
+              fontSize: 12,
+              fontWeight: 500,
+              cursor: 'pointer',
+              color: B.text,
             }}
           >
             Chase client
@@ -137,8 +163,14 @@ export default function ClientDetailHeader({
           <button
             onClick={onMessageClick}
             style={{
-              padding: '8px 16px', borderRadius: 8, border: `1px solid ${B.border}`,
-              background: B.white, fontSize: 12, fontWeight: 500, cursor: 'pointer', color: B.text,
+              padding: '8px 16px',
+              borderRadius: 8,
+              border: `1px solid ${B.border}`,
+              background: B.white,
+              fontSize: 12,
+              fontWeight: 500,
+              cursor: 'pointer',
+              color: B.text,
             }}
           >
             Message client
@@ -147,9 +179,13 @@ export default function ClientDetailHeader({
             disabled={previewLoading || !clientId}
             onClick={handlePreview}
             style={{
-              padding: '8px 16px', borderRadius: 8, border: 'none',
+              padding: '8px 16px',
+              borderRadius: 8,
+              border: 'none',
               background: previewLoading ? B.muted : B.primary,
-              color: '#fff', fontSize: 12, fontWeight: 600,
+              color: '#fff',
+              fontSize: 12,
+              fontWeight: 600,
               cursor: previewLoading ? 'not-allowed' : 'pointer',
               opacity: previewLoading ? 0.7 : 1,
             }}
@@ -166,8 +202,12 @@ export default function ClientDetailHeader({
             key={tab}
             onClick={() => setActiveTab(tab)}
             style={{
-              padding: '8px 20px', fontSize: 13, fontWeight: 500, cursor: 'pointer',
-              border: 'none', background: 'transparent',
+              padding: '8px 20px',
+              fontSize: 13,
+              fontWeight: 500,
+              cursor: 'pointer',
+              border: 'none',
+              background: 'transparent',
               color: activeTab === tab ? B.primary : B.muted,
               borderBottom: `2px solid ${activeTab === tab ? B.primary : 'transparent'}`,
               textTransform: 'capitalize',

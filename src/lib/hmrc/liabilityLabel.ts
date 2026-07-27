@@ -4,7 +4,7 @@ const SANDBOX_SENTINEL = 99999999999.99
 
 /** HMRC sandbox returns ±99999999999.99 as placeholder — treat as missing. */
 export function sanitizeHmrcAmount(value?: number | null): number | null {
-  console.log("sanitizeHmrcAmount", value)
+  console.log('sanitizeHmrcAmount', value)
   if (value == null || Number.isNaN(value)) return null
   if (Math.abs(value) >= SANDBOX_SENTINEL - 1) return null
   return value
@@ -62,7 +62,7 @@ const NON_LIABILITY_DESCRIPTIONS = new Set(['Payment', 'Repayment', 'Clearing Do
 
 /** Charge rows for the liabilities table (exclude payments/credits). */
 export function filterLiabilityDocuments(
-  docs: HmrcAccountDocumentDetail[] | undefined,
+  docs: HmrcAccountDocumentDetail[] | undefined
 ): HmrcAccountDocumentDetail[] {
   return (docs ?? []).filter((doc) => {
     const desc = doc.documentDescription ?? ''

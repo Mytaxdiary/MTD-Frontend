@@ -4,11 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import B from '@/styles/theme'
 import { Card, CardHeader } from '@/components/ui/card'
 import { currentUkTaxYear } from '@/lib/hmrc/taxYear'
-import {
-  fmtUkPeriodRange,
-  fmtUkShortDate,
-  ukQuarterFromPeriodStart,
-} from '@/lib/hmrc/quarterLabel'
+import { fmtUkPeriodRange, fmtUkShortDate, ukQuarterFromPeriodStart } from '@/lib/hmrc/quarterLabel'
 import {
   clientsService,
   type BusinessListItem,
@@ -35,7 +31,7 @@ function businessLabel(b: BusinessListItem): string {
 
 function ObligationTimeline({ details }: { details: ObligationDetail[] }) {
   const sorted = [...details].sort(
-    (a, b) => new Date(a.periodStartDate).getTime() - new Date(b.periodStartDate).getTime(),
+    (a, b) => new Date(a.periodStartDate).getTime() - new Date(b.periodStartDate).getTime()
   )
 
   if (sorted.length === 0) {
@@ -54,7 +50,10 @@ function ObligationTimeline({ details }: { details: ObligationDetail[] }) {
         const period = fmtUkPeriodRange(ob.periodStartDate, ob.periodEndDate)
 
         return (
-          <div key={`${ob.periodStartDate}-${ob.periodEndDate}`} style={{ display: 'flex', alignItems: 'stretch' }}>
+          <div
+            key={`${ob.periodStartDate}-${ob.periodEndDate}`}
+            style={{ display: 'flex', alignItems: 'stretch' }}
+          >
             <div
               style={{
                 width: 32,
@@ -165,7 +164,10 @@ function CrystallisationTimeline({ items }: { items: CrystallisationObligation[]
         const period = fmtUkPeriodRange(ob.periodStartDate, ob.periodEndDate)
 
         return (
-          <div key={`${ob.periodStartDate}-${ob.dueDate}`} style={{ display: 'flex', alignItems: 'stretch' }}>
+          <div
+            key={`${ob.periodStartDate}-${ob.dueDate}`}
+            style={{ display: 'flex', alignItems: 'stretch' }}
+          >
             <div
               style={{
                 width: 32,
@@ -303,7 +305,7 @@ export default function ObligationsCard({ client }: { client: ClientRecord }) {
       })
       const group = (result.obligations ?? []).find((o) => o.businessId === selected.businessId)
       setObligationDetails(
-        group?.obligationDetails ?? result.obligations?.[0]?.obligationDetails ?? [],
+        group?.obligationDetails ?? result.obligations?.[0]?.obligationDetails ?? []
       )
     } catch (err: unknown) {
       setObligationDetails([])
@@ -391,7 +393,9 @@ export default function ObligationsCard({ client }: { client: ClientRecord }) {
             marginBottom: 16,
           }}
         >
-          <label style={{ fontSize: 12, color: B.muted, display: 'flex', alignItems: 'center', gap: 6 }}>
+          <label
+            style={{ fontSize: 12, color: B.muted, display: 'flex', alignItems: 'center', gap: 6 }}
+          >
             Business
             <select
               value={selectedKey}
@@ -418,7 +422,9 @@ export default function ObligationsCard({ client }: { client: ClientRecord }) {
             </select>
           </label>
 
-          <label style={{ fontSize: 12, color: B.muted, display: 'flex', alignItems: 'center', gap: 6 }}>
+          <label
+            style={{ fontSize: 12, color: B.muted, display: 'flex', alignItems: 'center', gap: 6 }}
+          >
             Status
             <select
               value={statusFilter}
@@ -487,7 +493,9 @@ export default function ObligationsCard({ client }: { client: ClientRecord }) {
         )}
 
         {obligationsLoading ? (
-          <p style={{ fontSize: 12, color: B.muted, margin: 0 }}>Loading obligations from HMRC...</p>
+          <p style={{ fontSize: 12, color: B.muted, margin: 0 }}>
+            Loading obligations from HMRC...
+          </p>
         ) : (
           <ObligationTimeline details={obligationDetails} />
         )}

@@ -138,8 +138,9 @@ export default function SandboxInvitationsSection() {
           lineHeight: 1.5,
         }}
       >
-        When you send an invitation from Add Client, it appears here. Use <strong>Accept (sandbox)</strong>{' '}
-        instead of Postman. Refresh the client list to see Authorised / Partial auth status.
+        When you send an invitation from Add Client, it appears here. Use{' '}
+        <strong>Accept (sandbox)</strong> instead of Postman. Refresh the client list to see
+        Authorised / Partial auth status.
       </div>
 
       {successMsg && (

@@ -22,7 +22,7 @@ export function scheduleAccessTokenRefresh(onRefresh: RefreshHandler): () => voi
         scheduleAccessTokenRefresh(onRefresh)
       })
     },
-    Math.max(delay, 0),
+    Math.max(delay, 0)
   )
 
   return () => window.clearTimeout(timerId)

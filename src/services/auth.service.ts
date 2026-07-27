@@ -101,7 +101,9 @@ export const authService = {
   },
 
   getSession: async (): Promise<SessionResponse> => {
-    const { data } = await axiosClient.get<{ success: true; data: SessionResponse }>('/auth/session')
+    const { data } = await axiosClient.get<{ success: true; data: SessionResponse }>(
+      '/auth/session'
+    )
     return data.data
   },
 
@@ -126,7 +128,9 @@ export const authService = {
   },
 
   mfaSetup: async (): Promise<MfaSetupResponse> => {
-    const { data } = await axiosClient.get<{ success: true; data: MfaSetupResponse }>('/auth/mfa/setup')
+    const { data } = await axiosClient.get<{ success: true; data: MfaSetupResponse }>(
+      '/auth/mfa/setup'
+    )
     return data.data
   },
 
@@ -141,7 +145,7 @@ export const authService = {
   mfaVerify: async (mfaToken: string, code: string): Promise<AuthResponse> => {
     const { data } = await axiosClient.post<{ success: true; data: AuthResponse }>(
       '/auth/mfa/verify',
-      { mfaToken, code },
+      { mfaToken, code }
     )
     return data.data
   },

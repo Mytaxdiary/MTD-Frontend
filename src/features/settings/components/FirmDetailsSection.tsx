@@ -24,7 +24,9 @@ export default function FirmDetailsSection() {
     }
   }, [])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => {
+    load()
+  }, [load])
 
   const handleSave = async () => {
     if (!firmDetails) return
@@ -82,12 +84,14 @@ export default function FirmDetailsSection() {
         ) : (
           <>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-              {([
-                ['Firm name', 'firmName', 'text'],
-                ['Primary contact', 'contactName', 'text'],
-                ['Email', 'contactEmail', 'email'],
-                ['Phone', 'phone', 'text'],
-              ] as [string, keyof FirmDetails, string][]).map(([label, field, type]) => (
+              {(
+                [
+                  ['Firm name', 'firmName', 'text'],
+                  ['Primary contact', 'contactName', 'text'],
+                  ['Email', 'contactEmail', 'email'],
+                  ['Phone', 'phone', 'text'],
+                ] as [string, keyof FirmDetails, string][]
+              ).map(([label, field, type]) => (
                 <div key={field}>
                   <label style={labelStyle}>{label}</label>
                   <input
@@ -124,9 +128,7 @@ export default function FirmDetailsSection() {
               </div>
             </div>
 
-            {error && (
-              <div style={{ fontSize: 13, color: B.redText, marginTop: 10 }}>{error}</div>
-            )}
+            {error && <div style={{ fontSize: 13, color: B.redText, marginTop: 10 }}>{error}</div>}
             {success && (
               <div style={{ fontSize: 13, color: B.greenText, marginTop: 10 }}>Changes saved.</div>
             )}

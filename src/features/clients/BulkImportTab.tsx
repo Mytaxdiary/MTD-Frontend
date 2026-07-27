@@ -1,7 +1,11 @@
 ﻿'use client'
 import { useRef, useState } from 'react'
 import B from '@/styles/theme'
-import { clientsService, type BulkImportResult, type BulkImportRowError } from '@/services/clients.service'
+import {
+  clientsService,
+  type BulkImportResult,
+  type BulkImportRowError,
+} from '@/services/clients.service'
 
 // ─── CSV template ─────────────────────────────────────────────────────────────
 
@@ -33,8 +37,9 @@ function extractErrors(err: unknown): BulkImportRowError[] | null {
 }
 
 function extractMessage(err: unknown): string {
-  const raw = (err as { response?: { data?: { message?: string | string[] | { errors?: unknown[] } } } })
-    ?.response?.data?.message
+  const raw = (
+    err as { response?: { data?: { message?: string | string[] | { errors?: unknown[] } } } }
+  )?.response?.data?.message
   if (typeof raw === 'string') return raw
   if (Array.isArray(raw)) return raw.join(' ')
   return (err as { message?: string })?.message ?? 'Something went wrong. Please try again.'
@@ -183,7 +188,8 @@ export default function BulkImportTab({ onSuccess }: Props) {
             lineHeight: 1.6,
           }}
         >
-          <strong>Next step:</strong> Go to the <strong>Clients</strong> page and send HMRC invitations to each client individually.
+          <strong>Next step:</strong> Go to the <strong>Clients</strong> page and send HMRC
+          invitations to each client individually.
         </div>
 
         <button
@@ -234,8 +240,8 @@ export default function BulkImportTab({ onSuccess }: Props) {
           ))}
         </div>
         <div style={{ fontSize: 11, color: B.light, marginTop: 8 }}>
-          NINO format: AB123456C (2 letters, 6 digits, 1 letter A–D) &nbsp;·&nbsp;
-          agent_type: <code>main</code> or <code>supporting</code> (defaults to main)
+          NINO format: AB123456C (2 letters, 6 digits, 1 letter A–D) &nbsp;·&nbsp; agent_type:{' '}
+          <code>main</code> or <code>supporting</code> (defaults to main)
         </div>
       </div>
 
@@ -258,7 +264,14 @@ export default function BulkImportTab({ onSuccess }: Props) {
             gap: 6,
           }}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+          >
             <path d="M12 5v14M5 12l7 7 7-7" />
           </svg>
           Download CSV template
@@ -273,7 +286,10 @@ export default function BulkImportTab({ onSuccess }: Props) {
         role="button"
         tabIndex={0}
         aria-label="Upload CSV file"
-        onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
+        onDragOver={(e) => {
+          e.preventDefault()
+          setDragOver(true)
+        }}
         onDragLeave={() => setDragOver(false)}
         onDrop={(e) => {
           e.preventDefault()
@@ -282,7 +298,9 @@ export default function BulkImportTab({ onSuccess }: Props) {
           if (f) handleFile(f)
         }}
         onClick={() => fileInputRef.current?.click()}
-        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') fileInputRef.current?.click() }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') fileInputRef.current?.click()
+        }}
         style={{
           border: `2px dashed ${dragOver ? B.primary : file ? '#A7F3D0' : B.border}`,
           borderRadius: 10,
@@ -361,7 +379,8 @@ export default function BulkImportTab({ onSuccess }: Props) {
                 color: '#991B1B',
               }}
             >
-              {rowErrors.length} issue{rowErrors.length !== 1 ? 's' : ''} found — fix the file and re-upload
+              {rowErrors.length} issue{rowErrors.length !== 1 ? 's' : ''} found — fix the file and
+              re-upload
             </div>
             <span
               style={{

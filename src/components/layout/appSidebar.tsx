@@ -52,14 +52,14 @@ const NavItem = ({ label, active, icon, count = 0, onClick }: NavItemProps) => (
       <span
         aria-label={`${count} overdue`}
         style={{
-        fontSize: 11,
-        fontWeight: 700,
-        background: C.red,
-        color: '#fff',
-        borderRadius: 10,
-        padding: '2px 7px',
-        minWidth: 18,
-        textAlign: 'center',
+          fontSize: 11,
+          fontWeight: 700,
+          background: C.red,
+          color: '#fff',
+          borderRadius: 10,
+          padding: '2px 7px',
+          minWidth: 18,
+          textAlign: 'center',
         }}
       >
         {count}
@@ -102,9 +102,9 @@ export default function AppSidebar({ overdueCount = 2 }: { overdueCount?: number
   return (
     <nav
       aria-label="Main navigation"
-    style={{
-      width: 244,
-      background: C.navy,
+      style={{
+        width: 244,
+        background: C.navy,
         display: 'flex',
         flexDirection: 'column',
         flexShrink: 0,
@@ -249,13 +249,13 @@ export default function AppSidebar({ overdueCount = 2 }: { overdueCount?: number
           type="button"
           onClick={logout}
           style={{
-          width: '100%',
-          padding: '8px 14px',
-          borderRadius: 7,
-          background: 'rgba(255,255,255,0.06)',
-          border: '1px solid rgba(255,255,255,0.12)',
-          color: 'rgba(255,255,255,0.75)',
-          fontSize: 13,
+            width: '100%',
+            padding: '8px 14px',
+            borderRadius: 7,
+            background: 'rgba(255,255,255,0.06)',
+            border: '1px solid rgba(255,255,255,0.12)',
+            color: 'rgba(255,255,255,0.75)',
+            fontSize: 13,
             fontWeight: 500,
             cursor: 'pointer',
             textAlign: 'left',

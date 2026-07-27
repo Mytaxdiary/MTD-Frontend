@@ -5,22 +5,18 @@ import {
   type ChaseTemplateRecord,
   type CreateChaseTemplatePayload,
 } from '@/services/chaseTemplates.service'
-import {
-  chaseService,
-  renderTemplate,
-  type ChaseClientRecord,
-} from '@/services/chase.service'
+import { chaseService, renderTemplate, type ChaseClientRecord } from '@/services/chase.service'
 import { useCurrentUser } from '@/components/auth/CurrentUserProvider'
 import B from '@/styles/theme'
 
 const ResponseBadge = ({ status }: { status: string }) => {
   const m: Record<string, { bg: string; c: string; b: string; l: string }> = {
-    'no-response': { bg: B.redBg,    c: B.redText,    b: '#FECACA', l: 'No response' },
-    opened:        { bg: B.amberBg,  c: B.amberText,  b: '#FDE68A', l: 'Opened'      },
-    responded:     { bg: B.greenBg,  c: B.greenText,  b: '#A7F3D0', l: 'Responded'   },
-    sent:          { bg: B.blueBg,   c: B.blueText,   b: '#BAE6FD', l: 'Sent'        },
-    bounced:       { bg: B.redBg,    c: B.redText,    b: '#FECACA', l: 'Bounced'     },
-    'not-started': { bg: B.surface,  c: B.light,      b: B.border,  l: 'Not chased'  },
+    'no-response': { bg: B.redBg, c: B.redText, b: '#FECACA', l: 'No response' },
+    opened: { bg: B.amberBg, c: B.amberText, b: '#FDE68A', l: 'Opened' },
+    responded: { bg: B.greenBg, c: B.greenText, b: '#A7F3D0', l: 'Responded' },
+    sent: { bg: B.blueBg, c: B.blueText, b: '#BAE6FD', l: 'Sent' },
+    bounced: { bg: B.redBg, c: B.redText, b: '#FECACA', l: 'Bounced' },
+    'not-started': { bg: B.surface, c: B.light, b: B.border, l: 'Not chased' },
   }
   const s = m[status] ?? { bg: B.surface, c: B.muted, b: B.border, l: status }
   return (
@@ -117,9 +113,13 @@ export default function ChaseManager({
   const overdueClients = chaseClients.filter((c) => c.daysOverdue > 0)
   const upcomingClients = chaseClients.filter((c) => c.daysOverdue <= 0)
   const filteredOverdue =
-    typeFilter === 'all' ? overdueClients : overdueClients.filter((c) => c.workflowType === typeFilter)
+    typeFilter === 'all'
+      ? overdueClients
+      : overdueClients.filter((c) => c.workflowType === typeFilter)
   const filteredUpcoming =
-    typeFilter === 'all' ? upcomingClients : upcomingClients.filter((c) => c.workflowType === typeFilter)
+    typeFilter === 'all'
+      ? upcomingClients
+      : upcomingClients.filter((c) => c.workflowType === typeFilter)
 
   const toggleSelect = (id: string) =>
     setSelected((p) => {
@@ -154,7 +154,7 @@ export default function ChaseManager({
             subject: renderTemplate(currentTemplate.subject, vars),
             body: renderTemplate(currentTemplate.body, vars),
           })
-        }),
+        })
       )
       setSelected(new Set())
       // Reload to refresh chase counts / last chase dates
@@ -174,12 +174,12 @@ export default function ChaseManager({
 
   const previewVars = previewClient
     ? {
-        name:       previewClient.name,
-        business:   previewClient.business,
-        quarter:    previewClient.quarter,
-        deadline:   previewClient.deadline,
+        name: previewClient.name,
+        business: previewClient.business,
+        quarter: previewClient.quarter,
+        deadline: previewClient.deadline,
         agent_name: (user as { name?: string })?.name ?? 'Your accountant',
-        firm_name:  (user as { firmName?: string })?.firmName ?? 'Your firm',
+        firm_name: (user as { firmName?: string })?.firmName ?? 'Your firm',
       }
     : null
 
@@ -317,7 +317,9 @@ export default function ChaseManager({
             <option value="data-request">Data request</option>
           </select>
           {selected.size > 0 && (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
+            <div
+              style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}
+            >
               <button
                 onClick={handleSend}
                 disabled={sending}
@@ -336,9 +338,7 @@ export default function ChaseManager({
                   ? 'Sending...'
                   : `Send to ${selected.size} client${selected.size > 1 ? 's' : ''}`}
               </button>
-              {sendError && (
-                <span style={{ fontSize: 12, color: B.redText }}>{sendError}</span>
-              )}
+              {sendError && <span style={{ fontSize: 12, color: B.redText }}>{sendError}</span>}
             </div>
           )}
         </div>
@@ -350,30 +350,34 @@ export default function ChaseManager({
           <div>
             {/* Send error banner */}
             {sendError && (
-              <div style={{
-                marginBottom: 12,
-                padding: '10px 14px',
-                background: B.redBg,
-                border: '1px solid #FECACA',
-                borderRadius: 8,
-                fontSize: 13,
-                color: B.redText,
-              }}>
+              <div
+                style={{
+                  marginBottom: 12,
+                  padding: '10px 14px',
+                  background: B.redBg,
+                  border: '1px solid #FECACA',
+                  borderRadius: 8,
+                  fontSize: 13,
+                  color: B.redText,
+                }}
+              >
                 {sendError}
               </div>
             )}
 
             {/* No template selected warning */}
             {selected.size > 0 && !selectedTemplateId && (
-              <div style={{
-                marginBottom: 12,
-                padding: '10px 14px',
-                background: B.amberBg,
-                border: '1px solid #FDE68A',
-                borderRadius: 8,
-                fontSize: 13,
-                color: B.amberText,
-              }}>
+              <div
+                style={{
+                  marginBottom: 12,
+                  padding: '10px 14px',
+                  background: B.amberBg,
+                  border: '1px solid #FDE68A',
+                  borderRadius: 8,
+                  fontSize: 13,
+                  color: B.amberText,
+                }}
+              >
                 Select a template on the right before sending.
               </div>
             )}
@@ -385,15 +389,17 @@ export default function ChaseManager({
             )}
 
             {!clientsLoading && chaseClients.length === 0 && (
-              <div style={{
-                padding: '36px',
-                textAlign: 'center',
-                fontSize: 14,
-                color: B.light,
-                background: B.white,
-                borderRadius: 12,
-                border: `1px solid ${B.border}`,
-              }}>
+              <div
+                style={{
+                  padding: '36px',
+                  textAlign: 'center',
+                  fontSize: 14,
+                  color: B.light,
+                  background: B.white,
+                  borderRadius: 12,
+                  border: `1px solid ${B.border}`,
+                }}
+              >
                 No authorised clients yet. Add and authorise clients to start chasing.
               </div>
             )}
@@ -412,9 +418,7 @@ export default function ChaseManager({
                   selected={selected}
                   clientChannels={clientChannels}
                   onToggle={toggleSelect}
-                  onChannelChange={(id, ch) =>
-                    setClientChannels({ ...clientChannels, [id]: ch })
-                  }
+                  onChannelChange={(id, ch) => setClientChannels({ ...clientChannels, [id]: ch })}
                 />
               </div>
             )}
@@ -432,9 +436,7 @@ export default function ChaseManager({
                   selected={selected}
                   clientChannels={clientChannels}
                   onToggle={toggleSelect}
-                  onChannelChange={(id, ch) =>
-                    setClientChannels({ ...clientChannels, [id]: ch })
-                  }
+                  onChannelChange={(id, ch) => setClientChannels({ ...clientChannels, [id]: ch })}
                 />
               </div>
             )}
@@ -480,12 +482,16 @@ export default function ChaseManager({
 
               <div style={{ padding: '8px 12px' }}>
                 {templatesLoading && (
-                  <div style={{ padding: '14px', fontSize: 13, color: B.muted, textAlign: 'center' }}>
+                  <div
+                    style={{ padding: '14px', fontSize: 13, color: B.muted, textAlign: 'center' }}
+                  >
                     Loading templates...
                   </div>
                 )}
                 {templatesError && (
-                  <div style={{ padding: '14px', fontSize: 13, color: B.redText, textAlign: 'center' }}>
+                  <div
+                    style={{ padding: '14px', fontSize: 13, color: B.redText, textAlign: 'center' }}
+                  >
                     {templatesError}
                   </div>
                 )}
@@ -577,7 +583,11 @@ export default function ChaseManager({
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <div style={{ fontSize: 15, fontWeight: 700 }}>
-                    {editMode === 'new' ? 'New template' : editMode === 'edit' ? 'Edit template' : 'Preview'}
+                    {editMode === 'new'
+                      ? 'New template'
+                      : editMode === 'edit'
+                        ? 'Edit template'
+                        : 'Preview'}
                   </div>
                   {!editMode && previewClient && (
                     <span
@@ -662,7 +672,16 @@ export default function ChaseManager({
                 {/* Preview mode */}
                 {!editMode && currentTemplate && (
                   <>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: B.muted, marginBottom: 4, textTransform: 'uppercase' as const, letterSpacing: '0.04em' }}>
+                    <div
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 600,
+                        color: B.muted,
+                        marginBottom: 4,
+                        textTransform: 'uppercase' as const,
+                        letterSpacing: '0.04em',
+                      }}
+                    >
                       Subject
                     </div>
                     <div
@@ -678,7 +697,16 @@ export default function ChaseManager({
                     >
                       {previewSubject}
                     </div>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: B.muted, marginBottom: 4, textTransform: 'uppercase' as const, letterSpacing: '0.04em' }}>
+                    <div
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 600,
+                        color: B.muted,
+                        marginBottom: 4,
+                        textTransform: 'uppercase' as const,
+                        letterSpacing: '0.04em',
+                      }}
+                    >
                       Body
                     </div>
                     <div
@@ -703,11 +731,23 @@ export default function ChaseManager({
                   <>
                     {/* Name + type row */}
                     <div
-                      style={{ display: 'grid', gridTemplateColumns: '1fr 130px', gap: 10, marginBottom: 14 }}
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 130px',
+                        gap: 10,
+                        marginBottom: 14,
+                      }}
                     >
                       <div>
                         <div
-                          style={{ fontSize: 12, fontWeight: 600, color: B.muted, marginBottom: 4, textTransform: 'uppercase' as const, letterSpacing: '0.04em' }}
+                          style={{
+                            fontSize: 12,
+                            fontWeight: 600,
+                            color: B.muted,
+                            marginBottom: 4,
+                            textTransform: 'uppercase' as const,
+                            letterSpacing: '0.04em',
+                          }}
                         >
                           Name
                         </div>
@@ -728,7 +768,14 @@ export default function ChaseManager({
                       </div>
                       <div>
                         <div
-                          style={{ fontSize: 12, fontWeight: 600, color: B.muted, marginBottom: 4, textTransform: 'uppercase' as const, letterSpacing: '0.04em' }}
+                          style={{
+                            fontSize: 12,
+                            fontWeight: 600,
+                            color: B.muted,
+                            marginBottom: 4,
+                            textTransform: 'uppercase' as const,
+                            letterSpacing: '0.04em',
+                          }}
                         >
                           Type
                         </div>
@@ -755,7 +802,14 @@ export default function ChaseManager({
 
                     {/* Subject */}
                     <div
-                      style={{ fontSize: 12, fontWeight: 600, color: B.muted, marginBottom: 4, textTransform: 'uppercase' as const, letterSpacing: '0.04em' }}
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 600,
+                        color: B.muted,
+                        marginBottom: 4,
+                        textTransform: 'uppercase' as const,
+                        letterSpacing: '0.04em',
+                      }}
                     >
                       Subject
                     </div>
@@ -777,7 +831,14 @@ export default function ChaseManager({
 
                     {/* Body */}
                     <div
-                      style={{ fontSize: 12, fontWeight: 600, color: B.muted, marginBottom: 4, textTransform: 'uppercase' as const, letterSpacing: '0.04em' }}
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 600,
+                        color: B.muted,
+                        marginBottom: 4,
+                        textTransform: 'uppercase' as const,
+                        letterSpacing: '0.04em',
+                      }}
                     >
                       Body
                     </div>
@@ -801,9 +862,7 @@ export default function ChaseManager({
                     />
 
                     {saveError && (
-                      <div
-                        style={{ fontSize: 12, color: B.redText, marginTop: 8 }}
-                      >
+                      <div style={{ fontSize: 12, color: B.redText, marginTop: 8 }}>
                         {saveError}
                       </div>
                     )}
@@ -826,8 +885,7 @@ export default function ChaseManager({
 /* ─────────────────────────────────────── helpers ─────────────────────────────────────── */
 
 function TypeBadge({ type }: { type: string }) {
-  const bg =
-    type === 'bookkeeping' ? B.purpleBg : type === 'data-request' ? B.blueBg : B.surface
+  const bg = type === 'bookkeeping' ? B.purpleBg : type === 'data-request' ? B.blueBg : B.surface
   const color =
     type === 'bookkeeping' ? B.purpleText : type === 'data-request' ? B.blueText : B.muted
   const label = type === 'bookkeeping' ? 'BK' : type === 'data-request' ? 'DR' : 'GEN'
@@ -900,9 +958,7 @@ function ClientTable({
             style={{ cursor: 'pointer', accentColor: B.primary }}
           />
           <div style={{ flex: 1 }}>
-            <div
-              style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-            >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <span style={{ fontWeight: 600, fontSize: 14 }}>{c.name}</span>
                 <span style={{ color: B.muted, fontSize: 13, marginLeft: 8 }}>{c.business}</span>
@@ -925,7 +981,8 @@ function ClientTable({
                 </span>
               ) : (
                 <span>
-                  Due: <b style={{ color: B.text }}>{c.deadline}</b> ({Math.abs(c.daysOverdue)}d left)
+                  Due: <b style={{ color: B.text }}>{c.deadline}</b> ({Math.abs(c.daysOverdue)}d
+                  left)
                 </span>
               )}
               <span>

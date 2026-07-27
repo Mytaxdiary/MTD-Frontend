@@ -52,12 +52,18 @@ export interface PortalFileRecord {
 
 const portalService = {
   async setup(token: string, password: string): Promise<{ name: string }> {
-    const res = await portalAxiosClient.post<{ data: { name: string } }>('/portal/auth/setup', { token, password })
+    const res = await portalAxiosClient.post<{ data: { name: string } }>('/portal/auth/setup', {
+      token,
+      password,
+    })
     return res.data.data
   },
 
   async login(email: string, password: string): Promise<{ name: string }> {
-    const res = await portalAxiosClient.post<{ data: { name: string } }>('/portal/auth/login', { email, password })
+    const res = await portalAxiosClient.post<{ data: { name: string } }>('/portal/auth/login', {
+      email,
+      password,
+    })
     return res.data.data
   },
 
@@ -71,12 +77,16 @@ const portalService = {
   },
 
   async getObligations(): Promise<{ obligations: PortalObligation[]; message?: string }> {
-    const res = await portalAxiosClient.get<{ data: { obligations: PortalObligation[]; message?: string } }>('/portal/obligations')
+    const res = await portalAxiosClient.get<{
+      data: { obligations: PortalObligation[]; message?: string }
+    }>('/portal/obligations')
     return res.data.data
   },
 
   async getLiabilities(): Promise<{ balanceDetails?: unknown; message?: string }> {
-    const res = await portalAxiosClient.get<{ data: { balanceDetails?: unknown; message?: string } }>('/portal/liabilities')
+    const res = await portalAxiosClient.get<{
+      data: { balanceDetails?: unknown; message?: string }
+    }>('/portal/liabilities')
     return res.data.data
   },
 
@@ -86,7 +96,9 @@ const portalService = {
   },
 
   async getUnreadCount(): Promise<number> {
-    const res = await portalAxiosClient.get<{ data: { count: number } }>('/portal/messages/unread-count')
+    const res = await portalAxiosClient.get<{ data: { count: number } }>(
+      '/portal/messages/unread-count'
+    )
     return res.data.data.count
   },
 
@@ -109,9 +121,10 @@ const portalService = {
   },
 
   downloadFileUrl(fileId: string): string {
-    const base = typeof window !== 'undefined'
-      ? (process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3500/api/v1')
-      : 'http://localhost:3500/api/v1'
+    const base =
+      typeof window !== 'undefined'
+        ? (process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3500/api/v1')
+        : 'http://localhost:3500/api/v1'
     return `${base}/portal/files/${fileId}/download`
   },
 }

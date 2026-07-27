@@ -35,7 +35,7 @@ function redirectToLogin(): void {
 }
 
 async function attachFraudContext(
-  config: InternalAxiosRequestConfig,
+  config: InternalAxiosRequestConfig
 ): Promise<InternalAxiosRequestConfig> {
   if (typeof window === 'undefined') return config
   // Auth routes do not call HMRC — skip custom header to avoid unnecessary CORS preflight
@@ -89,7 +89,11 @@ export function setupInterceptors(client: AxiosInstance): void {
         }
       }
 
-      const raw = error.response?.data?.message as string | string[] | Record<string, unknown> | undefined
+      const raw = error.response?.data?.message as
+        | string
+        | string[]
+        | Record<string, unknown>
+        | undefined
       const message =
         typeof raw === 'string'
           ? raw
@@ -101,6 +105,6 @@ export function setupInterceptors(client: AxiosInstance): void {
       apiError.statusCode = error.response?.status
       apiError.responseData = error.response?.data
       return Promise.reject(apiError)
-    },
+    }
   )
 }

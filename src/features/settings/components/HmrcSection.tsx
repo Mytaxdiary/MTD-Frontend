@@ -5,11 +5,7 @@ import { Card, CardHeader as CardHead } from '@/components/ui/card'
 import { hmrcService, type HmrcStatus } from '@/services/hmrc.service'
 import SandboxTestUsersCard from './SandboxTestUsersCard'
 
-function fraudHeadersLabel(
-  tested: boolean,
-  valid: boolean | null,
-  hasWarnings?: boolean,
-): string {
+function fraudHeadersLabel(tested: boolean, valid: boolean | null, hasWarnings?: boolean): string {
   if (!tested) return 'Not tested yet'
   if (valid === true && hasWarnings) return 'Valid (warnings)'
   if (valid === true) return 'Valid'
@@ -72,7 +68,7 @@ function buildRows(
   status: HmrcStatus | null,
   fraudTested: boolean,
   fraudValid: boolean | null,
-  fraudHasWarnings?: boolean,
+  fraudHasWarnings?: boolean
 ): [string, string][] {
   const fraudLabel = status?.connected
     ? fraudHeadersLabel(fraudTested, fraudValid, fraudHasWarnings)
@@ -146,7 +142,7 @@ export default function HmrcSection() {
     setArnError(null)
     try {
       const result = await hmrcService.updateArn(trimmed)
-      setHmrcStatus((prev) => prev ? { ...prev, arn: result.arn } : prev)
+      setHmrcStatus((prev) => (prev ? { ...prev, arn: result.arn } : prev))
       setArnEditing(false)
     } catch (err: unknown) {
       const msg =
@@ -192,12 +188,12 @@ export default function HmrcSection() {
 
       if (result.valid && result.hasWarnings && result.warningHeaders?.length) {
         const remaining = result.warningHeaders.filter(
-          (h: string) => h !== 'gov-client-multi-factor',
+          (h: string) => h !== 'gov-client-multi-factor'
         )
         if (remaining.length > 0) {
           setFraudDetail(
             `Headers passed with warnings: ${remaining.join(', ')}. ` +
-              'Add HMRC_VENDOR_LICENSE_IDS to .env if you have a software license ID from HMRC Developer Hub.',
+              'Add HMRC_VENDOR_LICENSE_IDS to .env if you have a software license ID from HMRC Developer Hub.'
           )
         } else {
           setFraudDetail('HMRC accepted the fraud prevention headers for this session.')
@@ -213,8 +209,7 @@ export default function HmrcSection() {
       setFraudTested(true)
       setFraudValid(false)
       const msg =
-        (err as { message?: string })?.message ??
-        'Failed to validate fraud headers with HMRC.'
+        (err as { message?: string })?.message ?? 'Failed to validate fraud headers with HMRC.'
       setFraudError(msg)
     } finally {
       setFraudTesting(false)
@@ -287,7 +282,13 @@ export default function HmrcSection() {
               </div>
             )}
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
-              <button style={outlineBtn} onClick={() => { setShowModal(false); setDisconnectError(null) }}>
+              <button
+                style={outlineBtn}
+                onClick={() => {
+                  setShowModal(false)
+                  setDisconnectError(null)
+                }}
+              >
                 Cancel
               </button>
               <button
@@ -312,7 +313,8 @@ export default function HmrcSection() {
                     setShowModal(false)
                   } catch (err: unknown) {
                     const msg =
-                      (err as { response?: { data?: { message?: string } } })?.response?.data?.message ??
+                      (err as { response?: { data?: { message?: string } } })?.response?.data
+                        ?.message ??
                       (err as { message?: string })?.message ??
                       'Failed to disconnect. Please try again.'
                     setDisconnectError(msg)
@@ -388,9 +390,7 @@ export default function HmrcSection() {
                       border: `1px solid ${B.border}`,
                     }}
                   >
-                    <div
-                      style={{ width: 10, height: 10, borderRadius: 5, background: B.light }}
-                    />
+                    <div style={{ width: 10, height: 10, borderRadius: 5, background: B.light }} />
                     <div>
                       <div style={{ fontSize: 14, fontWeight: 700, color: B.text }}>
                         Not connected to HMRC
@@ -423,7 +423,10 @@ export default function HmrcSection() {
                         onChange={(e) => setArnInput(e.target.value)}
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') handleSaveArn()
-                          if (e.key === 'Escape') { setArnEditing(false); setArnError(null) }
+                          if (e.key === 'Escape') {
+                            setArnEditing(false)
+                            setArnError(null)
+                          }
                         }}
                         placeholder="e.g. EARN0713416"
                         style={{
@@ -453,7 +456,10 @@ export default function HmrcSection() {
                         {arnSaving ? '...' : 'Save'}
                       </button>
                       <button
-                        onClick={() => { setArnEditing(false); setArnError(null) }}
+                        onClick={() => {
+                          setArnEditing(false)
+                          setArnError(null)
+                        }}
                         style={{
                           padding: '4px 8px',
                           borderRadius: 6,
@@ -501,7 +507,9 @@ export default function HmrcSection() {
                   )}
                 </div>
                 {arnError && (
-                  <div style={{ fontSize: 11, color: B.redText, marginBottom: 4, textAlign: 'right' }}>
+                  <div
+                    style={{ fontSize: 11, color: B.redText, marginBottom: 4, textAlign: 'right' }}
+                  >
                     {arnError}
                   </div>
                 )}
@@ -522,7 +530,10 @@ export default function HmrcSection() {
                       style={{
                         fontSize: 13,
                         fontWeight: 500,
-                        color: v === '-' || v === 'Not connected' || v === 'Inactive' ? B.light : 'inherit',
+                        color:
+                          v === '-' || v === 'Not connected' || v === 'Inactive'
+                            ? B.light
+                            : 'inherit',
                         fontFamily: k === 'Gateway ID' ? 'monospace' : 'inherit',
                       }}
                     >
@@ -598,11 +609,19 @@ export default function HmrcSection() {
                     style={{
                       marginTop: 12,
                       padding: '10px 14px',
-                      background: fraudValid ? (fraudHasWarnings ? B.amberBg : B.greenBg) : B.amberBg,
+                      background: fraudValid
+                        ? fraudHasWarnings
+                          ? B.amberBg
+                          : B.greenBg
+                        : B.amberBg,
                       border: `1px solid ${fraudValid ? (fraudHasWarnings ? '#FDE68A' : '#A7F3D0') : '#FDE68A'}`,
                       borderRadius: 8,
                       fontSize: 13,
-                      color: fraudValid ? (fraudHasWarnings ? B.amberText : B.greenText) : B.amberText,
+                      color: fraudValid
+                        ? fraudHasWarnings
+                          ? B.amberText
+                          : B.greenText
+                        : B.amberText,
                     }}
                   >
                     {fraudDetail}

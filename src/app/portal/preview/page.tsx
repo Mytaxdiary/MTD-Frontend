@@ -12,9 +12,9 @@ import B from '@/styles/theme'
  * then redirects to /portal/dashboard.
  */
 function PreviewExchange() {
-  const router  = useRouter()
-  const params  = useSearchParams()
-  const token   = params.get('token') ?? ''
+  const router = useRouter()
+  const params = useSearchParams()
+  const token = params.get('token') ?? ''
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -31,7 +31,9 @@ function PreviewExchange() {
         router.replace('/portal/dashboard')
       })
       .catch(() => {
-        setError('This preview link has expired or is invalid. Please click "View client portal" again from the client detail page.')
+        setError(
+          'This preview link has expired or is invalid. Please click "View client portal" again from the client detail page.'
+        )
       })
   }, [token, router])
 
@@ -72,9 +74,7 @@ function PreviewExchange() {
   return (
     <div style={{ maxWidth: 480, margin: '80px auto', textAlign: 'center' }}>
       <div style={{ fontSize: 36, marginBottom: 16 }}>⏳</div>
-      <p style={{ fontSize: 15, color: B.muted, margin: 0 }}>
-        Opening client portal preview...
-      </p>
+      <p style={{ fontSize: 15, color: B.muted, margin: 0 }}>Opening client portal preview...</p>
     </div>
   )
 }

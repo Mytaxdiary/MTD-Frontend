@@ -34,20 +34,19 @@ function mapToRow(c: ClientRecord): ClientListRow {
     name: c.name,
     business: c.nino,
     type: [] as string[],
-    mtd:
-      c.authorisedAt
-        ? 'Mandated'
-        : c.invitationStatus === 'accepted'
-          ? 'Invite accepted'
-          : c.invitationStatus === 'partial-auth'
-            ? 'Partial auth'
-            : 'Pending',
+    mtd: c.authorisedAt
+      ? 'Mandated'
+      : c.invitationStatus === 'accepted'
+        ? 'Invite accepted'
+        : c.invitationStatus === 'partial-auth'
+          ? 'Partial auth'
+          : 'Pending',
     deadline: 'N/A',
     filing: c.authorisedAt
       ? 'filed'
       : c.invitationStatus === 'accepted'
         ? 'invite-accepted'
-        : statusMap[c.invitationStatus] ?? c.invitationStatus,
+        : (statusMap[c.invitationStatus] ?? c.invitationStatus),
     chase: needsResend ? 'resend' : '',
     agentType: c.agentType,
     income: 0,
@@ -116,22 +115,22 @@ export default function ClientList({
   const router = useRouter()
 
   // Server-driven state
-  const [clients, setClients]       = useState<ReturnType<typeof mapToRow>[]>([])
-  const [total, setTotal]           = useState(0)
+  const [clients, setClients] = useState<ReturnType<typeof mapToRow>[]>([])
+  const [total, setTotal] = useState(0)
   const [totalPages, setTotalPages] = useState(1)
-  const [page, setPage]             = useState(1)
+  const [page, setPage] = useState(1)
   const [clientsLoading, setClientsLoading] = useState(true)
 
   // Filter / sort state
-  const [search, setSearch]           = useState('')
-  const [searchInput, setSearchInput] = useState('')   // controlled input before debounce
+  const [search, setSearch] = useState('')
+  const [searchInput, setSearchInput] = useState('') // controlled input before debounce
   const [statusFilter, setStatusFilter] = useState('all')
-  const [sortCol, setSortCol]         = useState('name')
-  const [sortDir, setSortDir]         = useState('asc')
+  const [sortCol, setSortCol] = useState('name')
+  const [sortDir, setSortDir] = useState('asc')
 
   // UI state
-  const [selected, setSelected]       = useState(new Set<string>())
-  const [cols, setCols]               = useState<Record<ColKeys, boolean>>(defaultCols)
+  const [selected, setSelected] = useState(new Set<string>())
+  const [cols, setCols] = useState<Record<ColKeys, boolean>>(defaultCols)
   const [showColPicker, setShowColPicker] = useState(false)
   const [resendingId, setResendingId] = useState<string | null>(null)
 
@@ -139,30 +138,34 @@ export default function ClientList({
 
   // ── Data loading ──────────────────────────────────────────────────────────
 
-  const loadPage = useCallback(
-    (p: number, status: string, q: string) => {
-      setClientsLoading(true)
-      clientsService
-        .list({ page: p, limit: PAGE_SIZE, status: status !== 'all' ? status : undefined, search: q || undefined })
-        .then((res) => {
-          setClients(res.clients.map(mapToRow))
-          setTotal(res.total)
-          setTotalPages(res.totalPages)
-          setPage(res.page)
-          setSelected(new Set())
-        })
-        .catch(() => {
-          setClients([])
-          setTotal(0)
-          setTotalPages(1)
-        })
-        .finally(() => setClientsLoading(false))
-    },
-    [],
-  )
+  const loadPage = useCallback((p: number, status: string, q: string) => {
+    setClientsLoading(true)
+    clientsService
+      .list({
+        page: p,
+        limit: PAGE_SIZE,
+        status: status !== 'all' ? status : undefined,
+        search: q || undefined,
+      })
+      .then((res) => {
+        setClients(res.clients.map(mapToRow))
+        setTotal(res.total)
+        setTotalPages(res.totalPages)
+        setPage(res.page)
+        setSelected(new Set())
+      })
+      .catch(() => {
+        setClients([])
+        setTotal(0)
+        setTotalPages(1)
+      })
+      .finally(() => setClientsLoading(false))
+  }, [])
 
   // Initial load
-  useEffect(() => { loadPage(1, 'all', '') }, [loadPage])
+  useEffect(() => {
+    loadPage(1, 'all', '')
+  }, [loadPage])
 
   // When status filter changes → reset to page 1
   const handleStatusChange = (val: string) => {
@@ -200,8 +203,16 @@ export default function ClientList({
   const filtered = [...clients].sort((a, b) => {
     const va = (a as Record<string, unknown>)[sortCol]
     const vb = (b as Record<string, unknown>)[sortCol]
-    const sa = Array.isArray(va) ? va.join(',').toLowerCase() : typeof va === 'string' ? va.toLowerCase() : va
-    const sb = Array.isArray(vb) ? vb.join(',').toLowerCase() : typeof vb === 'string' ? vb.toLowerCase() : vb
+    const sa = Array.isArray(va)
+      ? va.join(',').toLowerCase()
+      : typeof va === 'string'
+        ? va.toLowerCase()
+        : va
+    const sb = Array.isArray(vb)
+      ? vb.join(',').toLowerCase()
+      : typeof vb === 'string'
+        ? vb.toLowerCase()
+        : vb
     if (sa! < sb!) return sortDir === 'asc' ? -1 : 1
     if (sa! > sb!) return sortDir === 'asc' ? 1 : -1
     return 0
@@ -209,12 +220,21 @@ export default function ClientList({
 
   const toggleSort = (col: string) => {
     if (sortCol === col) setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))
-    else { setSortCol(col); setSortDir('asc') }
+    else {
+      setSortCol(col)
+      setSortDir('asc')
+    }
   }
   const toggleSelect = (id: string) =>
-    setSelected((p) => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n })
+    setSelected((p) => {
+      const n = new Set(p)
+      n.has(id) ? n.delete(id) : n.add(id)
+      return n
+    })
   const toggleAll = () =>
-    setSelected((p) => p.size === filtered.length ? new Set<string>() : new Set(filtered.map((c) => c.id)))
+    setSelected((p) =>
+      p.size === filtered.length ? new Set<string>() : new Set(filtered.map((c) => c.id))
+    )
   const SortIcon = ({ col }: { col: string }) => (
     <span style={{ fontSize: 10, marginLeft: 4, opacity: sortCol === col ? 1 : 0.3 }}>
       {sortCol === col && sortDir === 'desc' ? '▼' : '▲'}
@@ -582,116 +602,123 @@ export default function ClientList({
             <tbody>
               {clientsLoading && (
                 <tr>
-                  <td colSpan={10} style={{ padding: '28px', textAlign: 'center', fontSize: 14, color: B.muted }}>
+                  <td
+                    colSpan={10}
+                    style={{ padding: '28px', textAlign: 'center', fontSize: 14, color: B.muted }}
+                  >
                     Loading clients...
                   </td>
                 </tr>
               )}
               {!clientsLoading && filtered.length === 0 && (
                 <tr>
-                  <td colSpan={10} style={{ padding: '28px', textAlign: 'center', fontSize: 14, color: B.light }}>
+                  <td
+                    colSpan={10}
+                    style={{ padding: '28px', textAlign: 'center', fontSize: 14, color: B.light }}
+                  >
                     No clients yet. Click &ldquo;+ Add client&rdquo; to invite your first client.
                   </td>
                 </tr>
               )}
-              {!clientsLoading && filtered.map((c, i) => (
-                <tr
-                  key={String(c.id)}
-                  onClick={() => router.push(`/clients/detail?id=${c.id}`)}
-                  style={{
-                    borderBottom: `1px solid ${B.borderLight}`,
-                    background: selected.has(c.id)
-                      ? '#F0F9FF'
-                      : i % 2 === 1
-                        ? '#FAFBFC'
-                        : 'transparent',
-                    cursor: 'pointer',
-                  }}
-                >
-                  <td style={{ padding: '11px 16px' }}>
-                    <input
-                      type="checkbox"
-                      checked={selected.has(c.id)}
-                      onChange={() => toggleSelect(c.id)}
-                      onClick={(e) => e.stopPropagation()}
-                      style={{ cursor: 'pointer', accentColor: B.primary }}
-                    />
-                  </td>
-                  <td style={{ padding: '11px 14px' }}>
-                    <div style={{ fontWeight: 600, fontSize: 14 }}>{c.name}</div>
-                    <div style={{ fontSize: 12, color: B.light, marginTop: 2 }}>{c.business}</div>
-                  </td>
-                  {cols.type && (
-                    <td style={{ padding: '11px 14px' }}>
-                      {c.type.length > 0 ? <TypePills types={c.type} /> : null}
+              {!clientsLoading &&
+                filtered.map((c, i) => (
+                  <tr
+                    key={String(c.id)}
+                    onClick={() => router.push(`/clients/detail?id=${c.id}`)}
+                    style={{
+                      borderBottom: `1px solid ${B.borderLight}`,
+                      background: selected.has(c.id)
+                        ? '#F0F9FF'
+                        : i % 2 === 1
+                          ? '#FAFBFC'
+                          : 'transparent',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <td style={{ padding: '11px 16px' }}>
+                      <input
+                        type="checkbox"
+                        checked={selected.has(c.id)}
+                        onChange={() => toggleSelect(c.id)}
+                        onClick={(e) => e.stopPropagation()}
+                        style={{ cursor: 'pointer', accentColor: B.primary }}
+                      />
                     </td>
-                  )}
-                  {cols.mtd && (
                     <td style={{ padding: '11px 14px' }}>
-                      <span
-                        style={{
-                          fontSize: 12,
-                          fontWeight: 700,
-                          padding: '3px 10px',
-                          borderRadius: 20,
-                          background: c.mtd === 'Mandated' ? B.greenBg : B.blueBg,
-                          color: c.mtd === 'Mandated' ? B.greenText : B.blueText,
-                          border: `1px solid ${c.mtd === 'Mandated' ? '#A7F3D0' : '#BAE6FD'}`,
-                        }}
-                      >
-                        {c.mtd}
-                      </span>
+                      <div style={{ fontWeight: 600, fontSize: 14 }}>{c.name}</div>
+                      <div style={{ fontSize: 12, color: B.light, marginTop: 2 }}>{c.business}</div>
                     </td>
-                  )}
-                  {cols.deadline && (
-                    <td style={{ padding: '11px 14px', fontSize: 13 }}>{c.deadline}</td>
-                  )}
-                  {cols.filing && (
-                    <td style={{ padding: '11px 14px' }}>
-                      <Badge status={c.filing} />
-                    </td>
-                  )}
-                  {cols.chase && (
-                    <td style={{ padding: '11px 14px' }} onClick={(e) => e.stopPropagation()}>
-                      {c.needsResend ? (
-                        <button
-                          type="button"
-                          disabled={resendingId === c.id}
-                          onClick={(e) => handleResend(c.id, e)}
+                    {cols.type && (
+                      <td style={{ padding: '11px 14px' }}>
+                        {c.type.length > 0 ? <TypePills types={c.type} /> : null}
+                      </td>
+                    )}
+                    {cols.mtd && (
+                      <td style={{ padding: '11px 14px' }}>
+                        <span
                           style={{
                             fontSize: 12,
-                            fontWeight: 600,
-                            padding: '5px 12px',
-                            borderRadius: 7,
-                            border: `1px solid ${B.primary}`,
-                            background: B.blueBg,
-                            color: B.blueText,
-                            cursor: resendingId === c.id ? 'not-allowed' : 'pointer',
-                            opacity: resendingId === c.id ? 0.6 : 1,
+                            fontWeight: 700,
+                            padding: '3px 10px',
+                            borderRadius: 20,
+                            background: c.mtd === 'Mandated' ? B.greenBg : B.blueBg,
+                            color: c.mtd === 'Mandated' ? B.greenText : B.blueText,
+                            border: `1px solid ${c.mtd === 'Mandated' ? '#A7F3D0' : '#BAE6FD'}`,
                           }}
                         >
-                          {resendingId === c.id ? 'Sending...' : 'Resend invite'}
-                        </button>
-                      ) : (
-                        <span style={{ fontSize: 13, color: B.muted }}>No action</span>
-                      )}
-                    </td>
-                  )}
-                  {cols.income && (
-                    <td
-                      style={{
-                        padding: '11px 14px',
-                        textAlign: 'right',
-                        fontVariantNumeric: 'tabular-nums',
-                        fontWeight: 500,
-                        fontSize: 13,
-                      }}
-                    >
-                      {c.income > 0 ? `£${c.income.toLocaleString()}` : ''}
-                    </td>
-                  )}
-                </tr>
-              ))}
+                          {c.mtd}
+                        </span>
+                      </td>
+                    )}
+                    {cols.deadline && (
+                      <td style={{ padding: '11px 14px', fontSize: 13 }}>{c.deadline}</td>
+                    )}
+                    {cols.filing && (
+                      <td style={{ padding: '11px 14px' }}>
+                        <Badge status={c.filing} />
+                      </td>
+                    )}
+                    {cols.chase && (
+                      <td style={{ padding: '11px 14px' }} onClick={(e) => e.stopPropagation()}>
+                        {c.needsResend ? (
+                          <button
+                            type="button"
+                            disabled={resendingId === c.id}
+                            onClick={(e) => handleResend(c.id, e)}
+                            style={{
+                              fontSize: 12,
+                              fontWeight: 600,
+                              padding: '5px 12px',
+                              borderRadius: 7,
+                              border: `1px solid ${B.primary}`,
+                              background: B.blueBg,
+                              color: B.blueText,
+                              cursor: resendingId === c.id ? 'not-allowed' : 'pointer',
+                              opacity: resendingId === c.id ? 0.6 : 1,
+                            }}
+                          >
+                            {resendingId === c.id ? 'Sending...' : 'Resend invite'}
+                          </button>
+                        ) : (
+                          <span style={{ fontSize: 13, color: B.muted }}>No action</span>
+                        )}
+                      </td>
+                    )}
+                    {cols.income && (
+                      <td
+                        style={{
+                          padding: '11px 14px',
+                          textAlign: 'right',
+                          fontVariantNumeric: 'tabular-nums',
+                          fontWeight: 500,
+                          fontSize: 13,
+                        }}
+                      >
+                        {c.income > 0 ? `£${c.income.toLocaleString()}` : ''}
+                      </td>
+                    )}
+                  </tr>
+                ))}
             </tbody>
           </table>
           <div
@@ -736,9 +763,14 @@ export default function ClientList({
                 onClick={() => loadPage(1, statusFilter, search)}
                 disabled={page === 1 || clientsLoading}
                 style={{
-                  padding: '6px 11px', borderRadius: 7, border: `1px solid ${B.border}`,
-                  background: B.white, fontSize: 12, cursor: page === 1 ? 'default' : 'pointer',
-                  color: page === 1 ? B.light : B.text, opacity: page === 1 ? 0.5 : 1,
+                  padding: '6px 11px',
+                  borderRadius: 7,
+                  border: `1px solid ${B.border}`,
+                  background: B.white,
+                  fontSize: 12,
+                  cursor: page === 1 ? 'default' : 'pointer',
+                  color: page === 1 ? B.light : B.text,
+                  opacity: page === 1 ? 0.5 : 1,
                 }}
               >
                 «
@@ -747,9 +779,14 @@ export default function ClientList({
                 onClick={() => loadPage(page - 1, statusFilter, search)}
                 disabled={page === 1 || clientsLoading}
                 style={{
-                  padding: '6px 11px', borderRadius: 7, border: `1px solid ${B.border}`,
-                  background: B.white, fontSize: 12, cursor: page === 1 ? 'default' : 'pointer',
-                  color: page === 1 ? B.light : B.text, opacity: page === 1 ? 0.5 : 1,
+                  padding: '6px 11px',
+                  borderRadius: 7,
+                  border: `1px solid ${B.border}`,
+                  background: B.white,
+                  fontSize: 12,
+                  cursor: page === 1 ? 'default' : 'pointer',
+                  color: page === 1 ? B.light : B.text,
+                  opacity: page === 1 ? 0.5 : 1,
                 }}
               >
                 Prev
@@ -765,19 +802,24 @@ export default function ClientList({
                 }, [])
                 .map((p, i) =>
                   p === 'ellipsis' ? (
-                    <span key={`e${i}`} style={{ fontSize: 12, color: B.light, padding: '0 4px' }}>...</span>
+                    <span key={`e${i}`} style={{ fontSize: 12, color: B.light, padding: '0 4px' }}>
+                      ...
+                    </span>
                   ) : (
                     <button
                       key={p}
                       onClick={() => loadPage(p as number, statusFilter, search)}
                       disabled={clientsLoading}
                       style={{
-                        padding: '5px 10px', borderRadius: 6,
+                        padding: '5px 10px',
+                        borderRadius: 6,
                         border: `1px solid ${page === p ? B.primary : B.border}`,
                         background: page === p ? B.primary : B.white,
                         color: page === p ? '#fff' : B.text,
-                        fontSize: 12, fontWeight: page === p ? 700 : 400,
-                        cursor: 'pointer', minWidth: 34,
+                        fontSize: 12,
+                        fontWeight: page === p ? 700 : 400,
+                        cursor: 'pointer',
+                        minWidth: 34,
                       }}
                     >
                       {p}
@@ -789,8 +831,11 @@ export default function ClientList({
                 onClick={() => loadPage(page + 1, statusFilter, search)}
                 disabled={page === totalPages || clientsLoading}
                 style={{
-                  padding: '6px 11px', borderRadius: 7, border: `1px solid ${B.border}`,
-                  background: B.white, fontSize: 12,
+                  padding: '6px 11px',
+                  borderRadius: 7,
+                  border: `1px solid ${B.border}`,
+                  background: B.white,
+                  fontSize: 12,
                   cursor: page === totalPages ? 'default' : 'pointer',
                   color: page === totalPages ? B.light : B.text,
                   opacity: page === totalPages ? 0.5 : 1,
@@ -802,8 +847,11 @@ export default function ClientList({
                 onClick={() => loadPage(totalPages, statusFilter, search)}
                 disabled={page === totalPages || clientsLoading}
                 style={{
-                  padding: '6px 11px', borderRadius: 7, border: `1px solid ${B.border}`,
-                  background: B.white, fontSize: 12,
+                  padding: '6px 11px',
+                  borderRadius: 7,
+                  border: `1px solid ${B.border}`,
+                  background: B.white,
+                  fontSize: 12,
                   cursor: page === totalPages ? 'default' : 'pointer',
                   color: page === totalPages ? B.light : B.text,
                   opacity: page === totalPages ? 0.5 : 1,

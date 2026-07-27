@@ -29,7 +29,11 @@ function daysLeft(expiresAt?: string): number | null {
 
 function fmtDate(d?: string): string {
   if (!d) return '-'
-  return new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+  return new Date(d).toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  })
 }
 
 type InvBadge = { label: string; bg: string; c: string; border: string }
@@ -76,7 +80,14 @@ function invitationBadge(inv: ClientRecord): InvBadge {
   if (inv.invitationStatus === 'pending') {
     return inv.invitationId ? map.pending_sent : map.pending_unsent
   }
-  return map[inv.invitationStatus] ?? { label: inv.invitationStatus, bg: '#F8FAFC', c: '#64748B', border: '#E2E8F0' }
+  return (
+    map[inv.invitationStatus] ?? {
+      label: inv.invitationStatus,
+      bg: '#F8FAFC',
+      c: '#64748B',
+      border: '#E2E8F0',
+    }
+  )
 }
 
 function invitationHint(inv: ClientRecord): string {
@@ -137,9 +148,13 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
   const loadPending = useCallback(() => {
     setPendingLoading(true)
     clientsService
-      .list()
-      .then((all) =>
-        setPendingClients(all.filter((c) => ACTIONABLE_STATUSES.includes(c.invitationStatus))),
+      .list({ limit: 200 })
+      .then((res) =>
+        setPendingClients(
+          res.clients.filter((c: ClientRecord) =>
+            ACTIONABLE_STATUSES.includes(c.invitationStatus),
+          ),
+        ),
       )
       .catch(() => setPendingClients([]))
       .finally(() => setPendingLoading(false))
@@ -289,7 +304,15 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
 
                 {/* NINO */}
                 <div style={{ marginBottom: 16 }}>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: B.muted, display: 'block', marginBottom: 5 }}>
+                  <label
+                    style={{
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: B.muted,
+                      display: 'block',
+                      marginBottom: 5,
+                    }}
+                  >
                     National Insurance number (NINO) *
                   </label>
                   <input
@@ -317,7 +340,15 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
 
                 {/* Client name */}
                 <div style={{ marginBottom: 16 }}>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: B.muted, display: 'block', marginBottom: 5 }}>
+                  <label
+                    style={{
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: B.muted,
+                      display: 'block',
+                      marginBottom: 5,
+                    }}
+                  >
                     Client name *
                   </label>
                   <input
@@ -337,8 +368,19 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
 
                 {/* Postcode */}
                 <div style={{ marginBottom: 16 }}>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: B.muted, display: 'block', marginBottom: 5 }}>
-                    Postcode * <span style={{ fontWeight: 400, color: B.light }}>(used by HMRC to verify identity)</span>
+                  <label
+                    style={{
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: B.muted,
+                      display: 'block',
+                      marginBottom: 5,
+                    }}
+                  >
+                    Postcode *{' '}
+                    <span style={{ fontWeight: 400, color: B.light }}>
+                      (used by HMRC to verify identity)
+                    </span>
                   </label>
                   <input
                     value={postcode}
@@ -358,7 +400,15 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
 
                 {/* Client email */}
                 <div style={{ marginBottom: 16 }}>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: B.muted, display: 'block', marginBottom: 5 }}>
+                  <label
+                    style={{
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: B.muted,
+                      display: 'block',
+                      marginBottom: 5,
+                    }}
+                  >
                     Client email *
                   </label>
                   <input
@@ -378,7 +428,15 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
 
                 {/* Personal message */}
                 <div style={{ marginBottom: 20 }}>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: B.muted, display: 'block', marginBottom: 5 }}>
+                  <label
+                    style={{
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: B.muted,
+                      display: 'block',
+                      marginBottom: 5,
+                    }}
+                  >
                     Personal message to client
                   </label>
                   <textarea
@@ -398,7 +456,8 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                     }}
                   />
                   <div style={{ fontSize: 10, color: B.light, marginTop: 3 }}>
-                    Sent alongside the HMRC invitation. Use {'{name}'} and it will be replaced with the client&apos;s name.
+                    Sent alongside the HMRC invitation. Use {'{name}'} and it will be replaced with
+                    the client&apos;s name.
                   </div>
                 </div>
 
@@ -431,7 +490,15 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                       }}
                     >
                       <div>
-                        <label style={{ fontSize: 12, fontWeight: 600, color: B.muted, display: 'block', marginBottom: 8 }}>
+                        <label
+                          style={{
+                            fontSize: 12,
+                            fontWeight: 600,
+                            color: B.muted,
+                            display: 'block',
+                            marginBottom: 8,
+                          }}
+                        >
                           Agent type
                         </label>
                         <div style={{ display: 'flex', gap: 10 }}>
@@ -464,12 +531,26 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                                   }}
                                 >
                                   {agentType === a.k && (
-                                    <div style={{ width: 6, height: 6, borderRadius: 3, background: B.primary }} />
+                                    <div
+                                      style={{
+                                        width: 6,
+                                        height: 6,
+                                        borderRadius: 3,
+                                        background: B.primary,
+                                      }}
+                                    />
                                   )}
                                 </div>
                                 <span style={{ fontSize: 12, fontWeight: 600 }}>{a.l}</span>
                               </div>
-                              <div style={{ fontSize: 11, color: B.muted, marginTop: 3, paddingLeft: 20 }}>
+                              <div
+                                style={{
+                                  fontSize: 11,
+                                  color: B.muted,
+                                  marginTop: 3,
+                                  paddingLeft: 20,
+                                }}
+                              >
                                 {a.d}
                               </div>
                             </div>
@@ -478,7 +559,15 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                       </div>
 
                       <div>
-                        <label style={{ fontSize: 12, fontWeight: 600, color: B.muted, display: 'block', marginBottom: 5 }}>
+                        <label
+                          style={{
+                            fontSize: 12,
+                            fontWeight: 600,
+                            color: B.muted,
+                            display: 'block',
+                            marginBottom: 5,
+                          }}
+                        >
                           Phone (optional)
                         </label>
                         <input
@@ -580,9 +669,18 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                 </div>
                 {invitationSent ? (
                   <>
-                    <div style={{ fontSize: 13, color: B.muted, lineHeight: 1.6, maxWidth: 400, margin: '0 auto' }}>
-                      Your personal message and notification email have been sent to {sentClient.email}.
-                      The client needs to sign in with their Government Gateway credentials to accept the HMRC request.
+                    <div
+                      style={{
+                        fontSize: 13,
+                        color: B.muted,
+                        lineHeight: 1.6,
+                        maxWidth: 400,
+                        margin: '0 auto',
+                      }}
+                    >
+                      Your personal message and notification email have been sent to{' '}
+                      {sentClient.email}. The client needs to sign in with their Government Gateway
+                      credentials to accept the HMRC request.
                     </div>
                     <div
                       style={{
@@ -595,7 +693,8 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                         color: B.amberText,
                       }}
                     >
-                      The invitation expires on {fmtDate(sentClient.invitationExpiresAt)}. You&apos;ll be notified when the client accepts.
+                      The invitation expires on {fmtDate(sentClient.invitationExpiresAt)}.
+                      You&apos;ll be notified when the client accepts.
                     </div>
                   </>
                 ) : (
@@ -615,12 +714,14 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                       textAlign: 'left',
                     }}
                   >
-                    <strong>{sentClient.name}</strong> was added to your client list, but the HMRC invitation could not be sent.
+                    <strong>{sentClient.name}</strong> was added to your client list, but the HMRC
+                    invitation could not be sent.
                     {sentWarning && (
                       <p style={{ margin: '10px 0 0', fontWeight: 400 }}>{sentWarning}</p>
                     )}
                     <p style={{ margin: '10px 0 0', fontSize: 12, color: B.amberText }}>
-                      No email was sent to the client. Fix the issue above, then use Resend on the pending invitations panel.
+                      No email was sent to the client. Fix the issue above, then use Resend on the
+                      pending invitations panel.
                     </p>
                   </div>
                 )}
@@ -652,9 +753,12 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                   padding: '24px',
                 }}
               >
-                <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4 }}>Bulk import clients</div>
+                <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4 }}>
+                  Bulk import clients
+                </div>
                 <div style={{ fontSize: 13, color: B.muted, marginBottom: 20, lineHeight: 1.6 }}>
-                  Upload a CSV file to add multiple clients at once. All rows are validated before any client is created.
+                  Upload a CSV file to add multiple clients at once. All rows are validated before
+                  any client is created.
                 </div>
                 <BulkImportTab onSuccess={loadPending} />
               </div>
@@ -725,7 +829,9 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                 )
                   .filter((s) => pendingClients.some((c) => c.invitationStatus === s.status))
                   .map((s) => {
-                    const count = pendingClients.filter((c) => c.invitationStatus === s.status).length
+                    const count = pendingClients.filter(
+                      (c) => c.invitationStatus === s.status
+                    ).length
                     return (
                       <span
                         key={s.status}
@@ -763,20 +869,23 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                   </div>
                 )}
                 {pendingLoading ? (
-                  <div style={{ padding: '16px 0', textAlign: 'center', fontSize: 12, color: B.muted }}>
+                  <div
+                    style={{ padding: '16px 0', textAlign: 'center', fontSize: 12, color: B.muted }}
+                  >
                     Loading...
                   </div>
                 ) : pendingClients.length === 0 ? (
                   <div style={{ padding: '20px 0', textAlign: 'center' }}>
                     <div style={{ fontSize: 20, marginBottom: 6 }}>✓</div>
-                    <div style={{ fontSize: 12, color: B.light }}>All invitations are up to date</div>
+                    <div style={{ fontSize: 12, color: B.light }}>
+                      All invitations are up to date
+                    </div>
                   </div>
                 ) : (
                   pendingClients.map((inv, i) => {
                     const badge = invitationBadge(inv)
                     const hint = invitationHint(inv)
-                    const canResendNow =
-                      inv.invitationStatus !== 'pending' || !inv.invitationId
+                    const canResendNow = inv.invitationStatus !== 'pending' || !inv.invitationId
                     return (
                       <div
                         key={inv.id}
@@ -888,10 +997,26 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
               </div>
               <div style={{ padding: '14px 20px' }}>
                 {[
-                  { n: '1', t: 'You send the invitation', d: 'We create an HMRC authorisation request and send your personal message' },
-                  { n: '2', t: 'Client receives email', d: "They get your message plus a separate link from HMRC's Government Gateway" },
-                  { n: '3', t: 'Client accepts', d: 'They sign in and confirm. You get notified instantly.' },
-                  { n: '4', t: 'Client appears on dashboard', d: 'We fetch their business details, obligations, and liabilities' },
+                  {
+                    n: '1',
+                    t: 'You send the invitation',
+                    d: 'We create an HMRC authorisation request and send your personal message',
+                  },
+                  {
+                    n: '2',
+                    t: 'Client receives email',
+                    d: "They get your message plus a separate link from HMRC's Government Gateway",
+                  },
+                  {
+                    n: '3',
+                    t: 'Client accepts',
+                    d: 'They sign in and confirm. You get notified instantly.',
+                  },
+                  {
+                    n: '4',
+                    t: 'Client appears on dashboard',
+                    d: 'We fetch their business details, obligations, and liabilities',
+                  },
                 ].map((s, i) => (
                   <div key={i} style={{ display: 'flex', gap: 12, marginBottom: i < 3 ? 14 : 0 }}>
                     <div
@@ -914,7 +1039,9 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                     </div>
                     <div>
                       <div style={{ fontSize: 12, fontWeight: 600 }}>{s.t}</div>
-                      <div style={{ fontSize: 11, color: B.muted, marginTop: 1, lineHeight: 1.5 }}>{s.d}</div>
+                      <div style={{ fontSize: 11, color: B.muted, marginTop: 1, lineHeight: 1.5 }}>
+                        {s.d}
+                      </div>
                     </div>
                   </div>
                 ))}

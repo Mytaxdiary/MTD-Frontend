@@ -33,7 +33,7 @@ type BissState = 'idle' | 'loading' | 'no-data' | 'loaded'
 function bissStateOf(
   authorised: boolean,
   loading: boolean,
-  summary: IncomeSummaryResponse | null,
+  summary: IncomeSummaryResponse | null
 ): BissState {
   if (!authorised) return 'idle'
   if (loading) return 'loading'
@@ -55,15 +55,19 @@ export default function MetricsStrip({
     {
       label: `Submitted income (YTD${incomeSummary ? ` ${incomeSummary.taxYear}` : ''})`,
       value:
-        bissState === 'loaded' ? fmtGbp(incomeSummary!.totalIncome)
-        : bissState === 'no-data' ? 'No data'
-        : 'N/A',
+        bissState === 'loaded'
+          ? fmtGbp(incomeSummary!.totalIncome)
+          : bissState === 'no-data'
+            ? 'No data'
+            : 'N/A',
       sub:
         bissState === 'loaded'
           ? `${incomeSummary!.businesses.length} business${incomeSummary!.businesses.length > 1 ? 'es' : ''}`
           : bissState === 'no-data'
             ? 'No quarterly submissions yet'
-            : authorised ? 'Authorised — HMRC data unavailable' : 'Authorise client to load',
+            : authorised
+              ? 'Authorised — HMRC data unavailable'
+              : 'Authorise client to load',
       color: B.green,
       accentColor: bissState === 'loaded' ? B.text : B.light,
       loading: bissState === 'loading',
@@ -71,15 +75,19 @@ export default function MetricsStrip({
     {
       label: 'Submitted expenses (YTD)',
       value:
-        bissState === 'loaded' ? fmtGbp(incomeSummary!.totalExpenses)
-        : bissState === 'no-data' ? 'No data'
-        : 'N/A',
+        bissState === 'loaded'
+          ? fmtGbp(incomeSummary!.totalExpenses)
+          : bissState === 'no-data'
+            ? 'No data'
+            : 'N/A',
       sub:
         bissState === 'loaded'
           ? 'All business types'
           : bissState === 'no-data'
             ? 'No quarterly submissions yet'
-            : authorised ? 'Authorised — HMRC data unavailable' : 'Authorise client to load',
+            : authorised
+              ? 'Authorised — HMRC data unavailable'
+              : 'Authorise client to load',
       color: B.amber,
       accentColor: bissState === 'loaded' ? B.text : B.light,
       loading: bissState === 'loading',
@@ -93,28 +101,34 @@ export default function MetricsStrip({
             : incomeSummary!.netLoss > 0
               ? `-${fmtGbp(incomeSummary!.netLoss)}`
               : '£0'
-          : bissState === 'no-data' ? 'No data'
-          : 'N/A',
+          : bissState === 'no-data'
+            ? 'No data'
+            : 'N/A',
       sub:
         bissState === 'loaded'
-          ? incomeSummary!.netLoss > 0 ? 'Net loss' : 'Net profit'
+          ? incomeSummary!.netLoss > 0
+            ? 'Net loss'
+            : 'Net profit'
           : bissState === 'no-data'
             ? 'No quarterly submissions yet'
-            : authorised ? 'Authorised — HMRC data unavailable' : 'Authorise client to load',
+            : authorised
+              ? 'Authorised — HMRC data unavailable'
+              : 'Authorise client to load',
       color: bissState === 'loaded' && incomeSummary!.netLoss > 0 ? B.red : B.primary,
       accentColor: bissState === 'loaded' ? B.text : B.light,
       loading: bissState === 'loading',
     },
     {
       label: 'Outstanding to HMRC',
-      value:
-        outstandingBalance != null
-          ? fmtGbp(outstandingBalance)
-          : 'N/A',
+      value: outstandingBalance != null ? fmtGbp(outstandingBalance) : 'N/A',
       sub:
         outstandingBalance == null
-          ? authorised ? 'Authorised — loading...' : 'Authorise client to load'
-          : outstandingBalance > 0 ? 'Payment due' : 'All clear',
+          ? authorised
+            ? 'Authorised — loading...'
+            : 'Authorise client to load'
+          : outstandingBalance > 0
+            ? 'Payment due'
+            : 'All clear',
       color: outstandingBalance != null ? outstandingColor : B.light,
       accentColor: outstandingBalance != null ? B.text : B.light,
       loading: authorised && outstandingBalance === null,
@@ -145,17 +159,38 @@ export default function MetricsStrip({
           >
             <div
               style={{
-                position: 'absolute', top: 0, left: 0, right: 0, height: 3,
-                background: m.color, opacity: m.loading ? 0.4 : 1,
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: 3,
+                background: m.color,
+                opacity: m.loading ? 0.4 : 1,
               }}
             />
-            <div style={{ fontSize: 11, fontWeight: 600, color: B.muted, letterSpacing: '0.03em', textTransform: 'uppercase' }}>
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: B.muted,
+                letterSpacing: '0.03em',
+                textTransform: 'uppercase',
+              }}
+            >
               {m.label}
             </div>
             {m.loading ? (
               <SkeletonBar />
             ) : (
-              <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em', marginTop: 4, color: m.accentColor }}>
+              <div
+                style={{
+                  fontSize: 22,
+                  fontWeight: 700,
+                  letterSpacing: '-0.02em',
+                  marginTop: 4,
+                  color: m.accentColor,
+                }}
+              >
                 {m.value}
               </div>
             )}

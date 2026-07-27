@@ -35,10 +35,7 @@ export default function CurrentUserProvider({ children }: { children: React.Reac
     void refresh()
   }, [refresh])
 
-  const value = useMemo(
-    () => ({ user, loading, error, refresh }),
-    [user, loading, error, refresh],
-  )
+  const value = useMemo(() => ({ user, loading, error, refresh }), [user, loading, error, refresh])
 
   return <CurrentUserContext.Provider value={value}>{children}</CurrentUserContext.Provider>
 }

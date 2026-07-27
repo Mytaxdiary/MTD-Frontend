@@ -5,13 +5,7 @@ import { authService } from '@/services/auth.service'
 import { useCurrentUser } from '@/components/auth/CurrentUserProvider'
 import B from '@/styles/theme'
 
-type Phase =
-  | 'idle'
-  | 'setup-loading'
-  | 'setup-ready'
-  | 'enabling'
-  | 'disable-confirm'
-  | 'disabling'
+type Phase = 'idle' | 'setup-loading' | 'setup-ready' | 'enabling' | 'disable-confirm' | 'disabling'
 
 export default function SecuritySection() {
   const { user, refresh: reloadUser } = useCurrentUser()
@@ -56,7 +50,10 @@ export default function SecuritySection() {
 
   async function confirmEnable() {
     const clean = enableCode.replace(/\D/g, '')
-    if (clean.length !== 6) { setError('Enter the 6-digit code shown in your app.'); return }
+    if (clean.length !== 6) {
+      setError('Enter the 6-digit code shown in your app.')
+      return
+    }
     setPhase('enabling')
     setError(null)
     try {
@@ -73,8 +70,14 @@ export default function SecuritySection() {
 
   async function confirmDisable() {
     const clean = disableCode.replace(/\D/g, '')
-    if (!disablePassword.trim()) { setError('Enter your password.'); return }
-    if (clean.length !== 6) { setError('Enter the 6-digit code from your authenticator app.'); return }
+    if (!disablePassword.trim()) {
+      setError('Enter your password.')
+      return
+    }
+    if (clean.length !== 6) {
+      setError('Enter the 6-digit code from your authenticator app.')
+      return
+    }
     setPhase('disabling')
     setError(null)
     try {
@@ -152,7 +155,15 @@ export default function SecuritySection() {
             </div>
             {phase === 'idle' && (
               <button
-                onClick={mfaEnabled ? () => { setPhase('disable-confirm'); setError(null); setSuccessMsg(null) } : startSetup}
+                onClick={
+                  mfaEnabled
+                    ? () => {
+                        setPhase('disable-confirm')
+                        setError(null)
+                        setSuccessMsg(null)
+                      }
+                    : startSetup
+                }
                 style={{
                   padding: '8px 18px',
                   borderRadius: 8,
@@ -230,7 +241,11 @@ export default function SecuritySection() {
                     <img
                       src={qrDataUrl}
                       alt="MFA QR code"
-                      style={{ borderRadius: 8, border: `1px solid ${B.border}`, background: '#fff' }}
+                      style={{
+                        borderRadius: 8,
+                        border: `1px solid ${B.border}`,
+                        background: '#fff',
+                      }}
                     />
                   )}
                   <div>
@@ -271,7 +286,10 @@ export default function SecuritySection() {
                     inputMode="numeric"
                     autoComplete="one-time-code"
                     value={enableCode}
-                    onChange={(e) => { setEnableCode(e.target.value.replace(/\D/g, '').slice(0, 6)); setError(null) }}
+                    onChange={(e) => {
+                      setEnableCode(e.target.value.replace(/\D/g, '').slice(0, 6))
+                      setError(null)
+                    }}
                     placeholder="000000"
                     maxLength={6}
                     style={{
@@ -298,7 +316,8 @@ export default function SecuritySection() {
                       color: enableCode.replace(/\D/g, '').length === 6 ? '#fff' : B.muted,
                       fontSize: 13,
                       fontWeight: 600,
-                      cursor: enableCode.replace(/\D/g, '').length === 6 ? 'pointer' : 'not-allowed',
+                      cursor:
+                        enableCode.replace(/\D/g, '').length === 6 ? 'pointer' : 'not-allowed',
                     }}
                   >
                     Confirm &amp; enable
@@ -349,7 +368,10 @@ export default function SecuritySection() {
                   ref={disableInputRef}
                   type="password"
                   value={disablePassword}
-                  onChange={(e) => { setDisablePassword(e.target.value); setError(null) }}
+                  onChange={(e) => {
+                    setDisablePassword(e.target.value)
+                    setError(null)
+                  }}
                   placeholder="Your password"
                   autoFocus
                   style={{
@@ -365,7 +387,10 @@ export default function SecuritySection() {
                   inputMode="numeric"
                   autoComplete="one-time-code"
                   value={disableCode}
-                  onChange={(e) => { setDisableCode(e.target.value.replace(/\D/g, '').slice(0, 6)); setError(null) }}
+                  onChange={(e) => {
+                    setDisableCode(e.target.value.replace(/\D/g, '').slice(0, 6))
+                    setError(null)
+                  }}
                   placeholder="6-digit code"
                   maxLength={6}
                   style={{
@@ -430,7 +455,9 @@ export default function SecuritySection() {
           padding: '16px 20px',
         }}
       >
-        <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 10 }}>Supported authenticator apps</div>
+        <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 10 }}>
+          Supported authenticator apps
+        </div>
         {[
           { name: 'Google Authenticator', note: 'iOS & Android' },
           { name: 'Microsoft Authenticator', note: 'iOS & Android' },
@@ -439,7 +466,13 @@ export default function SecuritySection() {
         ].map((a) => (
           <div
             key={a.name}
-            style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: B.text, marginBottom: 6 }}
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              fontSize: 13,
+              color: B.text,
+              marginBottom: 6,
+            }}
           >
             <span>{a.name}</span>
             <span style={{ color: B.muted }}>{a.note}</span>
