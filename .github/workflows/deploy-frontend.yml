@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 env:
-  NODE_VERSION: '20'
+  NODE_VERSION: '22'
   APP_DIR: /var/www/mtd/frontend
   PM2_NAME: mtd-frontend
 
