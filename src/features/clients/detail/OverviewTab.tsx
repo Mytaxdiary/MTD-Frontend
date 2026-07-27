@@ -375,10 +375,10 @@ function ClientInfoCard({
               borderBottom: i < rows.length - 1 ? `1px solid ${B.borderLight}` : 'none',
             }}
           >
-            <span style={{ fontSize: 12, color: B.muted }}>{k}</span>
+            <span style={{ fontSize: 13, color: B.muted }}>{k}</span>
             <span
               style={{
-                fontSize: 12,
+                fontSize: 13,
                 fontWeight: 500,
                 fontFamily: k === 'NINO' ? 'monospace' : 'inherit',
               }}
@@ -419,7 +419,7 @@ function PaymentDetailsCard() {
               key={k}
               style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0' }}
             >
-              <span style={{ fontSize: 12, color: '#0369A1' }}>{k}</span>
+              <span style={{ fontSize: 13, color: '#0369A1' }}>{k}</span>
               <span
                 style={{
                   fontSize: idx === 2 ? 11 : 13,

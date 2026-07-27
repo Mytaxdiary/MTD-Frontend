@@ -121,6 +121,7 @@ export default function DataPrivacySection() {
           background: B.white,
           borderRadius: 12,
           border: `1px solid ${B.border}`,
+          boxShadow: B.cardShadow,
           overflow: 'hidden',
         }}
       >
@@ -128,7 +129,7 @@ export default function DataPrivacySection() {
           style={{
             padding: '14px 20px',
             borderBottom: `1px solid ${B.border}`,
-            fontSize: 14,
+            fontSize: 16,
             fontWeight: 700,
           }}
         >
@@ -311,6 +312,7 @@ export default function DataPrivacySection() {
           background: B.white,
           borderRadius: 12,
           border: `1px solid ${B.border}`,
+          boxShadow: B.cardShadow,
           padding: '16px 20px',
         }}
       >
@@ -382,6 +384,7 @@ export default function DataPrivacySection() {
           background: B.white,
           borderRadius: 12,
           border: '1px solid #FECACA',
+          boxShadow: B.cardShadow,
           overflow: 'hidden',
           marginTop: 8,
         }}
@@ -390,7 +393,7 @@ export default function DataPrivacySection() {
           style={{
             padding: '14px 20px',
             borderBottom: '1px solid #FECACA',
-            fontSize: 14,
+            fontSize: 16,
             fontWeight: 700,
             color: B.redText,
           }}

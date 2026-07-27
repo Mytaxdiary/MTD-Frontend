@@ -104,6 +104,7 @@ const MetricCard = ({
       borderRadius: 12,
       padding: '16px 18px',
       border: `1.5px solid ${active ? color : B.border}`,
+      boxShadow: B.cardShadow,
       position: 'relative',
       overflow: 'hidden',
       cursor: 'pointer',
@@ -117,7 +118,7 @@ const MetricCard = ({
       <div>
         <div
           style={{
-            fontSize: 12,
+            fontSize: 13,
             fontWeight: 600,
             color: B.muted,
             letterSpacing: '0.03em',
@@ -232,7 +233,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
       {/* Header */}
       <div
         style={{
-          padding: '16px 32px',
+          padding: '14px 28px',
           background: B.white,
           borderBottom: `1px solid ${B.border}`,
           display: 'flex',
@@ -242,10 +243,10 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
         }}
       >
         <div>
-          <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.02em' }}>
+          <div style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.02em' }}>
             {timeOfDayGreeting()}, {greetingName}
           </div>
-          <div style={{ fontSize: 14, color: B.muted, marginTop: 3 }}>
+          <div style={{ fontSize: 15, color: B.muted, marginTop: 3 }}>
             {liveDateSubtitle(summary)}
           </div>
         </div>
@@ -283,7 +284,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
         </div>
       </div>
 
-      <div style={{ padding: '24px 32px', flex: 1 }}>
+      <div style={{ padding: '18px 28px', flex: 1 }}>
         {/* Metric cards */}
         <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
           <MetricCard
@@ -330,6 +331,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
             background: B.white,
             borderRadius: '12px 12px 0 0',
             border: `1px solid ${B.border}`,
+            boxShadow: B.cardShadow,
             borderBottom: 'none',
             padding: '12px 20px',
             display: 'flex',
@@ -458,6 +460,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
               background: B.white,
               borderRadius: '0 0 12px 12px',
               border: `1px solid ${B.border}`,
+              boxShadow: B.cardShadow,
               overflow: 'hidden',
             }}
           >
@@ -636,6 +639,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
               background: B.white,
               borderRadius: '0 0 12px 12px',
               border: `1px solid ${B.border}`,
+              boxShadow: B.cardShadow,
               padding: 16,
             }}
           >
@@ -744,6 +748,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
               background: B.white,
               borderRadius: '0 0 12px 12px',
               border: `1px solid ${B.border}`,
+              boxShadow: B.cardShadow,
               overflow: 'hidden',
             }}
           >

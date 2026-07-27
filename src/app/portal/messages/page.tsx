@@ -52,7 +52,7 @@ export default function PortalMessagesPage() {
           >
             Messages
           </h2>
-          <p style={{ margin: '5px 0 0', fontSize: 14, color: B.muted }}>
+          <p style={{ margin: '5px 0 0', fontSize: 15, color: B.muted }}>
             Messages from your accountant
           </p>
         </div>
@@ -85,7 +85,7 @@ export default function PortalMessagesPage() {
             border: `1px solid ${B.border}`,
             padding: '56px 32px',
             textAlign: 'center',
-            boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+            boxShadow: B.cardShadow,
           }}
         >
           <div style={{ fontSize: 40, marginBottom: 16 }}>💬</div>
@@ -104,9 +104,7 @@ export default function PortalMessagesPage() {
                 border: `1.5px solid ${!msg.readAt ? '#1E3A5F' : B.border}`,
                 overflow: 'hidden',
                 cursor: 'pointer',
-                boxShadow: !msg.readAt
-                  ? '0 2px 8px rgba(30,58,95,0.10)'
-                  : '0 1px 3px rgba(0,0,0,0.04)',
+                boxShadow: !msg.readAt ? '0 2px 8px rgba(30,58,95,0.10)' : B.cardShadow,
               }}
               onClick={() => handleExpand(msg)}
             >

@@ -22,7 +22,7 @@ const outlineBtn: React.CSSProperties = {
 export default function BillingSection() {
   return (
     <Card>
-      <CardHead titleSize={15} padding="16px 20px" title="Plan & billing" />
+      <CardHead titleSize={16} padding="16px 20px" title="Plan & billing" />
       <div style={{ padding: '20px' }}>
         <div
           style={{
@@ -69,8 +69,8 @@ export default function BillingSection() {
               borderBottom: i < BILLING_ROWS.length - 1 ? `1px solid ${B.borderLight}` : 'none',
             }}
           >
-            <span style={{ fontSize: 12, color: B.muted }}>{k}</span>
-            <span style={{ fontSize: 12, fontWeight: 500 }}>{v}</span>
+            <span style={{ fontSize: 13, color: B.muted }}>{k}</span>
+            <span style={{ fontSize: 13, fontWeight: 500 }}>{v}</span>
           </div>
         ))}
 

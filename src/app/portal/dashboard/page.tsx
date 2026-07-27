@@ -38,7 +38,7 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
         border: `1px solid ${B.border}`,
         marginBottom: 20,
         overflow: 'hidden',
-        boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+        boxShadow: B.cardShadow,
       }}
     >
       <div
@@ -46,7 +46,7 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
           padding: '15px 22px',
           borderBottom: `1px solid ${B.border}`,
           fontWeight: 700,
-          fontSize: 15,
+          fontSize: 16,
           color: B.text,
           background: B.surface,
         }}
@@ -171,7 +171,7 @@ export default function PortalDashboard() {
           >
             Welcome, {me?.name}
           </h2>
-          <p style={{ margin: '5px 0 0', fontSize: 14, color: B.muted }}>
+          <p style={{ margin: '5px 0 0', fontSize: 15, color: B.muted }}>
             Managed by <strong>{me?.firmName}</strong>
             {me?.firmEmail && <span style={{ color: B.light }}> &nbsp;|&nbsp; {me.firmEmail}</span>}
           </p>
@@ -233,7 +233,7 @@ export default function PortalDashboard() {
       {/* Quarterly deadlines */}
       <Card title="Quarterly deadlines">
         {obligations.length === 0 ? (
-          <p style={{ fontSize: 14, color: B.muted, margin: 0 }}>No obligations found.</p>
+          <p style={{ fontSize: 15, color: B.muted, margin: 0 }}>No obligations found.</p>
         ) : (
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
             <thead>
@@ -288,7 +288,7 @@ export default function PortalDashboard() {
       {me?.authorisedAt && (
         <Card title="HMRC balance">
           {!bal ? (
-            <p style={{ fontSize: 14, color: B.muted, margin: 0 }}>No liability data available.</p>
+            <p style={{ fontSize: 15, color: B.muted, margin: 0 }}>No liability data available.</p>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
               {(
@@ -305,11 +305,12 @@ export default function PortalDashboard() {
                     borderRadius: 10,
                     padding: '16px 18px',
                     border: `1px solid ${B.border}`,
+                    boxShadow: B.cardShadow,
                   }}
                 >
                   <div
                     style={{
-                      fontSize: 12,
+                      fontSize: 13,
                       color: B.muted,
                       marginBottom: 8,
                       fontWeight: 600,

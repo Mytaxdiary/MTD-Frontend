@@ -245,7 +245,7 @@ export default function ClientList({
     <div style={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
       <div
         style={{
-          padding: '16px 32px',
+          padding: '14px 28px',
           background: B.white,
           borderBottom: `1px solid ${B.border}`,
           display: 'flex',
@@ -255,8 +255,8 @@ export default function ClientList({
         }}
       >
         <div>
-          <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.01em' }}>Clients</div>
-          <div style={{ fontSize: 14, color: B.muted, marginTop: 3 }}>
+          <div style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.01em' }}>Clients</div>
+          <div style={{ fontSize: 15, color: B.muted, marginTop: 3 }}>
             {clientsLoading
               ? 'Loading...'
               : `${total} client${total !== 1 ? 's' : ''} · Page ${page} of ${totalPages}`}
@@ -279,7 +279,7 @@ export default function ClientList({
         </button>
       </div>
 
-      <div style={{ padding: '20px 32px', flex: 1 }}>
+      <div style={{ padding: '18px 28px', flex: 1 }}>
         <div
           style={{
             display: 'flex',
@@ -474,6 +474,7 @@ export default function ClientList({
             background: B.white,
             borderRadius: 12,
             border: `1px solid ${B.border}`,
+            boxShadow: B.cardShadow,
             overflow: 'hidden',
           }}
         >

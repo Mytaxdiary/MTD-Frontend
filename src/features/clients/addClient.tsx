@@ -240,65 +240,76 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
     <div style={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
       <div
         style={{
-          padding: '16px 32px',
+          padding: '14px 28px',
           background: B.white,
-          borderBottom: `1px solid ${B.border}`,
+          borderBottom: `1px solid ${B.borderStrong}`,
           flexShrink: 0,
         }}
       >
-        <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.01em' }}>Add client</div>
-        <div style={{ fontSize: 14, color: B.muted, marginTop: 3 }}>
+        <div style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.01em' }}>Add client</div>
+        <div style={{ fontSize: 15, color: B.muted, marginTop: 3 }}>
           Send an HMRC authorisation invitation to a new client
         </div>
       </div>
 
-      <div style={{ padding: '24px 32px', flex: 1 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 24 }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            <div
+      <div style={{ padding: '18px 28px', flex: 1 }}>
+        {/* Tabs above the grid so Invitations aligns with the form card */}
+        <div
+          style={{
+            display: 'flex',
+            gap: 4,
+            padding: 4,
+            background: B.surface,
+            borderRadius: 10,
+            width: 'fit-content',
+            marginBottom: 14,
+            border: `1px solid ${B.borderStrong}`,
+          }}
+        >
+          {[
+            { k: 'single', l: 'Single client' },
+            { k: 'bulk', l: 'Bulk import (CSV)' },
+          ].map((m) => (
+            <button
+              key={m.k}
+              onClick={() => setMode(m.k)}
               style={{
-                display: 'flex',
-                gap: 4,
-                padding: 4,
-                background: B.borderLight,
-                borderRadius: 10,
-                width: 'fit-content',
+                padding: '9px 18px',
+                borderRadius: 8,
+                border: 'none',
+                fontSize: 14,
+                fontWeight: 600,
+                cursor: 'pointer',
+                background: mode === m.k ? B.white : 'transparent',
+                color: mode === m.k ? B.text : B.muted,
+                boxShadow: mode === m.k ? B.cardShadow : 'none',
               }}
             >
-              {[
-                { k: 'single', l: 'Single client' },
-                { k: 'bulk', l: 'Bulk import (CSV)' },
-              ].map((m) => (
-                <button
-                  key={m.k}
-                  onClick={() => setMode(m.k)}
-                  style={{
-                    padding: '7px 18px',
-                    borderRadius: 7,
-                    border: 'none',
-                    fontSize: 12,
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    background: mode === m.k ? B.white : 'transparent',
-                    color: mode === m.k ? B.text : B.muted,
-                    boxShadow: mode === m.k ? '0 1px 3px rgba(0,0,0,0.06)' : 'none',
-                  }}
-                >
-                  {m.l}
-                </button>
-              ))}
-            </div>
+              {m.l}
+            </button>
+          ))}
+        </div>
 
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 380px',
+            gap: 18,
+            alignItems: 'start',
+          }}
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {mode === 'single' && !sent && (
               <div
                 style={{
                   background: B.white,
                   borderRadius: 12,
-                  border: `1px solid ${B.border}`,
-                  padding: '24px',
+                  border: `1px solid ${B.borderStrong}`,
+                  boxShadow: B.cardShadow,
+                  padding: '22px',
                 }}
               >
-                <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 20 }}>
+                <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 18 }}>
                   Client details
                 </div>
 
@@ -306,11 +317,11 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                 <div style={{ marginBottom: 16 }}>
                   <label
                     style={{
-                      fontSize: 12,
+                      fontSize: 13,
                       fontWeight: 600,
                       color: B.muted,
                       display: 'block',
-                      marginBottom: 5,
+                      marginBottom: 6,
                     }}
                   >
                     National Insurance number (NINO) *
@@ -324,7 +335,7 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                       width: '100%',
                       padding: '10px 14px',
                       borderRadius: 8,
-                      border: `1px solid ${nino.length > 0 && !ninoValid ? '#FECACA' : B.border}`,
+                      border: `1px solid ${nino.length > 0 && !ninoValid ? '#FCA5A5' : B.borderStrong}`,
                       fontSize: 15,
                       fontFamily: 'monospace',
                       letterSpacing: '0.08em',
@@ -342,11 +353,11 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                 <div style={{ marginBottom: 16 }}>
                   <label
                     style={{
-                      fontSize: 12,
+                      fontSize: 13,
                       fontWeight: 600,
                       color: B.muted,
                       display: 'block',
-                      marginBottom: 5,
+                      marginBottom: 6,
                     }}
                   >
                     Client name *
@@ -359,7 +370,7 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                       width: '100%',
                       padding: '10px 14px',
                       borderRadius: 8,
-                      border: `1px solid ${B.border}`,
+                      border: `1px solid ${B.borderStrong}`,
                       fontSize: 13,
                       outline: 'none',
                     }}
@@ -370,11 +381,11 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                 <div style={{ marginBottom: 16 }}>
                   <label
                     style={{
-                      fontSize: 12,
+                      fontSize: 13,
                       fontWeight: 600,
                       color: B.muted,
                       display: 'block',
-                      marginBottom: 5,
+                      marginBottom: 6,
                     }}
                   >
                     Postcode *{' '}
@@ -402,11 +413,11 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                 <div style={{ marginBottom: 16 }}>
                   <label
                     style={{
-                      fontSize: 12,
+                      fontSize: 13,
                       fontWeight: 600,
                       color: B.muted,
                       display: 'block',
-                      marginBottom: 5,
+                      marginBottom: 6,
                     }}
                   >
                     Client email *
@@ -430,11 +441,11 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                 <div style={{ marginBottom: 20 }}>
                   <label
                     style={{
-                      fontSize: 12,
+                      fontSize: 13,
                       fontWeight: 600,
                       color: B.muted,
                       display: 'block',
-                      marginBottom: 5,
+                      marginBottom: 6,
                     }}
                   >
                     Personal message to client
@@ -447,7 +458,7 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                       width: '100%',
                       padding: '10px 14px',
                       borderRadius: 8,
-                      border: `1px solid ${B.border}`,
+                      border: `1px solid ${B.borderStrong}`,
                       fontSize: 12,
                       lineHeight: 1.6,
                       outline: 'none',
@@ -578,7 +589,7 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                             width: '100%',
                             padding: '10px 14px',
                             borderRadius: 8,
-                            border: `1px solid ${B.border}`,
+                            border: `1px solid ${B.borderStrong}`,
                             fontSize: 13,
                             outline: 'none',
                           }}
@@ -641,7 +652,7 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                 style={{
                   background: B.white,
                   borderRadius: 12,
-                  border: `1px solid ${B.border}`,
+                  border: `1px solid ${B.borderStrong}`,
                   padding: '40px',
                   textAlign: 'center',
                 }}
@@ -731,7 +742,7 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                     marginTop: 20,
                     padding: '8px 20px',
                     borderRadius: 8,
-                    border: `1px solid ${B.border}`,
+                    border: `1px solid ${B.borderStrong}`,
                     background: B.white,
                     fontSize: 13,
                     fontWeight: 500,
@@ -745,18 +756,19 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
             )}
 
             {mode === 'bulk' && (
-              <div
+                <div
                 style={{
                   background: B.white,
                   borderRadius: 12,
-                  border: `1px solid ${B.border}`,
-                  padding: '24px',
+                  border: `1px solid ${B.borderStrong}`,
+                  boxShadow: B.cardShadow,
+                  padding: '22px',
                 }}
               >
-                <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4 }}>
+                <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>
                   Bulk import clients
                 </div>
-                <div style={{ fontSize: 13, color: B.muted, marginBottom: 20, lineHeight: 1.6 }}>
+                <div style={{ fontSize: 14, color: B.muted, marginBottom: 18, lineHeight: 1.55 }}>
                   Upload a CSV file to add multiple clients at once. All rows are validated before
                   any client is created.
                 </div>
@@ -765,42 +777,44 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
             )}
           </div>
 
-          {/* Right panel */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          {/* Right panel — top-aligned with form because tabs are outside the grid */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             {/* Invitations panel */}
             <div
               style={{
                 background: B.white,
                 borderRadius: 12,
-                border: `1px solid ${B.border}`,
+                border: `1px solid ${B.borderStrong}`,
+                boxShadow: B.cardShadow,
                 overflow: 'hidden',
               }}
             >
               <div
                 style={{
-                  padding: '14px 20px',
-                  borderBottom: `1px solid ${B.border}`,
+                  padding: '13px 16px',
+                  borderBottom: `1px solid ${B.borderStrong}`,
+                  background: B.surface,
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
                 }}
               >
                 <div>
-                  <div style={{ fontSize: 14, fontWeight: 700 }}>Invitations</div>
-                  <div style={{ fontSize: 11, color: B.muted, marginTop: 2 }}>
+                  <div style={{ fontSize: 16, fontWeight: 700 }}>Invitations</div>
+                  <div style={{ fontSize: 13, color: B.muted, marginTop: 2 }}>
                     Pending, expired &amp; declined
                   </div>
                 </div>
                 {pendingClients.length > 0 && (
                   <span
                     style={{
-                      fontSize: 11,
-                      fontWeight: 600,
-                      padding: '2px 10px',
+                      fontSize: 13,
+                      fontWeight: 700,
+                      padding: '3px 11px',
                       borderRadius: 20,
                       background: B.purpleBg,
                       color: B.purpleText,
-                      border: '1px solid #DDD6FE',
+                      border: '1px solid #C4B5FD',
                     }}
                   >
                     {pendingClients.length}
@@ -811,10 +825,10 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
               {/* Status legend */}
               <div
                 style={{
-                  padding: '8px 20px',
-                  borderBottom: `1px solid ${B.borderLight}`,
+                  padding: '10px 16px',
+                  borderBottom: `1px solid ${B.borderStrong}`,
                   display: 'flex',
-                  gap: 10,
+                  gap: 8,
                   flexWrap: 'wrap',
                 }}
               >
@@ -836,13 +850,13 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                       <span
                         key={s.status}
                         style={{
-                          fontSize: 10,
+                          fontSize: 12,
                           fontWeight: 600,
-                          padding: '1px 7px',
+                          padding: '3px 9px',
                           borderRadius: 10,
                           background: s.bg,
                           color: s.c,
-                          border: `1px solid ${s.bg === B.redBg ? '#FECACA' : B.border}`,
+                          border: `1px solid ${s.bg === B.redBg ? '#FCA5A5' : B.borderStrong}`,
                         }}
                       >
                         {count} {s.label}
@@ -851,7 +865,7 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                   })}
               </div>
 
-              <div style={{ padding: '4px 20px 12px' }}>
+              <div style={{ padding: '6px 16px 14px' }}>
                 {resendPanelError && (
                   <div
                     style={{
@@ -870,14 +884,14 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                 )}
                 {pendingLoading ? (
                   <div
-                    style={{ padding: '16px 0', textAlign: 'center', fontSize: 12, color: B.muted }}
+                    style={{ padding: '16px 0', textAlign: 'center', fontSize: 14, color: B.muted }}
                   >
                     Loading...
                   </div>
                 ) : pendingClients.length === 0 ? (
                   <div style={{ padding: '20px 0', textAlign: 'center' }}>
                     <div style={{ fontSize: 20, marginBottom: 6 }}>✓</div>
-                    <div style={{ fontSize: 12, color: B.light }}>
+                    <div style={{ fontSize: 14, color: B.muted }}>
                       All invitations are up to date
                     </div>
                   </div>
@@ -892,7 +906,7 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                         style={{
                           padding: '12px 0',
                           borderBottom:
-                            i < pendingClients.length - 1 ? `1px solid ${B.borderLight}` : 'none',
+                            i < pendingClients.length - 1 ? `1px solid ${B.borderStrong}` : 'none',
                         }}
                       >
                         <div
@@ -904,12 +918,12 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                           }}
                         >
                           <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 2 }}>
+                            <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 2 }}>
                               {inv.name}
                             </div>
                             <div
                               style={{
-                                fontSize: 11,
+                                fontSize: 12,
                                 fontFamily: 'monospace',
                                 color: B.muted,
                                 marginBottom: 4,
@@ -981,21 +995,23 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
               style={{
                 background: B.white,
                 borderRadius: 12,
-                border: `1px solid ${B.border}`,
+                border: `1px solid ${B.borderStrong}`,
+                boxShadow: B.cardShadow,
                 overflow: 'hidden',
               }}
             >
               <div
                 style={{
-                  padding: '14px 20px',
-                  borderBottom: `1px solid ${B.border}`,
-                  fontSize: 14,
+                  padding: '13px 16px',
+                  borderBottom: `1px solid ${B.borderStrong}`,
+                  background: B.surface,
+                  fontSize: 16,
                   fontWeight: 700,
                 }}
               >
                 How the invitation works
               </div>
-              <div style={{ padding: '14px 20px' }}>
+              <div style={{ padding: '14px 16px' }}>
                 {[
                   {
                     n: '1',
@@ -1021,25 +1037,25 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                   <div key={i} style={{ display: 'flex', gap: 12, marginBottom: i < 3 ? 14 : 0 }}>
                     <div
                       style={{
-                        width: 24,
-                        height: 24,
-                        borderRadius: 12,
+                        width: 26,
+                        height: 26,
+                        borderRadius: 13,
                         background: B.blueBg,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: 11,
+                        fontSize: 12,
                         fontWeight: 700,
                         color: B.blueText,
                         flexShrink: 0,
-                        border: '1px solid #BAE6FD',
+                        border: '1px solid #7DD3FC',
                       }}
                     >
                       {s.n}
                     </div>
                     <div>
-                      <div style={{ fontSize: 12, fontWeight: 600 }}>{s.t}</div>
-                      <div style={{ fontSize: 11, color: B.muted, marginTop: 1, lineHeight: 1.5 }}>
+                      <div style={{ fontSize: 14, fontWeight: 600 }}>{s.t}</div>
+                      <div style={{ fontSize: 13, color: B.muted, marginTop: 2, lineHeight: 1.5 }}>
                         {s.d}
                       </div>
                     </div>

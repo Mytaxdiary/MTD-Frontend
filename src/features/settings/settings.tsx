@@ -36,19 +36,19 @@ export default function Settings({ navigate = () => {} }: { navigate?: (route: s
     <div style={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
       <div
         style={{
-          padding: '16px 32px',
+          padding: '14px 28px',
           background: B.white,
           borderBottom: `1px solid ${B.border}`,
           flexShrink: 0,
         }}
       >
-        <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.01em' }}>Settings</div>
-        <div style={{ fontSize: 14, color: B.muted, marginTop: 3 }}>
+        <div style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.01em' }}>Settings</div>
+        <div style={{ fontSize: 15, color: B.muted, marginTop: 3 }}>
           Manage your firm, HMRC connection, team, and preferences
         </div>
       </div>
 
-      <div style={{ padding: '24px 32px', flex: 1 }}>
+      <div style={{ padding: '18px 28px', flex: 1 }}>
         <div style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 24 }}>
           <SettingsSidebar active={section} onChange={setSection} />
 

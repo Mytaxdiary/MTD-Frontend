@@ -58,7 +58,7 @@ export default function ClientDetailHeader({
   return (
     <div
       style={{
-        padding: '24px 32px 20px',
+        padding: '18px 28px 16px',
         background: B.white,
         borderBottom: `1px solid ${B.border}`,
         flexShrink: 0,
@@ -84,7 +84,7 @@ export default function ClientDetailHeader({
             {client ? clientInitials(client.name) : 'PS'}
           </div>
           <div>
-            <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em' }}>
+            <div style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.02em' }}>
               {displayName}
             </div>
             <div

@@ -35,7 +35,7 @@ const NavItem = ({ label, active, icon, count = 0, onClick }: NavItemProps) => (
       cursor: 'pointer',
       background: active ? 'rgba(14,165,201,0.15)' : 'transparent',
       color: active ? '#fff' : 'rgba(255,255,255,0.75)',
-      fontSize: 14,
+      fontSize: 15,
       fontWeight: active ? 600 : 400,
       marginBottom: 2,
       width: '100%',

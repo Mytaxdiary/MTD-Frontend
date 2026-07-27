@@ -171,10 +171,10 @@ function UserBlock({
             borderBottom: i < rows.length - 1 ? `1px solid ${B.borderLight}` : 'none',
           }}
         >
-          <span style={{ fontSize: 12, color: B.muted, flexShrink: 0 }}>{label}</span>
+          <span style={{ fontSize: 13, color: B.muted, flexShrink: 0 }}>{label}</span>
           <span
             style={{
-              fontSize: 12,
+              fontSize: 13,
               fontWeight: 500,
               fontFamily: label === 'Name' || label === 'Email' ? 'inherit' : 'monospace',
               wordBreak: 'break-all',
@@ -263,7 +263,7 @@ export default function SandboxTestUsersCard({ hmrcConnected, onSaveArn }: Props
   return (
     <Card>
       <CardHead
-        titleSize={15}
+        titleSize={16}
         padding="16px 20px"
         title="Sandbox demo setup"
         sub="Create HMRC test agent & client (Postman steps 0–2)"

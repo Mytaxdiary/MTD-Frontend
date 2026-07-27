@@ -8,12 +8,17 @@ const theme = {
   navy: '#1B2A4A',
   surface: '#F8FAFC',
   white: '#FFFFFF',
-  border: '#E2E8F0',
-  borderLight: '#F1F5F9',
+  /** Default outline — clear enough on white cards (was too pale at #E2E8F0). */
+  border: '#CBD5E1',
+  borderLight: '#E2E8F0',
+  /** Alias kept for newer screens; same weight as border. */
+  borderStrong: '#94A3B8',
+  /** Standard card elevation. Depth reads better than a thicker border. */
+  cardShadow: '0 1px 2px rgba(15,23,42,0.05), 0 2px 6px rgba(15,23,42,0.06)',
   text: '#0F172A',
-  muted: '#64748B',
-  light: '#94A3B8',
-  xlight: '#CBD5E1',
+  muted: '#475569',
+  light: '#64748B',
+  xlight: '#94A3B8',
   red: '#EF4444',
   redBg: '#FEF2F2',
   redText: '#991B1B',

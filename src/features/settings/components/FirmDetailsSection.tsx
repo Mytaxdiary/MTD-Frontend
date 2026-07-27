@@ -73,7 +73,7 @@ export default function FirmDetailsSection() {
   return (
     <Card>
       <CardHead
-        titleSize={15}
+        titleSize={16}
         padding="16px 20px"
         title="Firm details"
         sub="Your practice information"

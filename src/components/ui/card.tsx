@@ -7,6 +7,7 @@ export function Card({ children }: { children: React.ReactNode }) {
         background: B.white,
         borderRadius: 12,
         border: `1px solid ${B.border}`,
+        boxShadow: B.cardShadow,
         overflow: 'hidden',
       }}
     >
@@ -27,8 +28,8 @@ export function CardHeader({
   title,
   sub,
   right,
-  titleSize = 14,
-  padding = '14px 20px',
+  titleSize = 16,
+  padding = '13px 18px',
 }: CardHeaderProps) {
   if (right) {
     return (
@@ -36,6 +37,7 @@ export function CardHeader({
         style={{
           padding,
           borderBottom: `1px solid ${B.border}`,
+          background: B.surface,
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -47,9 +49,9 @@ export function CardHeader({
     )
   }
   return (
-    <div style={{ padding, borderBottom: `1px solid ${B.border}` }}>
+    <div style={{ padding, borderBottom: `1px solid ${B.border}`, background: B.surface }}>
       <div style={{ fontSize: titleSize, fontWeight: 700 }}>{title}</div>
-      {sub && <div style={{ fontSize: 12, color: B.muted, marginTop: 2 }}>{sub}</div>}
+      {sub && <div style={{ fontSize: 13, color: B.muted, marginTop: 3 }}>{sub}</div>}
     </div>
   )
 }

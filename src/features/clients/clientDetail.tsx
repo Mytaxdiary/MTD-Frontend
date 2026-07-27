@@ -121,7 +121,7 @@ export default function ClientDetail({
         onMessageClick={() => setShowMsgModal(true)}
       />
 
-      <div style={{ padding: '24px 32px', flex: 1 }}>
+      <div style={{ padding: '18px 28px', flex: 1 }}>
         <MetricsStrip
           authorised={!!client?.authorisedAt}
           outstandingBalance={outstandingBalance}

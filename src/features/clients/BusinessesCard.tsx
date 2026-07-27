@@ -43,7 +43,7 @@ function DetailRow({ label, value }: { label: string; value?: string | null }) {
         justifyContent: 'space-between',
         gap: 12,
         padding: '6px 0',
-        fontSize: 12,
+        fontSize: 13,
         borderBottom: `1px solid ${B.borderLight}`,
       }}
     >

@@ -52,7 +52,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
                   style={{
                     padding: '7px 18px',
                     borderRadius: 7,
-                    fontSize: 14,
+                    fontSize: 15,
                     fontWeight: active ? 700 : 400,
                     color: active ? '#fff' : 'rgba(255,255,255,0.70)',
                     background: active ? 'rgba(255,255,255,0.18)' : 'transparent',

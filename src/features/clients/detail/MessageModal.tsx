@@ -123,7 +123,7 @@ export default function MessageModal({ show, onClose, clientId, clientName }: Pr
           ) : (
             <>
               <label style={{ display: 'block', marginBottom: 14 }}>
-                <span style={{ fontSize: 12, fontWeight: 600, color: B.text }}>Subject</span>
+                <span style={{ fontSize: 13, fontWeight: 600, color: B.text }}>Subject</span>
                 <input
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
@@ -142,7 +142,7 @@ export default function MessageModal({ show, onClose, clientId, clientName }: Pr
                 />
               </label>
               <label style={{ display: 'block', marginBottom: 16 }}>
-                <span style={{ fontSize: 12, fontWeight: 600, color: B.text }}>Message</span>
+                <span style={{ fontSize: 13, fontWeight: 600, color: B.text }}>Message</span>
                 <textarea
                   value={body}
                   onChange={(e) => setBody(e.target.value)}

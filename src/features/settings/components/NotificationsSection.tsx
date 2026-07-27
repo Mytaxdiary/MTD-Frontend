@@ -67,7 +67,7 @@ export default function NotificationsSection() {
   return (
     <Card>
       <CardHead
-        titleSize={15}
+        titleSize={16}
         padding="16px 20px"
         title="Notification preferences"
         sub="Control how and when you receive alerts"

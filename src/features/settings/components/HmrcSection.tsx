@@ -341,7 +341,7 @@ export default function HmrcSection() {
 
         <Card>
           <CardHead
-            titleSize={15}
+            titleSize={16}
             padding="16px 20px"
             title="HMRC connection status"
             sub="OAuth 2.0 via Government Gateway"
@@ -696,7 +696,7 @@ export default function HmrcSection() {
         </Card>
 
         <Card>
-          <CardHead titleSize={15} padding="16px 20px" title="API subscriptions" />
+          <CardHead titleSize={16} padding="16px 20px" title="API subscriptions" />
           <div style={{ padding: '8px 20px 14px' }}>
             {API_SUBSCRIPTIONS.map((a, i) => (
               <div

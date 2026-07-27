@@ -122,7 +122,7 @@ export default function PortalFilesPage() {
         >
           Files
         </h2>
-        <p style={{ margin: '5px 0 0', fontSize: 14, color: B.muted }}>
+        <p style={{ margin: '5px 0 0', fontSize: 15, color: B.muted }}>
           Upload bank statements, receipts, or any documents your accountant has requested.
         </p>
       </div>
@@ -145,7 +145,7 @@ export default function PortalFilesPage() {
           background: dragging ? '#EFF6FF' : B.white,
           marginBottom: 22,
           transition: 'all 0.15s',
-          boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+          boxShadow: B.cardShadow,
         }}
       >
         <input
@@ -212,7 +212,7 @@ export default function PortalFilesPage() {
             border: `1px solid ${B.border}`,
             padding: '48px 32px',
             textAlign: 'center',
-            boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+            boxShadow: B.cardShadow,
           }}
         >
           <p style={{ fontSize: 15, color: B.muted, margin: 0 }}>No files uploaded yet.</p>
@@ -224,7 +224,7 @@ export default function PortalFilesPage() {
             borderRadius: 12,
             border: `1px solid ${B.border}`,
             overflow: 'hidden',
-            boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+            boxShadow: B.cardShadow,
           }}
         >
           <div

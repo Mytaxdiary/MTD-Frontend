@@ -153,6 +153,7 @@ export default function MetricsStrip({
               borderRadius: 10,
               padding: '14px 16px',
               border: `1px solid ${B.border}`,
+              boxShadow: B.cardShadow,
               position: 'relative',
               overflow: 'hidden',
             }}
@@ -170,7 +171,7 @@ export default function MetricsStrip({
             />
             <div
               style={{
-                fontSize: 11,
+                fontSize: 12,
                 fontWeight: 600,
                 color: B.muted,
                 letterSpacing: '0.03em',
@@ -194,7 +195,7 @@ export default function MetricsStrip({
                 {m.value}
               </div>
             )}
-            <div style={{ fontSize: 11, color: B.light, marginTop: 3 }}>{m.sub}</div>
+            <div style={{ fontSize: 12, color: B.light, marginTop: 3 }}>{m.sub}</div>
           </div>
         ))}
       </div>

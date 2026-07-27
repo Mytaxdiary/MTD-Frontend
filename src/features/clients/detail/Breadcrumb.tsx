@@ -10,7 +10,7 @@ export default function ClientDetailBreadcrumb({ clientLoading, displayName, nav
   return (
     <div
       style={{
-        padding: '12px 32px',
+        padding: '12px 28px',
         background: B.white,
         borderBottom: `1px solid ${B.border}`,
         display: 'flex',

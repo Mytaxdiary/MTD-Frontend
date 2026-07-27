@@ -28,7 +28,7 @@ export default function QuarterlyReview({
         {/* Breadcrumb */}
         <div
           style={{
-            padding: '12px 32px',
+            padding: '12px 28px',
             background: B.white,
             borderBottom: `1px solid ${B.border}`,
             display: 'flex',
@@ -58,7 +58,7 @@ export default function QuarterlyReview({
         {/* Header */}
         <div
           style={{
-            padding: '20px 32px',
+            padding: '18px 28px',
             background: B.white,
             borderBottom: `1px solid ${B.border}`,
             flexShrink: 0,
@@ -66,10 +66,10 @@ export default function QuarterlyReview({
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
-              <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.02em' }}>
+              <div style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.02em' }}>
                 Review quarterly update
               </div>
-              <div style={{ fontSize: 13, color: B.muted, marginTop: 3 }}>
+              <div style={{ fontSize: 15, color: B.muted, marginTop: 3 }}>
                 Priya Sharma · Sharma Design Studio · Q4 (6 Jan – 5 Apr 2026) · Due 7 May 2026
               </div>
             </div>
@@ -132,7 +132,7 @@ export default function QuarterlyReview({
         </div>
 
         {/* Content */}
-        <div style={{ padding: '24px 32px', flex: 1 }}>
+        <div style={{ padding: '18px 28px', flex: 1 }}>
           {/* HMRC preview banner */}
           <div
             style={{
@@ -182,6 +182,7 @@ export default function QuarterlyReview({
                   background: B.white,
                   borderRadius: 12,
                   border: `1px solid ${B.border}`,
+                  boxShadow: B.cardShadow,
                   overflow: 'hidden',
                 }}
               >
@@ -189,7 +190,7 @@ export default function QuarterlyReview({
                   style={{
                     padding: '14px 20px',
                     borderBottom: `1px solid ${B.border}`,
-                    fontSize: 14,
+                    fontSize: 16,
                     fontWeight: 700,
                   }}
                 >
@@ -323,6 +324,7 @@ export default function QuarterlyReview({
                   background: B.white,
                   borderRadius: 12,
                   border: `1px solid ${B.border}`,
+                  boxShadow: B.cardShadow,
                   overflow: 'hidden',
                 }}
               >
@@ -330,7 +332,7 @@ export default function QuarterlyReview({
                   style={{
                     padding: '14px 20px',
                     borderBottom: `1px solid ${B.border}`,
-                    fontSize: 14,
+                    fontSize: 16,
                     fontWeight: 700,
                   }}
                 >
@@ -563,6 +565,7 @@ export default function QuarterlyReview({
                   background: B.white,
                   borderRadius: 12,
                   border: `1px solid ${B.border}`,
+                  boxShadow: B.cardShadow,
                   overflow: 'hidden',
                 }}
               >
@@ -570,7 +573,7 @@ export default function QuarterlyReview({
                   style={{
                     padding: '14px 20px',
                     borderBottom: `1px solid ${B.border}`,
-                    fontSize: 14,
+                    fontSize: 16,
                     fontWeight: 700,
                   }}
                 >
@@ -627,6 +630,7 @@ export default function QuarterlyReview({
                   background: B.white,
                   borderRadius: 12,
                   border: `1px solid ${B.border}`,
+                  boxShadow: B.cardShadow,
                   overflow: 'hidden',
                 }}
               >
@@ -634,7 +638,7 @@ export default function QuarterlyReview({
                   style={{
                     padding: '14px 20px',
                     borderBottom: `1px solid ${B.border}`,
-                    fontSize: 14,
+                    fontSize: 16,
                     fontWeight: 700,
                   }}
                 >

@@ -120,7 +120,7 @@ export default function SandboxInvitationsSection() {
   return (
     <Card>
       <CardHead
-        titleSize={15}
+        titleSize={16}
         padding="16px 20px"
         title="Sandbox invitations"
         sub="HMRC test environment only. Simulates a client accepting your authorisation invite (Postman step 9)."

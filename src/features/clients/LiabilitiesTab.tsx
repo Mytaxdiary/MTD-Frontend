@@ -495,7 +495,7 @@ export default function LiabilitiesTab({ client }: Props) {
                   key={k}
                   style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0' }}
                 >
-                  <span style={{ fontSize: 12, color: '#0369A1' }}>{k}</span>
+                  <span style={{ fontSize: 13, color: '#0369A1' }}>{k}</span>
                   <span
                     style={{
                       fontSize: 13,

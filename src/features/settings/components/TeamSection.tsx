@@ -9,7 +9,7 @@ export default function TeamSection() {
 
   return (
     <Card>
-      <CardHead titleSize={15} padding="16px 20px" title="Team members" />
+      <CardHead titleSize={16} padding="16px 20px" title="Team members" />
       <div style={{ padding: '8px 20px 14px' }}>
         {loading ? (
           <div style={{ padding: '14px 0', fontSize: 14, color: B.muted }}>Loading...</div>

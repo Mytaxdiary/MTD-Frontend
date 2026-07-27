@@ -66,7 +66,7 @@ function SetupForm() {
         <h1 style={{ margin: '0 0 6px', fontSize: 24, fontWeight: 800, color: B.text }}>
           Set up your portal
         </h1>
-        <p style={{ margin: 0, fontSize: 14, color: B.muted }}>
+        <p style={{ margin: 0, fontSize: 15, color: B.muted }}>
           Choose a password to access your client portal. You can use this to log in at any time.
         </p>
       </div>
@@ -77,7 +77,7 @@ function SetupForm() {
           borderRadius: 14,
           border: `1px solid ${B.border}`,
           padding: '32px 32px',
-          boxShadow: '0 4px 16px rgba(0,0,0,0.07)',
+          boxShadow: B.cardShadow,
         }}
       >
         <form onSubmit={handleSubmit}>

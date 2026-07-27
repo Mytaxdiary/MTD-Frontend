@@ -131,7 +131,7 @@ export default function ItsaStatusCard({ client }: { client: ClientRecord }) {
             marginBottom: 12,
           }}
         >
-          <label style={{ fontSize: 12, color: B.muted }}>
+          <label style={{ fontSize: 13, color: B.muted }}>
             Tax year{' '}
             <input
               value={taxYear}
@@ -142,13 +142,13 @@ export default function ItsaStatusCard({ client }: { client: ClientRecord }) {
                 padding: '6px 10px',
                 borderRadius: 6,
                 border: `1px solid ${B.border}`,
-                fontSize: 12,
+                fontSize: 13,
                 width: 88,
               }}
             />
           </label>
           <label
-            style={{ fontSize: 12, color: B.text, display: 'flex', alignItems: 'center', gap: 4 }}
+            style={{ fontSize: 13, color: B.text, display: 'flex', alignItems: 'center', gap: 4 }}
           >
             <input
               type="checkbox"
@@ -158,7 +158,7 @@ export default function ItsaStatusCard({ client }: { client: ClientRecord }) {
             History
           </label>
           <label
-            style={{ fontSize: 12, color: B.text, display: 'flex', alignItems: 'center', gap: 4 }}
+            style={{ fontSize: 13, color: B.text, display: 'flex', alignItems: 'center', gap: 4 }}
           >
             <input
               type="checkbox"

@@ -174,6 +174,7 @@ export default function ChasingTab({ clientId }: { clientId?: string | null }) {
               flex: 1,
               background: B.white,
               border: `1px solid ${B.border}`,
+              boxShadow: B.cardShadow,
               borderRadius: 10,
               padding: '12px 16px',
               position: 'relative',
@@ -193,7 +194,7 @@ export default function ChasingTab({ clientId }: { clientId?: string | null }) {
             <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em', color: B.text }}>
               {loading ? '0' : m.value}
             </div>
-            <div style={{ fontSize: 11, color: B.muted, marginTop: 2 }}>{m.label}</div>
+            <div style={{ fontSize: 12, color: B.muted, marginTop: 2 }}>{m.label}</div>
           </div>
         ))}
       </div>

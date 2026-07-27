@@ -49,7 +49,7 @@ export default function PortalLoginPage() {
         <h1 style={{ margin: '0 0 6px', fontSize: 24, fontWeight: 800, color: B.text }}>
           Sign in to your portal
         </h1>
-        <p style={{ margin: 0, fontSize: 14, color: B.muted }}>
+        <p style={{ margin: 0, fontSize: 15, color: B.muted }}>
           View your tax submissions and messages from your accountant.
         </p>
       </div>
@@ -60,7 +60,7 @@ export default function PortalLoginPage() {
           borderRadius: 14,
           border: `1px solid ${B.border}`,
           padding: '32px 32px',
-          boxShadow: '0 4px 16px rgba(0,0,0,0.07)',
+          boxShadow: B.cardShadow,
         }}
       >
         <form onSubmit={handleSubmit}>

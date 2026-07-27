@@ -394,7 +394,7 @@ export default function ObligationsCard({ client }: { client: ClientRecord }) {
           }}
         >
           <label
-            style={{ fontSize: 12, color: B.muted, display: 'flex', alignItems: 'center', gap: 6 }}
+            style={{ fontSize: 13, color: B.muted, display: 'flex', alignItems: 'center', gap: 6 }}
           >
             Business
             <select
@@ -405,7 +405,7 @@ export default function ObligationsCard({ client }: { client: ClientRecord }) {
                 padding: '6px 10px',
                 borderRadius: 6,
                 border: `1px solid ${B.border}`,
-                fontSize: 12,
+                fontSize: 13,
                 minWidth: 220,
                 maxWidth: 360,
               }}
@@ -423,7 +423,7 @@ export default function ObligationsCard({ client }: { client: ClientRecord }) {
           </label>
 
           <label
-            style={{ fontSize: 12, color: B.muted, display: 'flex', alignItems: 'center', gap: 6 }}
+            style={{ fontSize: 13, color: B.muted, display: 'flex', alignItems: 'center', gap: 6 }}
           >
             Status
             <select
@@ -434,7 +434,7 @@ export default function ObligationsCard({ client }: { client: ClientRecord }) {
                 padding: '6px 10px',
                 borderRadius: 6,
                 border: `1px solid ${B.border}`,
-                fontSize: 12,
+                fontSize: 13,
               }}
             >
               <option value="">All</option>
@@ -511,7 +511,7 @@ export default function ObligationsCard({ client }: { client: ClientRecord }) {
             }}
           >
             <span style={{ fontSize: 13, fontWeight: 600, color: B.text }}>Final declaration</span>
-            <label style={{ fontSize: 12, color: B.muted }}>
+            <label style={{ fontSize: 13, color: B.muted }}>
               Tax year{' '}
               <input
                 value={taxYear}
@@ -522,7 +522,7 @@ export default function ObligationsCard({ client }: { client: ClientRecord }) {
                   padding: '6px 10px',
                   borderRadius: 6,
                   border: `1px solid ${B.border}`,
-                  fontSize: 12,
+                  fontSize: 13,
                   width: 88,
                 }}
               />

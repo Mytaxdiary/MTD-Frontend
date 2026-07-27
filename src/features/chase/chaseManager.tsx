@@ -7,28 +7,58 @@ import {
 } from '@/services/chaseTemplates.service'
 import { chaseService, renderTemplate, type ChaseClientRecord } from '@/services/chase.service'
 import { useCurrentUser } from '@/components/auth/CurrentUserProvider'
+import InfoTooltip from '@/components/ui/InfoTooltip'
 import B from '@/styles/theme'
+
+/** Shared card chrome so every panel on this screen reads at the same weight. */
+const CARD: React.CSSProperties = {
+  background: B.white,
+  borderRadius: 12,
+  border: `1px solid ${B.borderStrong}`,
+  boxShadow: B.cardShadow,
+  overflow: 'hidden',
+}
+
+const CARD_HEADER: React.CSSProperties = {
+  padding: '13px 18px',
+  borderBottom: `1px solid ${B.borderStrong}`,
+  background: B.surface,
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  gap: 10,
+}
+
+const FIELD_LABEL: React.CSSProperties = {
+  fontSize: 12,
+  fontWeight: 700,
+  color: B.muted,
+  marginBottom: 6,
+  textTransform: 'uppercase',
+  letterSpacing: '0.04em',
+}
 
 const ResponseBadge = ({ status }: { status: string }) => {
   const m: Record<string, { bg: string; c: string; b: string; l: string }> = {
-    'no-response': { bg: B.redBg, c: B.redText, b: '#FECACA', l: 'No response' },
-    opened: { bg: B.amberBg, c: B.amberText, b: '#FDE68A', l: 'Opened' },
-    responded: { bg: B.greenBg, c: B.greenText, b: '#A7F3D0', l: 'Responded' },
-    sent: { bg: B.blueBg, c: B.blueText, b: '#BAE6FD', l: 'Sent' },
-    bounced: { bg: B.redBg, c: B.redText, b: '#FECACA', l: 'Bounced' },
-    'not-started': { bg: B.surface, c: B.light, b: B.border, l: 'Not chased' },
+    'no-response': { bg: B.redBg, c: B.redText, b: '#FCA5A5', l: 'No response' },
+    opened: { bg: B.amberBg, c: B.amberText, b: '#FCD34D', l: 'Opened' },
+    responded: { bg: B.greenBg, c: B.greenText, b: '#6EE7B7', l: 'Responded' },
+    sent: { bg: B.blueBg, c: B.blueText, b: '#7DD3FC', l: 'Sent' },
+    bounced: { bg: B.redBg, c: B.redText, b: '#FCA5A5', l: 'Bounced' },
+    'not-started': { bg: B.surface, c: B.muted, b: B.borderStrong, l: 'Not chased' },
   }
-  const s = m[status] ?? { bg: B.surface, c: B.muted, b: B.border, l: status }
+  const s = m[status] ?? { bg: B.surface, c: B.muted, b: B.borderStrong, l: status }
   return (
     <span
       style={{
-        fontSize: 12,
+        fontSize: 13,
         fontWeight: 700,
-        padding: '3px 11px',
+        padding: '4px 12px',
         borderRadius: 20,
         background: s.bg,
         color: s.c,
         border: `1px solid ${s.b}`,
+        whiteSpace: 'nowrap',
       }}
     >
       {s.l}
@@ -277,9 +307,9 @@ export default function ChaseManager({
       {/* Header bar */}
       <div
         style={{
-          padding: '16px 32px',
+          padding: '14px 28px',
           background: B.white,
-          borderBottom: `1px solid ${B.border}`,
+          borderBottom: `1px solid ${B.borderStrong}`,
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -287,10 +317,10 @@ export default function ChaseManager({
         }}
       >
         <div>
-          <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.01em' }}>
+          <div style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.01em' }}>
             Chase manager
           </div>
-          <div style={{ fontSize: 14, color: B.muted, marginTop: 3 }}>
+          <div style={{ fontSize: 15, color: B.muted, marginTop: 2 }}>
             {clientsLoading
               ? 'Loading clients...'
               : clientsError
@@ -298,15 +328,16 @@ export default function ChaseManager({
                 : `${chaseClients.length} authorised clients: ${overdueClients.length} overdue, ${upcomingClients.length} upcoming`}
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
             style={{
-              padding: '8px 11px',
-              borderRadius: 7,
-              border: `1px solid ${B.border}`,
-              fontSize: 13,
+              padding: '10px 13px',
+              borderRadius: 8,
+              border: `1px solid ${B.borderStrong}`,
+              fontSize: 14,
+              fontWeight: 500,
               color: B.text,
               background: B.white,
               cursor: 'pointer',
@@ -324,12 +355,12 @@ export default function ChaseManager({
                 onClick={handleSend}
                 disabled={sending}
                 style={{
-                  padding: '8px 20px',
+                  padding: '10px 22px',
                   borderRadius: 8,
                   border: 'none',
                   background: sending ? B.muted : B.primary,
                   color: '#fff',
-                  fontSize: 14,
+                  fontSize: 15,
                   fontWeight: 600,
                   cursor: sending ? 'not-allowed' : 'pointer',
                 }}
@@ -338,14 +369,14 @@ export default function ChaseManager({
                   ? 'Sending...'
                   : `Send to ${selected.size} client${selected.size > 1 ? 's' : ''}`}
               </button>
-              {sendError && <span style={{ fontSize: 12, color: B.redText }}>{sendError}</span>}
+              {sendError && <span style={{ fontSize: 13, color: B.redText }}>{sendError}</span>}
             </div>
           )}
         </div>
       </div>
 
-      <div style={{ padding: '24px 32px', flex: 1 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 20 }}>
+      <div style={{ padding: '18px 28px', flex: 1 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 18, alignItems: 'start' }}>
           {/* ─────────── Left: client list ─────────── */}
           <div>
             {/* Send error banner */}
@@ -353,11 +384,11 @@ export default function ChaseManager({
               <div
                 style={{
                   marginBottom: 12,
-                  padding: '10px 14px',
+                  padding: '11px 15px',
                   background: B.redBg,
-                  border: '1px solid #FECACA',
+                  border: '1px solid #FCA5A5',
                   borderRadius: 8,
-                  fontSize: 13,
+                  fontSize: 14,
                   color: B.redText,
                 }}
               >
@@ -370,11 +401,11 @@ export default function ChaseManager({
               <div
                 style={{
                   marginBottom: 12,
-                  padding: '10px 14px',
+                  padding: '11px 15px',
                   background: B.amberBg,
-                  border: '1px solid #FDE68A',
+                  border: '1px solid #FCD34D',
                   borderRadius: 8,
-                  fontSize: 13,
+                  fontSize: 14,
                   color: B.amberText,
                 }}
               >
@@ -383,7 +414,7 @@ export default function ChaseManager({
             )}
 
             {clientsLoading && (
-              <div style={{ padding: '36px', textAlign: 'center', fontSize: 14, color: B.muted }}>
+              <div style={{ padding: '32px', textAlign: 'center', fontSize: 15, color: B.muted }}>
                 Loading clients...
               </div>
             )}
@@ -391,13 +422,11 @@ export default function ChaseManager({
             {!clientsLoading && chaseClients.length === 0 && (
               <div
                 style={{
-                  padding: '36px',
+                  ...CARD,
+                  padding: '32px',
                   textAlign: 'center',
-                  fontSize: 14,
-                  color: B.light,
-                  background: B.white,
-                  borderRadius: 12,
-                  border: `1px solid ${B.border}`,
+                  fontSize: 15,
+                  color: B.muted,
                 }}
               >
                 No authorised clients yet. Add and authorise clients to start chasing.
@@ -405,13 +434,13 @@ export default function ChaseManager({
             )}
 
             {filteredOverdue.length > 0 && (
-              <div style={{ marginBottom: 20 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                  <div style={{ width: 8, height: 8, borderRadius: 4, background: B.red }} />
-                  <span style={{ fontSize: 14, fontWeight: 700, color: B.redText }}>
+              <div style={{ marginBottom: 16 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 9 }}>
+                  <div style={{ width: 9, height: 9, borderRadius: 5, background: B.red }} />
+                  <span style={{ fontSize: 15, fontWeight: 700, color: B.redText }}>
                     Overdue: deadline passed
                   </span>
-                  <span style={{ fontSize: 12, color: B.muted }}>({filteredOverdue.length})</span>
+                  <span style={{ fontSize: 14, color: B.muted }}>({filteredOverdue.length})</span>
                 </div>
                 <ClientTable
                   clients={filteredOverdue}
@@ -424,12 +453,12 @@ export default function ChaseManager({
             )}
             {filteredUpcoming.length > 0 && (
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                  <div style={{ width: 8, height: 8, borderRadius: 4, background: B.amber }} />
-                  <span style={{ fontSize: 14, fontWeight: 700, color: B.amberText }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 9 }}>
+                  <div style={{ width: 9, height: 9, borderRadius: 5, background: B.amber }} />
+                  <span style={{ fontSize: 15, fontWeight: 700, color: B.amberText }}>
                     Upcoming: chase window open
                   </span>
-                  <span style={{ fontSize: 12, color: B.muted }}>({filteredUpcoming.length})</span>
+                  <span style={{ fontSize: 14, color: B.muted }}>({filteredUpcoming.length})</span>
                 </div>
                 <ClientTable
                   clients={filteredUpcoming}
@@ -443,123 +472,117 @@ export default function ChaseManager({
           </div>
 
           {/* ─────────── Right: templates ─────────── */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {/* Template list card */}
-            <div
-              style={{
-                background: B.white,
-                borderRadius: 12,
-                border: `1px solid ${B.border}`,
-                overflow: 'hidden',
-              }}
-            >
-              <div
-                style={{
-                  padding: '14px 20px',
-                  borderBottom: `1px solid ${B.border}`,
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}
-              >
-                <div style={{ fontSize: 15, fontWeight: 700 }}>Chase templates</div>
+            <div style={CARD}>
+              <div style={CARD_HEADER}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                  <span style={{ fontSize: 16, fontWeight: 700 }}>Chase templates</span>
+                  <InfoTooltip label="What are chase templates?" align="left" width={320}>
+                    Chase templates are reusable email messages for clients whose records or data are
+                    outstanding. Pick a template here, tick the clients on the left, then send. You can
+                    create, edit and delete templates, and use variables such as {'{name}'} or{' '}
+                    {'{deadline}'} that are filled in per client.
+                  </InfoTooltip>
+                </div>
                 <button
                   onClick={openNew}
                   style={{
-                    fontSize: 12,
-                    fontWeight: 500,
-                    padding: '5px 12px',
-                    borderRadius: 6,
-                    border: `1px solid ${B.border}`,
-                    background: 'transparent',
+                    fontSize: 13,
+                    fontWeight: 600,
+                    padding: '7px 13px',
+                    borderRadius: 7,
+                    border: `1px solid ${B.borderStrong}`,
+                    background: B.white,
                     cursor: 'pointer',
-                    color: B.primary,
+                    color: B.link,
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   + New template
                 </button>
               </div>
 
-              <div style={{ padding: '8px 12px' }}>
+              <div style={{ padding: '10px 12px' }}>
                 {templatesLoading && (
                   <div
-                    style={{ padding: '14px', fontSize: 13, color: B.muted, textAlign: 'center' }}
+                    style={{ padding: '14px', fontSize: 14, color: B.muted, textAlign: 'center' }}
                   >
                     Loading templates...
                   </div>
                 )}
                 {templatesError && (
                   <div
-                    style={{ padding: '14px', fontSize: 13, color: B.redText, textAlign: 'center' }}
+                    style={{ padding: '14px', fontSize: 14, color: B.redText, textAlign: 'center' }}
                   >
                     {templatesError}
                   </div>
                 )}
                 {!templatesLoading &&
-                  templates.map((t) => (
-                    <div
-                      key={t.id}
-                      onClick={() => {
-                        setSelectedTemplateId(t.id)
-                        setEditMode(null)
-                      }}
-                      style={{
-                        padding: '10px 12px',
-                        borderRadius: 8,
-                        cursor: 'pointer',
-                        marginBottom: 4,
-                        background:
-                          selectedTemplateId === t.id && editMode !== 'new'
-                            ? B.blueBg
-                            : 'transparent',
-                        border: `1px solid ${selectedTemplateId === t.id && editMode !== 'new' ? '#BAE6FD' : 'transparent'}`,
-                      }}
-                    >
+                  templates.map((t) => {
+                    const active = selectedTemplateId === t.id && editMode !== 'new'
+                    return (
                       <div
+                        key={t.id}
+                        onClick={() => {
+                          setSelectedTemplateId(t.id)
+                          setEditMode(null)
+                        }}
                         style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
+                          padding: '11px 13px',
+                          borderRadius: 8,
+                          cursor: 'pointer',
+                          marginBottom: 6,
+                          background: active ? B.blueBg : B.white,
+                          border: `1px solid ${active ? '#7DD3FC' : B.border}`,
+                          boxShadow: active ? 'inset 3px 0 0 0 ' + B.primary : 'none',
                         }}
                       >
                         <div
                           style={{
-                            fontSize: 13,
-                            fontWeight: 600,
-                            color:
-                              selectedTemplateId === t.id && editMode !== 'new'
-                                ? B.blueText
-                                : B.text,
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            gap: 8,
                           }}
                         >
-                          {t.name}
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                          <TypeBadge type={t.type} />
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              handleDelete(t.id)
-                            }}
-                            disabled={deletingId === t.id}
-                            title="Delete template"
+                          <div
                             style={{
-                              fontSize: 12,
-                              padding: '2px 6px',
-                              borderRadius: 5,
-                              border: `1px solid ${B.borderLight}`,
-                              background: 'transparent',
-                              color: B.light,
-                              cursor: 'pointer',
-                              lineHeight: 1,
+                              fontSize: 14,
+                              fontWeight: 600,
+                              color: active ? B.blueText : B.text,
                             }}
                           >
-                            ✕
-                          </button>
+                            {t.name}
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <TypeBadge type={t.type} />
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleDelete(t.id)
+                              }}
+                              disabled={deletingId === t.id}
+                              title="Delete template"
+                              aria-label={`Delete ${t.name}`}
+                              style={{
+                                fontSize: 13,
+                                padding: '3px 7px',
+                                borderRadius: 6,
+                                border: `1px solid ${B.border}`,
+                                background: B.white,
+                                color: B.light,
+                                cursor: 'pointer',
+                                lineHeight: 1,
+                              }}
+                            >
+                              ✕
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
               </div>
             </div>
 
@@ -892,12 +915,15 @@ function TypeBadge({ type }: { type: string }) {
   return (
     <span
       style={{
-        fontSize: 10,
-        padding: '2px 7px',
-        borderRadius: 5,
+        fontSize: 12,
+        padding: '3px 8px',
+        borderRadius: 6,
         background: bg,
         color,
-        fontWeight: 600,
+        fontWeight: 700,
+        border: `1px solid ${
+          type === 'bookkeeping' ? '#C4B5FD' : type === 'data-request' ? '#7DD3FC' : B.borderStrong
+        }`,
       }}
     >
       {label}
@@ -931,14 +957,7 @@ function ClientTable({
   onChannelChange: (id: string, ch: string) => void
 }) {
   return (
-    <div
-      style={{
-        background: B.white,
-        borderRadius: 12,
-        border: `1px solid ${B.border}`,
-        overflow: 'hidden',
-      }}
-    >
+    <div style={CARD}>
       {clients.map((c, i) => (
         <div
           key={c.id}
@@ -946,33 +965,34 @@ function ClientTable({
             display: 'flex',
             alignItems: 'center',
             gap: 12,
-            padding: '14px 16px',
-            borderBottom: i < clients.length - 1 ? `1px solid ${B.borderLight}` : 'none',
-            background: selected.has(c.id) ? '#F0F9FF' : 'transparent',
+            padding: '13px 16px',
+            borderBottom: i < clients.length - 1 ? `1px solid ${B.borderStrong}` : 'none',
+            background: selected.has(c.id) ? '#E0F2FE' : 'transparent',
           }}
         >
           <input
             type="checkbox"
             checked={selected.has(c.id)}
             onChange={() => onToggle(c.id)}
-            style={{ cursor: 'pointer', accentColor: B.primary }}
+            style={{ cursor: 'pointer', accentColor: B.primary, width: 17, height: 17 }}
           />
-          <div style={{ flex: 1 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <span style={{ fontWeight: 600, fontSize: 14 }}>{c.name}</span>
-                <span style={{ color: B.muted, fontSize: 13, marginLeft: 8 }}>{c.business}</span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
+              <div style={{ minWidth: 0 }}>
+                <span style={{ fontWeight: 700, fontSize: 15 }}>{c.name}</span>
+                <span style={{ color: B.muted, fontSize: 14, marginLeft: 8 }}>{c.business}</span>
               </div>
               <ResponseBadge status={c.status} />
             </div>
             <div
               style={{
                 display: 'flex',
-                gap: 16,
-                marginTop: 6,
-                fontSize: 12,
-                color: B.light,
+                gap: 14,
+                marginTop: 7,
+                fontSize: 13,
+                color: B.muted,
                 alignItems: 'center',
+                flexWrap: 'wrap',
               }}
             >
               {c.daysOverdue > 0 ? (
@@ -990,11 +1010,13 @@ function ClientTable({
               </span>
               <span
                 style={{
-                  fontSize: 11,
-                  padding: '2px 8px',
-                  borderRadius: 5,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  padding: '3px 9px',
+                  borderRadius: 6,
                   background: c.workflowType === 'bookkeeping' ? B.purpleBg : B.blueBg,
                   color: c.workflowType === 'bookkeeping' ? B.purpleText : B.blueText,
+                  border: `1px solid ${c.workflowType === 'bookkeeping' ? '#C4B5FD' : '#7DD3FC'}`,
                 }}
               >
                 {c.workflowType === 'bookkeeping' ? 'Bookkeeping' : 'Data request'}
@@ -1003,12 +1025,13 @@ function ClientTable({
                 value={clientChannels[c.id]}
                 onChange={(e) => onChannelChange(c.id, e.target.value)}
                 style={{
-                  fontSize: 11,
-                  padding: '3px 7px',
-                  borderRadius: 5,
-                  border: `1px solid ${B.borderLight}`,
+                  fontSize: 13,
+                  fontWeight: 500,
+                  padding: '5px 9px',
+                  borderRadius: 6,
+                  border: `1px solid ${B.borderStrong}`,
                   background: B.white,
-                  color: B.muted,
+                  color: B.text,
                   cursor: 'pointer',
                 }}
               >
