@@ -90,6 +90,26 @@ const portalService = {
     return res.data.data
   },
 
+  async getItsaStatus(): Promise<{ itsaStatuses?: unknown[]; message?: string }> {
+    const res = await portalAxiosClient.get<{
+      data: { itsaStatuses?: unknown[]; message?: string }
+    }>('/portal/itsa-status')
+    return res.data.data
+  },
+
+  async getSubmissions(): Promise<{
+    taxYear?: string
+    totalIncome?: number
+    totalExpenses?: number
+    netProfit?: number
+    netLoss?: number
+    businesses?: unknown[]
+    message?: string
+  }> {
+    const res = await portalAxiosClient.get<{ data: Record<string, unknown> }>('/portal/submissions')
+    return res.data.data
+  },
+
   async getMessages(): Promise<PortalMessage[]> {
     const res = await portalAxiosClient.get<{ data: PortalMessage[] }>('/portal/messages')
     return res.data.data

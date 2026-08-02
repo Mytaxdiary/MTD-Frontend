@@ -11,6 +11,8 @@ export interface ChaseClientRecord {
   deadline: string
   /** positive = overdue days, negative = days remaining */
   daysOverdue: number
+  /** positive = days since obligation period ended, negative = period still open */
+  daysSincePeriodEnd: number
   quarter: string
   lastChase: string | null
   chaseCount: number

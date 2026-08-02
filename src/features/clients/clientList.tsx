@@ -120,6 +120,7 @@ export default function ClientList({
   const [totalPages, setTotalPages] = useState(1)
   const [page, setPage] = useState(1)
   const [clientsLoading, setClientsLoading] = useState(true)
+  const [clientsError, setClientsError] = useState<string | null>(null)
 
   // Filter / sort state
   const [search, setSearch] = useState('')
@@ -140,6 +141,7 @@ export default function ClientList({
 
   const loadPage = useCallback((p: number, status: string, q: string) => {
     setClientsLoading(true)
+    setClientsError(null)
     clientsService
       .list({
         page: p,
@@ -153,11 +155,18 @@ export default function ClientList({
         setTotalPages(res.totalPages)
         setPage(res.page)
         setSelected(new Set())
+        setClientsError(null)
       })
-      .catch(() => {
+      .catch((err: unknown) => {
         setClients([])
         setTotal(0)
         setTotalPages(1)
+        setClientsError(
+          (err as { response?: { data?: { message?: string } }; message?: string })?.response
+            ?.data?.message ??
+            (err as { message?: string })?.message ??
+            'Failed to load clients. Please try again.',
+        )
       })
       .finally(() => setClientsLoading(false))
   }, [])
@@ -611,7 +620,33 @@ export default function ClientList({
                   </td>
                 </tr>
               )}
-              {!clientsLoading && filtered.length === 0 && (
+              {!clientsLoading && clientsError && (
+                <tr>
+                  <td colSpan={10} style={{ padding: '28px', textAlign: 'center' }}>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: B.redText, marginBottom: 6 }}>
+                      Could not load clients
+                    </div>
+                    <div style={{ fontSize: 13, color: B.muted, marginBottom: 12 }}>{clientsError}</div>
+                    <button
+                      type="button"
+                      onClick={() => loadPage(page, statusFilter, search)}
+                      style={{
+                        padding: '7px 14px',
+                        borderRadius: 8,
+                        border: `1px solid ${B.border}`,
+                        background: B.white,
+                        fontSize: 12,
+                        fontWeight: 500,
+                        cursor: 'pointer',
+                        color: B.text,
+                      }}
+                    >
+                      Retry
+                    </button>
+                  </td>
+                </tr>
+              )}
+              {!clientsLoading && !clientsError && filtered.length === 0 && (
                 <tr>
                   <td
                     colSpan={10}

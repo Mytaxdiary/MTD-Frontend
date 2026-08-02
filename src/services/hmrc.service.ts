@@ -40,6 +40,7 @@ export interface HmrcSandboxIndividualUser {
   emailAddress: string
   groupIdentifier?: string
   nino: string
+  saUtr?: string
   mtdItId?: string
   postcode: string
   individualDetails?: HmrcSandboxIndividualDetails

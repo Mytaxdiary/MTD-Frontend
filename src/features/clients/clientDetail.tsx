@@ -7,6 +7,7 @@ import {
   type ClientRecord,
   type IncomeSummaryResponse,
 } from '@/services/clients.service'
+import { sanitizeHmrcAmount } from '@/lib/hmrc/liabilityLabel'
 import LiabilitiesTab from '@/features/clients/LiabilitiesTab'
 import ChasingTab from '@/features/clients/ChasingTab'
 import NotesTab from '@/features/clients/NotesTab'
@@ -31,6 +32,8 @@ export default function ClientDetail({
 
   const [firstBusiness, setFirstBusiness] = useState<BusinessListItem | null>(null)
   const [outstandingBalance, setOutstandingBalance] = useState<number | null>(null)
+  const [outstandingLoading, setOutstandingLoading] = useState(false)
+  const [outstandingError, setOutstandingError] = useState(false)
   const [incomeSummary, setIncomeSummary] = useState<IncomeSummaryResponse | null>(null)
   const [incomeSummaryLoading, setIncomeSummaryLoading] = useState(false)
 
@@ -59,11 +62,16 @@ export default function ClientDetail({
   }, [clientId])
 
   const fetchOutstanding = useCallback(async (id: string) => {
+    setOutstandingLoading(true)
+    setOutstandingError(false)
     try {
       const data = await clientsService.getBalanceAndTransactions(id, { onlyOpenItems: true })
-      setOutstandingBalance(data.balanceDetails?.totalBalance ?? null)
+      setOutstandingBalance(sanitizeHmrcAmount(data.balanceDetails?.totalBalance))
     } catch {
       setOutstandingBalance(null)
+      setOutstandingError(true)
+    } finally {
+      setOutstandingLoading(false)
     }
   }, [])
 
@@ -85,6 +93,8 @@ export default function ClientDetail({
       void fetchIncomeSummary(client.id)
     } else {
       setOutstandingBalance(null)
+      setOutstandingLoading(false)
+      setOutstandingError(false)
       setIncomeSummary(null)
     }
   }, [client?.id, client?.authorisedAt, fetchOutstanding, fetchIncomeSummary])
@@ -111,6 +121,7 @@ export default function ClientDetail({
 
       <ClientDetailHeader
         client={client}
+        clientLoading={clientLoading}
         firstBusiness={firstBusiness}
         mtdBadge={mtdBadge}
         activeTab={activeTab}
@@ -125,27 +136,47 @@ export default function ClientDetail({
         <MetricsStrip
           authorised={!!client?.authorisedAt}
           outstandingBalance={outstandingBalance}
+          outstandingLoading={outstandingLoading}
+          outstandingError={outstandingError}
           incomeSummary={incomeSummary}
           incomeSummaryLoading={incomeSummaryLoading}
         />
 
-        {clientError && (
+        {clientError && !client && (
           <div
             style={{
-              marginBottom: 16,
-              padding: '10px 12px',
-              background: B.redBg,
-              border: '1px solid #FECACA',
-              borderRadius: 8,
-              fontSize: 12,
-              color: B.redText,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '60px 24px',
+              gap: 12,
+              textAlign: 'center',
             }}
           >
-            {clientError}
+            <div style={{ fontSize: 36 }}>⚠️</div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: B.text }}>Client not found</div>
+            <div style={{ fontSize: 13, color: B.muted, maxWidth: 320 }}>{clientError}</div>
+            <button
+              onClick={() => navigate('clients')}
+              style={{
+                marginTop: 8,
+                padding: '8px 20px',
+                borderRadius: 8,
+                border: `1px solid ${B.border}`,
+                background: B.white,
+                fontSize: 13,
+                fontWeight: 500,
+                cursor: 'pointer',
+                color: B.text,
+              }}
+            >
+              Back to clients
+            </button>
           </div>
         )}
 
-        {!clientId && (
+        {clientError && !client ? null : !clientId && (
           <div
             style={{
               marginBottom: 16,
@@ -162,7 +193,7 @@ export default function ClientDetail({
           </div>
         )}
 
-        {activeTab === 'overview' && (
+        {!clientError && activeTab === 'overview' && (
           <OverviewTab
             client={client}
             clientId={clientId}
@@ -171,9 +202,11 @@ export default function ClientDetail({
           />
         )}
 
-        {activeTab === 'liabilities' && client && <LiabilitiesTab client={client} />}
+        {!clientError && activeTab === 'liabilities' && client && (
+          <LiabilitiesTab client={client} />
+        )}
 
-        {activeTab === 'liabilities' && !client && (
+        {!clientError && activeTab === 'liabilities' && !client && (
           <div
             style={{
               padding: '10px 12px',
@@ -188,9 +221,9 @@ export default function ClientDetail({
           </div>
         )}
 
-        {activeTab === 'chasing' && <ChasingTab clientId={clientId} />}
+        {!clientError && activeTab === 'chasing' && <ChasingTab clientId={clientId} />}
 
-        {activeTab === 'notes' && <NotesTab clientId={clientId} />}
+        {!clientError && activeTab === 'notes' && <NotesTab clientId={clientId} />}
       </div>
 
       <MessageModal

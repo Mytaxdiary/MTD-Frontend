@@ -4,6 +4,13 @@ import { chaseService, type ChaseLogRecord } from '@/services/chase.service'
 import { Card, CardHeader } from '@/components/ui/card'
 import B from '@/styles/theme'
 
+const NEXT_STATUS: Record<string, { label: string; value: string } | null> = {
+  sent: { label: 'Mark opened', value: 'opened' },
+  opened: { label: 'Mark responded', value: 'responded' },
+  responded: null,
+  bounced: null,
+}
+
 const CHANNEL_ICON: Record<string, string> = { email: '✉', sms: '✆' }
 
 const STATUS_STYLE: Record<string, { bg: string; c: string; b: string }> = {
@@ -42,7 +49,30 @@ function fmtDate(iso: string): string {
   })
 }
 
-function ChaseRow({ entry, last }: { entry: ChaseLogRecord; last: boolean }) {
+function ChaseRow({
+  entry,
+  last,
+  onStatusUpdate,
+}: {
+  entry: ChaseLogRecord
+  last: boolean
+  onStatusUpdate: (id: string, status: string) => void
+}) {
+  const [updating, setUpdating] = useState(false)
+  const next = NEXT_STATUS[entry.status]
+
+  const handleUpdate = async (newStatus: string) => {
+    setUpdating(true)
+    try {
+      await chaseService.updateStatus(entry.id, newStatus)
+      onStatusUpdate(entry.id, newStatus)
+    } catch {
+      // silently ignore — status badge stays unchanged
+    } finally {
+      setUpdating(false)
+    }
+  }
+
   return (
     <div
       style={{
@@ -88,7 +118,29 @@ function ChaseRow({ entry, last }: { entry: ChaseLogRecord; last: boolean }) {
           >
             {entry.subject}
           </span>
-          <StatusBadge status={entry.status} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            <StatusBadge status={entry.status} />
+            {next && (
+              <button
+                onClick={() => void handleUpdate(next.value)}
+                disabled={updating}
+                title={next.label}
+                style={{
+                  fontSize: 11,
+                  fontWeight: 600,
+                  padding: '3px 9px',
+                  borderRadius: 6,
+                  border: `1px solid ${B.border}`,
+                  background: updating ? B.surface : B.white,
+                  color: B.muted,
+                  cursor: updating ? 'not-allowed' : 'pointer',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {updating ? '...' : next.label}
+              </button>
+            )}
+          </div>
         </div>
         <div style={{ fontSize: 11, color: B.light, marginTop: 3 }}>
           {fmtDate(entry.sentAt)}
@@ -137,6 +189,10 @@ export default function ChasingTab({ clientId }: { clientId?: string | null }) {
   useEffect(() => {
     void load()
   }, [load])
+
+  const handleStatusUpdate = (id: string, newStatus: string) => {
+    setLogs((prev) => prev.map((l) => (l.id === id ? { ...l, status: newStatus } : l)))
+  }
 
   const filtered = filter === 'all' ? logs : logs.filter((l) => l.channel === filter)
 
@@ -247,7 +303,12 @@ export default function ChasingTab({ clientId }: { clientId?: string | null }) {
           {!loading &&
             !error &&
             filtered.map((entry, i) => (
-              <ChaseRow key={entry.id} entry={entry} last={i === filtered.length - 1} />
+              <ChaseRow
+                key={entry.id}
+                entry={entry}
+                last={i === filtered.length - 1}
+                onStatusUpdate={handleStatusUpdate}
+              />
             ))}
         </div>
       </Card>

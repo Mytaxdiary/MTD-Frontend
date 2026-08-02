@@ -10,6 +10,10 @@ function StatusBadge({ status }: { status: string }) {
     Open: { bg: B.amberBg, c: B.amberText, l: 'Open' },
     Fulfilled: { bg: B.greenBg, c: B.greenText, l: 'Submitted' },
     Overdue: { bg: B.redBg, c: B.redText, l: 'Overdue' },
+    MTD: { bg: B.greenBg, c: B.greenText, l: 'MTD enrolled' },
+    'MTD Exempt': { bg: B.purpleBg, c: B.purpleText, l: 'MTD Exempt' },
+    'Annual NINO': { bg: B.amberBg, c: B.amberText, l: 'Annual NINO' },
+    'No Status': { bg: B.surface, c: B.muted, l: 'No status' },
   }
   const s = map[status] ?? { bg: B.surface, c: B.muted, l: status }
   return (
@@ -63,6 +67,10 @@ export default function PortalDashboard() {
   const [me, setMe] = useState<PortalMe | null>(null)
   const [obligations, setObligations] = useState<unknown[]>([])
   const [liabilities, setLiabilities] = useState<unknown>(null)
+  const [itsaStatuses, setItsaStatuses] = useState<unknown[]>([])
+  const [submissions, setSubmissions] = useState<{
+    taxYear?: string; totalIncome?: number; totalExpenses?: number; netProfit?: number; netLoss?: number; message?: string
+  } | null>(null)
   const [unread, setUnread] = useState(0)
   const [loading, setLoading] = useState(true)
 
@@ -79,8 +87,14 @@ export default function PortalDashboard() {
         setUnread(unreadCount)
 
         if (meData.authorisedAt) {
-          const liabData = await portalService.getLiabilities()
+          const [liabData, itsaData, subData] = await Promise.all([
+            portalService.getLiabilities(),
+            portalService.getItsaStatus(),
+            portalService.getSubmissions(),
+          ])
           setLiabilities(liabData)
+          setItsaStatuses(itsaData.itsaStatuses ?? [])
+          setSubmissions(subData)
         }
       } catch {
         router.push('/portal/login')
@@ -283,6 +297,103 @@ export default function PortalDashboard() {
           </table>
         )}
       </Card>
+
+      {/* HMRC Tax status */}
+      {me?.authorisedAt && itsaStatuses.length > 0 && (
+        <Card title="HMRC Making Tax Digital status">
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+            <thead>
+              <tr style={{ borderBottom: `2px solid ${B.border}` }}>
+                {['Tax year', 'Status', 'Reason'].map((h) => (
+                  <th
+                    key={h}
+                    style={{
+                      textAlign: 'left',
+                      padding: '8px 12px',
+                      fontSize: 12,
+                      color: B.muted,
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                    }}
+                  >
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {(itsaStatuses as Array<{ taxYear: string; itsaStatusDetails?: Array<{ status: string; statusReason?: string; submittedOn?: string }> }>).map((row) =>
+                (row.itsaStatusDetails ?? []).map((detail, di) => (
+                  <tr key={`${row.taxYear}-${di}`} style={{ borderBottom: `1px solid ${B.borderLight}` }}>
+                    <td style={{ padding: '10px 12px', fontSize: 14, fontWeight: 600 }}>{row.taxYear}</td>
+                    <td style={{ padding: '10px 12px' }}>
+                      <StatusBadge status={detail.status} />
+                    </td>
+                    <td style={{ padding: '10px 12px', fontSize: 13, color: B.muted }}>
+                      {detail.statusReason ?? 'N/A'}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </Card>
+      )}
+
+      {/* Submitted figures */}
+      {me?.authorisedAt && submissions && !submissions.message && (
+        <Card title={`Submitted figures${submissions.taxYear ? ` — ${submissions.taxYear}` : ''}`}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+            {(
+              [
+                ['Income (YTD)', submissions.totalIncome ?? 0, false],
+                ['Expenses (YTD)', submissions.totalExpenses ?? 0, false],
+                ['Net profit / loss', (submissions.netProfit ?? 0) - (submissions.netLoss ?? 0), true],
+              ] as [string, number, boolean][]
+            ).map(([label, amount, isNet]) => (
+              <div
+                key={label}
+                style={{
+                  background: B.surface,
+                  borderRadius: 10,
+                  padding: '16px 18px',
+                  border: `1px solid ${B.border}`,
+                  boxShadow: B.cardShadow,
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 13,
+                    color: B.muted,
+                    marginBottom: 8,
+                    fontWeight: 600,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.4px',
+                  }}
+                >
+                  {label}
+                </div>
+                <div
+                  style={{
+                    fontSize: 22,
+                    fontWeight: 800,
+                    color: isNet && amount < 0 ? B.redText : B.text,
+                  }}
+                >
+                  {formatCurrency(Math.abs(amount))}
+                  {isNet && amount < 0 && (
+                    <span style={{ fontSize: 12, fontWeight: 500, color: B.redText, marginLeft: 6 }}>loss</span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop: 14, fontSize: 13, color: B.light }}>
+            Year-to-date totals as filed with HMRC.
+          </div>
+        </Card>
+      )}
 
       {/* HMRC balance */}
       {me?.authorisedAt && (

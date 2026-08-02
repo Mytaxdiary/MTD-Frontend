@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import B from '@/styles/theme'
 import { Card, CardHeader } from '@/components/ui/card'
-import { currentUkTaxYear } from '@/lib/hmrc/taxYear'
+import { currentUkTaxYear, taxYearDateRange } from '@/lib/hmrc/taxYear'
 import { fmtUkPeriodRange, fmtUkShortDate, ukQuarterFromPeriodStart } from '@/lib/hmrc/quarterLabel'
 import {
   clientsService,
@@ -298,9 +298,12 @@ export default function ObligationsCard({ client }: { client: ClientRecord }) {
     setObligationsLoading(true)
     setObligationsError(null)
     try {
+      const { fromDate, toDate } = taxYearDateRange(displayTaxYear)
       const result = await clientsService.getIncomeAndExpenditureObligations(client.id, {
         businessId: selected.businessId,
         typeOfBusiness: selected.typeOfBusiness,
+        fromDate,
+        toDate,
         status: statusFilter || undefined,
       })
       const group = (result.obligations ?? []).find((o) => o.businessId === selected.businessId)
@@ -313,7 +316,7 @@ export default function ObligationsCard({ client }: { client: ClientRecord }) {
     } finally {
       setObligationsLoading(false)
     }
-  }, [client.id, client.authorisedAt, selected, statusFilter])
+  }, [client.id, client.authorisedAt, selected, statusFilter, displayTaxYear])
 
   const loadCrystallisation = useCallback(async () => {
     if (!client.authorisedAt) return

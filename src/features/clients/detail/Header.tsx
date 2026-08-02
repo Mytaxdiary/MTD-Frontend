@@ -16,6 +16,7 @@ const TABS = ['overview', 'liabilities', 'chasing', 'notes'] as const
 
 interface Props {
   client: ClientRecord | null
+  clientLoading?: boolean
   firstBusiness: BusinessListItem | null
   mtdBadge: string
   activeTab: string
@@ -28,6 +29,7 @@ interface Props {
 
 export default function ClientDetailHeader({
   client,
+  clientLoading = false,
   firstBusiness,
   mtdBadge,
   activeTab,
@@ -37,7 +39,7 @@ export default function ClientDetailHeader({
   setPreviewLoading,
   onMessageClick,
 }: Props) {
-  const displayName = client?.name ?? 'Priya Sharma'
+  const displayName = client?.name ?? ''
 
   const handlePreview = async () => {
     if (!clientId) return
@@ -64,6 +66,7 @@ export default function ClientDetailHeader({
         flexShrink: 0,
       }}
     >
+      <style>{`@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}`}</style>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         {/* Avatar + name + badges */}
         <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
@@ -72,7 +75,9 @@ export default function ClientDetailHeader({
               width: 52,
               height: 52,
               borderRadius: 14,
-              background: 'linear-gradient(135deg,#E0F2FE,#BAE6FD)',
+              background: clientLoading
+                ? B.borderLight
+                : 'linear-gradient(135deg,#E0F2FE,#BAE6FD)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -81,13 +86,27 @@ export default function ClientDetailHeader({
               color: B.blueText,
             }}
           >
-            {client ? clientInitials(client.name) : 'PS'}
+            {!clientLoading && (client ? clientInitials(client.name) : '')}
           </div>
           <div>
-            <div style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.02em' }}>
-              {displayName}
-            </div>
-            <div
+            {clientLoading ? (
+              <div
+                style={{
+                  height: 28,
+                  width: 180,
+                  borderRadius: 6,
+                  background: `linear-gradient(90deg, ${B.surface} 25%, ${B.borderLight} 50%, ${B.surface} 75%)`,
+                  backgroundSize: '200% 100%',
+                  animation: 'shimmer 1.4s infinite',
+                  marginBottom: 8,
+                }}
+              />
+            ) : (
+              <div style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.02em' }}>
+                {displayName}
+              </div>
+            )}
+            {!clientLoading && <div
               style={{
                 display: 'flex',
                 gap: 12,
@@ -140,13 +159,14 @@ export default function ClientDetailHeader({
               >
                 Main agent
               </span>
-            </div>
+            </div>}
           </div>
         </div>
 
         {/* Action buttons */}
         <div style={{ display: 'flex', gap: 8 }}>
           <button
+            onClick={() => setActiveTab('chasing')}
             style={{
               padding: '8px 16px',
               borderRadius: 8,

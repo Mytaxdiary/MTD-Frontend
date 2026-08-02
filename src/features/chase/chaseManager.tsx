@@ -141,7 +141,8 @@ export default function ChaseManager({
 
   /* ── client helpers ── */
   const overdueClients = chaseClients.filter((c) => c.daysOverdue > 0)
-  const upcomingClients = chaseClients.filter((c) => c.daysOverdue <= 0)
+  const upcomingClients = chaseClients.filter((c) => c.daysOverdue <= 0 && c.daysSincePeriodEnd >= 1)
+  const notStartedClients = chaseClients.filter((c) => c.daysOverdue <= 0 && c.daysSincePeriodEnd < 1)
   const filteredOverdue =
     typeFilter === 'all'
       ? overdueClients
@@ -150,6 +151,10 @@ export default function ChaseManager({
     typeFilter === 'all'
       ? upcomingClients
       : upcomingClients.filter((c) => c.workflowType === typeFilter)
+  const filteredNotStarted =
+    typeFilter === 'all'
+      ? notStartedClients
+      : notStartedClients.filter((c) => c.workflowType === typeFilter)
 
   const toggleSelect = (id: string) =>
     setSelected((p) => {
@@ -325,7 +330,7 @@ export default function ChaseManager({
               ? 'Loading clients...'
               : clientsError
                 ? clientsError
-                : `${chaseClients.length} authorised clients: ${overdueClients.length} overdue, ${upcomingClients.length} upcoming`}
+                : `${chaseClients.length} authorised clients: ${overdueClients.length} overdue, ${upcomingClients.length} in chase window, ${notStartedClients.length} upcoming`}
           </div>
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
@@ -456,12 +461,30 @@ export default function ChaseManager({
                 <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 9 }}>
                   <div style={{ width: 9, height: 9, borderRadius: 5, background: B.amber }} />
                   <span style={{ fontSize: 15, fontWeight: 700, color: B.amberText }}>
-                    Upcoming: chase window open
+                    Chase window open: period ended, deadline pending
                   </span>
                   <span style={{ fontSize: 14, color: B.muted }}>({filteredUpcoming.length})</span>
                 </div>
                 <ClientTable
                   clients={filteredUpcoming}
+                  selected={selected}
+                  clientChannels={clientChannels}
+                  onToggle={toggleSelect}
+                  onChannelChange={(id, ch) => setClientChannels({ ...clientChannels, [id]: ch })}
+                />
+              </div>
+            )}
+            {filteredNotStarted.length > 0 && (
+              <div style={{ marginTop: 16 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 9 }}>
+                  <div style={{ width: 9, height: 9, borderRadius: 5, background: B.muted }} />
+                  <span style={{ fontSize: 15, fontWeight: 700, color: B.muted }}>
+                    Period still open: no chase needed yet
+                  </span>
+                  <span style={{ fontSize: 14, color: B.light }}>({filteredNotStarted.length})</span>
+                </div>
+                <ClientTable
+                  clients={filteredNotStarted}
                   selected={selected}
                   clientChannels={clientChannels}
                   onToggle={toggleSelect}

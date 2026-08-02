@@ -12,6 +12,7 @@ import {
   sanitizeHmrcAmount,
 } from '@/lib/hmrc/liabilityLabel'
 import { clientsService, type ClientRecord, type HmrcPayment } from '@/services/clients.service'
+import MessageModal from '@/features/clients/detail/MessageModal'
 
 const outlineBtn: React.CSSProperties = {
   padding: '7px 14px',
@@ -96,6 +97,46 @@ interface Props {
   client: ClientRecord
 }
 
+function buildPaymentDetailsMessage(
+  clientName: string,
+  totalBalance: number | null,
+  overdueAmount: number | null,
+  utr?: string,
+): { subject: string; body: string } {
+  const balanceLine =
+    totalBalance != null
+      ? `Your current outstanding balance with HMRC is ${fmtMoney(totalBalance)}.`
+      : 'Please check your Self Assessment account for your latest balance.'
+  const overdueLine =
+    overdueAmount != null && overdueAmount > 0
+      ? `\nOf this, ${fmtMoney(overdueAmount)} is overdue.`
+      : ''
+  const referenceLine = utr
+    ? `Reference (your UTR): ${utr}`
+    : 'Reference: your 10-digit Unique Taxpayer Reference (UTR)'
+
+  return {
+    subject: 'HMRC payment details',
+    body: [
+      `Hi ${clientName},`,
+      '',
+      balanceLine + overdueLine,
+      '',
+      'You can pay HMRC by bank transfer using these details:',
+      '',
+      'Sort code: 08-32-10',
+      'Account number: 12001039',
+      referenceLine,
+      '',
+      'You can also pay online at https://www.gov.uk/pay-self-assessment-tax-bill',
+      '',
+      'If you have any questions, reply here in the portal or get in touch.',
+      '',
+      'Kind regards',
+    ].join('\n'),
+  }
+}
+
 export default function LiabilitiesTab({ client }: Props) {
   const [liabLoading, setLiabLoading] = useState(false)
   const [liabError, setLiabError] = useState<string | null>(null)
@@ -107,8 +148,15 @@ export default function LiabilitiesTab({ client }: Props) {
   const [paymentsLoading, setPaymentsLoading] = useState(false)
   const [paymentsError, setPaymentsError] = useState<string | null>(null)
   const [payments, setPayments] = useState<HmrcPayment[]>([])
+  const [showMsgModal, setShowMsgModal] = useState(false)
 
   const canFetch = !!client.authorisedAt
+  const paymentMsg = buildPaymentDetailsMessage(
+    client.name,
+    totalBalance,
+    overdueAmount,
+    client.utr,
+  )
 
   const fetchLiabilities = useCallback(async () => {
     if (!client.authorisedAt) return
@@ -489,7 +537,7 @@ export default function LiabilitiesTab({ client }: Props) {
               {[
                 ['Sort code', '08-32-10'],
                 ['Account number', '12001039'],
-                ['Reference', '12345 67890'],
+                ['Reference (UTR)', client.utr || 'Not set'],
               ].map(([k, v]) => (
                 <div
                   key={k}
@@ -502,6 +550,7 @@ export default function LiabilitiesTab({ client }: Props) {
                       fontWeight: 700,
                       fontFamily: 'monospace',
                       color: B.blueText,
+                      fontStyle: k.includes('UTR') && !client.utr ? 'italic' : 'normal',
                     }}
                   >
                     {v}
@@ -519,6 +568,7 @@ export default function LiabilitiesTab({ client }: Props) {
             </div>
             <button
               type="button"
+              onClick={() => setShowMsgModal(true)}
               style={{
                 width: '100%',
                 padding: '10px',
@@ -536,6 +586,15 @@ export default function LiabilitiesTab({ client }: Props) {
           </div>
         </Card>
       </div>
+
+      <MessageModal
+        show={showMsgModal}
+        onClose={() => setShowMsgModal(false)}
+        clientId={client.id}
+        clientName={client.name}
+        initialSubject={paymentMsg.subject}
+        initialBody={paymentMsg.body}
+      />
     </div>
   )
 }

@@ -54,6 +54,7 @@ function formatClientCopy(ind: HmrcSandboxIndividualUser): string {
   return [
     `NINO: ${ind.nino}`,
     `Postcode: ${ind.postcode}`,
+    ind.saUtr ? `UTR: ${ind.saUtr}` : null,
     ind.mtdItId ? `MTD IT ID: ${ind.mtdItId}` : null,
     `User ID: ${ind.userId}`,
     `Password: ${ind.password}`,
@@ -88,6 +89,7 @@ function clientRows(ind: HmrcSandboxIndividualUser): [string, string][] {
     ['NINO', ind.nino],
     ['Postcode', ind.postcode],
   ]
+  if (ind.saUtr) rows.push(['UTR', ind.saUtr])
   if (ind.mtdItId) rows.push(['MTD IT ID', ind.mtdItId])
   rows.push(['User ID', ind.userId], ['Password', ind.password])
   if (ind.groupIdentifier) rows.push(['Group ID', ind.groupIdentifier])

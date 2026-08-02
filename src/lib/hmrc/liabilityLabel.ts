@@ -4,7 +4,6 @@ const SANDBOX_SENTINEL = 99999999999.99
 
 /** HMRC sandbox returns ±99999999999.99 as placeholder — treat as missing. */
 export function sanitizeHmrcAmount(value?: number | null): number | null {
-  console.log('sanitizeHmrcAmount', value)
   if (value == null || Number.isNaN(value)) return null
   if (Math.abs(value) >= SANDBOX_SENTINEL - 1) return null
   return value

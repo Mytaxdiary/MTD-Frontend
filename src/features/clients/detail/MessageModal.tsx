@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import B from '@/styles/theme'
 import axiosClient from '@/lib/api/axiosClient'
 
@@ -7,14 +7,32 @@ interface Props {
   onClose: () => void
   clientId: string | null
   clientName: string
+  initialSubject?: string
+  initialBody?: string
 }
 
-export default function MessageModal({ show, onClose, clientId, clientName }: Props) {
+export default function MessageModal({
+  show,
+  onClose,
+  clientId,
+  clientName,
+  initialSubject = '',
+  initialBody = '',
+}: Props) {
   const [subject, setSubject] = useState('')
   const [body, setBody] = useState('')
   const [sending, setSending] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    if (!show) return
+    setSubject(initialSubject)
+    setBody(initialBody)
+    setSending(false)
+    setSuccess(false)
+    setError('')
+  }, [show, initialSubject, initialBody])
 
   if (!show) return null
 
@@ -68,7 +86,6 @@ export default function MessageModal({ show, onClose, clientId, clientName }: Pr
           overflow: 'hidden',
         }}
       >
-        {/* Header */}
         <div
           style={{
             padding: '18px 24px',
@@ -93,7 +110,6 @@ export default function MessageModal({ show, onClose, clientId, clientName }: Pr
           </button>
         </div>
 
-        {/* Body */}
         <div style={{ padding: '20px 24px' }}>
           {success ? (
             <div style={{ textAlign: 'center', padding: '20px 0' }}>
@@ -146,7 +162,7 @@ export default function MessageModal({ show, onClose, clientId, clientName }: Pr
                 <textarea
                   value={body}
                   onChange={(e) => setBody(e.target.value)}
-                  rows={6}
+                  rows={8}
                   placeholder="Write your message here..."
                   style={{
                     display: 'block',

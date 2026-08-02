@@ -4,6 +4,8 @@ import type { IncomeSummaryResponse } from '@/services/clients.service'
 interface Props {
   authorised: boolean
   outstandingBalance: number | null
+  outstandingLoading?: boolean
+  outstandingError?: boolean
   incomeSummary: IncomeSummaryResponse | null
   incomeSummaryLoading: boolean
 }
@@ -45,6 +47,8 @@ function bissStateOf(
 export default function MetricsStrip({
   authorised,
   outstandingBalance,
+  outstandingLoading = false,
+  outstandingError = false,
   incomeSummary,
   incomeSummaryLoading,
 }: Props) {
@@ -122,16 +126,20 @@ export default function MetricsStrip({
       label: 'Outstanding to HMRC',
       value: outstandingBalance != null ? fmtGbp(outstandingBalance) : 'N/A',
       sub:
-        outstandingBalance == null
-          ? authorised
+        outstandingError
+          ? 'Could not load — HMRC unavailable'
+          : outstandingLoading
             ? 'Authorised — loading...'
-            : 'Authorise client to load'
-          : outstandingBalance > 0
-            ? 'Payment due'
-            : 'All clear',
-      color: outstandingBalance != null ? outstandingColor : B.light,
+            : outstandingBalance == null
+              ? authorised
+                ? 'No reliable balance from HMRC'
+                : 'Authorise client to load'
+              : outstandingBalance > 0
+                ? 'Payment due'
+                : 'All clear',
+      color: outstandingError ? B.amber : outstandingBalance != null ? outstandingColor : B.light,
       accentColor: outstandingBalance != null ? B.text : B.light,
-      loading: authorised && outstandingBalance === null,
+      loading: outstandingLoading,
     },
   ]
 

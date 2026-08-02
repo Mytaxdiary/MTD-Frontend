@@ -8,6 +8,7 @@ export interface ClientRecord {
   postcode: string
   email: string
   phone?: string
+  utr?: string
   agentType: string
   invitationId?: string
   /** HMRC invitation status (open string — API may return values beyond the common set). */
@@ -246,6 +247,30 @@ export interface IncomeSummaryResponse {
   businesses: IncomeSummaryBusiness[]
 }
 
+export interface SubmittedPeriodFigure {
+  label: string
+  periodStartDate?: string
+  periodEndDate?: string
+  periodId?: string
+  businessId: string
+  typeOfBusiness: string
+  tradingName?: string
+  income: number
+  expenses: number
+  net: number
+  cumulative?: boolean
+}
+
+export interface SubmittedFiguresResponse {
+  taxYear: string
+  totalIncome: number
+  totalExpenses: number
+  netProfit: number
+  netLoss: number
+  periods: SubmittedPeriodFigure[]
+  businesses: IncomeSummaryBusiness[]
+}
+
 export const clientsService = {
   async create(payload: CreateClientPayload): Promise<CreateClientResult> {
     const res = await apiClient.post<{ data: CreateClientResult }>('/clients', payload)
@@ -342,6 +367,11 @@ export const clientsService = {
     return res.data.data
   },
 
+  async updateClient(id: string, fields: { utr?: string }): Promise<ClientRecord> {
+    const res = await apiClient.patch<{ data: ClientRecord }>(`/clients/${id}`, fields)
+    return res.data.data
+  },
+
   async getItsaStatus(id: string, params: GetItsaStatusParams): Promise<ItsaStatusResponse> {
     const res = await apiClient.get<{ data: ItsaStatusResponse }>(`/clients/${id}/itsa-status`, {
       params,
@@ -413,6 +443,15 @@ export const clientsService = {
   async getIncomeSummary(id: string, taxYear?: string): Promise<IncomeSummaryResponse> {
     const res = await apiClient.get<{ data: IncomeSummaryResponse }>(
       `/clients/${id}/income-summary`,
+      taxYear ? { params: { taxYear } } : undefined
+    )
+    return res.data.data
+  },
+
+  /** YTD (BISS) + Self-Employment / Property period or cumulative summaries. */
+  async getSubmittedFigures(id: string, taxYear?: string): Promise<SubmittedFiguresResponse> {
+    const res = await apiClient.get<{ data: SubmittedFiguresResponse }>(
+      `/clients/${id}/submitted-figures`,
       taxYear ? { params: { taxYear } } : undefined
     )
     return res.data.data
