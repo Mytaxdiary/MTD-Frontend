@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import portalService, { type PortalMe } from '@/services/portal.service'
 import { clearPortalSessionCookie } from '@/lib/auth/portalTokenStorage'
+import MtdScopeNotice from '@/components/ui/MtdScopeNotice'
 import B from '@/styles/theme'
 
 function StatusBadge({ status }: { status: string }) {
@@ -243,6 +244,10 @@ export default function PortalDashboard() {
           via HMRC. Once you accept it, your submissions and liabilities will appear here.
         </div>
       )}
+
+      <div style={{ marginBottom: 20 }}>
+        <MtdScopeNotice />
+      </div>
 
       {/* Quarterly deadlines */}
       <Card title="Quarterly deadlines">

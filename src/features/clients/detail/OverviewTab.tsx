@@ -9,6 +9,7 @@ import ItsaStatusCard from '@/features/clients/ItsaStatusCard'
 
 import BusinessesCard from '@/features/clients/BusinessesCard'
 import ObligationsCard from '@/features/clients/ObligationsCard'
+import MtdScopeNotice from '@/components/ui/MtdScopeNotice'
 import type { BusinessListItem } from '@/services/clients.service'
 
 // ── Received Files card ───────────────────────────────────────────────────────
@@ -727,6 +728,7 @@ export default function OverviewTab({
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20 }}>
       {/* Left column */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+        <MtdScopeNotice />
         {client && <ItsaStatusCard client={client} />}
         {client && <BusinessesCard client={client} onFirstBusiness={onFirstBusiness} />}
         {client && <ObligationsCard client={client} />}
