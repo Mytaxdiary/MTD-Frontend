@@ -1,4 +1,4 @@
-# My Tax Diary — Frontend
+# My Tax Diary - Frontend
 
 Next.js 15 + TypeScript frontend for the My Tax Diary agent platform.
 
