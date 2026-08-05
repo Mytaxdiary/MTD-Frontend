@@ -17,7 +17,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             display: 'flex',
             height: '100vh',
             fontFamily: "'DM Sans', 'Segoe UI', system-ui, sans-serif",
-            background: '#F8FAFC',
+            background: '#F1F5F9',
             color: '#0F172A',
           }}
         >

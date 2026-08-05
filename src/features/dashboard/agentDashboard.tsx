@@ -10,6 +10,22 @@ import dashboardService, {
   type DashboardClientRow,
   type DashboardSummary,
 } from '@/services/dashboard.service'
+import EmptyStateIllustration from '@/components/ui/EmptyStateIllustration'
+import {
+  AlertIcon,
+  BoardViewIcon,
+  CalendarIcon,
+  CheckIcon,
+  ChevronDownIcon,
+  ClockIcon,
+  ExportIcon,
+  FilterIcon,
+  ListViewIcon,
+  PlusIcon,
+  RefreshIcon,
+  SendIcon,
+  YearViewIcon,
+} from '@/components/ui/icons'
 
 function timeOfDayGreeting(): string {
   const h = new Date().getHours()
@@ -84,6 +100,7 @@ const MetricCard = ({
   value,
   sub,
   color,
+  tint,
   icon,
   active,
   onClick,
@@ -92,70 +109,148 @@ const MetricCard = ({
   value: number | string
   sub: string
   color: string
+  tint: string
   icon: React.ReactNode
   active: boolean
   onClick: () => void
 }) => (
-  <div
+  <button
+    type="button"
     onClick={onClick}
+    aria-pressed={active}
     style={{
       flex: 1,
+      minWidth: 0,
       background: B.white,
       borderRadius: 12,
-      padding: '16px 18px',
-      border: `1.5px solid ${active ? color : B.border}`,
-      boxShadow: B.cardShadow,
+      padding: '20px 20px 20px 18px',
+      border: `1px solid ${active ? color : B.borderLight}`,
+      boxShadow: active
+        ? `${B.cardShadow}, 0 0 0 3px ${tint}`
+        : '0 1px 2px rgba(15,23,42,0.04), 0 1px 3px rgba(15,23,42,0.05)',
       position: 'relative',
       overflow: 'hidden',
       cursor: 'pointer',
-      transition: 'all 0.15s',
+      textAlign: 'left',
+      fontFamily: 'inherit',
+      display: 'flex',
+      alignItems: 'center',
+      gap: 16,
+      transition: 'border-color 0.15s, box-shadow 0.15s',
     }}
   >
-    <div
+    {/* Colour rail — the card's status accent */}
+    <span
+      aria-hidden="true"
       style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: color }}
     />
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-      <div>
-        <div
-          style={{
-            fontSize: 13,
-            fontWeight: 600,
-            color: B.muted,
-            letterSpacing: '0.03em',
-            marginBottom: 4,
-          }}
-        >
-          {label}
-        </div>
-        <div
-          style={{
-            fontSize: 28,
-            fontWeight: 800,
-            color: B.text,
-            lineHeight: 1,
-            letterSpacing: '-0.02em',
-          }}
-        >
-          {value}
-        </div>
-        <div style={{ fontSize: 12, color: B.light, marginTop: 4 }}>{sub}</div>
-      </div>
-      <div
+    <span
+      aria-hidden="true"
+      style={{
+        width: 44,
+        height: 44,
+        borderRadius: '50%',
+        background: tint,
+        color,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexShrink: 0,
+      }}
+    >
+      {icon}
+    </span>
+    <span style={{ minWidth: 0 }}>
+      <span
         style={{
-          width: 32,
-          height: 32,
-          borderRadius: 8,
-          background: `${color}14`,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: 14,
+          display: 'block',
+          fontSize: 13,
+          fontWeight: 500,
+          color: B.muted,
+          marginBottom: 3,
         }}
       >
-        {icon}
-      </div>
-    </div>
-  </div>
+        {label}
+      </span>
+      <span
+        style={{
+          display: 'block',
+          fontSize: 27,
+          fontWeight: 800,
+          color: B.text,
+          lineHeight: 1.1,
+          letterSpacing: '-0.02em',
+        }}
+      >
+        {value}
+      </span>
+      <span style={{ display: 'block', fontSize: 12, color: B.light, marginTop: 4 }}>{sub}</span>
+    </span>
+  </button>
+)
+
+/** Native select wrapped with a leading icon and a custom chevron. */
+const FilterSelect = ({
+  value,
+  onChange,
+  icon,
+  children,
+  ariaLabel,
+}: {
+  value: string
+  onChange: (v: string) => void
+  icon: React.ReactNode
+  children: React.ReactNode
+  ariaLabel: string
+}) => (
+  <span style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+    <span
+      aria-hidden="true"
+      style={{
+        position: 'absolute',
+        left: 11,
+        display: 'flex',
+        color: B.light,
+        pointerEvents: 'none',
+      }}
+    >
+      {icon}
+    </span>
+    <select
+      aria-label={ariaLabel}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      style={{
+        appearance: 'none',
+        WebkitAppearance: 'none',
+        MozAppearance: 'none',
+        padding: '8px 32px 8px 33px',
+        borderRadius: 8,
+        border: `1px solid ${B.borderLight}`,
+        fontSize: 13,
+        fontWeight: 500,
+        color: B.text,
+        background: B.white,
+        cursor: 'pointer',
+        fontFamily: 'inherit',
+        minWidth: 132,
+      }}
+    >
+      {children}
+    </select>
+    <span
+      aria-hidden="true"
+      style={{
+        position: 'absolute',
+        right: 10,
+        display: 'flex',
+        color: B.light,
+        pointerEvents: 'none',
+      }}
+    >
+      <ChevronDownIcon />
+    </span>
+  </span>
 )
 
 export default function Dashboard({ navigate = () => {} }: { navigate?: (route: string) => void }) {
@@ -230,96 +325,119 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
 
   return (
     <div style={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
-      {/* Header */}
+      {/* Header — sits directly on the page surface, no separate bar */}
       <div
         style={{
-          padding: '14px 28px',
-          background: B.white,
-          borderBottom: `1px solid ${B.border}`,
+          padding: '22px 24px 18px',
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center',
+          alignItems: 'flex-start',
+          gap: 16,
           flexShrink: 0,
         }}
       >
         <div>
-          <div style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.02em' }}>
+          <h1
+            style={{
+              margin: 0,
+              fontSize: 26,
+              fontWeight: 800,
+              letterSpacing: '-0.025em',
+              color: B.text,
+            }}
+          >
             {timeOfDayGreeting()}, {greetingName}
-          </div>
-          <div style={{ fontSize: 15, color: B.muted, marginTop: 3 }}>
+          </h1>
+          <div style={{ fontSize: 14, color: B.muted, marginTop: 5 }}>
             {liveDateSubtitle(summary)}
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 10 }}>
+        <div style={{ display: 'flex', gap: 10, flexShrink: 0 }}>
           <button
             onClick={() => navigate('add-client')}
             style={{
-              padding: '8px 16px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '9px 16px',
               borderRadius: 8,
-              border: `1px solid ${B.border}`,
+              border: `1px solid ${B.borderLight}`,
               background: B.white,
-              fontSize: 13,
+              boxShadow: '0 1px 2px rgba(15,23,42,0.05)',
+              fontSize: 13.5,
               fontWeight: 500,
+              fontFamily: 'inherit',
               cursor: 'pointer',
               color: B.text,
             }}
           >
-            + Add client
+            <PlusIcon />
+            Add client
           </button>
           <button
             onClick={() => navigate('chase')}
             style={{
-              padding: '8px 16px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '9px 16px',
               borderRadius: 8,
               border: 'none',
               background: B.primary,
+              boxShadow: '0 1px 2px rgba(14,165,201,0.28)',
               color: '#fff',
-              fontSize: 13,
+              fontSize: 13.5,
               fontWeight: 600,
+              fontFamily: 'inherit',
               cursor: 'pointer',
             }}
           >
-            ↗ Chase all overdue
+            <SendIcon size={15} />
+            Chase all overdue
           </button>
         </div>
       </div>
 
-      <div style={{ padding: '18px 28px', flex: 1 }}>
+      <div style={{ padding: '0 24px 24px', flex: 1 }}>
         {/* Metric cards */}
-        <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
+        <div style={{ display: 'flex', gap: 14, marginBottom: 18 }}>
           <MetricCard
-            label="OVERDUE"
+            label="Overdue"
             value={loading ? '...' : overdueCount}
             sub="Past deadline, act now"
             color={B.red}
-            icon={<span style={{ color: B.red }}>!</span>}
+            tint="#FEE2E2"
+            icon={<AlertIcon />}
             active={activeMetric === 'overdue'}
             onClick={() => handleMetricClick('overdue')}
           />
           <MetricCard
-            label="DUE WITHIN 30 DAYS"
+            label="Due within 30 days"
             value={loading ? '...' : dueSoonCount}
             sub="Chase window open"
             color={B.amber}
-            icon={<span style={{ color: B.amber }}>◷</span>}
+            tint="#FEF3C7"
+            icon={<ClockIcon />}
             active={activeMetric === 'due-soon'}
             onClick={() => handleMetricClick('due-soon')}
           />
           <MetricCard
-            label="RECORDS READY"
+            label="Records ready"
             value={recordsReady}
             sub="Ready for review"
             color={B.green}
-            icon={<span style={{ color: B.green }}>✓</span>}
+            tint="#D1FAE5"
+            icon={<CheckIcon />}
             active={activeMetric === 'records'}
             onClick={() => handleMetricClick('records')}
           />
           <MetricCard
-            label="PENDING INVITES"
+            label="Pending invites"
             value={loading ? '...' : pendingInvites}
             sub="Awaiting acceptance"
             color={B.purple}
-            icon={<span style={{ color: B.purple }}>⟳</span>}
+            tint="#EDE9FE"
+            icon={<RefreshIcon />}
             active={activeMetric === 'pending-invite'}
             onClick={() => handleMetricClick('pending-invite')}
           />
@@ -330,125 +448,121 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
           style={{
             background: B.white,
             borderRadius: '12px 12px 0 0',
-            border: `1px solid ${B.border}`,
-            boxShadow: B.cardShadow,
+            border: `1px solid ${B.borderLight}`,
+            boxShadow: '0 1px 2px rgba(15,23,42,0.04)',
             borderBottom: 'none',
-            padding: '12px 20px',
+            padding: '13px 18px',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
+            gap: 14,
+            flexWrap: 'wrap',
           }}
         >
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <select
+          <div style={{ display: 'flex', gap: 9, alignItems: 'center', flexWrap: 'wrap' }}>
+            <FilterSelect
+              ariaLabel="Filter by status"
               value={statusFilter}
-              onChange={(e) => {
-                setStatusFilter(e.target.value)
+              onChange={(v) => {
+                setStatusFilter(v)
                 setActiveMetric(null)
               }}
-              style={{
-                padding: '7px 11px',
-                borderRadius: 7,
-                border: `1px solid ${B.border}`,
-                fontSize: 13,
-                color: B.text,
-                background: B.white,
-                cursor: 'pointer',
-              }}
+              icon={<FilterIcon />}
             >
               <option value="all">All statuses</option>
               <option value="overdue">Overdue</option>
               <option value="due-soon">Due soon</option>
               <option value="filed">Filed</option>
               <option value="pending-invite">Pending invite</option>
-            </select>
-            <select
+            </FilterSelect>
+            <FilterSelect
+              ariaLabel="Filter by income type"
               value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
-              style={{
-                padding: '7px 11px',
-                borderRadius: 7,
-                border: `1px solid ${B.border}`,
-                fontSize: 13,
-                color: B.text,
-                background: B.white,
-                cursor: 'pointer',
-              }}
+              onChange={setTypeFilter}
+              icon={<FilterIcon />}
             >
               <option value="all">All types</option>
               <option value="SE">Self-employment</option>
               <option value="Prop">UK Property</option>
               <option value="both">Both income types</option>
-            </select>
+            </FilterSelect>
             {view === 'list' && (
-              <select
+              <FilterSelect
+                ariaLabel="Filter by quarter"
                 value={quarterFilter}
-                onChange={(e) => setQuarterFilter(e.target.value)}
-                style={{
-                  padding: '7px 11px',
-                  borderRadius: 7,
-                  border: `1px solid ${B.border}`,
-                  fontSize: 13,
-                  color: B.text,
-                  background: B.white,
-                  cursor: 'pointer',
-                }}
+                onChange={setQuarterFilter}
+                icon={<CalendarIcon />}
               >
                 <option value="all">All quarters</option>
                 <option value="Q1">Q1</option>
                 <option value="Q2">Q2</option>
                 <option value="Q3">Q3</option>
                 <option value="Q4">Q4</option>
-              </select>
+              </FilterSelect>
             )}
             <span style={{ fontSize: 13, color: B.light, marginLeft: 4 }}>
               {loading ? 'Loading...' : `${filtered.length} of ${clients.length}`}
             </span>
           </div>
-          <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
             <button
               style={{
-                padding: '7px 13px',
-                borderRadius: 7,
-                border: `1px solid ${B.border}`,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 7,
+                padding: '8px 14px',
+                borderRadius: 8,
+                border: `1px solid ${B.borderLight}`,
                 fontSize: 13,
+                fontWeight: 500,
+                fontFamily: 'inherit',
                 cursor: 'pointer',
                 background: B.white,
                 color: B.muted,
               }}
             >
+              <ExportIcon />
               Export
             </button>
-            <div style={{ display: 'flex', gap: 0, marginLeft: 8 }}>
+            <div style={{ display: 'flex' }}>
               {[
-                { k: 'list', l: '☰' },
-                { k: 'kanban', l: '▥' },
-                { k: 'year', l: '▦' },
-              ].map((v) => (
-                <button
-                  key={v.k}
-                  onClick={() => {
-                    setView(v.k)
-                    if (v.k !== 'list') setQuarterFilter('all')
-                  }}
-                  style={{
-                    padding: '6px 10px',
-                    border: `1px solid ${B.border}`,
-                    fontSize: 13,
-                    cursor: 'pointer',
-                    background: view === v.k ? B.navy : 'transparent',
-                    color: view === v.k ? '#fff' : B.muted,
-                    borderRadius:
-                      v.k === 'list' ? '6px 0 0 6px' : v.k === 'year' ? '0 6px 6px 0' : '0',
-                    marginLeft: v.k !== 'list' ? '-1px' : '0',
-                  }}
-                  title={
-                    v.k === 'list' ? 'List view' : v.k === 'kanban' ? 'Kanban view' : 'Year view'
-                  }
-                >
-                  {v.l}
-                </button>
-              ))}
+                { k: 'list', label: 'List view', Icon: ListViewIcon },
+                { k: 'kanban', label: 'Kanban view', Icon: BoardViewIcon },
+                { k: 'year', label: 'Year view', Icon: YearViewIcon },
+              ].map((v, i, arr) => {
+                const isActive = view === v.k
+                return (
+                  <button
+                    key={v.k}
+                    onClick={() => {
+                      setView(v.k)
+                      if (v.k !== 'list') setQuarterFilter('all')
+                    }}
+                    aria-pressed={isActive}
+                    title={v.label}
+                    aria-label={v.label}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: 36,
+                      height: 34,
+                      padding: 0,
+                      border: `1px solid ${isActive ? B.sidebarBg : B.borderLight}`,
+                      cursor: 'pointer',
+                      background: isActive ? B.sidebarBg : B.white,
+                      color: isActive ? '#fff' : B.light,
+                      borderRadius:
+                        i === 0 ? '8px 0 0 8px' : i === arr.length - 1 ? '0 8px 8px 0' : 0,
+                      marginLeft: i === 0 ? 0 : -1,
+                      position: 'relative',
+                      zIndex: isActive ? 1 : 0,
+                    }}
+                  >
+                    <v.Icon />
+                  </button>
+                )
+              })}
             </div>
           </div>
         </div>
@@ -459,8 +573,8 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
             style={{
               background: B.white,
               borderRadius: '0 0 12px 12px',
-              border: `1px solid ${B.border}`,
-              boxShadow: B.cardShadow,
+              border: `1px solid ${B.borderLight}`,
+              boxShadow: '0 1px 2px rgba(15,23,42,0.04), 0 1px 3px rgba(15,23,42,0.05)',
               overflow: 'hidden',
             }}
           >
@@ -471,18 +585,18 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
             ) : (
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
                 <thead>
-                  <tr style={{ borderBottom: `2px solid ${B.border}`, background: B.surface }}>
+                  <tr style={{ borderBottom: `1px solid ${B.borderLight}`, background: B.white }}>
                     {['Client', 'Type', 'Quarter', 'Deadline', 'Status', 'Chase status', ''].map(
                       (h, i) => (
                         <th
                           key={i}
                           style={{
-                            padding: '11px 16px',
+                            padding: '13px 16px',
                             textAlign: 'left',
-                            fontSize: 12,
+                            fontSize: 11.5,
                             fontWeight: 700,
-                            color: B.muted,
-                            letterSpacing: '0.04em',
+                            color: B.light,
+                            letterSpacing: '0.06em',
                             textTransform: 'uppercase',
                           }}
                         >
@@ -495,16 +609,52 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                 <tbody>
                   {filtered.length === 0 ? (
                     <tr>
-                      <td
-                        colSpan={7}
-                        style={{
-                          padding: '32px 16px',
-                          textAlign: 'center',
-                          color: B.muted,
-                          fontSize: 13,
-                        }}
-                      >
-                        No clients match the current filter.
+                      <td colSpan={7} style={{ padding: '44px 16px 52px' }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            textAlign: 'center',
+                          }}
+                        >
+                          <EmptyStateIllustration />
+                          <div
+                            style={{
+                              fontSize: 15,
+                              fontWeight: 700,
+                              color: B.text,
+                              marginTop: 10,
+                            }}
+                          >
+                            No clients match the current filter.
+                          </div>
+                          <div style={{ fontSize: 13.5, color: B.muted, marginTop: 6 }}>
+                            Try adjusting your filters or add a new client to get started.
+                          </div>
+                          <button
+                            onClick={() => navigate('add-client')}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 8,
+                              marginTop: 18,
+                              padding: '10px 18px',
+                              borderRadius: 8,
+                              border: 'none',
+                              background: B.primary,
+                              boxShadow: '0 1px 2px rgba(14,165,201,0.28)',
+                              color: '#fff',
+                              fontSize: 13.5,
+                              fontWeight: 600,
+                              fontFamily: 'inherit',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            <PlusIcon />
+                            Add your first client
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ) : (

@@ -33,6 +33,19 @@ const theme = {
   purpleText: '#5B21B6',
   blueBg: '#F0F9FF',
   blueText: '#0C4A6E',
+
+  /* ── Sidebar (dark shell) ──────────────────────────────────────────────
+   * The sidebar sits on a near-black navy with a faint circuit motif.
+   * Text opacities are tuned so inactive items still clear WCAG AA. */
+  sidebarBg: '#0A1120',
+  sidebarBgTop: '#101C33',
+  sidebarBorder: 'rgba(148,163,184,0.14)',
+  sidebarActiveBg: 'rgba(14,165,201,0.16)',
+  sidebarActiveBorder: 'rgba(14,165,201,0.34)',
+  sidebarHoverBg: 'rgba(255,255,255,0.06)',
+  sidebarText: 'rgba(226,232,240,0.78)',
+  sidebarTextActive: '#FFFFFF',
+  sidebarLabel: 'rgba(148,163,184,0.72)',
 }
 
 export default theme
