@@ -348,7 +348,7 @@ export default function PortalDashboard() {
 
       {/* Submitted figures */}
       {me?.authorisedAt && submissions && !submissions.message && (
-        <Card title={`Submitted figures${submissions.taxYear ? ` — ${submissions.taxYear}` : ''}`}>
+        <Card title={`Submitted figures${submissions.taxYear ? ` (${submissions.taxYear})` : ''}`}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
             {(
               [

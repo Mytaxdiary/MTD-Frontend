@@ -1,5 +1,6 @@
 import B from '@/styles/theme'
 import LegalFooter from '@/components/ui/LegalFooter'
+import BrandLogo from '@/components/ui/BrandLogo'
 
 type AuthPageLayoutProps = {
   subtitle: string
@@ -31,37 +32,24 @@ export default function AuthPageLayout({
       }}
     >
       <div style={{ width: '100%', maxWidth }}>
-        {/* Logo — aria-hidden: decorative branding, screen readers don't need it */}
+        {/* Logo — product name is in the image alt text */}
         <div
-          aria-hidden="true"
           style={{
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            marginBottom: 32,
+            marginBottom: 28,
           }}
         >
           <div
             style={{
-              width: 44,
-              height: 44,
               borderRadius: 12,
-              background: `linear-gradient(135deg,${B.primary},${B.primaryDark})`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 800,
-              fontSize: 16,
-              color: '#fff',
-              marginBottom: 14,
-              boxShadow: '0 4px 12px rgba(14,165,201,0.3)',
+              overflow: 'hidden',
+              boxShadow: '0 4px 16px rgba(15,23,42,0.12)',
+              marginBottom: 12,
             }}
           >
-            NE
-          </div>
-          {/* WCAG 1.4.3 — app name: #1B2A4A on #F8FAFC → 12.6:1 ✓ */}
-          <div style={{ fontSize: 22, fontWeight: 700, color: B.navy, letterSpacing: '-0.02em' }}>
-            NewEffect MTD ITSA
+            <BrandLogo width={260} priority />
           </div>
           {/* WCAG 1.4.3 — subtitle: #64748B on #F8FAFC → 4.6:1 ✓ */}
           <div style={{ fontSize: 13, color: B.muted, marginTop: 4 }}>{subtitle}</div>

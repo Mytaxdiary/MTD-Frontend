@@ -1,14 +1,17 @@
 import axiosClient from '@/lib/api/axiosClient'
+import type { PipelineStatus } from '@/lib/dashboard/pipelineStatus'
 
 export interface DashboardClientRow {
   id: string
   name: string
   invitationStatus: string
   authorisedAt: string | null
-  /** overdue | due-soon | authorized | pending-invite */
-  status: string
-  /** not-started | chased | received */
-  stage: string
+  /** Canonical pipeline status for list / kanban / year */
+  pipelineStatus: PipelineStatus
+  /** Alias of pipelineStatus (compat) */
+  status: PipelineStatus
+  /** Alias of pipelineStatus (compat) */
+  stage: PipelineStatus
   quarter: string
   deadline: string
   /** positive = days remaining, negative = days overdue */
@@ -30,8 +33,11 @@ export interface DashboardSummary {
   metrics: {
     total: number
     pendingInvites: number
-    overdue: number
-    dueSoon: number
+    notStarted: number
+    chased: number
+    recordsReceived: number
+    readyForReview: number
+    submitted: number
   }
   clients: DashboardClientRow[]
 }

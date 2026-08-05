@@ -114,7 +114,7 @@ export const mockChaseTemplates: ChaseTemplate[] = [
     type: 'data-request',
     name: 'Data request (gentle)',
     subject: 'Quarterly records needed: {business}',
-    body: 'Hi {name},\n\nWe need your income and expense records for {quarter} (due {deadline}). Please send us your bank statements, invoices, and receipts for the period.\n\nYou can reply to this email with attachments, or upload files directly in your NewEffect portal.\n\nBest regards,\n{agent_name}',
+    body: 'Hi {name},\n\nWe need your income and expense records for {quarter} (due {deadline}). Please send us your bank statements, invoices, and receipts for the period.\n\nYou can reply to this email with attachments, or upload files directly in your My Tax Diary portal.\n\nBest regards,\n{agent_name}',
   },
   {
     id: 'dr-urgent',

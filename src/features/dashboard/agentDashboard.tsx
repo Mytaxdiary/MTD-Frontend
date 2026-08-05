@@ -1,7 +1,6 @@
 'use client'
 import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { mockKanbanCols } from '@/mocks/dashboard/dashboardData'
 import TypePills from '@/components/common/typePills'
 import { matchesTypeFilter } from '@/lib/helpers/clientType'
 import B from '@/styles/theme'
@@ -12,18 +11,24 @@ import dashboardService, {
 } from '@/services/dashboard.service'
 import EmptyStateIllustration from '@/components/ui/EmptyStateIllustration'
 import {
-  AlertIcon,
+  PIPELINE_KANBAN_COLS,
+  PIPELINE_STATUS_LABELS,
+  PIPELINE_STATUS_STYLES,
+  isPipelineStatus,
+  type PipelineStatus,
+} from '@/lib/dashboard/pipelineStatus'
+import {
   BoardViewIcon,
   CalendarIcon,
   CheckIcon,
   ChevronDownIcon,
-  ClockIcon,
   ExportIcon,
   FilterIcon,
   ListViewIcon,
   PlusIcon,
   RefreshIcon,
   SendIcon,
+  UsersIcon,
   YearViewIcon,
 } from '@/components/ui/icons'
 
@@ -68,15 +73,16 @@ const QDot = ({ status }: { status: string }) => {
   )
 }
 
-const Badge = ({ status }: { status: string }) => {
-  const m: Record<string, { bg: string; c: string; b: string; l: string }> = {
-    overdue: { bg: B.redBg, c: B.redText, b: '#FECACA', l: 'Overdue' },
-    'due-soon': { bg: B.amberBg, c: B.amberText, b: '#FDE68A', l: 'Due soon' },
-    filed: { bg: B.greenBg, c: B.greenText, b: '#A7F3D0', l: 'Filed' },
-    authorized: { bg: B.greenBg, c: B.greenText, b: '#A7F3D0', l: 'Authorised' },
-    'pending-invite': { bg: B.purpleBg, c: B.purpleText, b: '#DDD6FE', l: 'Pending' },
-  }
-  const s = m[status] ?? m.filed
+function pipelineOf(c: DashboardClientRow): PipelineStatus {
+  if (c.pipelineStatus && isPipelineStatus(c.pipelineStatus)) return c.pipelineStatus
+  if (c.status && isPipelineStatus(c.status)) return c.status
+  if (c.stage && isPipelineStatus(c.stage)) return c.stage
+  return 'not-started'
+}
+
+const PipelineBadge = ({ status }: { status: string }) => {
+  const key: PipelineStatus = isPipelineStatus(status) ? status : 'not-started'
+  const s = PIPELINE_STATUS_STYLES[key]
   return (
     <span
       style={{
@@ -90,7 +96,7 @@ const Badge = ({ status }: { status: string }) => {
         whiteSpace: 'nowrap',
       }}
     >
-      {s.l}
+      {PIPELINE_STATUS_LABELS[key]}
     </span>
   )
 }
@@ -293,33 +299,21 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
     }
   }
 
-  const getQStatus = (c: DashboardClientRow, qf: string): string => {
-    if (qf === 'all') return c.status
-    return c[qf.toLowerCase() as 'q1' | 'q2' | 'q3' | 'q4']
-  }
-
   const filtered = clients.filter((c) => {
+    const pipeline = pipelineOf(c)
+    if (statusFilter !== 'all' && pipeline !== statusFilter) return false
     if (quarterFilter !== 'all') {
-      const qStatus = getQStatus(c, quarterFilter)
+      const qStatus = c[quarterFilter.toLowerCase() as 'q1' | 'q2' | 'q3' | 'q4']
       if (qStatus === 'N/A') return false
-      if (statusFilter !== 'all') {
-        if (statusFilter === 'filed' && qStatus !== 'filed') return false
-        if (statusFilter === 'overdue' && qStatus !== 'overdue') return false
-        if (statusFilter === 'due-soon' && !['pending', 'ready'].includes(qStatus)) return false
-        if (statusFilter === 'pending-invite') return false
-      }
-    } else {
-      if (statusFilter !== 'all' && c.status !== statusFilter) return false
     }
     if (!matchesTypeFilter(c.type, typeFilter)) return false
     return true
   })
 
-  const overdueCount = summary?.metrics.overdue ?? 0
-  const dueSoonCount = summary?.metrics.dueSoon ?? 0
   const pendingInvites = summary?.metrics.pendingInvites ?? 0
-  // Records Ready has no live backend model — always 0 from live data
-  const recordsReady = clients.filter((c) => c.records && c.status !== 'filed').length
+  const notStartedCount = summary?.metrics.notStarted ?? 0
+  const chasedCount = summary?.metrics.chased ?? 0
+  const submittedCount = summary?.metrics.submitted ?? 0
 
   const goToClient = (id: string) => router.push(`/clients/detail?id=${id}`)
 
@@ -399,47 +393,47 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
       </div>
 
       <div style={{ padding: '0 24px 24px', flex: 1 }}>
-        {/* Metric cards */}
+        {/* Metric cards — pipeline counts (same vocabulary as list / kanban / year) */}
         <div style={{ display: 'flex', gap: 14, marginBottom: 18 }}>
-          <MetricCard
-            label="Overdue"
-            value={loading ? '...' : overdueCount}
-            sub="Past deadline, act now"
-            color={B.red}
-            tint="#FEE2E2"
-            icon={<AlertIcon />}
-            active={activeMetric === 'overdue'}
-            onClick={() => handleMetricClick('overdue')}
-          />
-          <MetricCard
-            label="Due within 30 days"
-            value={loading ? '...' : dueSoonCount}
-            sub="Chase window open"
-            color={B.amber}
-            tint="#FEF3C7"
-            icon={<ClockIcon />}
-            active={activeMetric === 'due-soon'}
-            onClick={() => handleMetricClick('due-soon')}
-          />
-          <MetricCard
-            label="Records ready"
-            value={recordsReady}
-            sub="Ready for review"
-            color={B.green}
-            tint="#D1FAE5"
-            icon={<CheckIcon />}
-            active={activeMetric === 'records'}
-            onClick={() => handleMetricClick('records')}
-          />
           <MetricCard
             label="Pending invites"
             value={loading ? '...' : pendingInvites}
-            sub="Awaiting acceptance"
+            sub="Awaiting HMRC authorisation"
             color={B.purple}
             tint="#EDE9FE"
             icon={<RefreshIcon />}
             active={activeMetric === 'pending-invite'}
             onClick={() => handleMetricClick('pending-invite')}
+          />
+          <MetricCard
+            label="Not started"
+            value={loading ? '...' : notStartedCount}
+            sub="Authorised, not chased yet"
+            color={B.light}
+            tint="#F1F5F9"
+            icon={<UsersIcon size={20} />}
+            active={activeMetric === 'not-started'}
+            onClick={() => handleMetricClick('not-started')}
+          />
+          <MetricCard
+            label="Chased"
+            value={loading ? '...' : chasedCount}
+            sub="Chase sent this quarter"
+            color={B.amber}
+            tint="#FEF3C7"
+            icon={<SendIcon size={20} />}
+            active={activeMetric === 'chased'}
+            onClick={() => handleMetricClick('chased')}
+          />
+          <MetricCard
+            label="Submitted"
+            value={loading ? '...' : submittedCount}
+            sub="Filed to HMRC this quarter"
+            color={B.green}
+            tint="#D1FAE5"
+            icon={<CheckIcon />}
+            active={activeMetric === 'submitted'}
+            onClick={() => handleMetricClick('submitted')}
           />
         </div>
 
@@ -470,10 +464,12 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
               icon={<FilterIcon />}
             >
               <option value="all">All statuses</option>
-              <option value="overdue">Overdue</option>
-              <option value="due-soon">Due soon</option>
-              <option value="filed">Filed</option>
               <option value="pending-invite">Pending invite</option>
+              <option value="not-started">Not started</option>
+              <option value="chased">Chased</option>
+              <option value="records-received">Records received</option>
+              <option value="ready-for-review">Ready for review</option>
+              <option value="submitted">Submitted</option>
             </FilterSelect>
             <FilterSelect
               ariaLabel="Filter by income type"
@@ -586,7 +582,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
                 <thead>
                   <tr style={{ borderBottom: `1px solid ${B.borderLight}`, background: B.white }}>
-                    {['Client', 'Type', 'Quarter', 'Deadline', 'Status', 'Chase status', ''].map(
+                    {['Client', 'Type', 'Quarter', 'Deadline', 'Status', 'Last chase', ''].map(
                       (h, i) => (
                         <th
                           key={i}
@@ -689,68 +685,13 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                           )}
                         </td>
                         <td style={{ padding: '12px 16px' }}>
-                          <Badge status={c.status} />
+                          <PipelineBadge status={pipelineOf(c)} />
                         </td>
                         <td style={{ padding: '12px 16px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                            {c.records && (
-                              <span
-                                style={{
-                                  width: 6,
-                                  height: 6,
-                                  borderRadius: 3,
-                                  background: B.green,
-                                }}
-                              />
-                            )}
-                            <span
-                              style={{ color: c.records ? B.greenText : B.muted, fontSize: 13 }}
-                            >
-                              {c.chase}
-                            </span>
-                          </div>
+                          <span style={{ color: B.muted, fontSize: 13 }}>{c.chase}</span>
                         </td>
                         <td style={{ padding: '12px 16px' }}>
-                          {c.status === 'overdue' && (
-                            <button
-                              style={{
-                                padding: '5px 14px',
-                                borderRadius: 6,
-                                border: 'none',
-                                background: B.red,
-                                color: '#fff',
-                                fontSize: 12,
-                                fontWeight: 600,
-                                cursor: 'pointer',
-                              }}
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                navigate('chase')
-                              }}
-                            >
-                              Chase
-                            </button>
-                          )}
-                          {c.status === 'due-soon' && (
-                            <button
-                              style={{
-                                padding: '5px 14px',
-                                borderRadius: 6,
-                                border: `1px solid ${B.border}`,
-                                background: 'transparent',
-                                color: B.muted,
-                                fontSize: 12,
-                                cursor: 'pointer',
-                              }}
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                navigate('chase')
-                              }}
-                            >
-                              Chase
-                            </button>
-                          )}
-                          {c.status === 'pending-invite' && (
+                          {pipelineOf(c) === 'pending-invite' && (
                             <button
                               style={{
                                 padding: '5px 14px',
@@ -769,6 +710,26 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                               Resend
                             </button>
                           )}
+                          {(pipelineOf(c) === 'not-started' || pipelineOf(c) === 'chased') && (
+                            <button
+                              style={{
+                                padding: '5px 14px',
+                                borderRadius: 6,
+                                border: 'none',
+                                background: pipelineOf(c) === 'not-started' ? B.primary : B.navy,
+                                color: '#fff',
+                                fontSize: 12,
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                              }}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                navigate('chase')
+                              }}
+                            >
+                              {pipelineOf(c) === 'chased' ? 'Chase again' : 'Chase'}
+                            </button>
+                          )}
                         </td>
                       </tr>
                     ))
@@ -779,13 +740,11 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
           </div>
         )}
 
-        {/* KANBAN VIEW */}
+        {/* KANBAN VIEW — same pipeline columns as Status badges */}
         {view === 'kanban' && (
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(4,minmax(0,1fr))',
-              gap: 12,
+              overflowX: 'auto',
               background: B.white,
               borderRadius: '0 0 12px 12px',
               border: `1px solid ${B.border}`,
@@ -793,101 +752,121 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
               padding: 16,
             }}
           >
-            {mockKanbanCols.map((col) => {
-              const colClients = filtered.filter((c) => c.stage === col.key)
-              return (
-                <div
-                  key={col.key}
-                  style={{ background: col.bg, borderRadius: 10, padding: 10, minHeight: 300 }}
-                >
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(6, minmax(160px, 1fr))',
+                gap: 12,
+                minWidth: 1040,
+              }}
+            >
+              {PIPELINE_KANBAN_COLS.map((col) => {
+                const colClients = filtered.filter((c) => pipelineOf(c) === col.key)
+                return (
                   <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      marginBottom: 10,
-                      padding: '0 4px',
-                    }}
+                    key={col.key}
+                    style={{ background: col.bg, borderRadius: 10, padding: 10, minHeight: 280 }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <div
-                        style={{ width: 8, height: 8, borderRadius: 4, background: col.color }}
-                      />
-                      <span style={{ fontSize: 12, fontWeight: 600, color: B.text }}>
-                        {col.label}
-                      </span>
-                    </div>
-                    <span
+                    <div
                       style={{
-                        fontSize: 12,
-                        fontWeight: 700,
-                        color: B.muted,
-                        background: B.white,
-                        borderRadius: 10,
-                        padding: '2px 9px',
-                        border: `1px solid ${B.border}`,
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: 10,
+                        padding: '0 4px',
+                        gap: 6,
                       }}
                     >
-                      {colClients.length}
-                    </span>
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {colClients.map((c) => (
-                      <div
-                        key={c.id}
-                        onClick={() => goToClient(c.id)}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 0 }}>
+                        <div
+                          style={{
+                            width: 8,
+                            height: 8,
+                            borderRadius: 4,
+                            background: col.color,
+                            flexShrink: 0,
+                          }}
+                        />
+                        <span style={{ fontSize: 12, fontWeight: 600, color: B.text }}>
+                          {col.label}
+                        </span>
+                      </div>
+                      <span
                         style={{
+                          fontSize: 12,
+                          fontWeight: 700,
+                          color: B.muted,
                           background: B.white,
-                          borderRadius: 8,
-                          padding: '12px 14px',
+                          borderRadius: 10,
+                          padding: '2px 9px',
                           border: `1px solid ${B.border}`,
-                          cursor: 'pointer',
+                          flexShrink: 0,
                         }}
                       >
+                        {colClients.length}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {colClients.map((c) => (
                         <div
+                          key={c.id}
+                          onClick={() => goToClient(c.id)}
                           style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'flex-start',
-                            marginBottom: 6,
+                            background: B.white,
+                            borderRadius: 8,
+                            padding: '12px 14px',
+                            border: `1px solid ${B.border}`,
+                            cursor: 'pointer',
                           }}
                         >
-                          <div style={{ fontWeight: 600, fontSize: 13, lineHeight: 1.3 }}>
-                            {c.name}
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'flex-start',
+                              marginBottom: 6,
+                              gap: 6,
+                            }}
+                          >
+                            <div style={{ fontWeight: 600, fontSize: 13, lineHeight: 1.3 }}>
+                              {c.name}
+                            </div>
+                            <PipelineBadge status={pipelineOf(c)} />
                           </div>
-                          <Badge status={c.status} />
-                        </div>
-                        <div
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <div style={{ display: 'flex', gap: 3, alignItems: 'center' }}>
-                            <span style={{ fontSize: 11, color: B.light, marginRight: 2 }}>
-                              Q1-4:
-                            </span>
-                            <QDot status={c.q1} />
-                            <QDot status={c.q2} />
-                            <QDot status={c.q3} />
-                            <QDot status={c.q4} />
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <div style={{ display: 'flex', gap: 3, alignItems: 'center' }}>
+                              <span style={{ fontSize: 11, color: B.light, marginRight: 2 }}>
+                                Q1-4:
+                              </span>
+                              <QDot status={c.q1} />
+                              <QDot status={c.q2} />
+                              <QDot status={c.q3} />
+                              <QDot status={c.q4} />
+                            </div>
+                            {c.daysLeft < 0 && (
+                              <span style={{ fontSize: 11, fontWeight: 600, color: B.red }}>
+                                {Math.abs(c.daysLeft)}d late
+                              </span>
+                            )}
+                            {c.daysLeft > 0 && (
+                              <span style={{ fontSize: 11, color: B.light }}>
+                                {c.daysLeft}d left
+                              </span>
+                            )}
                           </div>
-                          {c.daysLeft < 0 && (
-                            <span style={{ fontSize: 11, fontWeight: 600, color: B.red }}>
-                              {Math.abs(c.daysLeft)}d late
-                            </span>
-                          )}
-                          {c.daysLeft > 0 && (
-                            <span style={{ fontSize: 11, color: B.light }}>{c.daysLeft}d left</span>
-                          )}
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )
-            })}
+                )
+              })}
+            </div>
           </div>
         )}
 
@@ -924,12 +903,8 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                 </tr>
               </thead>
               <tbody>
-                {filtered
-                  .filter((c) => c.status !== 'pending-invite')
-                  .map((c, i) => {
+                {filtered.map((c, i) => {
                     const qs = [c.q1, c.q2, c.q3, c.q4]
-                    const allFiled = qs.every((q) => q === 'filed')
-                    const hasOverdue = qs.some((q) => q === 'overdue')
                     return (
                       <tr
                         key={c.id}
@@ -958,7 +933,9 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                                       ? B.redBg
                                       : q === 'ready'
                                         ? `${B.primary}18`
-                                        : B.surface,
+                                        : q === 'N/A'
+                                          ? B.surface
+                                          : B.surface,
                                 border: `1px solid ${q === 'filed' ? '#A7F3D0' : q === 'overdue' ? '#FECACA' : q === 'ready' ? '#BAE6FD' : B.borderLight}`,
                               }}
                             >
@@ -982,7 +959,9 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                                     ? '!'
                                     : q === 'ready'
                                       ? '●'
-                                      : '○'}
+                                      : q === 'N/A'
+                                        ? '–'
+                                        : '○'}
                               </span>
                             </div>
                           </td>
@@ -1004,19 +983,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                           </div>
                         </td>
                         <td style={{ padding: '12px 16px', textAlign: 'center' }}>
-                          <span
-                            style={{
-                              fontSize: 12,
-                              fontWeight: 700,
-                              padding: '3px 11px',
-                              borderRadius: 20,
-                              background: allFiled ? B.greenBg : hasOverdue ? B.redBg : B.amberBg,
-                              color: allFiled ? B.greenText : hasOverdue ? B.redText : B.amberText,
-                              border: `1px solid ${allFiled ? '#A7F3D0' : hasOverdue ? '#FECACA' : '#FDE68A'}`,
-                            }}
-                          >
-                            {allFiled ? 'On track' : hasOverdue ? 'Action needed' : 'In progress'}
-                          </span>
+                          <PipelineBadge status={pipelineOf(c)} />
                         </td>
                       </tr>
                     )
@@ -1035,11 +1002,11 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
             >
               <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                 <div style={{ width: 10, height: 10, borderRadius: 5, background: B.green }} />{' '}
-                Filed
+                Submitted (Q cell)
               </span>
               <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                 <div style={{ width: 10, height: 10, borderRadius: 5, background: B.primary }} />{' '}
-                Records ready
+                In progress
               </span>
               <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                 <div style={{ width: 10, height: 10, borderRadius: 5, background: B.light }} />{' '}
@@ -1049,6 +1016,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                 <div style={{ width: 10, height: 10, borderRadius: 5, background: B.red }} />{' '}
                 Overdue
               </span>
+              <span style={{ color: B.muted }}>Overall = pipeline status</span>
             </div>
           </div>
         )}

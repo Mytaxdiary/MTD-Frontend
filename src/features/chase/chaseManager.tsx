@@ -1,11 +1,17 @@
 'use client'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import {
   chaseTemplatesService,
   type ChaseTemplateRecord,
   type CreateChaseTemplatePayload,
 } from '@/services/chaseTemplates.service'
-import { chaseService, renderTemplate, type ChaseClientRecord } from '@/services/chase.service'
+import {
+  chaseGreetingName,
+  chaseService,
+  renderTemplate,
+  type ChaseClientRecord,
+} from '@/services/chase.service'
 import { useCurrentUser } from '@/components/auth/CurrentUserProvider'
 import InfoTooltip from '@/components/ui/InfoTooltip'
 import B from '@/styles/theme'
@@ -74,6 +80,9 @@ export default function ChaseManager({
   navigate?: (route: string) => void
 }) {
   const { user } = useCurrentUser()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const preselectApplied = useRef(false)
 
   /* ── client list state ── */
   const [chaseClients, setChaseClients] = useState<ChaseClientRecord[]>([])
@@ -84,7 +93,7 @@ export default function ChaseManager({
   const [sending, setSending] = useState(false)
   // `sent` removed — we reload clients after send instead of local optimistic state
   const [sendError, setSendError] = useState<string | null>(null)
-  const [clientChannels, setClientChannels] = useState<Record<string, string>>({})
+  const [preselectNote, setPreselectNote] = useState<string | null>(null)
   const [typeFilter, setTypeFilter] = useState('all')
 
   /* ── template state ── */
@@ -109,7 +118,6 @@ export default function ChaseManager({
     try {
       const data = await chaseService.listChaseClients()
       setChaseClients(data)
-      setClientChannels(Object.fromEntries(data.map((c) => [c.id, c.channel])))
     } catch {
       setClientsError('Failed to load chase clients')
     } finally {
@@ -139,6 +147,42 @@ export default function ChaseManager({
     loadTemplates()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  /**
+   * When arriving from Clients → Chase selected (?ids=a,b,c), pre-check those
+   * clients once the chase list has loaded, then clean the URL.
+   */
+  useEffect(() => {
+    if (clientsLoading || preselectApplied.current) return
+
+    const raw = searchParams.get('ids')
+    if (!raw) return
+
+    preselectApplied.current = true
+    const requested = raw
+      .split(',')
+      .map((id) => id.trim())
+      .filter(Boolean)
+    const available = new Set(chaseClients.map((c) => c.id))
+    const matched = requested.filter((id) => available.has(id))
+    const missing = requested.length - matched.length
+
+    if (matched.length > 0) {
+      setSelected(new Set(matched))
+      setPreselectNote(
+        missing > 0
+          ? `${matched.length} of ${requested.length} clients selected. ${missing} could not be chased (not authorised or not in the list).`
+          : `${matched.length} client${matched.length === 1 ? '' : 's'} selected from the Clients list. Pick a template and send.`,
+      )
+    } else if (requested.length > 0) {
+      setPreselectNote(
+        'None of the selected clients are available to chase yet. They need to be HMRC-authorised first.',
+      )
+    }
+
+    // Drop ?ids= so a refresh does not re-apply the same selection
+    router.replace('/chase', { scroll: false })
+  }, [clientsLoading, chaseClients, searchParams, router])
+
   /* ── client helpers ── */
   const overdueClients = chaseClients.filter((c) => c.daysOverdue > 0)
   const upcomingClients = chaseClients.filter((c) => c.daysOverdue <= 0 && c.daysSincePeriodEnd >= 1)
@@ -163,6 +207,10 @@ export default function ChaseManager({
       return n
     })
 
+  const openClientDetail = (id: string) => {
+    router.push(`/clients/detail?id=${id}`)
+  }
+
   const handleSend = async () => {
     if (!selectedTemplateId || !currentTemplate) {
       setSendError('Please select a template before sending.')
@@ -175,7 +223,7 @@ export default function ChaseManager({
       await Promise.all(
         selectedClients.map((c) => {
           const vars = {
-            name: c.name,
+            name: c.greetingName || chaseGreetingName(c.name, c.preferredName),
             business: c.business,
             quarter: c.quarter,
             deadline: c.deadline,
@@ -185,7 +233,7 @@ export default function ChaseManager({
           return chaseService.sendChase({
             clientId: c.id,
             templateId: selectedTemplateId,
-            channel: clientChannels[c.id] ?? 'email',
+            channel: 'email',
             subject: renderTemplate(currentTemplate.subject, vars),
             body: renderTemplate(currentTemplate.body, vars),
           })
@@ -209,7 +257,9 @@ export default function ChaseManager({
 
   const previewVars = previewClient
     ? {
-        name: previewClient.name,
+        name:
+          previewClient.greetingName ||
+          chaseGreetingName(previewClient.name, previewClient.preferredName),
         business: previewClient.business,
         quarter: previewClient.quarter,
         deadline: previewClient.deadline,
@@ -384,6 +434,44 @@ export default function ChaseManager({
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 18, alignItems: 'start' }}>
           {/* ─────────── Left: client list ─────────── */}
           <div>
+            {/* Preselect banner from Clients → Chase selected */}
+            {preselectNote && (
+              <div
+                style={{
+                  marginBottom: 12,
+                  padding: '11px 15px',
+                  background: B.blueBg,
+                  border: '1px solid #7DD3FC',
+                  borderRadius: 8,
+                  fontSize: 14,
+                  color: B.blueText,
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  gap: 12,
+                }}
+              >
+                <span>{preselectNote}</span>
+                <button
+                  type="button"
+                  onClick={() => setPreselectNote(null)}
+                  aria-label="Dismiss"
+                  style={{
+                    border: 'none',
+                    background: 'transparent',
+                    color: B.blueText,
+                    cursor: 'pointer',
+                    fontSize: 16,
+                    lineHeight: 1,
+                    padding: 0,
+                    flexShrink: 0,
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+            )}
+
             {/* Send error banner */}
             {sendError && (
               <div
@@ -450,9 +538,8 @@ export default function ChaseManager({
                 <ClientTable
                   clients={filteredOverdue}
                   selected={selected}
-                  clientChannels={clientChannels}
                   onToggle={toggleSelect}
-                  onChannelChange={(id, ch) => setClientChannels({ ...clientChannels, [id]: ch })}
+                  onOpenClient={openClientDetail}
                 />
               </div>
             )}
@@ -468,9 +555,8 @@ export default function ChaseManager({
                 <ClientTable
                   clients={filteredUpcoming}
                   selected={selected}
-                  clientChannels={clientChannels}
                   onToggle={toggleSelect}
-                  onChannelChange={(id, ch) => setClientChannels({ ...clientChannels, [id]: ch })}
+                  onOpenClient={openClientDetail}
                 />
               </div>
             )}
@@ -486,9 +572,8 @@ export default function ChaseManager({
                 <ClientTable
                   clients={filteredNotStarted}
                   selected={selected}
-                  clientChannels={clientChannels}
                   onToggle={toggleSelect}
-                  onChannelChange={(id, ch) => setClientChannels({ ...clientChannels, [id]: ch })}
+                  onOpenClient={openClientDetail}
                 />
               </div>
             )}
@@ -916,8 +1001,8 @@ export default function ChaseManager({
                 )}
 
                 <div style={{ fontSize: 11, color: B.light, marginTop: 12 }}>
-                  Variables: {'{name}'}, {'{business}'}, {'{quarter}'}, {'{deadline}'},{' '}
-                  {'{agent_name}'}, {'{firm_name}'}
+                  Variables: {'{name}'} (preferred name or first name), {'{business}'},{' '}
+                  {'{quarter}'}, {'{deadline}'}, {'{agent_name}'}, {'{firm_name}'}
                 </div>
               </div>
             </div>
@@ -969,15 +1054,13 @@ type ChaseClientRow = {
 function ClientTable({
   clients,
   selected,
-  clientChannels,
   onToggle,
-  onChannelChange,
+  onOpenClient,
 }: {
   clients: ChaseClientRow[]
   selected: Set<string>
-  clientChannels: Record<string, string>
   onToggle: (id: string) => void
-  onChannelChange: (id: string, ch: string) => void
+  onOpenClient: (id: string) => void
 }) {
   return (
     <div style={CARD}>
@@ -997,12 +1080,37 @@ function ClientTable({
             type="checkbox"
             checked={selected.has(c.id)}
             onChange={() => onToggle(c.id)}
+            aria-label={`Select ${c.name} for chase`}
             style={{ cursor: 'pointer', accentColor: B.primary, width: 17, height: 17 }}
           />
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                gap: 10,
+              }}
+            >
               <div style={{ minWidth: 0 }}>
-                <span style={{ fontWeight: 700, fontSize: 15 }}>{c.name}</span>
+                <button
+                  type="button"
+                  onClick={() => onOpenClient(c.id)}
+                  style={{
+                    padding: 0,
+                    border: 'none',
+                    background: 'none',
+                    fontWeight: 700,
+                    fontSize: 15,
+                    color: B.link,
+                    textDecoration: 'underline',
+                    textUnderlineOffset: 2,
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                  }}
+                >
+                  {c.name}
+                </button>
                 <span style={{ color: B.muted, fontSize: 14, marginLeft: 8 }}>{c.business}</span>
               </div>
               <ResponseBadge status={c.status} />
@@ -1044,23 +1152,19 @@ function ClientTable({
               >
                 {c.workflowType === 'bookkeeping' ? 'Bookkeeping' : 'Data request'}
               </span>
-              <select
-                value={clientChannels[c.id]}
-                onChange={(e) => onChannelChange(c.id, e.target.value)}
+              <span
                 style={{
-                  fontSize: 13,
-                  fontWeight: 500,
-                  padding: '5px 9px',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  padding: '3px 9px',
                   borderRadius: 6,
+                  background: B.surface,
+                  color: B.muted,
                   border: `1px solid ${B.borderStrong}`,
-                  background: B.white,
-                  color: B.text,
-                  cursor: 'pointer',
                 }}
               >
-                <option value="email">Email</option>
-                <option value="sms">SMS</option>
-              </select>
+                Email
+              </span>
             </div>
           </div>
         </div>

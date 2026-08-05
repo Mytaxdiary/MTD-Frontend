@@ -43,7 +43,7 @@ export default function CheckEmailPage() {
         </div>
         <div style={{ fontSize: 13, color: B.muted, lineHeight: 1.6, marginBottom: 20 }}>
           We&apos;ve sent a verification link to <b style={{ color: B.text }}>{email}</b>. Click the link
-          to activate your account and start using MTD ITSA.
+          to activate your account and start using My Tax Diary.
         </div>
         <div style={{ fontSize: 12, color: B.muted, lineHeight: 1.6, marginBottom: 24 }}>
           Didn&apos;t receive the email? Check your spam folder or try registering again.

@@ -199,6 +199,7 @@ export default function ClientDetail({
             clientId={clientId}
             displayNino={displayNino}
             onFirstBusiness={setFirstBusiness}
+            onClientUpdated={setClient}
           />
         )}
 

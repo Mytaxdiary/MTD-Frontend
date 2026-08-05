@@ -9,6 +9,8 @@ export interface ClientRecord {
   email: string
   phone?: string
   utr?: string
+  /** Short name for chase greetings (e.g. Tom). Falls back to first name when unset. */
+  preferredName?: string
   agentType: string
   invitationId?: string
   /** HMRC invitation status (open string — API may return values beyond the common set). */
@@ -367,7 +369,10 @@ export const clientsService = {
     return res.data.data
   },
 
-  async updateClient(id: string, fields: { utr?: string }): Promise<ClientRecord> {
+  async updateClient(
+    id: string,
+    fields: { utr?: string; preferredName?: string },
+  ): Promise<ClientRecord> {
     const res = await apiClient.patch<{ data: ClientRecord }>(`/clients/${id}`, fields)
     return res.data.data
   },

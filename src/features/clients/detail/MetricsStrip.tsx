@@ -70,7 +70,7 @@ export default function MetricsStrip({
           : bissState === 'no-data'
             ? 'No quarterly submissions yet'
             : authorised
-              ? 'Authorised — HMRC data unavailable'
+              ? 'Authorised - HMRC data unavailable'
               : 'Authorise client to load',
       color: B.green,
       accentColor: bissState === 'loaded' ? B.text : B.light,
@@ -90,7 +90,7 @@ export default function MetricsStrip({
           : bissState === 'no-data'
             ? 'No quarterly submissions yet'
             : authorised
-              ? 'Authorised — HMRC data unavailable'
+              ? 'Authorised - HMRC data unavailable'
               : 'Authorise client to load',
       color: B.amber,
       accentColor: bissState === 'loaded' ? B.text : B.light,
@@ -116,7 +116,7 @@ export default function MetricsStrip({
           : bissState === 'no-data'
             ? 'No quarterly submissions yet'
             : authorised
-              ? 'Authorised — HMRC data unavailable'
+              ? 'Authorised - HMRC data unavailable'
               : 'Authorise client to load',
       color: bissState === 'loaded' && incomeSummary!.netLoss > 0 ? B.red : B.primary,
       accentColor: bissState === 'loaded' ? B.text : B.light,
@@ -127,9 +127,9 @@ export default function MetricsStrip({
       value: outstandingBalance != null ? fmtGbp(outstandingBalance) : 'N/A',
       sub:
         outstandingError
-          ? 'Could not load — HMRC unavailable'
+          ? 'Could not load - HMRC unavailable'
           : outstandingLoading
-            ? 'Authorised — loading...'
+            ? 'Authorised - loading...'
             : outstandingBalance == null
               ? authorised
                 ? 'No reliable balance from HMRC'

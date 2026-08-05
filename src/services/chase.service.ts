@@ -5,7 +5,11 @@ import apiClient from '@/lib/api/axiosClient'
 /** Shape returned by GET /chase/clients */
 export interface ChaseClientRecord {
   id: string
+  /** Full legal name (list display) */
   name: string
+  preferredName?: string
+  /** Preferred name if set, otherwise first name — used for {name} in templates */
+  greetingName: string
   /** NINO */
   business: string
   deadline: string
@@ -97,4 +101,12 @@ export function renderTemplate(template: string, vars: Partial<TemplateVars>): s
     .replace(/{deadline}/g, vars.deadline ?? '{deadline}')
     .replace(/{agent_name}/g, vars.agent_name ?? '{agent_name}')
     .replace(/{firm_name}/g, vars.firm_name ?? '{firm_name}')
+}
+
+/** Preferred name if set, else first word of full name. */
+export function chaseGreetingName(fullName: string, preferredName?: string | null): string {
+  const preferred = preferredName?.trim()
+  if (preferred) return preferred
+  const first = fullName.trim().split(/\s+/)[0]
+  return first || fullName.trim()
 }

@@ -1,6 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import BrandLogo from '@/components/ui/BrandLogo'
 
 const NAV_LINKS = [
   { href: '/portal/dashboard', label: 'Dashboard' },
@@ -37,9 +38,21 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
           boxShadow: '0 2px 8px rgba(0,0,0,0.18)',
         }}
       >
-        <span style={{ color: '#fff', fontWeight: 800, fontSize: 17, letterSpacing: '-0.2px' }}>
-          NewEffect Client Portal
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <BrandLogo width={168} />
+          <span
+            style={{
+              color: 'rgba(255,255,255,0.72)',
+              fontWeight: 600,
+              fontSize: 13,
+              letterSpacing: '0.02em',
+              borderLeft: '1px solid rgba(255,255,255,0.22)',
+              paddingLeft: 12,
+            }}
+          >
+            Client Portal
+          </span>
+        </div>
 
         {!isAuthPage && (
           <nav style={{ display: 'flex', gap: 4 }}>

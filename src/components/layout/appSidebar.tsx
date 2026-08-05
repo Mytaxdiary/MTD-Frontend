@@ -6,6 +6,7 @@ import B from '@/styles/theme'
 import { useAuth } from '@/hooks/useAuth'
 import { useCurrentUser, userInitials } from '@/components/auth/CurrentUserProvider'
 import NotificationBell from '@/components/ui/NotificationBell'
+import BrandLogo from '@/components/ui/BrandLogo'
 import {
   GridIcon,
   UsersIcon,
@@ -74,37 +75,6 @@ const CircuitBackdrop = () => (
       <path d="M-40 620c78-70 176-100 320-94" strokeWidth="0.8" opacity="0.6" />
     </g>
   </svg>
-)
-
-/** Circular brand mark: teal ring with the NE monogram. */
-const BrandMark = () => (
-  <div
-    aria-hidden="true"
-    style={{
-      width: 38,
-      height: 38,
-      borderRadius: '50%',
-      flexShrink: 0,
-      position: 'relative',
-      background: 'radial-gradient(circle at 30% 25%, #12384A 0%, #0A1120 70%)',
-      border: '1.5px solid rgba(34,211,238,0.55)',
-      boxShadow: '0 0 0 3px rgba(14,165,201,0.10), 0 0 14px rgba(34,211,238,0.28)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}
-  >
-    <span
-      style={{
-        fontSize: 13,
-        fontWeight: 800,
-        letterSpacing: '-0.04em',
-        color: '#22D3EE',
-      }}
-    >
-      NE
-    </span>
-  </div>
 )
 
 interface NavItemProps {
@@ -236,22 +206,9 @@ export default function AppSidebar({ overdueCount = 2 }: { overdueCount?: number
           minHeight: 0,
         }}
       >
-        {/* Brand */}
-        <div style={{ padding: '20px 18px 18px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <BrandMark />
-            <span
-              style={{
-                fontSize: 19,
-                fontWeight: 800,
-                letterSpacing: '-0.02em',
-                lineHeight: 1.1,
-              }}
-            >
-              <span style={{ color: '#FFFFFF' }}>New</span>
-              <span style={{ color: '#22D3EE' }}>Effect</span>
-            </span>
-          </div>
+        {/* Brand — official My Tax Diary lockup */}
+        <div style={{ padding: '16px 14px 14px' }}>
+          <BrandLogo width={216} priority />
         </div>
 
         {/* Nav groups */}

@@ -340,7 +340,7 @@ export default function SandboxTestUsersCard({ hmrcConnected, onSaveArn }: Props
                   Bulk import test CSV
                 </div>
                 <div style={{ fontSize: 11, color: B.blueText, opacity: 0.8 }}>
-                  5 real HMRC sandbox clients — ready to use for bulk import testing
+                  5 real HMRC sandbox clients, ready to use for bulk import testing
                 </div>
               </div>
               <button

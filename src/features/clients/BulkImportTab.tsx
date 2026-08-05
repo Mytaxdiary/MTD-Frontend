@@ -379,7 +379,7 @@ export default function BulkImportTab({ onSuccess }: Props) {
                 color: '#991B1B',
               }}
             >
-              {rowErrors.length} issue{rowErrors.length !== 1 ? 's' : ''} found — fix the file and
+              {rowErrors.length} issue{rowErrors.length !== 1 ? 's' : ''} found. Fix the file and
               re-upload
             </div>
             <span

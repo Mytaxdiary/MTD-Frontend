@@ -1,6 +1,6 @@
-# NewEffect MTD ITSA — Frontend
+# My Tax Diary — Frontend
 
-Next.js 15 + TypeScript frontend for the MTD ITSA agent platform.
+Next.js 15 + TypeScript frontend for the My Tax Diary agent platform.
 
 ---
 
@@ -23,7 +23,7 @@ cp .env.example .env.local
 Edit `.env.local`:
 
 ```env
-NEXT_PUBLIC_APP_NAME=NewEffect MTD ITSA
+NEXT_PUBLIC_APP_NAME=My Tax Diary
 NEXT_PUBLIC_APP_ENV=development
 NEXT_PUBLIC_API_BASE_URL=http://localhost:3500/api/v1
 ```

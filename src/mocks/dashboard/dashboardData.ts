@@ -225,9 +225,12 @@ export const mockDashboardClients: DashboardClient[] = [
   },
 ]
 
+/** @deprecated Prefer PIPELINE_KANBAN_COLS from @/lib/dashboard/pipelineStatus */
 export const mockKanbanCols: KanbanCol[] = [
+  { key: 'pending-invite', label: 'Pending invite', color: '#8B5CF6', bg: '#F5F3FF' },
   { key: 'not-started', label: 'Not started', color: '#94A3B8', bg: '#F8FAFC' },
   { key: 'chased', label: 'Chased', color: '#F59E0B', bg: '#FFFDF7' },
-  { key: 'received', label: 'Records received', color: '#0EA5C9', bg: '#F0FAFE' },
-  { key: 'submitted', label: 'Submitted', color: '#10B981', bg: '#F0FDF8' },
+  { key: 'records-received', label: 'Records received', color: '#0EA5C9', bg: '#F0FAFE' },
+  { key: 'ready-for-review', label: 'Ready for review', color: '#10B981', bg: '#ECFDF5' },
+  { key: 'submitted', label: 'Submitted', color: '#059669', bg: '#F0FDF8' },
 ]

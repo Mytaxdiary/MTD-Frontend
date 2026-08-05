@@ -207,6 +207,32 @@ export default function ClientList({
     }
   }
 
+  /** Open Chase Manager with the selected authorised clients pre-checked. */
+  function handleChaseSelected() {
+    const authorisedIds = clients
+      .filter((c) => selected.has(c.id) && c.filing === 'filed')
+      .map((c) => c.id)
+
+    if (authorisedIds.length === 0) {
+      alert(
+        'Chase only works for HMRC-authorised clients. Select at least one authorised client, or finish authorisation first.',
+      )
+      return
+    }
+
+    const skipped = selected.size - authorisedIds.length
+    if (skipped > 0) {
+      // Soft notice — continue with the chaseable ones
+      const ok = window.confirm(
+        `${skipped} selected client${skipped === 1 ? ' is' : 's are'} not yet authorised and will be skipped. Continue with ${authorisedIds.length} client${authorisedIds.length === 1 ? '' : 's'}?`,
+      )
+      if (!ok) return
+    }
+
+    const params = new URLSearchParams({ ids: authorisedIds.join(',') })
+    router.push(`/chase?${params.toString()}`)
+  }
+
   // ── Client-side sort within current page ─────────────────────────────────
 
   const filtered = [...clients].sort((a, b) => {
@@ -353,6 +379,8 @@ export default function ClientList({
               <>
                 <span style={{ fontSize: 13, color: B.muted }}>{selected.size} selected</span>
                 <button
+                  type="button"
+                  onClick={handleChaseSelected}
                   style={{
                     padding: '7px 14px',
                     borderRadius: 7,

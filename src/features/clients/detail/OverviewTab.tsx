@@ -534,12 +534,27 @@ function fmtAuthDate(date?: string): string {
 
 function ClientInfoCard({
   client,
+  clientId,
   displayNino,
+  onClientUpdated,
 }: {
   client: ClientRecord | null
+  clientId: string | null
   displayNino: string
+  onClientUpdated?: (client: ClientRecord) => void
 }) {
+  const [preferredName, setPreferredName] = useState(client?.preferredName ?? '')
+  const [editingPreferred, setEditingPreferred] = useState(false)
+  const [draft, setDraft] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
+
+  useEffect(() => {
+    setPreferredName(client?.preferredName ?? '')
+  }, [client?.preferredName, client?.id])
+
   const rows: [string, string][] = [
+    ['Full name', client?.name ?? 'Not set'],
     ['NINO', displayNino],
     ['Email', client?.email ?? 'Not set'],
     ['Postcode', client?.postcode ?? 'Not set'],
@@ -547,6 +562,38 @@ function ClientInfoCard({
     ['Invitation status', client?.invitationStatus ?? 'Unknown'],
     ['Authorised since', fmtAuthDate(client?.authorisedAt)],
   ]
+
+  const firstNameFallback = client?.name?.trim().split(/\s+/)[0] || 'first name'
+
+  const handleEditPreferred = () => {
+    setDraft(preferredName)
+    setSaveError(null)
+    setEditingPreferred(true)
+  }
+
+  const handleSavePreferred = async () => {
+    if (!clientId) return
+    const trimmed = draft.trim()
+    if (trimmed.length > 80) {
+      setSaveError('Preferred name must be 80 characters or fewer')
+      return
+    }
+    setSaving(true)
+    setSaveError(null)
+    try {
+      const updated = await clientsService.updateClient(clientId, {
+        preferredName: trimmed,
+      })
+      setPreferredName(updated.preferredName ?? '')
+      setEditingPreferred(false)
+      onClientUpdated?.(updated)
+    } catch {
+      setSaveError('Failed to save preferred name. Please try again.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
   return (
     <Card>
       <CardHeader title="Client details" />
@@ -557,8 +604,9 @@ function ClientInfoCard({
             style={{
               display: 'flex',
               justifyContent: 'space-between',
+              gap: 12,
               padding: '7px 0',
-              borderBottom: i < rows.length - 1 ? `1px solid ${B.borderLight}` : 'none',
+              borderBottom: `1px solid ${B.borderLight}`,
             }}
           >
             <span style={{ fontSize: 13, color: B.muted }}>{k}</span>
@@ -567,12 +615,125 @@ function ClientInfoCard({
                 fontSize: 13,
                 fontWeight: 500,
                 fontFamily: k === 'NINO' ? 'monospace' : 'inherit',
+                textAlign: 'right',
               }}
             >
               {v}
             </span>
           </div>
         ))}
+
+        {/* Preferred name — used in chase email greetings */}
+        <div style={{ padding: '10px 0 4px' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: 10,
+              marginBottom: editingPreferred ? 8 : 0,
+            }}
+          >
+            <div>
+              <div style={{ fontSize: 13, color: B.muted }}>Preferred name</div>
+              <div style={{ fontSize: 11, color: B.light, marginTop: 2 }}>
+                Used in chase emails as {'{name}'}. Defaults to {firstNameFallback}.
+              </div>
+            </div>
+            {!editingPreferred && clientId && (
+              <button
+                type="button"
+                onClick={handleEditPreferred}
+                style={{
+                  padding: '4px 10px',
+                  borderRadius: 6,
+                  border: `1px solid ${B.border}`,
+                  background: B.white,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  color: B.link,
+                  cursor: 'pointer',
+                  flexShrink: 0,
+                }}
+              >
+                Edit
+              </button>
+            )}
+          </div>
+
+          {editingPreferred ? (
+            <div>
+              <input
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                placeholder="Preferred name (or leave blank for first name)"
+                maxLength={80}
+                style={{
+                  width: '100%',
+                  padding: '8px 10px',
+                  borderRadius: 7,
+                  border: `1px solid ${B.border}`,
+                  fontSize: 13,
+                  fontFamily: 'inherit',
+                  boxSizing: 'border-box',
+                }}
+              />
+              {saveError && (
+                <div style={{ fontSize: 12, color: B.redText, marginTop: 6 }}>{saveError}</div>
+              )}
+              <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                <button
+                  type="button"
+                  onClick={handleSavePreferred}
+                  disabled={saving}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: 6,
+                    border: 'none',
+                    background: B.primary,
+                    color: '#fff',
+                    fontSize: 12,
+                    fontWeight: 600,
+                    cursor: saving ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  {saving ? 'Saving...' : 'Save'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingPreferred(false)
+                    setSaveError(null)
+                  }}
+                  disabled={saving}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: 6,
+                    border: `1px solid ${B.border}`,
+                    background: B.white,
+                    fontSize: 12,
+                    color: B.muted,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div
+              style={{
+                fontSize: 13,
+                fontWeight: 600,
+                color: preferredName ? B.text : B.light,
+                fontStyle: preferredName ? 'normal' : 'italic',
+                marginTop: 6,
+              }}
+            >
+              {preferredName || `Not set (will use ${firstNameFallback})`}
+            </div>
+          )}
+        </div>
       </div>
     </Card>
   )
@@ -716,6 +877,7 @@ interface OverviewTabProps {
   clientId: string | null
   displayNino: string
   onFirstBusiness: (b: BusinessListItem | null) => void
+  onClientUpdated?: (client: ClientRecord) => void
 }
 
 export default function OverviewTab({
@@ -723,6 +885,7 @@ export default function OverviewTab({
   clientId,
   displayNino,
   onFirstBusiness,
+  onClientUpdated,
 }: OverviewTabProps) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20 }}>
@@ -740,7 +903,12 @@ export default function OverviewTab({
 
       {/* Right column */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-        <ClientInfoCard client={client} displayNino={displayNino} />
+        <ClientInfoCard
+          client={client}
+          clientId={clientId}
+          displayNino={displayNino}
+          onClientUpdated={onClientUpdated}
+        />
         <PaymentDetailsCard clientId={clientId} utr={client?.utr} />
         {clientId && <ReceivedFilesCard clientId={clientId} />}
       </div>

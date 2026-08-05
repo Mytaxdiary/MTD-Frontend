@@ -515,7 +515,7 @@ export default function ObligationsCard({ client }: { client: ClientRecord }) {
           >
             <span style={{ fontSize: 13, fontWeight: 600, color: B.text }}>Final declaration</span>
             <span style={{ fontSize: 12, color: B.muted, flex: 1, minWidth: 180 }}>
-              Read-only status. This product does not submit Final Declaration — use{' '}
+              Read-only status. This product does not submit Final Declaration. Use{' '}
               <a
                 href="https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
                 target="_blank"
