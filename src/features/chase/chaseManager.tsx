@@ -14,6 +14,7 @@ import {
 } from '@/services/chase.service'
 import { useCurrentUser } from '@/components/auth/CurrentUserProvider'
 import InfoTooltip from '@/components/ui/InfoTooltip'
+import { emailConnectionService } from '@/services/email-connection.service'
 import B from '@/styles/theme'
 
 /** Shared card chrome so every panel on this screen reads at the same weight. */
@@ -95,6 +96,7 @@ export default function ChaseManager({
   const [sendError, setSendError] = useState<string | null>(null)
   const [preselectNote, setPreselectNote] = useState<string | null>(null)
   const [typeFilter, setTypeFilter] = useState('all')
+  const [emailConnected, setEmailConnected] = useState<boolean | null>(null)
 
   /* ── template state ── */
   const [templates, setTemplates] = useState<ChaseTemplateRecord[]>([])
@@ -110,6 +112,21 @@ export default function ChaseManager({
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    emailConnectionService
+      .getStatus()
+      .then((s) => {
+        if (!cancelled) setEmailConnected(s.connected === true)
+      })
+      .catch(() => {
+        if (!cancelled) setEmailConnected(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   /* ── load chase clients ── */
   const loadClients = useCallback(async () => {
@@ -429,6 +446,44 @@ export default function ChaseManager({
           )}
         </div>
       </div>
+
+      {emailConnected === false && (
+        <div
+          style={{
+            margin: '14px 28px 0',
+            padding: '10px 14px',
+            background: B.amberBg,
+            border: '1px solid #FDE68A',
+            borderRadius: 8,
+            fontSize: 13,
+            color: B.amberText,
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            gap: 10,
+          }}
+        >
+          <span style={{ flex: 1, minWidth: 220 }}>
+            Emails will send from My Tax Diary until you connect your email.
+          </span>
+          <button
+            type="button"
+            onClick={() => router.push('/settings?section=email')}
+            style={{
+              padding: '6px 12px',
+              borderRadius: 6,
+              border: '1px solid #F59E0B',
+              background: B.white,
+              fontSize: 12,
+              fontWeight: 600,
+              cursor: 'pointer',
+              color: B.amberText,
+            }}
+          >
+            Connect email
+          </button>
+        </div>
+      )}
 
       <div style={{ padding: '18px 28px', flex: 1 }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 18, alignItems: 'start' }}>

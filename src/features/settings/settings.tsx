@@ -5,6 +5,7 @@ import B from '@/styles/theme'
 import SettingsSidebar, { type SectionKey } from './components/SettingsSidebar'
 import FirmDetailsSection from './components/FirmDetailsSection'
 import HmrcSection from './components/HmrcSection'
+import EmailSection from './components/EmailSection'
 import TeamSection from './components/TeamSection'
 import NotificationsSection from './components/NotificationsSection'
 import BillingSection from './components/BillingSection'
@@ -15,6 +16,7 @@ import DataPrivacySection from './components/DataPrivacySection'
 const VALID_SECTIONS: SectionKey[] = [
   'firm',
   'hmrc',
+  'email',
   'sandbox-invitations',
   'team',
   'notifications',
@@ -55,6 +57,7 @@ export default function Settings({ navigate = () => {} }: { navigate?: (route: s
           <div>
             {section === 'firm' && <FirmDetailsSection />}
             {section === 'hmrc' && <HmrcSection />}
+            {section === 'email' && <EmailSection />}
             {section === 'sandbox-invitations' && <SandboxInvitationsSection />}
             {section === 'team' && <TeamSection />}
             {section === 'notifications' && <NotificationsSection />}

@@ -1,4 +1,5 @@
 import apiClient from '@/lib/api/axiosClient'
+import type { ManualPipelineStatus, PipelineStatus } from '@/lib/dashboard/pipelineStatus'
 
 export interface ClientRecord {
   id: string
@@ -18,7 +19,25 @@ export interface ClientRecord {
   invitationSentAt?: string
   invitationExpiresAt?: string
   authorisedAt?: string
+  /** Persisted MTD pipeline status (pending-invite → … → submitted). */
+  pipelineStatus?: PipelineStatus | string
   createdAt: string
+}
+
+export interface ClientStatusHistoryEntry {
+  id: string
+  fromStatus: string | null
+  toStatus: string
+  source: 'system' | 'agent'
+  changedByUserId: string | null
+  changedByName: string | null
+  createdAt: string
+}
+
+export interface ClientStatusHistoryResponse {
+  currentStatus: PipelineStatus
+  nextManualStatus: ManualPipelineStatus | null
+  history: ClientStatusHistoryEntry[]
 }
 
 export interface CreateClientPayload {
@@ -374,6 +393,24 @@ export const clientsService = {
     fields: { utr?: string; preferredName?: string },
   ): Promise<ClientRecord> {
     const res = await apiClient.patch<{ data: ClientRecord }>(`/clients/${id}`, fields)
+    return res.data.data
+  },
+
+  async getStatusHistory(id: string): Promise<ClientStatusHistoryResponse> {
+    const res = await apiClient.get<{ data: ClientStatusHistoryResponse }>(
+      `/clients/${id}/status-history`,
+    )
+    return res.data.data
+  },
+
+  async updatePipelineStatus(
+    id: string,
+    status: ManualPipelineStatus,
+  ): Promise<ClientStatusHistoryResponse> {
+    const res = await apiClient.patch<{ data: ClientStatusHistoryResponse }>(
+      `/clients/${id}/pipeline-status`,
+      { status },
+    )
     return res.data.data
   },
 

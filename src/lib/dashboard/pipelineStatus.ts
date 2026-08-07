@@ -50,3 +50,12 @@ export const PIPELINE_KANBAN_COLS: {
 export function isPipelineStatus(value: string): value is PipelineStatus {
   return (PIPELINE_STATUSES as readonly string[]).includes(value)
 }
+
+export const MANUAL_PIPELINE_STATUSES = ['records-received', 'ready-for-review'] as const
+export type ManualPipelineStatus = (typeof MANUAL_PIPELINE_STATUSES)[number]
+
+export function nextManualPipelineStatus(current: PipelineStatus): ManualPipelineStatus | null {
+  if (current === 'chased') return 'records-received'
+  if (current === 'records-received') return 'ready-for-review'
+  return null
+}

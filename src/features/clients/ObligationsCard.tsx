@@ -9,9 +9,18 @@ import {
   clientsService,
   type BusinessListItem,
   type ClientRecord,
+  type ClientStatusHistoryEntry,
+  type ClientStatusHistoryResponse,
   type CrystallisationObligation,
   type ObligationDetail,
 } from '@/services/clients.service'
+import {
+  PIPELINE_STATUS_LABELS,
+  PIPELINE_STATUS_STYLES,
+  isPipelineStatus,
+  type ManualPipelineStatus,
+  type PipelineStatus,
+} from '@/lib/dashboard/pipelineStatus'
 
 const outlineBtn: React.CSSProperties = {
   padding: '7px 14px',
@@ -248,6 +257,180 @@ function CrystallisationTimeline({ items }: { items: CrystallisationObligation[]
         )
       })}
     </>
+  )
+}
+
+function statusLabel(status: string | null | undefined): string {
+  if (!status) return '—'
+  if (isPipelineStatus(status)) return PIPELINE_STATUS_LABELS[status]
+  return status
+}
+
+function formatHistoryWhen(iso: string): string {
+  try {
+    return new Date(iso).toLocaleString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  } catch {
+    return iso
+  }
+}
+
+function ClientHistorySection({
+  clientId,
+}: {
+  clientId: string
+}) {
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [currentStatus, setCurrentStatus] = useState<PipelineStatus>('pending-invite')
+  const [nextManualStatus, setNextManualStatus] = useState<ManualPipelineStatus | null>(null)
+  const [history, setHistory] = useState<ClientStatusHistoryEntry[]>([])
+
+  const applyResponse = useCallback((res: ClientStatusHistoryResponse) => {
+    setCurrentStatus(res.currentStatus)
+    setNextManualStatus(res.nextManualStatus)
+    setHistory(res.history)
+  }, [])
+
+  const loadHistory = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const res = await clientsService.getStatusHistory(clientId)
+      applyResponse(res)
+    } catch (err: unknown) {
+      setError((err as Error)?.message ?? 'Failed to load status history.')
+    } finally {
+      setLoading(false)
+    }
+  }, [clientId, applyResponse])
+
+  useEffect(() => {
+    void loadHistory()
+  }, [loadHistory])
+
+  const onTransition = async () => {
+    if (!nextManualStatus) return
+    setSaving(true)
+    setError(null)
+    try {
+      const res = await clientsService.updatePipelineStatus(clientId, nextManualStatus)
+      applyResponse(res)
+    } catch (err: unknown) {
+      setError((err as Error)?.message ?? 'Failed to update status.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const badge = PIPELINE_STATUS_STYLES[currentStatus]
+
+  return (
+    <div>
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          gap: 10,
+          marginBottom: 12,
+        }}
+      >
+        <span style={{ fontSize: 13, fontWeight: 600, color: B.text }}>Client History</span>
+        <span
+          style={{
+            fontSize: 11,
+            fontWeight: 600,
+            padding: '2px 10px',
+            borderRadius: 20,
+            background: badge.bg,
+            color: badge.c,
+            border: `1px solid ${badge.b}`,
+          }}
+        >
+          {PIPELINE_STATUS_LABELS[currentStatus]}
+        </span>
+        <span style={{ flex: 1 }} />
+        {nextManualStatus ? (
+          <button
+            type="button"
+            onClick={() => void onTransition()}
+            disabled={saving}
+            style={{
+              ...outlineBtn,
+              background: B.white,
+              opacity: saving ? 0.6 : 1,
+              cursor: saving ? 'not-allowed' : 'pointer',
+              fontWeight: 600,
+            }}
+          >
+            {saving ? 'Updating…' : `Mark as ${PIPELINE_STATUS_LABELS[nextManualStatus]}`}
+          </button>
+        ) : (
+          <span style={{ fontSize: 11, color: B.light }}>
+            {currentStatus === 'submitted' || currentStatus === 'ready-for-review'
+              ? 'No further manual transitions'
+              : 'Advances automatically until Chased'}
+          </span>
+        )}
+      </div>
+
+      {error && (
+        <div
+          style={{
+            padding: '10px 12px',
+            background: B.redBg,
+            border: '1px solid #FECACA',
+            borderRadius: 8,
+            fontSize: 12,
+            color: B.redText,
+            marginBottom: 12,
+          }}
+        >
+          {error}
+        </div>
+      )}
+
+      {loading ? (
+        <p style={{ fontSize: 12, color: B.muted, margin: 0 }}>Loading status history…</p>
+      ) : history.length === 0 ? (
+        <p style={{ fontSize: 12, color: B.muted, margin: 0 }}>No status history yet.</p>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+          {history.map((row, i) => (
+            <div
+              key={row.id}
+              style={{
+                display: 'flex',
+                gap: 12,
+                padding: '10px 0',
+                borderBottom:
+                  i < history.length - 1 ? `1px solid ${B.borderLight}` : 'none',
+              }}
+            >
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: B.text }}>
+                  {statusLabel(row.fromStatus)} → {statusLabel(row.toStatus)}
+                </div>
+                <div style={{ fontSize: 12, color: B.muted, marginTop: 4 }}>
+                  {row.source === 'agent'
+                    ? `Changed by ${row.changedByName ?? 'agent'}`
+                    : 'System'}
+                  {' · '}
+                  {formatHistoryWhen(row.createdAt)}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -503,7 +686,8 @@ export default function ObligationsCard({ client }: { client: ClientRecord }) {
           <ObligationTimeline details={obligationDetails} />
         )}
 
-        <div style={{ borderTop: `1px solid ${B.borderLight}`, marginTop: 20, paddingTop: 16 }}>
+        {/* Final Declaration — above the main divider */}
+        <div style={{ marginTop: 20 }}>
           <div
             style={{
               display: 'flex',
@@ -567,6 +751,11 @@ export default function ObligationsCard({ client }: { client: ClientRecord }) {
           ) : (
             <CrystallisationTimeline items={crystalObligations} />
           )}
+        </div>
+
+        {/* Client History — below the main divider */}
+        <div style={{ borderTop: `1px solid ${B.borderLight}`, marginTop: 20, paddingTop: 16 }}>
+          <ClientHistorySection clientId={client.id} />
         </div>
       </div>
     </Card>
