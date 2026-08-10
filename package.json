@@ -6,6 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
     "lint": "next lint",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
@@ -22,6 +25,10 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^7.0.0",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.3",
+    "@types/jest": "^30.0.0",
     "@types/node": "^20.0.0",
     "@types/qrcode": "^1.5.6",
     "@types/react": "^18.2.0",
@@ -30,7 +37,10 @@
     "eslint-config-next": "^15.3.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.0",
+    "jest": "^30.4.2",
+    "jest-environment-jsdom": "^30.4.1",
     "prettier": "^3.2.0",
+    "ts-jest": "^29.4.12",
     "typescript": "^5.4.0"
   }
 }
