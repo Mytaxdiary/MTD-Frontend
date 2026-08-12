@@ -158,6 +158,20 @@ function ChaseRow({
           >
             {entry.channel}
           </span>
+          <span
+            style={{
+              marginLeft: 8,
+              padding: '1px 7px',
+              borderRadius: 4,
+              background: B.blueBg,
+              border: '1px solid #BAE6FD',
+              fontSize: 10,
+              color: B.blueText,
+              fontWeight: 600,
+            }}
+          >
+            {entry.businessName?.trim() || (entry.businessId ? entry.businessId : 'Client-level')}
+          </span>
         </div>
       </div>
     </div>

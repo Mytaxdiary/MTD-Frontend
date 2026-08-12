@@ -165,38 +165,59 @@ export default function ChaseManager({
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   /**
-   * When arriving from Clients → Chase selected (?ids=a,b,c), pre-check those
-   * clients once the chase list has loaded, then clean the URL.
+   * When arriving from Clients → Chase selected (?targets=clientId|businessId,...),
+   * pre-check those business rows once the chase list has loaded, then clean the URL.
+   * Legacy ?ids=clientId still selects all business rows for those clients.
    */
   useEffect(() => {
     if (clientsLoading || preselectApplied.current) return
 
-    const raw = searchParams.get('ids')
-    if (!raw) return
+    const targetsRaw = searchParams.get('targets')
+    const idsRaw = searchParams.get('ids')
+    if (!targetsRaw && !idsRaw) return
 
     preselectApplied.current = true
-    const requested = raw
-      .split(',')
-      .map((id) => id.trim())
-      .filter(Boolean)
-    const available = new Set(chaseClients.map((c) => c.id))
-    const matched = requested.filter((id) => available.has(id))
-    const missing = requested.length - matched.length
+    let matched: string[] = []
+    let requestedCount = 0
+
+    if (targetsRaw) {
+      const requested = targetsRaw
+        .split(',')
+        .map((t) => t.trim())
+        .filter(Boolean)
+      requestedCount = requested.length
+      const available = new Set(chaseClients.map((c) => c.rowKey))
+      matched = requested
+        .map((t) => {
+          const [clientId, businessId] = t.split('|')
+          return `${clientId}::${businessId ?? ''}`
+        })
+        .filter((key) => available.has(key))
+    } else if (idsRaw) {
+      const requested = idsRaw
+        .split(',')
+        .map((id) => id.trim())
+        .filter(Boolean)
+      requestedCount = requested.length
+      const idSet = new Set(requested)
+      matched = chaseClients.filter((c) => idSet.has(c.id)).map((c) => c.rowKey)
+    }
+
+    const missing = requestedCount - matched.length
 
     if (matched.length > 0) {
       setSelected(new Set(matched))
       setPreselectNote(
         missing > 0
-          ? `${matched.length} of ${requested.length} clients selected. ${missing} could not be chased (not authorised or not in the list).`
-          : `${matched.length} client${matched.length === 1 ? '' : 's'} selected from the Clients list. Pick a template and send.`,
+          ? `${matched.length} of ${requestedCount} businesses selected. ${missing} could not be chased.`
+          : `${matched.length} business${matched.length === 1 ? '' : 'es'} selected from the Clients list. Pick a template and send.`,
       )
-    } else if (requested.length > 0) {
+    } else if (requestedCount > 0) {
       setPreselectNote(
-        'None of the selected clients are available to chase yet. They need to be HMRC-authorised first.',
+        'None of the selected businesses are available to chase yet. Clients need to be HMRC-authorised first.',
       )
     }
 
-    // Drop ?ids= so a refresh does not re-apply the same selection
     router.replace('/chase', { scroll: false })
   }, [clientsLoading, chaseClients, searchParams, router])
 
@@ -217,10 +238,10 @@ export default function ChaseManager({
       ? notStartedClients
       : notStartedClients.filter((c) => c.workflowType === typeFilter)
 
-  const toggleSelect = (id: string) =>
+  const toggleSelect = (rowKey: string) =>
     setSelected((p) => {
       const n = new Set(p)
-      n.has(id) ? n.delete(id) : n.add(id)
+      n.has(rowKey) ? n.delete(rowKey) : n.add(rowKey)
       return n
     })
 
@@ -235,13 +256,14 @@ export default function ChaseManager({
     }
     setSending(true)
     setSendError(null)
-    const selectedClients = chaseClients.filter((c) => selected.has(c.id))
+    const selectedRows = chaseClients.filter((c) => selected.has(c.rowKey))
     try {
       await Promise.all(
-        selectedClients.map((c) => {
+        selectedRows.map((c) => {
           const vars = {
             name: c.greetingName || chaseGreetingName(c.name, c.preferredName),
             business: c.business,
+            business_name: c.businessName ?? c.business,
             quarter: c.quarter,
             deadline: c.deadline,
             agent_name: user?.name ?? 'Your accountant',
@@ -249,6 +271,8 @@ export default function ChaseManager({
           }
           return chaseService.sendChase({
             clientId: c.id,
+            businessId: c.businessId ?? undefined,
+            businessName: c.businessName ?? undefined,
             templateId: selectedTemplateId,
             channel: 'email',
             subject: renderTemplate(currentTemplate.subject, vars),
@@ -257,7 +281,6 @@ export default function ChaseManager({
         })
       )
       setSelected(new Set())
-      // Reload to refresh chase counts / last chase dates
       void loadClients()
     } catch {
       setSendError('Some chases failed to send. Please try again.')
@@ -269,8 +292,8 @@ export default function ChaseManager({
   /* ── template helpers ── */
   const currentTemplate = templates.find((t) => t.id === selectedTemplateId) ?? null
 
-  // First selected client — used to render a live preview with real variable values
-  const previewClient = chaseClients.find((c) => selected.has(c.id)) ?? null
+  // First selected business row — used to render a live preview
+  const previewClient = chaseClients.find((c) => selected.has(c.rowKey)) ?? null
 
   const previewVars = previewClient
     ? {
@@ -278,6 +301,7 @@ export default function ChaseManager({
           previewClient.greetingName ||
           chaseGreetingName(previewClient.name, previewClient.preferredName),
         business: previewClient.business,
+        business_name: previewClient.businessName ?? previewClient.business,
         quarter: previewClient.quarter,
         deadline: previewClient.deadline,
         agent_name: (user as { name?: string })?.name ?? 'Your accountant',
@@ -439,7 +463,7 @@ export default function ChaseManager({
               >
                 {sending
                   ? 'Sending...'
-                  : `Send to ${selected.size} client${selected.size > 1 ? 's' : ''}`}
+                  : `Send to ${selected.size} business${selected.size > 1 ? 'es' : ''}`}
               </button>
               {sendError && <span style={{ fontSize: 13, color: B.redText }}>{sendError}</span>}
             </div>
@@ -1056,7 +1080,8 @@ export default function ChaseManager({
                 )}
 
                 <div style={{ fontSize: 11, color: B.light, marginTop: 12 }}>
-                  Variables: {'{name}'} (preferred name or first name), {'{business}'},{' '}
+                  Variables: {'{name}'} (preferred name or first name), {'{business}'} (NINO),{' '}
+                  {'{business_name}'},{' '}
                   {'{quarter}'}, {'{deadline}'}, {'{agent_name}'}, {'{firm_name}'}
                 </div>
               </div>
@@ -1095,9 +1120,11 @@ function TypeBadge({ type }: { type: string }) {
 }
 
 type ChaseClientRow = {
+  rowKey: string
   id: string
   name: string
   business: string
+  businessName: string | null
   deadline: string
   daysOverdue: number
   lastChase: string | null
@@ -1114,28 +1141,28 @@ function ClientTable({
 }: {
   clients: ChaseClientRow[]
   selected: Set<string>
-  onToggle: (id: string) => void
+  onToggle: (rowKey: string) => void
   onOpenClient: (id: string) => void
 }) {
   return (
     <div style={CARD}>
       {clients.map((c, i) => (
         <div
-          key={c.id}
+          key={c.rowKey}
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: 12,
             padding: '13px 16px',
             borderBottom: i < clients.length - 1 ? `1px solid ${B.borderStrong}` : 'none',
-            background: selected.has(c.id) ? '#E0F2FE' : 'transparent',
+            background: selected.has(c.rowKey) ? '#E0F2FE' : 'transparent',
           }}
         >
           <input
             type="checkbox"
-            checked={selected.has(c.id)}
-            onChange={() => onToggle(c.id)}
-            aria-label={`Select ${c.name} for chase`}
+            checked={selected.has(c.rowKey)}
+            onChange={() => onToggle(c.rowKey)}
+            aria-label={`Select ${c.name} ${c.businessName ?? ''} for chase`}
             style={{ cursor: 'pointer', accentColor: B.primary, width: 17, height: 17 }}
           />
           <div style={{ flex: 1, minWidth: 0 }}>
@@ -1166,7 +1193,10 @@ function ClientTable({
                 >
                   {c.name}
                 </button>
-                <span style={{ color: B.muted, fontSize: 14, marginLeft: 8 }}>{c.business}</span>
+                <span style={{ color: B.text, fontSize: 14, marginLeft: 8, fontWeight: 600 }}>
+                  {c.businessName ?? '—'}
+                </span>
+                <span style={{ color: B.muted, fontSize: 13, marginLeft: 8 }}>{c.business}</span>
               </div>
               <ResponseBadge status={c.status} />
             </div>

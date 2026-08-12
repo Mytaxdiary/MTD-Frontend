@@ -2,15 +2,20 @@ import apiClient from '@/lib/api/axiosClient'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-/** Shape returned by GET /chase/clients */
+/** Shape returned by GET /chase/clients — one row per client×business */
 export interface ChaseClientRecord {
+  /** Unique row key: clientId::businessId */
+  rowKey: string
   id: string
+  businessId: string | null
+  businessName: string | null
+  typeOfBusiness: string | null
   /** Full legal name (list display) */
   name: string
   preferredName?: string
   /** Preferred name if set, otherwise first name — used for {name} in templates */
   greetingName: string
-  /** NINO */
+  /** NINO — legacy {business} */
   business: string
   deadline: string
   /** positive = overdue days, negative = days remaining */
@@ -32,6 +37,8 @@ export interface ChaseClientRecord {
 export interface ChaseLogRecord {
   id: string
   clientId: string
+  businessId?: string | null
+  businessName?: string | null
   templateId?: string
   channel: string
   subject: string
@@ -44,6 +51,8 @@ export interface ChaseLogRecord {
 /** Payload for POST /chase-logs */
 export interface SendChasePayload {
   clientId: string
+  businessId?: string
+  businessName?: string
   templateId?: string
   channel: string
   subject: string
@@ -53,13 +62,13 @@ export interface SendChasePayload {
 // ── Service ───────────────────────────────────────────────────────────────────
 
 export const chaseService = {
-  /** List all authorised clients with their chase summary + current quarter deadline */
+  /** List authorised clients expanded to one row per business */
   async listChaseClients(): Promise<ChaseClientRecord[]> {
     const res = await apiClient.get<{ data: ChaseClientRecord[] }>('/chase/clients')
     return res.data.data
   },
 
-  /** Record a chase sent to a client (also fires the actual email/SMS) */
+  /** Record a chase sent for one business (also fires the actual email/SMS) */
   async sendChase(payload: SendChasePayload): Promise<ChaseLogRecord> {
     const res = await apiClient.post<{ data: ChaseLogRecord }>('/chase-logs', payload)
     return res.data.data
@@ -87,6 +96,7 @@ export const chaseService = {
 export interface TemplateVars {
   name: string
   business: string
+  business_name?: string
   quarter: string
   deadline: string
   agent_name: string
@@ -96,6 +106,7 @@ export interface TemplateVars {
 export function renderTemplate(template: string, vars: Partial<TemplateVars>): string {
   return template
     .replace(/{name}/g, vars.name ?? '{name}')
+    .replace(/{business_name}/g, vars.business_name ?? vars.business ?? '{business_name}')
     .replace(/{business}/g, vars.business ?? '{business}')
     .replace(/{quarter}/g, vars.quarter ?? '{quarter}')
     .replace(/{deadline}/g, vars.deadline ?? '{deadline}')

@@ -16,7 +16,16 @@ function apiErrorMessage(err: unknown): string {
   return msg ?? 'Something went wrong.'
 }
 
-function mapToRow(c: ClientRecord): ClientListRow {
+function formatBusinessType(typeOfBusiness?: string): string {
+  if (!typeOfBusiness) return ''
+  return typeOfBusiness
+    .split('-')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ')
+}
+
+/** Expand one client into one list row per HMRC business (or a single fallback row). */
+function mapToRows(c: ClientRecord): ClientListRow[] {
   const statusMap: Record<string, string> = {
     pending: 'pending',
     'partial-auth': 'partial-auth',
@@ -29,29 +38,62 @@ function mapToRow(c: ClientRecord): ClientListRow {
   const needsResend =
     (c.invitationStatus === 'pending' && !c.invitationId) ||
     ['expired', 'rejected', 'cancelled', 'deauthorised'].includes(c.invitationStatus)
-  return {
-    id: c.id,
-    name: c.name,
-    business: c.nino,
-    type: [] as string[],
-    mtd: c.authorisedAt
-      ? 'Mandated'
-      : c.invitationStatus === 'accepted'
-        ? 'Invite accepted'
-        : c.invitationStatus === 'partial-auth'
-          ? 'Partial auth'
-          : 'Pending',
-    deadline: 'N/A',
-    filing: c.authorisedAt
-      ? 'filed'
-      : c.invitationStatus === 'accepted'
-        ? 'invite-accepted'
-        : (statusMap[c.invitationStatus] ?? c.invitationStatus),
-    chase: needsResend ? 'resend' : '',
-    agentType: c.agentType,
-    income: 0,
-    needsResend,
+  const baseFiling = c.authorisedAt
+    ? 'filed'
+    : c.invitationStatus === 'accepted'
+      ? 'invite-accepted'
+      : (statusMap[c.invitationStatus] ?? c.invitationStatus)
+  const mtd = c.authorisedAt
+    ? 'Mandated'
+    : c.invitationStatus === 'accepted'
+      ? 'Invite accepted'
+      : c.invitationStatus === 'partial-auth'
+        ? 'Partial auth'
+        : 'Pending'
+
+  const businesses = c.businesses ?? []
+  if (businesses.length === 0) {
+    return [
+      {
+        rowKey: `${c.id}::`,
+        id: c.id,
+        businessId: null,
+        name: c.name,
+        nino: c.nino,
+        businessName: '—',
+        type: [],
+        mtd,
+        deadline: 'N/A',
+        filing: baseFiling,
+        chase: needsResend ? 'resend' : '',
+        agentType: c.agentType,
+        income: 0,
+        needsResend,
+        chaseCount: 0,
+      },
+    ]
   }
+
+  return businesses.map((b) => {
+    const chased = (b.chaseCount ?? 0) > 0
+    return {
+      rowKey: `${c.id}::${b.businessId}`,
+      id: c.id,
+      businessId: b.businessId,
+      name: c.name,
+      nino: c.nino,
+      businessName: b.tradingName?.trim() || formatBusinessType(b.typeOfBusiness) || b.businessId,
+      type: b.typeOfBusiness ? [formatBusinessType(b.typeOfBusiness)] : [],
+      mtd,
+      deadline: 'N/A',
+      filing: chased ? 'chased' : baseFiling,
+      chase: needsResend ? 'resend' : chased ? 'chased' : '',
+      agentType: c.agentType,
+      income: 0,
+      needsResend,
+      chaseCount: b.chaseCount ?? 0,
+    }
+  })
 }
 
 const Badge = ({ status }: { status: string }) => {
@@ -60,6 +102,7 @@ const Badge = ({ status }: { status: string }) => {
     'due-soon': { bg: B.amberBg, c: B.amberText, b: '#FDE68A', l: 'Due soon' },
     ready: { bg: B.greenBg, c: B.greenText, b: '#A7F3D0', l: 'Records ready' },
     filed: { bg: B.greenBg, c: B.greenText, b: '#A7F3D0', l: 'Authorised' },
+    chased: { bg: B.blueBg, c: B.blueText, b: '#BAE6FD', l: 'Chased' },
     pending: { bg: B.purpleBg, c: B.purpleText, b: '#DDD6FE', l: 'Pending invite' },
     'invite-accepted': { bg: B.amberBg, c: B.amberText, b: '#FDE68A', l: 'Invite accepted' },
     'partial-auth': { bg: B.amberBg, c: B.amberText, b: '#FDE68A', l: 'Partial auth' },
@@ -115,7 +158,7 @@ export default function ClientList({
   const router = useRouter()
 
   // Server-driven state
-  const [clients, setClients] = useState<ReturnType<typeof mapToRow>[]>([])
+  const [clients, setClients] = useState<ClientListRow[]>([])
   const [total, setTotal] = useState(0)
   const [totalPages, setTotalPages] = useState(1)
   const [page, setPage] = useState(1)
@@ -126,10 +169,11 @@ export default function ClientList({
   const [search, setSearch] = useState('')
   const [searchInput, setSearchInput] = useState('') // controlled input before debounce
   const [statusFilter, setStatusFilter] = useState('all')
+  const [agentTypeFilter, setAgentTypeFilter] = useState('all')
   const [sortCol, setSortCol] = useState('name')
   const [sortDir, setSortDir] = useState('asc')
 
-  // UI state
+  // UI state — selected rowKeys (clientId::businessId)
   const [selected, setSelected] = useState(new Set<string>())
   const [cols, setCols] = useState<Record<ColKeys, boolean>>(defaultCols)
   const [showColPicker, setShowColPicker] = useState(false)
@@ -139,7 +183,7 @@ export default function ClientList({
 
   // ── Data loading ──────────────────────────────────────────────────────────
 
-  const loadPage = useCallback((p: number, status: string, q: string) => {
+  const loadPage = useCallback((p: number, status: string, q: string, agentType: string) => {
     setClientsLoading(true)
     setClientsError(null)
     clientsService
@@ -148,9 +192,10 @@ export default function ClientList({
         limit: PAGE_SIZE,
         status: status !== 'all' ? status : undefined,
         search: q || undefined,
+        agentType: agentType !== 'all' ? agentType : undefined,
       })
       .then((res) => {
-        setClients(res.clients.map(mapToRow))
+        setClients(res.clients.flatMap(mapToRows))
         setTotal(res.total)
         setTotalPages(res.totalPages)
         setPage(res.page)
@@ -173,13 +218,18 @@ export default function ClientList({
 
   // Initial load
   useEffect(() => {
-    loadPage(1, 'all', '')
+    loadPage(1, 'all', '', 'all')
   }, [loadPage])
 
   // When status filter changes → reset to page 1
   const handleStatusChange = (val: string) => {
     setStatusFilter(val)
-    loadPage(1, val, search)
+    loadPage(1, val, search, agentTypeFilter)
+  }
+
+  const handleAgentTypeChange = (val: string) => {
+    setAgentTypeFilter(val)
+    loadPage(1, statusFilter, search, val)
   }
 
   // Debounce search input → trigger server fetch
@@ -188,11 +238,11 @@ export default function ClientList({
     if (debounceRef.current) clearTimeout(debounceRef.current)
     debounceRef.current = setTimeout(() => {
       setSearch(val)
-      loadPage(1, statusFilter, val)
+      loadPage(1, statusFilter, val, agentTypeFilter)
     }, 400)
   }
 
-  const reloadCurrent = () => loadPage(page, statusFilter, search)
+  const reloadCurrent = () => loadPage(page, statusFilter, search, agentTypeFilter)
 
   async function handleResend(clientId: string, e: { stopPropagation: () => void }) {
     e.stopPropagation()
@@ -207,29 +257,32 @@ export default function ClientList({
     }
   }
 
-  /** Open Chase Manager with the selected authorised clients pre-checked. */
+  /** Open Chase Manager with selected business rows pre-checked. */
   function handleChaseSelected() {
-    const authorisedIds = clients
-      .filter((c) => selected.has(c.id) && c.filing === 'filed')
-      .map((c) => c.id)
+    const chaseable = clients.filter(
+      (c) =>
+        selected.has(c.rowKey) &&
+        c.businessId &&
+        (c.filing === 'filed' || c.filing === 'chased'),
+    )
 
-    if (authorisedIds.length === 0) {
+    if (chaseable.length === 0) {
       alert(
-        'Chase only works for HMRC-authorised clients. Select at least one authorised client, or finish authorisation first.',
+        'Chase only works for authorised clients with a business. Select at least one business row, or finish authorisation first.',
       )
       return
     }
 
-    const skipped = selected.size - authorisedIds.length
+    const skipped = selected.size - chaseable.length
     if (skipped > 0) {
-      // Soft notice — continue with the chaseable ones
       const ok = window.confirm(
-        `${skipped} selected client${skipped === 1 ? ' is' : 's are'} not yet authorised and will be skipped. Continue with ${authorisedIds.length} client${authorisedIds.length === 1 ? '' : 's'}?`,
+        `${skipped} selected row${skipped === 1 ? ' is' : 's are'} not chaseable and will be skipped. Continue with ${chaseable.length}?`,
       )
       if (!ok) return
     }
 
-    const params = new URLSearchParams({ ids: authorisedIds.join(',') })
+    const targets = chaseable.map((c) => `${c.id}|${c.businessId}`).join(',')
+    const params = new URLSearchParams({ targets })
     router.push(`/chase?${params.toString()}`)
   }
 
@@ -260,15 +313,15 @@ export default function ClientList({
       setSortDir('asc')
     }
   }
-  const toggleSelect = (id: string) =>
+  const toggleSelect = (rowKey: string) =>
     setSelected((p) => {
       const n = new Set(p)
-      n.has(id) ? n.delete(id) : n.add(id)
+      n.has(rowKey) ? n.delete(rowKey) : n.add(rowKey)
       return n
     })
   const toggleAll = () =>
     setSelected((p) =>
-      p.size === filtered.length ? new Set<string>() : new Set(filtered.map((c) => c.id))
+      p.size === filtered.length ? new Set<string>() : new Set(filtered.map((c) => c.rowKey))
     )
   const SortIcon = ({ col }: { col: string }) => (
     <span style={{ fontSize: 10, marginLeft: 4, opacity: sortCol === col ? 1 : 0.3 }}>
@@ -373,6 +426,23 @@ export default function ClientList({
             <option value="partial-auth">Partial auth</option>
             <option value="rejected">Rejected</option>
             <option value="expired">Expired / cancelled</option>
+          </select>
+          <select
+            value={agentTypeFilter}
+            onChange={(e) => handleAgentTypeChange(e.target.value)}
+            style={{
+              padding: '8px 11px',
+              borderRadius: 8,
+              border: `1px solid ${B.border}`,
+              fontSize: 13,
+              color: B.text,
+              background: B.white,
+              cursor: 'pointer',
+            }}
+          >
+            <option value="all">All agent types</option>
+            <option value="main">Main</option>
+            <option value="supporting">Supporting</option>
           </select>
           <div style={{ marginLeft: 'auto', display: 'flex', gap: 6, alignItems: 'center' }}>
             {selected.size > 0 && (
@@ -542,6 +612,22 @@ export default function ClientList({
                   Client
                   <SortIcon col="name" />
                 </th>
+                <th
+                  onClick={() => toggleSort('businessName')}
+                  style={{
+                    padding: '11px 14px',
+                    textAlign: 'left',
+                    fontSize: 12,
+                    fontWeight: 700,
+                    color: B.muted,
+                    letterSpacing: '0.04em',
+                    textTransform: 'uppercase' as const,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Business
+                  <SortIcon col="businessName" />
+                </th>
                 {cols.type && (
                   <th
                     onClick={() => toggleSort('type')}
@@ -657,7 +743,7 @@ export default function ClientList({
                     <div style={{ fontSize: 13, color: B.muted, marginBottom: 12 }}>{clientsError}</div>
                     <button
                       type="button"
-                      onClick={() => loadPage(page, statusFilter, search)}
+                      onClick={() => loadPage(page, statusFilter, search, agentTypeFilter)}
                       style={{
                         padding: '7px 14px',
                         borderRadius: 8,
@@ -687,11 +773,11 @@ export default function ClientList({
               {!clientsLoading &&
                 filtered.map((c, i) => (
                   <tr
-                    key={String(c.id)}
+                    key={c.rowKey}
                     onClick={() => router.push(`/clients/detail?id=${c.id}`)}
                     style={{
                       borderBottom: `1px solid ${B.borderLight}`,
-                      background: selected.has(c.id)
+                      background: selected.has(c.rowKey)
                         ? '#F0F9FF'
                         : i % 2 === 1
                           ? '#FAFBFC'
@@ -702,15 +788,20 @@ export default function ClientList({
                     <td style={{ padding: '11px 16px' }}>
                       <input
                         type="checkbox"
-                        checked={selected.has(c.id)}
-                        onChange={() => toggleSelect(c.id)}
+                        checked={selected.has(c.rowKey)}
+                        onChange={() => toggleSelect(c.rowKey)}
                         onClick={(e) => e.stopPropagation()}
                         style={{ cursor: 'pointer', accentColor: B.primary }}
                       />
                     </td>
                     <td style={{ padding: '11px 14px' }}>
                       <div style={{ fontWeight: 600, fontSize: 14 }}>{c.name}</div>
-                      <div style={{ fontSize: 12, color: B.light, marginTop: 2 }}>{c.business}</div>
+                      <div style={{ fontSize: 12, color: B.light, marginTop: 2 }}>{c.nino}</div>
+                    </td>
+                    <td style={{ padding: '11px 14px' }}>
+                      <div style={{ fontSize: 13, fontWeight: 500, color: B.text }}>
+                        {c.businessName}
+                      </div>
                     </td>
                     {cols.type && (
                       <td style={{ padding: '11px 14px' }}>
@@ -763,6 +854,10 @@ export default function ClientList({
                           >
                             {resendingId === c.id ? 'Sending...' : 'Resend invite'}
                           </button>
+                        ) : c.chaseCount > 0 ? (
+                          <span style={{ fontSize: 13, color: B.blueText, fontWeight: 600 }}>
+                            Chased ({c.chaseCount})
+                          </span>
                         ) : (
                           <span style={{ fontSize: 13, color: B.muted }}>No action</span>
                         )}
@@ -824,7 +919,7 @@ export default function ClientList({
               }}
             >
               <button
-                onClick={() => loadPage(1, statusFilter, search)}
+                onClick={() => loadPage(1, statusFilter, search, agentTypeFilter)}
                 disabled={page === 1 || clientsLoading}
                 style={{
                   padding: '6px 11px',
@@ -840,7 +935,7 @@ export default function ClientList({
                 «
               </button>
               <button
-                onClick={() => loadPage(page - 1, statusFilter, search)}
+                onClick={() => loadPage(page - 1, statusFilter, search, agentTypeFilter)}
                 disabled={page === 1 || clientsLoading}
                 style={{
                   padding: '6px 11px',
@@ -872,7 +967,7 @@ export default function ClientList({
                   ) : (
                     <button
                       key={p}
-                      onClick={() => loadPage(p as number, statusFilter, search)}
+                      onClick={() => loadPage(p as number, statusFilter, search, agentTypeFilter)}
                       disabled={clientsLoading}
                       style={{
                         padding: '5px 10px',
@@ -892,7 +987,7 @@ export default function ClientList({
                 )}
 
               <button
-                onClick={() => loadPage(page + 1, statusFilter, search)}
+                onClick={() => loadPage(page + 1, statusFilter, search, agentTypeFilter)}
                 disabled={page === totalPages || clientsLoading}
                 style={{
                   padding: '6px 11px',
@@ -908,7 +1003,7 @@ export default function ClientList({
                 Next
               </button>
               <button
-                onClick={() => loadPage(totalPages, statusFilter, search)}
+                onClick={() => loadPage(totalPages, statusFilter, search, agentTypeFilter)}
                 disabled={page === totalPages || clientsLoading}
                 style={{
                   padding: '6px 11px',

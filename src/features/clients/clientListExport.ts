@@ -6,9 +6,15 @@
 export type ColKeys = 'type' | 'mtd' | 'deadline' | 'filing' | 'chase' | 'income'
 
 export type ClientListRow = {
+  /** Selection / chase key: clientId::businessId */
+  rowKey: string
   id: string
+  businessId: string | null
   name: string
-  business: string
+  /** NINO (secondary id under client name) */
+  nino: string
+  /** Trading name for the business column */
+  businessName: string
   type: string[]
   mtd: string
   deadline: string
@@ -17,6 +23,7 @@ export type ClientListRow = {
   agentType: string
   income: number
   needsResend: boolean
+  chaseCount: number
 }
 
 // ── CSV ───────────────────────────────────────────────────────────────────────
@@ -40,6 +47,7 @@ export function downloadCsv(rows: ClientListRow[], cols: Record<ColKeys, boolean
   const headers: string[] = [
     'Client name',
     'NINO',
+    'Business',
     ...(cols.type ? ['Business type'] : []),
     ...(cols.mtd ? ['MTD status'] : []),
     ...(cols.deadline ? ['Next deadline'] : []),
@@ -49,12 +57,21 @@ export function downloadCsv(rows: ClientListRow[], cols: Record<ColKeys, boolean
   ]
 
   const dataRows = rows.map((c) => {
-    const cells: (string | number)[] = [escapeCsvCell(c.name), escapeCsvCell(c.business)]
+    const cells: (string | number)[] = [
+      escapeCsvCell(c.name),
+      escapeCsvCell(c.nino),
+      escapeCsvCell(c.businessName),
+    ]
     if (cols.type) cells.push(escapeCsvCell(c.type.join(', ') || '-'))
     if (cols.mtd) cells.push(escapeCsvCell(c.mtd))
     if (cols.deadline) cells.push(escapeCsvCell(c.deadline))
     if (cols.filing) cells.push(escapeCsvCell(titleCase(c.filing)))
-    if (cols.chase) cells.push(escapeCsvCell(c.needsResend ? 'Resend invite' : '-'))
+    if (cols.chase)
+      cells.push(
+        escapeCsvCell(
+          c.needsResend ? 'Resend invite' : c.chaseCount > 0 ? `Chased (${c.chaseCount})` : '-',
+        ),
+      )
     if (cols.income) cells.push(escapeCsvCell(c.income > 0 ? c.income : '-'))
     return cells.join(',')
   })
@@ -84,10 +101,11 @@ const PDF_STYLES = `
   @media print { body { margin: 0; } }
 `
 
-const ALWAYS_COLS = [
+const ALWAYS_COLS: { key: keyof ClientListRow; label: string }[] = [
   { key: 'name', label: 'Client' },
-  { key: 'business', label: 'NINO' },
-] as const
+  { key: 'nino', label: 'NINO' },
+  { key: 'businessName', label: 'Business' },
+]
 
 const OPTIONAL_COLS: { key: keyof ClientListRow; label: string; flag: ColKeys }[] = [
   { key: 'type', label: 'Type', flag: 'type' },

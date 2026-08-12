@@ -1,6 +1,15 @@
 import apiClient from '@/lib/api/axiosClient'
 import type { ManualPipelineStatus, PipelineStatus } from '@/lib/dashboard/pipelineStatus'
 
+export interface ClientBusinessRow {
+  businessId: string
+  typeOfBusiness: string
+  tradingName?: string
+  chaseCount: number
+  lastChaseAt: string | null
+  lastChaseStatus: string | null
+}
+
 export interface ClientRecord {
   id: string
   tenantId: string
@@ -22,6 +31,8 @@ export interface ClientRecord {
   /** Persisted MTD pipeline status (pending-invite → … → submitted). */
   pipelineStatus?: PipelineStatus | string
   createdAt: string
+  /** Present on list responses — HMRC businesses with per-business chase stats */
+  businesses?: ClientBusinessRow[]
 }
 
 export interface ClientStatusHistoryEntry {
@@ -326,6 +337,7 @@ export const clientsService = {
     limit?: number
     status?: string
     search?: string
+    agentType?: string
   }): Promise<{
     clients: ClientRecord[]
     total: number
