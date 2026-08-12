@@ -122,6 +122,7 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
   const [clientName, setClientName] = useState('')
   const [postcode, setPostcode] = useState('')
   const [clientEmail, setClientEmail] = useState('')
+  const [utr, setUtr] = useState('')
   const [phone, setPhone] = useState('')
   const [personalMsg, setPersonalMsg] = useState(
     "Hi {name}, we're setting up your Making Tax Digital account. You'll receive an email from HMRC shortly. Please accept the authorisation link so we can manage your quarterly updates."
@@ -172,7 +173,10 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
   const ninoValid = ninoClean.length === 9
   const emailValid = clientEmail.includes('@') && clientEmail.includes('.')
   const postcodeValid = postcode.trim().length >= 5
-  const formComplete = ninoValid && clientName.length > 0 && emailValid && postcodeValid
+  const utrClean = utr.replace(/\s/g, '')
+  const utrValid = utrClean.length === 0 || /^\d{10}$/.test(utrClean)
+  const formComplete =
+    ninoValid && clientName.length > 0 && emailValid && postcodeValid && utrValid
 
   async function handleSubmit() {
     if (!formComplete) return
@@ -185,6 +189,7 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
         postcode: postcode.trim(),
         email: clientEmail,
         phone: phone.trim() || undefined,
+        utr: utrClean || undefined,
         agentType,
         personalMessage: personalMsg,
       })
@@ -232,6 +237,7 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
     setClientName('')
     setPostcode('')
     setClientEmail('')
+    setUtr('')
     setPhone('')
     setSubmitError(null)
   }
@@ -435,6 +441,44 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                       outline: 'none',
                     }}
                   />
+                </div>
+
+                {/* UTR */}
+                <div style={{ marginBottom: 16 }}>
+                  <label
+                    style={{
+                      fontSize: 13,
+                      fontWeight: 600,
+                      color: B.muted,
+                      display: 'block',
+                      marginBottom: 6,
+                    }}
+                  >
+                    Unique Taxpayer Reference (UTR){' '}
+                    <span style={{ fontWeight: 400, color: B.light }}>(optional)</span>
+                  </label>
+                  <input
+                    value={utr}
+                    onChange={(e) => setUtr(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                    placeholder="10-digit UTR"
+                    inputMode="numeric"
+                    maxLength={10}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      borderRadius: 8,
+                      border: `1px solid ${utrClean.length > 0 && !utrValid ? '#FECACA' : B.borderStrong}`,
+                      fontSize: 13,
+                      fontFamily: 'monospace',
+                      letterSpacing: '0.06em',
+                      outline: 'none',
+                    }}
+                  />
+                  {utrClean.length > 0 && !utrValid && (
+                    <div style={{ fontSize: 11, color: B.red, marginTop: 4 }}>
+                      UTR must be exactly 10 digits
+                    </div>
+                  )}
                 </div>
 
                 {/* Personal message */}

@@ -57,6 +57,8 @@ export interface CreateClientPayload {
   postcode: string
   email: string
   phone?: string
+  /** 10-digit Self Assessment UTR (optional) */
+  utr?: string
   agentType?: string
   personalMessage?: string
 }
