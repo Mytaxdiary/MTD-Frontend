@@ -172,6 +172,22 @@ function ChaseRow({
           >
             {entry.businessName?.trim() || (entry.businessId ? entry.businessId : 'Client-level')}
           </span>
+          {entry.quarterLabel?.trim() && (
+            <span
+              style={{
+                marginLeft: 8,
+                padding: '1px 7px',
+                borderRadius: 4,
+                background: B.surface,
+                border: `1px solid ${B.border}`,
+                fontSize: 10,
+                color: B.muted,
+                fontWeight: 600,
+              }}
+            >
+              {entry.quarterLabel}
+            </span>
+          )}
         </div>
       </div>
     </div>

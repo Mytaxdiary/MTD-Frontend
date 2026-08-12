@@ -2,14 +2,17 @@ import apiClient from '@/lib/api/axiosClient'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-/** Shape returned by GET /chase/clients — one row per client×business */
+/** Shape returned by GET /chase/clients — one row per business × open quarter */
 export interface ChaseClientRecord {
-  /** Unique row key: clientId::businessId */
+  /** Unique row key: clientId::businessId::periodStartDate */
   rowKey: string
   id: string
   businessId: string | null
   businessName: string | null
   typeOfBusiness: string | null
+  periodStartDate?: string | null
+  periodEndDate?: string | null
+  dueDate?: string | null
   /** Full legal name (list display) */
   name: string
   preferredName?: string
@@ -31,6 +34,24 @@ export interface ChaseClientRecord {
   channel: string
   /** bookkeeping | data-request */
   workflowType: string
+  obligationsFallback?: boolean
+}
+
+export interface ChaseClientsPage {
+  clients: ChaseClientRecord[]
+  page: number
+  limit: number
+  totalClients: number
+  totalPages: number
+}
+
+export interface ListChaseClientsParams {
+  search?: string
+  quarter?: string
+  sortBy?: 'quarter' | 'deadline' | 'name'
+  sortDir?: 'asc' | 'desc'
+  page?: number
+  limit?: number
 }
 
 /** Shape returned by GET /chase-logs?clientId= */
@@ -39,6 +60,10 @@ export interface ChaseLogRecord {
   clientId: string
   businessId?: string | null
   businessName?: string | null
+  periodStartDate?: string | null
+  periodEndDate?: string | null
+  dueDate?: string | null
+  quarterLabel?: string | null
   templateId?: string
   channel: string
   subject: string
@@ -53,6 +78,10 @@ export interface SendChasePayload {
   clientId: string
   businessId?: string
   businessName?: string
+  periodStartDate?: string
+  periodEndDate?: string
+  dueDate?: string
+  quarterLabel?: string
   templateId?: string
   channel: string
   subject: string
@@ -62,13 +91,22 @@ export interface SendChasePayload {
 // ── Service ───────────────────────────────────────────────────────────────────
 
 export const chaseService = {
-  /** List authorised clients expanded to one row per business */
-  async listChaseClients(): Promise<ChaseClientRecord[]> {
-    const res = await apiClient.get<{ data: ChaseClientRecord[] }>('/chase/clients')
+  /** Paginated authorised clients expanded to open business×quarter rows */
+  async listChaseClients(params: ListChaseClientsParams = {}): Promise<ChaseClientsPage> {
+    const res = await apiClient.get<{ data: ChaseClientsPage }>('/chase/clients', {
+      params: {
+        search: params.search || undefined,
+        quarter: params.quarter && params.quarter !== 'all' ? params.quarter : undefined,
+        sortBy: params.sortBy,
+        sortDir: params.sortDir,
+        page: params.page ?? 1,
+        limit: params.limit ?? 5,
+      },
+    })
     return res.data.data
   },
 
-  /** Record a chase sent for one business (also fires the actual email/SMS) */
+  /** Record a chase sent for one business×period (also fires the actual email/SMS) */
   async sendChase(payload: SendChasePayload): Promise<ChaseLogRecord> {
     const res = await apiClient.post<{ data: ChaseLogRecord }>('/chase-logs', payload)
     return res.data.data

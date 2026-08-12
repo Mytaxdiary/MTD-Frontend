@@ -85,10 +85,19 @@ export default function ChaseManager({
   const searchParams = useSearchParams()
   const preselectApplied = useRef(false)
 
-  /* ── client list state ── */
+  /* ── client list state (server-driven search / filter / sort / page) ── */
   const [chaseClients, setChaseClients] = useState<ChaseClientRecord[]>([])
   const [clientsLoading, setClientsLoading] = useState(true)
   const [clientsError, setClientsError] = useState<string | null>(null)
+  const [searchInput, setSearchInput] = useState('')
+  const [search, setSearch] = useState('')
+  const [quarterFilter, setQuarterFilter] = useState('all')
+  const [sortBy, setSortBy] = useState<'quarter' | 'deadline' | 'name'>('deadline')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [totalClients, setTotalClients] = useState(0)
+  const pageLimit = 5
 
   const [selected, setSelected] = useState(new Set<string>())
   const [sending, setSending] = useState(false)
@@ -128,19 +137,38 @@ export default function ChaseManager({
     }
   }, [])
 
+  /* ── debounce name search → server param ── */
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setSearch(searchInput.trim())
+      setPage(1)
+    }, 350)
+    return () => clearTimeout(t)
+  }, [searchInput])
+
   /* ── load chase clients ── */
   const loadClients = useCallback(async () => {
     setClientsLoading(true)
     setClientsError(null)
     try {
-      const data = await chaseService.listChaseClients()
-      setChaseClients(data)
+      const data = await chaseService.listChaseClients({
+        search: search || undefined,
+        quarter: quarterFilter,
+        sortBy,
+        sortDir,
+        page,
+        limit: pageLimit,
+      })
+      setChaseClients(data.clients)
+      setTotalPages(data.totalPages)
+      setTotalClients(data.totalClients)
+      if (data.page !== page) setPage(data.page)
     } catch {
       setClientsError('Failed to load chase clients')
     } finally {
       setClientsLoading(false)
     }
-  }, [])
+  }, [search, quarterFilter, sortBy, sortDir, page])
 
   /* ── load templates ── */
   const loadTemplates = useCallback(async () => {
@@ -161,6 +189,13 @@ export default function ChaseManager({
 
   useEffect(() => {
     void loadClients()
+  }, [loadClients])
+
+  useEffect(() => {
+    setSelected(new Set())
+  }, [page, search, quarterFilter, sortBy, sortDir])
+
+  useEffect(() => {
     loadTemplates()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -186,13 +221,15 @@ export default function ChaseManager({
         .map((t) => t.trim())
         .filter(Boolean)
       requestedCount = requested.length
-      const available = new Set(chaseClients.map((c) => c.rowKey))
-      matched = requested
-        .map((t) => {
-          const [clientId, businessId] = t.split('|')
-          return `${clientId}::${businessId ?? ''}`
-        })
-        .filter((key) => available.has(key))
+      // Clients list deep-link: clientId|businessId → select all open periods for that business on this page
+      matched = chaseClients
+        .filter((c) =>
+          requested.some((t) => {
+            const [clientId, businessId] = t.split('|')
+            return c.id === clientId && (c.businessId ?? '') === (businessId ?? '')
+          }),
+        )
+        .map((c) => c.rowKey)
     } else if (idsRaw) {
       const requested = idsRaw
         .split(',')
@@ -273,6 +310,10 @@ export default function ChaseManager({
             clientId: c.id,
             businessId: c.businessId ?? undefined,
             businessName: c.businessName ?? undefined,
+            periodStartDate: c.periodStartDate ?? undefined,
+            periodEndDate: c.periodEndDate ?? undefined,
+            dueDate: c.dueDate ?? undefined,
+            quarterLabel: c.quarter,
             templateId: selectedTemplateId,
             channel: 'email',
             subject: renderTemplate(currentTemplate.subject, vars),
@@ -421,10 +462,76 @@ export default function ChaseManager({
               ? 'Loading clients...'
               : clientsError
                 ? clientsError
-                : `${chaseClients.length} authorised clients: ${overdueClients.length} overdue, ${upcomingClients.length} in chase window, ${notStartedClients.length} upcoming`}
+                : `${totalClients} authorised client${totalClients === 1 ? '' : 's'} (page ${page}/${totalPages}): ${overdueClients.length} overdue, ${upcomingClients.length} in chase window, ${notStartedClients.length} upcoming · ${chaseClients.length} open period row${chaseClients.length === 1 ? '' : 's'}`}
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+          <input
+            type="search"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder="Search client name..."
+            style={{
+              padding: '10px 13px',
+              borderRadius: 8,
+              border: `1px solid ${B.borderStrong}`,
+              fontSize: 14,
+              minWidth: 180,
+              outline: 'none',
+            }}
+          />
+          <select
+            value={quarterFilter}
+            onChange={(e) => {
+              setQuarterFilter(e.target.value)
+              setPage(1)
+            }}
+            style={{
+              padding: '10px 13px',
+              borderRadius: 8,
+              border: `1px solid ${B.borderStrong}`,
+              fontSize: 14,
+              fontWeight: 500,
+              color: B.text,
+              background: B.white,
+              cursor: 'pointer',
+            }}
+          >
+            <option value="all">All quarters</option>
+            <option value="Q1">Q1</option>
+            <option value="Q2">Q2</option>
+            <option value="Q3">Q3</option>
+            <option value="Q4">Q4</option>
+          </select>
+          <select
+            value={`${sortBy}:${sortDir}`}
+            onChange={(e) => {
+              const [by, dir] = e.target.value.split(':') as [
+                'quarter' | 'deadline' | 'name',
+                'asc' | 'desc',
+              ]
+              setSortBy(by)
+              setSortDir(dir)
+              setPage(1)
+            }}
+            style={{
+              padding: '10px 13px',
+              borderRadius: 8,
+              border: `1px solid ${B.borderStrong}`,
+              fontSize: 14,
+              fontWeight: 500,
+              color: B.text,
+              background: B.white,
+              cursor: 'pointer',
+            }}
+          >
+            <option value="deadline:desc">Deadline (newest due)</option>
+            <option value="deadline:asc">Deadline (oldest due)</option>
+            <option value="quarter:asc">Quarter ascending</option>
+            <option value="quarter:desc">Quarter descending</option>
+            <option value="name:asc">Name A–Z</option>
+            <option value="name:desc">Name Z–A</option>
+          </select>
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
@@ -601,7 +708,9 @@ export default function ChaseManager({
                   color: B.muted,
                 }}
               >
-                No authorised clients yet. Add and authorise clients to start chasing.
+                {totalClients === 0
+                  ? 'No authorised clients yet. Add and authorise clients to start chasing.'
+                  : 'No open periods on this page for the current filters. Filed quarters are hidden.'}
               </div>
             )}
 
@@ -654,6 +763,65 @@ export default function ChaseManager({
                   onToggle={toggleSelect}
                   onOpenClient={openClientDetail}
                 />
+              </div>
+            )}
+
+            {!clientsLoading && totalClients > 0 && (
+              <div
+                style={{
+                  marginTop: 16,
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  gap: 12,
+                  flexWrap: 'wrap',
+                }}
+              >
+                <span style={{ fontSize: 13, color: B.muted }}>
+                  Showing {pageLimit} clients per page (HMRC obligations loaded for this page only).
+                  {quarterFilter !== 'all'
+                    ? ' Quarter filter applies to periods on the current client page.'
+                    : ''}
+                </span>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <button
+                    type="button"
+                    disabled={page <= 1 || clientsLoading}
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    style={{
+                      padding: '8px 14px',
+                      borderRadius: 8,
+                      border: `1px solid ${B.borderStrong}`,
+                      background: B.white,
+                      fontSize: 13,
+                      fontWeight: 600,
+                      cursor: page <= 1 ? 'not-allowed' : 'pointer',
+                      color: page <= 1 ? B.muted : B.text,
+                    }}
+                  >
+                    Previous
+                  </button>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: B.text }}>
+                    Page {page} of {totalPages}
+                  </span>
+                  <button
+                    type="button"
+                    disabled={page >= totalPages || clientsLoading}
+                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                    style={{
+                      padding: '8px 14px',
+                      borderRadius: 8,
+                      border: `1px solid ${B.borderStrong}`,
+                      background: B.white,
+                      fontSize: 13,
+                      fontWeight: 600,
+                      cursor: page >= totalPages ? 'not-allowed' : 'pointer',
+                      color: page >= totalPages ? B.muted : B.text,
+                    }}
+                  >
+                    Next
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -1125,6 +1293,7 @@ type ChaseClientRow = {
   name: string
   business: string
   businessName: string | null
+  quarter?: string
   deadline: string
   daysOverdue: number
   lastChase: string | null
@@ -1196,6 +1365,22 @@ function ClientTable({
                 <span style={{ color: B.text, fontSize: 14, marginLeft: 8, fontWeight: 600 }}>
                   {c.businessName ?? '—'}
                 </span>
+                {c.quarter && (
+                  <span
+                    style={{
+                      marginLeft: 8,
+                      fontSize: 12,
+                      fontWeight: 700,
+                      padding: '2px 8px',
+                      borderRadius: 6,
+                      background: B.blueBg,
+                      color: B.blueText,
+                      border: '1px solid #BAE6FD',
+                    }}
+                  >
+                    {c.quarter}
+                  </span>
+                )}
                 <span style={{ color: B.muted, fontSize: 13, marginLeft: 8 }}>{c.business}</span>
               </div>
               <ResponseBadge status={c.status} />
