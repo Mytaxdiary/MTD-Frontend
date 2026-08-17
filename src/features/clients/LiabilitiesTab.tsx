@@ -11,7 +11,12 @@ import {
   liabilityRowStatus,
   sanitizeHmrcAmount,
 } from '@/lib/hmrc/liabilityLabel'
-import { clientsService, type ClientRecord, type HmrcPayment } from '@/services/clients.service'
+import {
+  clientsService,
+  type ClientRecord,
+  type HmrcChargeHistoryDetail,
+  type HmrcPayment,
+} from '@/services/clients.service'
 import MessageModal from '@/features/clients/detail/MessageModal'
 
 const outlineBtn: React.CSSProperties = {
@@ -93,6 +98,26 @@ function fmtPaymentMethod(method?: string): string {
   return map[method] ?? method
 }
 
+function firstChargeReference(payment: HmrcPayment): string | undefined {
+  return payment.allocations?.map((a) => a.chargeReference).find((ref) => !!ref)
+}
+
+function fmtChangeWhen(row: HmrcChargeHistoryDetail): string {
+  if (row.changeTimestamp) {
+    const d = new Date(row.changeTimestamp)
+    if (!Number.isNaN(d.getTime())) {
+      return d.toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' })
+    }
+  }
+  return fmtUkShortDate(row.changeDate) || '-'
+}
+
+const historyBtn: React.CSSProperties = {
+  ...outlineBtn,
+  padding: '4px 10px',
+  fontSize: 11,
+}
+
 interface Props {
   client: ClientRecord
 }
@@ -150,6 +175,12 @@ export default function LiabilitiesTab({ client }: Props) {
   const [payments, setPayments] = useState<HmrcPayment[]>([])
   const [showMsgModal, setShowMsgModal] = useState(false)
 
+  const [historyLoading, setHistoryLoading] = useState(false)
+  const [historyError, setHistoryError] = useState<string | null>(null)
+  const [historyRows, setHistoryRows] = useState<HmrcChargeHistoryDetail[]>([])
+  const [historyLabel, setHistoryLabel] = useState<string | null>(null)
+  const [historySource, setHistorySource] = useState<string | null>(null)
+
   const canFetch = !!client.authorisedAt
   const paymentMsg = buildPaymentDetailsMessage(
     client.name,
@@ -194,6 +225,78 @@ export default function LiabilitiesTab({ client }: Props) {
       setPaymentsLoading(false)
     }
   }, [client.id, client.authorisedAt])
+
+  const openLiabilityHistory = useCallback(
+    async (documentId: string, label: string) => {
+      if (!client.authorisedAt) return
+      setHistoryLabel(label)
+      setHistorySource('Document ID and transaction ID')
+      setHistoryLoading(true)
+      setHistoryError(null)
+      setHistoryRows([])
+      try {
+        const [byId, byTxn] = await Promise.allSettled([
+          clientsService.getChargeHistory(client.id, documentId),
+          clientsService.getChargeHistoryByTransactionId(client.id, documentId),
+        ])
+        const ok =
+          byId.status === 'fulfilled'
+            ? byId.value
+            : byTxn.status === 'fulfilled'
+              ? byTxn.value
+              : null
+        if (!ok) {
+          const reason =
+            byId.status === 'rejected'
+              ? byId.reason
+              : byTxn.status === 'rejected'
+                ? byTxn.reason
+                : null
+          throw reason instanceof Error ? reason : new Error('Failed to load charge history.')
+        }
+        setHistoryRows(ok.chargeHistoryDetails ?? [])
+      } catch (err: unknown) {
+        setHistoryRows([])
+        setHistoryError((err as Error)?.message ?? 'Failed to load charge history.')
+      } finally {
+        setHistoryLoading(false)
+      }
+    },
+    [client.id, client.authorisedAt],
+  )
+
+  const openPaymentHistory = useCallback(
+    async (payment: HmrcPayment) => {
+      if (!client.authorisedAt) return
+      const chargeReference = firstChargeReference(payment)
+      const label = payment.paymentReference
+        ? `Payment ${payment.paymentReference}`
+        : 'Payment'
+      setHistoryLabel(label)
+      setHistorySource('Charge reference')
+      setHistoryRows([])
+      if (!chargeReference) {
+        setHistoryLoading(false)
+        setHistoryError('This payment has no HMRC charge reference, so history cannot be loaded.')
+        return
+      }
+      setHistoryLoading(true)
+      setHistoryError(null)
+      try {
+        const data = await clientsService.getChargeHistoryByChargeReference(
+          client.id,
+          chargeReference,
+        )
+        setHistoryRows(data.chargeHistoryDetails ?? [])
+      } catch (err: unknown) {
+        setHistoryRows([])
+        setHistoryError((err as Error)?.message ?? 'Failed to load charge history.')
+      } finally {
+        setHistoryLoading(false)
+      }
+    },
+    [client.id, client.authorisedAt],
+  )
 
   useEffect(() => {
     if (!canFetch) {
@@ -310,10 +413,10 @@ export default function LiabilitiesTab({ client }: Props) {
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
               <tr style={{ borderBottom: `1px solid ${B.border}` }}>
-                {['Description', 'Due date', 'Original', 'Outstanding', 'Interest', 'Status'].map(
+                {['Description', 'Due date', 'Original', 'Outstanding', 'Interest', 'Status', ''].map(
                   (h, i) => (
                     <th
-                      key={h}
+                      key={h || 'history'}
                       style={{
                         padding: '10px 16px',
                         textAlign: i >= 2 && i <= 4 ? 'right' : 'left',
@@ -331,13 +434,13 @@ export default function LiabilitiesTab({ client }: Props) {
             <tbody>
               {liabLoading && rows.length === 0 ? (
                 <tr>
-                  <td colSpan={6} style={{ padding: '16px', color: B.muted, fontSize: 12 }}>
+                  <td colSpan={7} style={{ padding: '16px', color: B.muted, fontSize: 12 }}>
                     Loading liabilities from HMRC...
                   </td>
                 </tr>
               ) : rows.length === 0 ? (
                 <tr>
-                  <td colSpan={6} style={{ padding: '16px', color: B.muted, fontSize: 12 }}>
+                  <td colSpan={7} style={{ padding: '16px', color: B.muted, fontSize: 12 }}>
                     {canFetch
                       ? 'No liability charges returned for this period.'
                       : 'Authorise client to load data.'}
@@ -396,6 +499,30 @@ export default function LiabilitiesTab({ client }: Props) {
                       <td style={{ padding: '12px 16px' }}>
                         <StatusBadge status={status} />
                       </td>
+                      <td style={{ padding: '12px 16px' }}>
+                        <button
+                          type="button"
+                          style={{
+                            ...historyBtn,
+                            opacity: doc.documentId ? 1 : 0.5,
+                            cursor: doc.documentId ? 'pointer' : 'not-allowed',
+                          }}
+                          disabled={!doc.documentId}
+                          title={
+                            doc.documentId
+                              ? 'View HMRC charge history'
+                              : 'No document ID from HMRC'
+                          }
+                          onClick={() =>
+                            void openLiabilityHistory(
+                              doc.documentId as string,
+                              formatLiabilityDescription(doc),
+                            )
+                          }
+                        >
+                          History
+                        </button>
+                      </td>
                     </tr>
                   )
                 })
@@ -445,9 +572,9 @@ export default function LiabilitiesTab({ client }: Props) {
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
               <tr style={{ borderBottom: `1px solid ${B.border}` }}>
-                {['Date', 'Amount', 'Reference', 'Method'].map((h, i) => (
+                {['Date', 'Amount', 'Reference', 'Method', ''].map((h, i) => (
                   <th
-                    key={h}
+                    key={h || 'history'}
                     style={{
                       padding: '10px 16px',
                       textAlign: i === 1 ? 'right' : 'left',
@@ -464,13 +591,13 @@ export default function LiabilitiesTab({ client }: Props) {
             <tbody>
               {paymentsLoading && payments.length === 0 ? (
                 <tr>
-                  <td colSpan={4} style={{ padding: '16px', color: B.muted, fontSize: 12 }}>
+                  <td colSpan={5} style={{ padding: '16px', color: B.muted, fontSize: 12 }}>
                     Loading payment history from HMRC...
                   </td>
                 </tr>
               ) : payments.length === 0 ? (
                 <tr>
-                  <td colSpan={4} style={{ padding: '16px', color: B.muted, fontSize: 12 }}>
+                  <td colSpan={5} style={{ padding: '16px', color: B.muted, fontSize: 12 }}>
                     {canFetch
                       ? 'No payments found for the last 2 years.'
                       : 'Authorise client to load data.'}
@@ -479,6 +606,7 @@ export default function LiabilitiesTab({ client }: Props) {
               ) : (
                 payments.map((p, i) => {
                   const amount = sanitizeHmrcAmount(p.paymentAmount)
+                  const chargeReference = firstChargeReference(p)
                   return (
                     <tr
                       key={`${p.paymentLot ?? i}-${p.paymentLotItem ?? i}`}
@@ -509,6 +637,20 @@ export default function LiabilitiesTab({ client }: Props) {
                       <td style={{ padding: '12px 16px', color: B.muted }}>
                         {fmtPaymentMethod(p.paymentMethod)}
                       </td>
+                      <td style={{ padding: '12px 16px' }}>
+                        <button
+                          type="button"
+                          style={historyBtn}
+                          title={
+                            chargeReference
+                              ? 'View HMRC charge history by charge reference'
+                              : 'No charge reference on this payment'
+                          }
+                          onClick={() => void openPaymentHistory(p)}
+                        >
+                          History
+                        </button>
+                      </td>
                     </tr>
                   )
                 })
@@ -520,6 +662,85 @@ export default function LiabilitiesTab({ client }: Props) {
 
       {/* ── Right sidebar ───────────────────────────────── */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+        <Card>
+          <CardHeader title="Charge history" />
+          <div style={{ padding: '12px 20px 16px' }}>
+            {!historyLabel && !historyLoading && !historyError ? (
+              <div style={{ fontSize: 12, color: B.muted, lineHeight: 1.6 }}>
+                Click History on a liability to load document ID and transaction ID history, or on
+                a payment to load history by charge reference.
+              </div>
+            ) : (
+              <>
+                {historyLabel && (
+                  <div style={{ fontSize: 13, fontWeight: 600, color: B.text, marginBottom: 4 }}>
+                    {historyLabel}
+                  </div>
+                )}
+                {historySource && (
+                  <div style={{ fontSize: 11, color: B.muted, marginBottom: 10 }}>
+                    Source: {historySource}
+                  </div>
+                )}
+                {historyLoading && (
+                  <div style={{ fontSize: 12, color: B.muted }}>Loading charge history...</div>
+                )}
+                {historyError && (
+                  <div
+                    style={{
+                      padding: '8px 10px',
+                      background: B.redBg,
+                      border: '1px solid #FECACA',
+                      borderRadius: 6,
+                      fontSize: 12,
+                      color: B.redText,
+                    }}
+                  >
+                    {historyError}
+                  </div>
+                )}
+                {!historyLoading && !historyError && historyRows.length === 0 && historyLabel && (
+                  <div style={{ fontSize: 12, color: B.muted }}>
+                    No charge history returned for this item.
+                  </div>
+                )}
+                {!historyLoading &&
+                  historyRows.map((row, i) => (
+                    <div
+                      key={`${row.transactionId ?? i}-${row.changeTimestamp ?? row.changeDate ?? i}`}
+                      style={{
+                        padding: '10px 0',
+                        borderTop: i === 0 ? `1px solid ${B.borderLight}` : undefined,
+                        borderBottom: `1px solid ${B.borderLight}`,
+                      }}
+                    >
+                      <div style={{ fontSize: 12, fontWeight: 600, color: B.text }}>
+                        {row.changeReason || row.description || 'Change'}
+                      </div>
+                      <div style={{ fontSize: 11, color: B.muted, marginTop: 2 }}>
+                        {fmtChangeWhen(row)}
+                      </div>
+                      {row.description && row.changeReason && (
+                        <div style={{ fontSize: 12, color: B.text, marginTop: 4 }}>
+                          {row.description}
+                        </div>
+                      )}
+                      <div
+                        style={{
+                          fontSize: 13,
+                          fontWeight: 600,
+                          fontVariantNumeric: 'tabular-nums',
+                          marginTop: 4,
+                        }}
+                      >
+                        {fmtMoney(sanitizeHmrcAmount(row.totalAmount))}
+                      </div>
+                    </div>
+                  ))}
+              </>
+            )}
+          </div>
+        </Card>
         <Card>
           <CardHeader title="HMRC payment details" />
           <div style={{ padding: '12px 20px' }}>

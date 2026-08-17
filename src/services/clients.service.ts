@@ -219,6 +219,14 @@ export interface GetBalanceAndTransactionsParams {
   calculateAccruedInterest?: boolean
 }
 
+export interface HmrcPaymentAllocation {
+  chargeReference?: string
+  chargeDetail?: {
+    documentId?: string
+    chargeTypeDescription?: string
+  }
+}
+
 export interface HmrcPayment {
   paymentLot?: string
   paymentLotItem?: string
@@ -226,6 +234,7 @@ export interface HmrcPayment {
   paymentAmount?: number
   paymentMethod?: string
   transactionDate?: string
+  allocations?: HmrcPaymentAllocation[]
 }
 
 export interface PaymentsAndAllocationsResponse {
@@ -237,6 +246,22 @@ export interface GetPaymentsAndAllocationsParams {
   toDate?: string
   paymentLot?: string
   paymentLotItem?: string
+}
+
+export interface HmrcChargeHistoryDetail {
+  taxYear?: string
+  transactionId?: string
+  transactionDate?: string
+  description?: string
+  totalAmount?: number
+  changeDate?: string
+  changeTimestamp?: string
+  changeReason?: string
+  poaAdjustmentReason?: string
+}
+
+export interface ChargeHistoryResponse {
+  chargeHistoryDetails: HmrcChargeHistoryDetail[]
 }
 
 export interface PaymentRecord {
@@ -487,6 +512,33 @@ export const clientsService = {
     const res = await apiClient.get<{ data: PaymentsAndAllocationsResponse }>(
       `/clients/${id}/liabilities/payments-and-allocations`,
       { params }
+    )
+    return res.data.data
+  },
+
+  async getChargeHistory(id: string, transactionId: string): Promise<ChargeHistoryResponse> {
+    const res = await apiClient.get<{ data: ChargeHistoryResponse }>(
+      `/clients/${id}/liabilities/charges/${encodeURIComponent(transactionId)}`
+    )
+    return res.data.data
+  },
+
+  async getChargeHistoryByTransactionId(
+    id: string,
+    transactionId: string
+  ): Promise<ChargeHistoryResponse> {
+    const res = await apiClient.get<{ data: ChargeHistoryResponse }>(
+      `/clients/${id}/liabilities/charges/by-transaction/${encodeURIComponent(transactionId)}`
+    )
+    return res.data.data
+  },
+
+  async getChargeHistoryByChargeReference(
+    id: string,
+    chargeReference: string
+  ): Promise<ChargeHistoryResponse> {
+    const res = await apiClient.get<{ data: ChargeHistoryResponse }>(
+      `/clients/${id}/liabilities/charges/by-reference/${encodeURIComponent(chargeReference)}`
     )
     return res.data.data
   },
