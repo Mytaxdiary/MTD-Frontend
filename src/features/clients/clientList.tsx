@@ -83,7 +83,7 @@ function mapToRows(c: ClientRecord): ClientListRow[] {
       name: c.name,
       nino: c.nino,
       businessName: b.tradingName?.trim() || formatBusinessType(b.typeOfBusiness) || b.businessId,
-      type: b.typeOfBusiness ? [formatBusinessType(b.typeOfBusiness)] : [],
+      type: b.typeOfBusiness ? [b.typeOfBusiness] : [],
       mtd,
       deadline: 'N/A',
       filing: chased ? 'chased' : baseFiling,
@@ -151,7 +151,7 @@ const defaultCols: Record<ColKeys, boolean> = {
 const PAGE_SIZE = 20
 
 export default function ClientList({
-  navigate = () => {},
+  navigate = () => { },
 }: {
   navigate?: (route: string) => void
 }) {
@@ -209,8 +209,8 @@ export default function ClientList({
         setClientsError(
           (err as { response?: { data?: { message?: string } }; message?: string })?.response
             ?.data?.message ??
-            (err as { message?: string })?.message ??
-            'Failed to load clients. Please try again.',
+          (err as { message?: string })?.message ??
+          'Failed to load clients. Please try again.',
         )
       })
       .finally(() => setClientsLoading(false))

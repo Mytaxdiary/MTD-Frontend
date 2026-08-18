@@ -320,6 +320,18 @@ export interface SubmittedPeriodFigure {
   cumulative?: boolean
 }
 
+export interface SeCumulativeSummaryResponse {
+  taxYear: string
+  businessId: string
+  typeOfBusiness: string
+  tradingName?: string
+  source: 'hmrc' | 'sandbox-test' | 'empty'
+  periodDates: { periodStartDate: string; periodEndDate: string } | null
+  periodIncome: { turnover: number; other: number }
+  periodExpenses: { consolidatedExpenses: number }
+  submittedOn?: string
+}
+
 export interface SubmittedFiguresResponse {
   taxYear: string
   totalIncome: number
@@ -328,6 +340,35 @@ export interface SubmittedFiguresResponse {
   netLoss: number
   periods: SubmittedPeriodFigure[]
   businesses: IncomeSummaryBusiness[]
+}
+
+export interface UkPropertyMoneyBlock {
+  income?: Record<string, unknown>
+  expenses?: Record<string, unknown>
+  adjustments?: Record<string, unknown>
+  allowances?: Record<string, unknown>
+}
+
+export interface UkPropertyAnnualSubmission {
+  submittedOn?: string
+  ukProperty?: UkPropertyMoneyBlock
+  ukFhlProperty?: UkPropertyMoneyBlock
+  ukNonFhlProperty?: UkPropertyMoneyBlock
+}
+
+export interface UkPropertyFiguresResponse {
+  taxYear: string
+  businessId: string
+  typeOfBusiness: string
+  tradingName?: string
+  fromDate?: string
+  toDate?: string
+  submittedOn?: string
+  income: number
+  expenses: number
+  net: number
+  periods: SubmittedPeriodFigure[]
+  annual: UkPropertyAnnualSubmission | null
 }
 
 export const clientsService = {
@@ -561,6 +602,56 @@ export const clientsService = {
     const res = await apiClient.get<{ data: SubmittedFiguresResponse }>(
       `/clients/${id}/submitted-figures`,
       taxYear ? { params: { taxYear } } : undefined
+    )
+    return res.data.data
+  },
+
+  async getUkPropertyFigures(
+    id: string,
+    businessId: string,
+    taxYear?: string
+  ): Promise<UkPropertyFiguresResponse> {
+    const res = await apiClient.get<{ data: UkPropertyFiguresResponse }>(
+      `/clients/${id}/businesses/${encodeURIComponent(businessId)}/property-figures`,
+      taxYear ? { params: { taxYear } } : undefined
+    )
+    return res.data.data
+  },
+
+  async getSeCumulative(
+    id: string,
+    businessId: string,
+    taxYear: string
+  ): Promise<SeCumulativeSummaryResponse> {
+    const res = await apiClient.get<{ data: SeCumulativeSummaryResponse }>(
+      `/clients/${id}/businesses/${encodeURIComponent(businessId)}/cumulative/${encodeURIComponent(taxYear)}`
+    )
+    return res.data.data
+  },
+
+  async submitSeCumulative(
+    id: string,
+    businessId: string,
+    taxYear: string,
+    body: {
+      periodDates: { periodStartDate: string; periodEndDate: string }
+      periodIncome: { turnover: number; other: number }
+      periodExpenses: { consolidatedExpenses: number }
+    }
+  ): Promise<SeCumulativeSummaryResponse> {
+    const res = await apiClient.put<{ data: SeCumulativeSummaryResponse }>(
+      `/clients/${id}/businesses/${encodeURIComponent(businessId)}/cumulative/${encodeURIComponent(taxYear)}`,
+      body,
+      { timeout: 30000 }
+    )
+    return res.data.data
+  },
+
+  /** Sandbox only — create a UK property income source on an authorised test client. */
+  async createUkPropertyTestBusiness(id: string): Promise<BusinessListResponse> {
+    const res = await apiClient.post<{ data: BusinessListResponse }>(
+      `/clients/${id}/sandbox/uk-property-business`,
+      {}
     )
     return res.data.data
   },

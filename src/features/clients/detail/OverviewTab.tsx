@@ -481,11 +481,16 @@ function CumulativeFiguresCard({ client }: { client: ClientRecord | null }) {
                         ) : null}
                       </div>
                       <div style={{ fontSize: 11, color: B.light, marginTop: 2 }}>
-                        {p.cumulative
-                          ? 'Cumulative submission'
-                          : [fmtShort(p.periodStartDate), fmtShort(p.periodEndDate)]
-                              .filter(Boolean)
-                              .join(' – ') || p.typeOfBusiness.replace(/-/g, ' ')}
+                        {[
+                          p.typeOfBusiness.replace(/-/g, ' '),
+                          p.cumulative
+                            ? 'Cumulative submission'
+                            : [fmtShort(p.periodStartDate), fmtShort(p.periodEndDate)]
+                                .filter(Boolean)
+                                .join(' – '),
+                        ]
+                          .filter(Boolean)
+                          .join(' · ')}
                       </div>
                     </div>
                     <div
@@ -887,14 +892,22 @@ export default function OverviewTab({
   onFirstBusiness,
   onClientUpdated,
 }: OverviewTabProps) {
+  const [hmrcBusinesses, setHmrcBusinesses] = useState<BusinessListItem[]>([])
+
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20 }}>
       {/* Left column */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
         <MtdScopeNotice />
         {client && <ItsaStatusCard client={client} />}
-        {client && <BusinessesCard client={client} onFirstBusiness={onFirstBusiness} />}
-        {client && <ObligationsCard client={client} />}
+        {client && (
+          <BusinessesCard
+            client={client}
+            onFirstBusiness={onFirstBusiness}
+            onBusinesses={setHmrcBusinesses}
+          />
+        )}
+        {client && <ObligationsCard client={client} businesses={hmrcBusinesses} />}
 
         {(!client || !client.authorisedAt) && <SubmissionHistoryCard />}
 

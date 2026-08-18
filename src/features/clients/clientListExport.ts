@@ -3,6 +3,8 @@
  * Kept in a separate module so clientList.tsx stays focused on UI.
  */
 
+import { incomeTypeLabel } from '@/lib/helpers/clientType'
+
 export type ColKeys = 'type' | 'mtd' | 'deadline' | 'filing' | 'chase' | 'income'
 
 export type ClientListRow = {
@@ -62,7 +64,8 @@ export function downloadCsv(rows: ClientListRow[], cols: Record<ColKeys, boolean
       escapeCsvCell(c.nino),
       escapeCsvCell(c.businessName),
     ]
-    if (cols.type) cells.push(escapeCsvCell(c.type.join(', ') || '-'))
+    if (cols.type)
+      cells.push(escapeCsvCell(c.type.map((t) => incomeTypeLabel(t)).join(', ') || '-'))
     if (cols.mtd) cells.push(escapeCsvCell(c.mtd))
     if (cols.deadline) cells.push(escapeCsvCell(c.deadline))
     if (cols.filing) cells.push(escapeCsvCell(titleCase(c.filing)))

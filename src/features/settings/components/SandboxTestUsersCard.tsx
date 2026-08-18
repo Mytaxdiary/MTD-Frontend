@@ -274,7 +274,9 @@ export default function SandboxTestUsersCard({ hmrcConnected, onSaveArn }: Props
         <p style={{ fontSize: 13, color: B.muted, lineHeight: 1.6, margin: '0 0 16px' }}>
           One click creates a sandbox agent and individual in HMRC, same as the Postman &quot;00 -
           Test Users&quot; folder. Use the agent credentials to connect HMRC, then add a client with
-          the individual NINO and postcode.
+          the individual NINO and postcode. These individuals are not created with a UK property
+          income source — after the client is authorised, open them and use{' '}
+          <strong>Add UK property (sandbox)</strong> on HMRC businesses.
         </p>
 
         <button

@@ -434,13 +434,23 @@ function ClientHistorySection({
   )
 }
 
-export default function ObligationsCard({ client }: { client: ClientRecord }) {
+export default function ObligationsCard({
+  client,
+  businesses: businessesFromParent,
+}: {
+  client: ClientRecord
+  businesses?: BusinessListItem[]
+}) {
   const displayTaxYear = currentUkTaxYear()
 
-  const [businesses, setBusinesses] = useState<BusinessListItem[]>([])
+  const [ownBusinesses, setOwnBusinesses] = useState<BusinessListItem[]>([])
   const [businessesLoading, setBusinessesLoading] = useState(false)
   const [businessesError, setBusinessesError] = useState<string | null>(null)
   const [selectedKey, setSelectedKey] = useState('')
+  const businesses =
+    businessesFromParent && businessesFromParent.length > 0
+      ? businessesFromParent
+      : ownBusinesses
 
   const [statusFilter, setStatusFilter] = useState('')
   const [obligationsLoading, setObligationsLoading] = useState(false)
@@ -462,13 +472,13 @@ export default function ObligationsCard({ client }: { client: ClientRecord }) {
     try {
       const result = await clientsService.listBusinesses(client.id)
       const list = result.listOfBusinesses ?? []
-      setBusinesses(list)
+      setOwnBusinesses(list)
       setSelectedKey((prev) => {
         if (prev && list.some((b) => b.businessId === prev)) return prev
         return list[0]?.businessId ?? ''
       })
     } catch (err: unknown) {
-      setBusinesses([])
+      setOwnBusinesses([])
       setSelectedKey('')
       setBusinessesError((err as Error)?.message ?? 'Failed to load businesses.')
     } finally {
@@ -521,14 +531,27 @@ export default function ObligationsCard({ client }: { client: ClientRecord }) {
 
   useEffect(() => {
     if (!canFetch) {
-      setBusinesses([])
+      setOwnBusinesses([])
       setSelectedKey('')
       setObligationDetails([])
       setCrystalObligations([])
       return
     }
-    void loadBusinesses()
-  }, [canFetch, loadBusinesses])
+    if (!businessesFromParent || businessesFromParent.length === 0) {
+      void loadBusinesses()
+    }
+  }, [canFetch, loadBusinesses, businessesFromParent])
+
+  useEffect(() => {
+    if (businesses.length === 0) {
+      setSelectedKey('')
+      return
+    }
+    setSelectedKey((prev) => {
+      if (prev && businesses.some((b) => b.businessId === prev)) return prev
+      return businesses[0]?.businessId ?? ''
+    })
+  }, [businesses])
 
   useEffect(() => {
     if (!selected) {
