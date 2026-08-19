@@ -8,6 +8,7 @@ import {
   clientsService,
   type ClientRecord,
   type SeCumulativeSummaryResponse,
+  type UkPropertyCumulativeSummaryResponse,
 } from '@/services/clients.service'
 
 function fmtGbp(n: number): string {
@@ -45,20 +46,40 @@ const primaryBtn: React.CSSProperties = {
   color: '#fff',
 }
 
+type ReviewKind = 'self-employment' | 'uk-property'
+
 export default function QuarterlyReview() {
   const router = useRouter()
   const params = useSearchParams()
   const clientId = params.get('id')
   const businessId = params.get('businessId')
   const taxYear = params.get('taxYear') || currentUkTaxYear()
+  const kind: ReviewKind = params.get('type') === 'uk-property' ? 'uk-property' : 'self-employment'
+  const isProperty = kind === 'uk-property'
 
   const [client, setClient] = useState<ClientRecord | null>(null)
-  const [data, setData] = useState<SeCumulativeSummaryResponse | null>(null)
+  const [seData, setSeData] = useState<SeCumulativeSummaryResponse | null>(null)
+  const [propertyData, setPropertyData] = useState<UkPropertyCumulativeSummaryResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [confirming, setConfirming] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+
+  const data = isProperty ? propertyData : seData
+  const periodDates = data?.periodDates ?? null
+  const income = isProperty
+    ? (propertyData?.periodAmount ?? 0)
+    : (seData?.periodIncome.turnover ?? 0) + (seData?.periodIncome.other ?? 0)
+  const expenses = isProperty
+    ? (propertyData?.consolidatedExpenses ?? 0)
+    : (seData?.periodExpenses.consolidatedExpenses ?? 0)
+  const net = income - expenses
+  const canSubmit = !!data && data.source !== 'empty' && !!periodDates && !submitted
+  const breadcrumb = isProperty ? 'UK property cumulative submit' : 'Self-employment cumulative submit'
+  const confirmApiName = isProperty
+    ? 'Create or Amend a UK Property Cumulative Period Summary'
+    : 'Create or Amend a Self-Employment Cumulative Period Summary'
 
   const backToClient = () => {
     if (clientId) router.push(`/clients/detail?id=${encodeURIComponent(clientId)}`)
@@ -68,7 +89,11 @@ export default function QuarterlyReview() {
   useEffect(() => {
     if (!clientId || !businessId) {
       setLoading(false)
-      setError('Open this screen from a self-employment business on the client overview.')
+      setError(
+        isProperty
+          ? 'Open this screen from a UK property business on the client overview.'
+          : 'Open this screen from a self-employment business on the client overview.',
+      )
       return
     }
 
@@ -76,15 +101,19 @@ export default function QuarterlyReview() {
     setLoading(true)
     setError(null)
     setSubmitted(false)
+    setSeData(null)
+    setPropertyData(null)
 
-    Promise.all([
-      clientsService.getOne(clientId),
-      clientsService.getSeCumulative(clientId, businessId, taxYear),
-    ])
+    const summaryPromise = isProperty
+      ? clientsService.getUkPropertyCumulative(clientId, businessId, taxYear)
+      : clientsService.getSeCumulative(clientId, businessId, taxYear)
+
+    Promise.all([clientsService.getOne(clientId), summaryPromise])
       .then(([c, summary]) => {
         if (cancelled) return
         setClient(c)
-        setData(summary)
+        if (isProperty) setPropertyData(summary as UkPropertyCumulativeSummaryResponse)
+        else setSeData(summary as SeCumulativeSummaryResponse)
       })
       .catch((err: unknown) => {
         if (!cancelled) setError((err as Error)?.message ?? 'Failed to load cumulative figures.')
@@ -96,24 +125,34 @@ export default function QuarterlyReview() {
     return () => {
       cancelled = true
     }
-  }, [clientId, businessId, taxYear])
-
-  const canSubmit = !!data && data.source !== 'empty' && !!data.periodDates && !submitted
-  const income = (data?.periodIncome.turnover ?? 0) + (data?.periodIncome.other ?? 0)
-  const expenses = data?.periodExpenses.consolidatedExpenses ?? 0
-  const net = income - expenses
+  }, [clientId, businessId, taxYear, isProperty])
 
   async function handleSubmit() {
-    if (!clientId || !businessId || !data?.periodDates || submitting) return
+    if (!clientId || !businessId || !periodDates || submitting) return
     setSubmitting(true)
     setError(null)
     try {
-      const result = await clientsService.submitSeCumulative(clientId, businessId, taxYear, {
-        periodDates: data.periodDates,
-        periodIncome: data.periodIncome,
-        periodExpenses: data.periodExpenses,
-      })
-      setData(result)
+      if (isProperty && propertyData) {
+        const result = await clientsService.submitUkPropertyCumulative(
+          clientId,
+          businessId,
+          taxYear,
+          {
+            fromDate: periodDates.periodStartDate,
+            toDate: periodDates.periodEndDate,
+            periodAmount: propertyData.periodAmount,
+            consolidatedExpenses: propertyData.consolidatedExpenses,
+          },
+        )
+        setPropertyData(result)
+      } else if (seData) {
+        const result = await clientsService.submitSeCumulative(clientId, businessId, taxYear, {
+          periodDates,
+          periodIncome: seData.periodIncome,
+          periodExpenses: seData.periodExpenses,
+        })
+        setSeData(result)
+      }
       setSubmitted(true)
       setConfirming(false)
     } catch (err: unknown) {
@@ -146,7 +185,7 @@ export default function QuarterlyReview() {
           {client?.name ?? 'Client'}
         </button>
         <span style={{ color: B.xlight }}>/</span>
-        <span style={{ fontWeight: 600 }}>Self-employment cumulative submit</span>
+        <span style={{ fontWeight: 600 }}>{breadcrumb}</span>
       </div>
 
       <div style={{ padding: '20px 28px 32px', maxWidth: 720 }}>
@@ -156,9 +195,10 @@ export default function QuarterlyReview() {
         <div style={{ fontSize: 14, color: B.muted, marginTop: 4 }}>
           {client?.name ?? 'Client'}
           {data?.tradingName ? ` · ${data.tradingName}` : ''}
+          {isProperty ? ' · UK property' : ''}
           {` · Tax year ${taxYear}`}
-          {data?.periodDates
-            ? ` · ${fmtDate(data.periodDates.periodStartDate)} – ${fmtDate(data.periodDates.periodEndDate)}`
+          {periodDates
+            ? ` · ${fmtDate(periodDates.periodStartDate)} – ${fmtDate(periodDates.periodEndDate)}`
             : ''}
         </div>
 
@@ -197,7 +237,7 @@ export default function QuarterlyReview() {
                 }}
               >
                 No cumulative summary is on HMRC yet. These are sandbox test figures for the latest
-                completed quarter. Production will not invent figures — it will only submit retrieved
+                completed quarter. Production will not invent figures. It will only submit retrieved
                 digital records.
               </div>
             )}
@@ -214,7 +254,9 @@ export default function QuarterlyReview() {
                   color: B.amberText,
                 }}
               >
-                There are no HMRC or accounting figures to submit for this self-employment business.
+                {isProperty
+                  ? 'There are no HMRC or accounting figures to submit for this UK property business.'
+                  : 'There are no HMRC or accounting figures to submit for this self-employment business.'}
               </div>
             )}
 
@@ -237,9 +279,15 @@ export default function QuarterlyReview() {
               <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 10 }}>
                 Cumulative figures · {taxYear}
               </div>
-              <Row label="Turnover" value={fmtGbp(data.periodIncome.turnover)} />
-              <Row label="Other income" value={fmtGbp(data.periodIncome.other)} />
-              <Row label="Consolidated expenses" value={fmtGbp(data.periodExpenses.consolidatedExpenses)} />
+              {isProperty ? (
+                <Row label="Property income (rent)" value={fmtGbp(propertyData?.periodAmount ?? 0)} />
+              ) : (
+                <>
+                  <Row label="Turnover" value={fmtGbp(seData?.periodIncome.turnover ?? 0)} />
+                  <Row label="Other income" value={fmtGbp(seData?.periodIncome.other ?? 0)} />
+                </>
+              )}
+              <Row label="Consolidated expenses" value={fmtGbp(expenses)} />
               <Row
                 label="Net"
                 value={net < 0 ? `-${fmtGbp(Math.abs(net))}` : fmtGbp(net)}
@@ -282,7 +330,7 @@ export default function QuarterlyReview() {
         )}
       </div>
 
-      {confirming && data?.periodDates && (
+      {confirming && periodDates && (
         <div
           style={{
             position: 'fixed',
@@ -306,10 +354,9 @@ export default function QuarterlyReview() {
           >
             <div style={{ fontSize: 16, fontWeight: 700 }}>Submit to HMRC?</div>
             <p style={{ fontSize: 13, color: B.muted, lineHeight: 1.5 }}>
-              This will call Create or Amend a Self-Employment Cumulative Period Summary for{' '}
-              <b>{taxYear}</b> ({fmtDate(data.periodDates.periodStartDate)} –{' '}
-              {fmtDate(data.periodDates.periodEndDate)}). Income {fmtGbp(income)}, expenses{' '}
-              {fmtGbp(expenses)}.
+              This will call {confirmApiName} for <b>{taxYear}</b> (
+              {fmtDate(periodDates.periodStartDate)} – {fmtDate(periodDates.periodEndDate)}). Income{' '}
+              {fmtGbp(income)}, expenses {fmtGbp(expenses)}.
             </p>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 16 }}>
               <button

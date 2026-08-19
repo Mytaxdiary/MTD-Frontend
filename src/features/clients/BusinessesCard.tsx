@@ -304,6 +304,21 @@ function BusinessRow({
           </a>
         </div>
       )}
+      {isUkPropertyType(item.typeOfBusiness) && (
+        <div
+          style={{
+            padding: '0 14px 10px',
+            background: expanded ? B.surface : B.white,
+          }}
+        >
+          <a
+            href={`/quarterly-review?id=${encodeURIComponent(clientId)}&businessId=${encodeURIComponent(item.businessId)}&type=uk-property`}
+            style={{ fontSize: 12, fontWeight: 600, color: B.link, textDecoration: 'none' }}
+          >
+            Submit cumulative
+          </a>
+        </div>
+      )}
 
       {expanded && (
         <div style={{ padding: '0 14px 14px', background: B.surface }}>

@@ -342,6 +342,18 @@ export interface SubmittedFiguresResponse {
   businesses: IncomeSummaryBusiness[]
 }
 
+export interface UkPropertyCumulativeSummaryResponse {
+  taxYear: string
+  businessId: string
+  typeOfBusiness: string
+  tradingName?: string
+  source: 'hmrc' | 'sandbox-test' | 'empty'
+  periodDates: { periodStartDate: string; periodEndDate: string } | null
+  periodAmount: number
+  consolidatedExpenses: number
+  submittedOn?: string
+}
+
 export interface UkPropertyMoneyBlock {
   income?: Record<string, unknown>
   expenses?: Record<string, unknown>
@@ -641,6 +653,36 @@ export const clientsService = {
   ): Promise<SeCumulativeSummaryResponse> {
     const res = await apiClient.put<{ data: SeCumulativeSummaryResponse }>(
       `/clients/${id}/businesses/${encodeURIComponent(businessId)}/cumulative/${encodeURIComponent(taxYear)}`,
+      body,
+      { timeout: 30000 }
+    )
+    return res.data.data
+  },
+
+  async getUkPropertyCumulative(
+    id: string,
+    businessId: string,
+    taxYear: string
+  ): Promise<UkPropertyCumulativeSummaryResponse> {
+    const res = await apiClient.get<{ data: UkPropertyCumulativeSummaryResponse }>(
+      `/clients/${id}/businesses/${encodeURIComponent(businessId)}/property-cumulative/${encodeURIComponent(taxYear)}`
+    )
+    return res.data.data
+  },
+
+  async submitUkPropertyCumulative(
+    id: string,
+    businessId: string,
+    taxYear: string,
+    body: {
+      fromDate: string
+      toDate: string
+      periodAmount: number
+      consolidatedExpenses: number
+    }
+  ): Promise<UkPropertyCumulativeSummaryResponse> {
+    const res = await apiClient.put<{ data: UkPropertyCumulativeSummaryResponse }>(
+      `/clients/${id}/businesses/${encodeURIComponent(businessId)}/property-cumulative/${encodeURIComponent(taxYear)}`,
       body,
       { timeout: 30000 }
     )
