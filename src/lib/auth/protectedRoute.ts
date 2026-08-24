@@ -8,6 +8,7 @@ export const PUBLIC_ROUTES = [
   '/reset-password',
   '/check-email',
   '/verify-email',
+  '/accept-invite',
 ] as const
 
 export const DEFAULT_LOGIN_ROUTE = '/login'

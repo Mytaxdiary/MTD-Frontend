@@ -26,6 +26,16 @@ export interface ResetPasswordPayload {
 
 // ── Response types ─────────────────────────────────────────────────────────
 
+export interface StaffPermissions {
+  canAddClients: boolean
+  canChase: boolean
+  canViewLiabilities: boolean
+  canViewNotes: boolean
+  canManageTemplates: boolean
+  canViewSettings: boolean
+  canInviteStaff: boolean
+}
+
 export interface AuthUser {
   id: string
   name: string
@@ -33,6 +43,8 @@ export interface AuthUser {
   firmName: string
   isEmailVerified: boolean
   mfaEnabled?: boolean
+  role?: 'owner' | 'staff'
+  permissions?: StaffPermissions
 }
 
 export interface AuthTokens {

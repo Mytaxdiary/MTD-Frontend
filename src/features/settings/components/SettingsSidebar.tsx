@@ -16,7 +16,7 @@ const SECTIONS: { k: SectionKey; l: string; i: string }[] = [
   { k: 'hmrc', l: 'HMRC connection', i: '⟷' },
   { k: 'email', l: 'Email connection', i: '✉' },
   { k: 'sandbox-invitations', l: 'Sandbox invitations', i: '▤' },
-  { k: 'team', l: 'Team members', i: '☷' },
+  { k: 'team', l: 'Team', i: '☷' },
   { k: 'notifications', l: 'Notifications', i: '⊙' },
   { k: 'security', l: 'Security & 2FA', i: '⊛' },
   { k: 'billing', l: 'Plan & billing', i: '◇' },

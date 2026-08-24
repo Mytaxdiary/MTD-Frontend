@@ -30,6 +30,8 @@ export interface ClientRecord {
   authorisedAt?: string
   /** Persisted MTD pipeline status (pending-invite → … → submitted). */
   pipelineStatus?: PipelineStatus | string
+  /** Staff user this client is assigned to. Null when unassigned. */
+  assignedToUserId?: string | null
   createdAt: string
   /** Present on list responses — HMRC businesses with per-business chase stats */
   businesses?: ClientBusinessRow[]

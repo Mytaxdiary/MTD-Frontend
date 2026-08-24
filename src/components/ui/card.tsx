@@ -43,7 +43,10 @@ export function CardHeader({
           alignItems: 'center',
         }}
       >
-        <div style={{ fontSize: titleSize, fontWeight: 700 }}>{title}</div>
+        <div>
+          <div style={{ fontSize: titleSize, fontWeight: 700 }}>{title}</div>
+          {sub && <div style={{ fontSize: 13, color: B.muted, marginTop: 3 }}>{sub}</div>}
+        </div>
         {right}
       </div>
     )

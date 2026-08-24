@@ -6,6 +6,8 @@ const NO_RETRY_PATHS = [
   '/auth/forgot-password',
   '/auth/reset-password',
   '/auth/verify-email',
+  '/auth/staff-invite',
+  '/auth/accept-staff-invite',
 ] as const
 
 /** Match axios config.url against auth routes (relative or absolute). */
