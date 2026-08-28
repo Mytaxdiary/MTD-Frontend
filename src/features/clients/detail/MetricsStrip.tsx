@@ -8,6 +8,7 @@ interface Props {
   outstandingError?: boolean
   incomeSummary: IncomeSummaryResponse | null
   incomeSummaryLoading: boolean
+  showOutstanding?: boolean
 }
 
 function fmtGbp(n: number): string {
@@ -51,6 +52,7 @@ export default function MetricsStrip({
   outstandingError = false,
   incomeSummary,
   incomeSummaryLoading,
+  showOutstanding = true,
 }: Props) {
   const bissState = bissStateOf(authorised, incomeSummaryLoading, incomeSummary)
   const outstandingColor = outstandingBalance != null && outstandingBalance > 0 ? B.red : B.green
@@ -122,25 +124,32 @@ export default function MetricsStrip({
       accentColor: bissState === 'loaded' ? B.text : B.light,
       loading: bissState === 'loading',
     },
-    {
-      label: 'Outstanding to HMRC',
-      value: outstandingBalance != null ? fmtGbp(outstandingBalance) : 'N/A',
-      sub:
-        outstandingError
-          ? 'Could not load - HMRC unavailable'
-          : outstandingLoading
-            ? 'Authorised - loading...'
-            : outstandingBalance == null
-              ? authorised
-                ? 'No reliable balance from HMRC'
-                : 'Authorise client to load'
-              : outstandingBalance > 0
-                ? 'Payment due'
-                : 'All clear',
-      color: outstandingError ? B.amber : outstandingBalance != null ? outstandingColor : B.light,
-      accentColor: outstandingBalance != null ? B.text : B.light,
-      loading: outstandingLoading,
-    },
+    ...(showOutstanding
+      ? [
+          {
+            label: 'Outstanding to HMRC',
+            value: outstandingBalance != null ? fmtGbp(outstandingBalance) : 'N/A',
+            sub: outstandingError
+              ? 'Could not load - HMRC unavailable'
+              : outstandingLoading
+                ? 'Authorised - loading...'
+                : outstandingBalance == null
+                  ? authorised
+                    ? 'No reliable balance from HMRC'
+                    : 'Authorise client to load'
+                  : outstandingBalance > 0
+                    ? 'Payment due'
+                    : 'All clear',
+            color: outstandingError
+              ? B.amber
+              : outstandingBalance != null
+                ? outstandingColor
+                : B.light,
+            accentColor: outstandingBalance != null ? B.text : B.light,
+            loading: outstandingLoading,
+          },
+        ]
+      : []),
   ]
 
   return (

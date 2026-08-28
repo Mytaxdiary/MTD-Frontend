@@ -1,6 +1,10 @@
+'use client'
 import B from '@/styles/theme'
 import type { BusinessListItem, ClientRecord } from '@/services/clients.service'
 import axiosClient from '@/lib/api/axiosClient'
+import { useAssignableStaff } from '@/features/clients/useAssignableStaff'
+import AssigneeSelect from '@/features/clients/AssigneeSelect'
+import { usePermissions } from '@/hooks/usePermissions'
 
 function clientInitials(name: string): string {
   return name
@@ -12,7 +16,7 @@ function clientInitials(name: string): string {
     .toUpperCase()
 }
 
-const TABS = ['overview', 'liabilities', 'chasing', 'notes'] as const
+const ALL_TABS = ['overview', 'liabilities', 'chasing', 'notes'] as const
 
 interface Props {
   client: ClientRecord | null
@@ -25,6 +29,7 @@ interface Props {
   previewLoading: boolean
   setPreviewLoading: (v: boolean) => void
   onMessageClick: () => void
+  onAssigned?: (assignedToUserId: string | null) => void
 }
 
 export default function ClientDetailHeader({
@@ -38,8 +43,17 @@ export default function ClientDetailHeader({
   previewLoading,
   setPreviewLoading,
   onMessageClick,
+  onAssigned,
 }: Props) {
+  const { isOwner, isStaff, people } = useAssignableStaff()
+  const { canChase, canViewLiabilities, canViewNotes } = usePermissions()
   const displayName = client?.name ?? ''
+  const tabs = ALL_TABS.filter((tab) => {
+    if (tab === 'liabilities') return canViewLiabilities
+    if (tab === 'chasing') return canChase
+    if (tab === 'notes') return canViewNotes
+    return true
+  })
 
   const handlePreview = async () => {
     if (!clientId) return
@@ -159,42 +173,80 @@ export default function ClientDetailHeader({
               >
                 Main agent
               </span>
+              {isOwner && client && (
+                <label
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    fontSize: 12,
+                    color: B.muted,
+                  }}
+                >
+                  Assigned to
+                  <AssigneeSelect
+                    clientId={client.id}
+                    assignedToUserId={client.assignedToUserId}
+                    people={people}
+                    onAssigned={(id) => onAssigned?.(id)}
+                  />
+                </label>
+              )}
+              {isStaff && (
+                <span
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 600,
+                    padding: '2px 10px',
+                    borderRadius: 20,
+                    background: B.surface,
+                    color: B.muted,
+                    border: `1px solid ${B.borderLight}`,
+                  }}
+                >
+                  Assigned to you
+                </span>
+              )}
             </div>}
           </div>
         </div>
 
         {/* Action buttons */}
         <div style={{ display: 'flex', gap: 8 }}>
-          <button
-            onClick={() => setActiveTab('chasing')}
-            style={{
-              padding: '8px 16px',
-              borderRadius: 8,
-              border: `1px solid ${B.border}`,
-              background: B.white,
-              fontSize: 12,
-              fontWeight: 500,
-              cursor: 'pointer',
-              color: B.text,
-            }}
-          >
-            Chase client
-          </button>
-          <button
-            onClick={onMessageClick}
-            style={{
-              padding: '8px 16px',
-              borderRadius: 8,
-              border: `1px solid ${B.border}`,
-              background: B.white,
-              fontSize: 12,
-              fontWeight: 500,
-              cursor: 'pointer',
-              color: B.text,
-            }}
-          >
-            Message client
-          </button>
+          {canChase && (
+            <button
+              onClick={() => setActiveTab('chasing')}
+              style={{
+                padding: '8px 16px',
+                borderRadius: 8,
+                border: `1px solid ${B.border}`,
+                background: B.white,
+                fontSize: 12,
+                fontWeight: 500,
+                cursor: 'pointer',
+                color: B.text,
+              }}
+            >
+              Chase client
+            </button>
+          )}
+          {canChase && (
+            <button
+              onClick={onMessageClick}
+              style={{
+                padding: '8px 16px',
+                borderRadius: 8,
+                border: `1px solid ${B.border}`,
+                background: B.white,
+                fontSize: 12,
+                fontWeight: 500,
+                cursor: 'pointer',
+                color: B.text,
+              }}
+            >
+              Message client
+            </button>
+          )}
           <button
             disabled={previewLoading || !clientId}
             onClick={handlePreview}
@@ -217,7 +269,7 @@ export default function ClientDetailHeader({
 
       {/* Tab bar */}
       <div style={{ display: 'flex', gap: 0, marginTop: 20 }}>
-        {TABS.map((tab) => (
+        {tabs.map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}

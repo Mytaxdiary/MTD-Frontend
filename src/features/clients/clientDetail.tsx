@@ -11,6 +11,8 @@ import { sanitizeHmrcAmount } from '@/lib/hmrc/liabilityLabel'
 import LiabilitiesTab from '@/features/clients/LiabilitiesTab'
 import ChasingTab from '@/features/clients/ChasingTab'
 import NotesTab from '@/features/clients/NotesTab'
+import { useCurrentUser } from '@/components/auth/CurrentUserProvider'
+import { usePermissions } from '@/hooks/usePermissions'
 
 import ClientDetailBreadcrumb from './detail/Breadcrumb'
 import ClientDetailHeader from './detail/Header'
@@ -25,6 +27,8 @@ export default function ClientDetail({
   clientId?: string | null
   navigate?: (route: string) => void
 }) {
+  const { user } = useCurrentUser()
+  const { canChase, canViewLiabilities, canViewNotes } = usePermissions()
   const [activeTab, setActiveTab] = useState('overview')
   const [client, setClient] = useState<ClientRecord | null>(null)
   const [clientLoading, setClientLoading] = useState(!!clientId)
@@ -53,13 +57,24 @@ export default function ClientDetail({
     setFirstBusiness(null)
     clientsService
       .getOne(clientId)
-      .then(setClient)
+      .then((record) => {
+        if (
+          user?.role === 'staff' &&
+          record.assignedToUserId &&
+          record.assignedToUserId !== user.id
+        ) {
+          setClient(null)
+          setClientError('Client not found')
+          return
+        }
+        setClient(record)
+      })
       .catch((err: unknown) => {
         setClientError((err as Error)?.message ?? 'Failed to load client.')
         setClient(null)
       })
       .finally(() => setClientLoading(false))
-  }, [clientId])
+  }, [clientId, user?.id, user?.role])
 
   const fetchOutstanding = useCallback(async (id: string) => {
     setOutstandingLoading(true)
@@ -89,7 +104,12 @@ export default function ClientDetail({
 
   useEffect(() => {
     if (client?.authorisedAt) {
-      void fetchOutstanding(client.id)
+      if (canViewLiabilities) void fetchOutstanding(client.id)
+      else {
+        setOutstandingBalance(null)
+        setOutstandingLoading(false)
+        setOutstandingError(false)
+      }
       void fetchIncomeSummary(client.id)
     } else {
       setOutstandingBalance(null)
@@ -97,7 +117,13 @@ export default function ClientDetail({
       setOutstandingError(false)
       setIncomeSummary(null)
     }
-  }, [client?.id, client?.authorisedAt, fetchOutstanding, fetchIncomeSummary])
+  }, [client?.id, client?.authorisedAt, fetchOutstanding, fetchIncomeSummary, canViewLiabilities])
+
+  useEffect(() => {
+    if (activeTab === 'liabilities' && !canViewLiabilities) setActiveTab('overview')
+    if (activeTab === 'notes' && !canViewNotes) setActiveTab('overview')
+    if (activeTab === 'chasing' && !canChase) setActiveTab('overview')
+  }, [activeTab, canViewLiabilities, canViewNotes, canChase])
 
   // ── Derived display values ──────────────────────────────────────────────────
 
@@ -130,6 +156,9 @@ export default function ClientDetail({
         previewLoading={previewLoading}
         setPreviewLoading={setPreviewLoading}
         onMessageClick={() => setShowMsgModal(true)}
+        onAssigned={(assignedToUserId) =>
+          setClient((prev) => (prev ? { ...prev, assignedToUserId } : prev))
+        }
       />
 
       <div style={{ padding: '18px 28px', flex: 1 }}>
@@ -140,6 +169,7 @@ export default function ClientDetail({
           outstandingError={outstandingError}
           incomeSummary={incomeSummary}
           incomeSummaryLoading={incomeSummaryLoading}
+          showOutstanding={canViewLiabilities}
         />
 
         {clientError && !client && (
@@ -203,11 +233,11 @@ export default function ClientDetail({
           />
         )}
 
-        {!clientError && activeTab === 'liabilities' && client && (
+        {!clientError && activeTab === 'liabilities' && canViewLiabilities && client && (
           <LiabilitiesTab client={client} />
         )}
 
-        {!clientError && activeTab === 'liabilities' && !client && (
+        {!clientError && activeTab === 'liabilities' && canViewLiabilities && !client && (
           <div
             style={{
               padding: '10px 12px',
@@ -222,17 +252,19 @@ export default function ClientDetail({
           </div>
         )}
 
-        {!clientError && activeTab === 'chasing' && <ChasingTab clientId={clientId} />}
+        {!clientError && activeTab === 'chasing' && canChase && <ChasingTab clientId={clientId} />}
 
-        {!clientError && activeTab === 'notes' && <NotesTab clientId={clientId} />}
+        {!clientError && activeTab === 'notes' && canViewNotes && <NotesTab clientId={clientId} />}
       </div>
 
-      <MessageModal
-        show={showMsgModal}
-        onClose={() => setShowMsgModal(false)}
-        clientId={clientId}
-        clientName={client?.name ?? 'client'}
-      />
+      {canChase && (
+        <MessageModal
+          show={showMsgModal}
+          onClose={() => setShowMsgModal(false)}
+          clientId={clientId}
+          clientName={client?.name ?? 'client'}
+        />
+      )}
     </div>
   )
 }

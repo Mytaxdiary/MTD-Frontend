@@ -444,6 +444,13 @@ export const clientsService = {
     return res.data.data
   },
 
+  async assign(id: string, assignedToUserId: string | null): Promise<ClientRecord> {
+    const res = await apiClient.patch<{ data: ClientRecord }>(`/clients/${id}/assignment`, {
+      assignedToUserId,
+    })
+    return res.data.data
+  },
+
   async checkInvitationStatus(id: string): Promise<ClientRecord> {
     const res = await apiClient.get<{ data: ClientRecord }>(`/clients/${id}/invitation-status`)
     return res.data.data

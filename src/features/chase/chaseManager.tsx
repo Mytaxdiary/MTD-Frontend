@@ -13,6 +13,7 @@ import {
   type ChaseClientRecord,
 } from '@/services/chase.service'
 import { useCurrentUser } from '@/components/auth/CurrentUserProvider'
+import { usePermissions } from '@/hooks/usePermissions'
 import InfoTooltip from '@/components/ui/InfoTooltip'
 import { emailConnectionService } from '@/services/email-connection.service'
 import B from '@/styles/theme'
@@ -81,6 +82,7 @@ export default function ChaseManager({
   navigate?: (route: string) => void
 }) {
   const { user } = useCurrentUser()
+  const { canManageTemplates } = usePermissions()
   const router = useRouter()
   const searchParams = useSearchParams()
   const preselectApplied = useRef(false)
@@ -462,7 +464,7 @@ export default function ChaseManager({
               ? 'Loading clients...'
               : clientsError
                 ? clientsError
-                : `${totalClients} authorised client${totalClients === 1 ? '' : 's'} (page ${page}/${totalPages}): ${overdueClients.length} overdue, ${upcomingClients.length} in chase window, ${notStartedClients.length} upcoming · ${chaseClients.length} open period row${chaseClients.length === 1 ? '' : 's'}`}
+                : `${totalClients} authorised client${totalClients === 1 ? '' : 's'}${user?.role === 'staff' ? ' assigned to you' : ''} (page ${page}/${totalPages}): ${overdueClients.length} overdue, ${upcomingClients.length} in chase window, ${notStartedClients.length} upcoming · ${chaseClients.length} open period row${chaseClients.length === 1 ? '' : 's'}`}
           </div>
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
@@ -709,7 +711,9 @@ export default function ChaseManager({
                 }}
               >
                 {totalClients === 0
-                  ? 'No authorised clients yet. Add and authorise clients to start chasing.'
+                  ? user?.role === 'staff'
+                    ? 'No authorised clients assigned to you yet.'
+                    : 'No authorised clients yet. Add and authorise clients to start chasing.'
                   : 'No open periods on this page for the current filters. Filed quarters are hidden.'}
               </div>
             )}
@@ -835,11 +839,15 @@ export default function ChaseManager({
                   <span style={{ fontSize: 16, fontWeight: 700 }}>Chase templates</span>
                   <InfoTooltip label="What are chase templates?" align="left" width={320}>
                     Chase templates are reusable email messages for clients whose records or data are
-                    outstanding. Pick a template here, tick the clients on the left, then send. You can
-                    create, edit and delete templates, and use variables such as {'{name}'} or{' '}
+                    outstanding. Pick a template here, tick the clients on the left, then send.
+                    {canManageTemplates
+                      ? ' You can create, edit and delete templates, and use variables such as '
+                      : ' Use variables such as '}
+                    {'{name}'} or{' '}
                     {'{deadline}'} that are filled in per client.
                   </InfoTooltip>
                 </div>
+                {canManageTemplates && (
                 <button
                   onClick={openNew}
                   style={{
@@ -856,6 +864,7 @@ export default function ChaseManager({
                 >
                   + New template
                 </button>
+                )}
               </div>
 
               <div style={{ padding: '10px 12px' }}>
@@ -912,6 +921,7 @@ export default function ChaseManager({
                           </div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                             <TypeBadge type={t.type} />
+                            {canManageTemplates && (
                             <button
                               onClick={(e) => {
                                 e.stopPropagation()
@@ -933,6 +943,7 @@ export default function ChaseManager({
                             >
                               ✕
                             </button>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -992,7 +1003,7 @@ export default function ChaseManager({
                   )}
                 </div>
                 <div style={{ display: 'flex', gap: 6 }}>
-                  {!editMode && currentTemplate && (
+                  {!editMode && currentTemplate && canManageTemplates && (
                     <button
                       onClick={() => openEdit(currentTemplate)}
                       style={{

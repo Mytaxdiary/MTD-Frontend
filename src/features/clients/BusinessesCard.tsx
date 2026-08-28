@@ -11,6 +11,7 @@ import {
   type UkPropertyFiguresResponse,
   type UkPropertyMoneyBlock,
 } from '@/services/clients.service'
+import { usePermissions } from '@/hooks/usePermissions'
 
 const outlineBtn: React.CSSProperties = {
   padding: '7px 14px',
@@ -379,6 +380,7 @@ export default function BusinessesCard({
   onFirstBusiness?: (b: BusinessListItem | null) => void
   onBusinesses?: (list: BusinessListItem[]) => void
 }) {
+  const { canAddClients } = usePermissions()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [businesses, setBusinesses] = useState<BusinessListItem[]>([])
@@ -548,7 +550,7 @@ export default function BusinessesCard({
             marginBottom: 12,
           }}
         >
-          {canFetch && needsSandboxBusiness && (
+          {canFetch && needsSandboxBusiness && canAddClients && (
             <button
               type="button"
               style={{

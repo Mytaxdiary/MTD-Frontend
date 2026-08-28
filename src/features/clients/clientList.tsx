@@ -4,12 +4,11 @@ import { useRouter } from 'next/navigation'
 import { clientsService, type ClientRecord } from '@/services/clients.service'
 import TypePills from '@/components/common/typePills'
 import B from '@/styles/theme'
-import {
-  downloadCsv,
-  printPdf,
-  type ColKeys,
-  type ClientListRow,
-} from '@/features/clients/clientListExport'
+import { downloadCsv, printPdf, type ColKeys, type ClientListRow } from '@/features/clients/clientListExport'
+import { useCurrentUser } from '@/components/auth/CurrentUserProvider'
+import { usePermissions } from '@/hooks/usePermissions'
+import { useAssignableStaff } from '@/features/clients/useAssignableStaff'
+import AssigneeSelect from '@/features/clients/AssigneeSelect'
 
 function apiErrorMessage(err: unknown): string {
   const msg = (err as { message?: string })?.message
@@ -70,6 +69,7 @@ function mapToRows(c: ClientRecord): ClientListRow[] {
         income: 0,
         needsResend,
         chaseCount: 0,
+        assignedToUserId: c.assignedToUserId ?? null,
       },
     ]
   }
@@ -89,10 +89,11 @@ function mapToRows(c: ClientRecord): ClientListRow[] {
       filing: chased ? 'chased' : baseFiling,
       chase: needsResend ? 'resend' : chased ? 'chased' : '',
       agentType: c.agentType,
-      income: 0,
-      needsResend,
-      chaseCount: b.chaseCount ?? 0,
-    }
+        income: 0,
+        needsResend,
+        chaseCount: b.chaseCount ?? 0,
+        assignedToUserId: c.assignedToUserId ?? null,
+      }
   })
 }
 
@@ -156,6 +157,9 @@ export default function ClientList({
   navigate?: (route: string) => void
 }) {
   const router = useRouter()
+  const { user } = useCurrentUser()
+  const { isStaff, isOwner, canAddClients, canChase } = usePermissions()
+  const { people } = useAssignableStaff()
 
   // Server-driven state
   const [clients, setClients] = useState<ClientListRow[]>([])
@@ -195,7 +199,12 @@ export default function ClientList({
         agentType: agentType !== 'all' ? agentType : undefined,
       })
       .then((res) => {
-        setClients(res.clients.flatMap(mapToRows))
+        const rows = res.clients.flatMap(mapToRows)
+        setClients(
+          isStaff
+            ? rows.filter((row) => !row.assignedToUserId || row.assignedToUserId === user?.id)
+            : rows,
+        )
         setTotal(res.total)
         setTotalPages(res.totalPages)
         setPage(res.page)
@@ -214,7 +223,7 @@ export default function ClientList({
         )
       })
       .finally(() => setClientsLoading(false))
-  }, [])
+  }, [isStaff, user?.id])
 
   // Initial load
   useEffect(() => {
@@ -240,6 +249,12 @@ export default function ClientList({
       setSearch(val)
       loadPage(1, statusFilter, val, agentTypeFilter)
     }, 400)
+  }
+
+  const applyAssignment = (clientId: string, assignedToUserId: string | null) => {
+    setClients((rows) =>
+      rows.map((row) => (row.id === clientId ? { ...row, assignedToUserId } : row)),
+    )
   }
 
   const reloadCurrent = () => loadPage(page, statusFilter, search, agentTypeFilter)
@@ -347,9 +362,12 @@ export default function ClientList({
           <div style={{ fontSize: 15, color: B.muted, marginTop: 3 }}>
             {clientsLoading
               ? 'Loading...'
-              : `${total} client${total !== 1 ? 's' : ''} · Page ${page} of ${totalPages}`}
+              : isStaff
+                ? `${total} assigned client${total !== 1 ? 's' : ''} · Page ${page} of ${totalPages}`
+                : `${total} client${total !== 1 ? 's' : ''} · Page ${page} of ${totalPages}`}
           </div>
         </div>
+        {canAddClients && (
         <button
           onClick={() => navigate('add-client')}
           style={{
@@ -365,6 +383,7 @@ export default function ClientList({
         >
           + Add client
         </button>
+        )}
       </div>
 
       <div style={{ padding: '18px 28px', flex: 1 }}>
@@ -445,7 +464,7 @@ export default function ClientList({
             <option value="supporting">Supporting</option>
           </select>
           <div style={{ marginLeft: 'auto', display: 'flex', gap: 6, alignItems: 'center' }}>
-            {selected.size > 0 && (
+            {selected.size > 0 && canChase && (
               <>
                 <span style={{ fontSize: 13, color: B.muted }}>{selected.size} selected</span>
                 <button
@@ -588,6 +607,7 @@ export default function ClientList({
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
             <thead>
               <tr style={{ borderBottom: `2px solid ${B.border}`, background: B.surface }}>
+                {canChase && (
                 <th style={{ padding: '11px 16px', width: 36 }}>
                   <input
                     type="checkbox"
@@ -596,6 +616,7 @@ export default function ClientList({
                     style={{ cursor: 'pointer', accentColor: B.primary }}
                   />
                 </th>
+                )}
                 <th
                   onClick={() => toggleSort('name')}
                   style={{
@@ -704,6 +725,20 @@ export default function ClientList({
                     Chase
                   </th>
                 )}
+                {isOwner && (
+                  <th
+                    style={{
+                      padding: '11px 14px',
+                      textAlign: 'left',
+                      fontSize: 12,
+                      fontWeight: 700,
+                      color: B.muted,
+                      textTransform: 'uppercase' as const,
+                    }}
+                  >
+                    Assigned to
+                  </th>
+                )}
                 {cols.income && (
                   <th
                     onClick={() => toggleSort('income')}
@@ -766,7 +801,11 @@ export default function ClientList({
                     colSpan={10}
                     style={{ padding: '28px', textAlign: 'center', fontSize: 14, color: B.light }}
                   >
-                    No clients yet. Click &ldquo;+ Add client&rdquo; to invite your first client.
+                    {isStaff
+                      ? 'No clients assigned to you yet.'
+                      : canAddClients
+                        ? 'No clients yet. Click “+ Add client” to invite your first client.'
+                        : 'No clients yet.'}
                   </td>
                 </tr>
               )}
@@ -785,6 +824,7 @@ export default function ClientList({
                       cursor: 'pointer',
                     }}
                   >
+                    {canChase && (
                     <td style={{ padding: '11px 16px' }}>
                       <input
                         type="checkbox"
@@ -794,6 +834,7 @@ export default function ClientList({
                         style={{ cursor: 'pointer', accentColor: B.primary }}
                       />
                     </td>
+                    )}
                     <td style={{ padding: '11px 14px' }}>
                       <div style={{ fontWeight: 600, fontSize: 14 }}>{c.name}</div>
                       <div style={{ fontSize: 12, color: B.light, marginTop: 2 }}>{c.nino}</div>
@@ -836,6 +877,7 @@ export default function ClientList({
                     {cols.chase && (
                       <td style={{ padding: '11px 14px' }} onClick={(e) => e.stopPropagation()}>
                         {c.needsResend ? (
+                          canAddClients ? (
                           <button
                             type="button"
                             disabled={resendingId === c.id}
@@ -854,6 +896,9 @@ export default function ClientList({
                           >
                             {resendingId === c.id ? 'Sending...' : 'Resend invite'}
                           </button>
+                          ) : (
+                          <span style={{ fontSize: 13, color: B.muted }}>Invite pending</span>
+                          )
                         ) : c.chaseCount > 0 ? (
                           <span style={{ fontSize: 13, color: B.blueText, fontWeight: 600 }}>
                             Chased ({c.chaseCount})
@@ -861,6 +906,17 @@ export default function ClientList({
                         ) : (
                           <span style={{ fontSize: 13, color: B.muted }}>No action</span>
                         )}
+                      </td>
+                    )}
+                    {isOwner && (
+                      <td style={{ padding: '11px 14px' }} onClick={(e) => e.stopPropagation()}>
+                        <AssigneeSelect
+                          compact
+                          clientId={c.id}
+                          assignedToUserId={c.assignedToUserId}
+                          people={people}
+                          onAssigned={(id) => applyAssignment(c.id, id)}
+                        />
                       </td>
                     )}
                     {cols.income && (
@@ -893,7 +949,9 @@ export default function ClientList({
           >
             <span>
               {total === 0
-                ? 'No clients'
+                ? isStaff
+                  ? 'No assigned clients'
+                  : 'No clients'
                 : `Showing ${(page - 1) * PAGE_SIZE + 1}–${Math.min(page * PAGE_SIZE, total)} of ${total} client${total !== 1 ? 's' : ''}`}
             </span>
             {cols.income && (

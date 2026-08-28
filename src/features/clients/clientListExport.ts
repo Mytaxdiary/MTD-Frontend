@@ -26,6 +26,7 @@ export type ClientListRow = {
   income: number
   needsResend: boolean
   chaseCount: number
+  assignedToUserId?: string | null
 }
 
 // ── CSV ───────────────────────────────────────────────────────────────────────

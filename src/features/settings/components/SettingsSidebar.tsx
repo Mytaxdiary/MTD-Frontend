@@ -1,3 +1,4 @@
+'use client'
 import B from '@/styles/theme'
 
 export type SectionKey =
@@ -11,7 +12,7 @@ export type SectionKey =
   | 'billing'
   | 'data-privacy'
 
-const SECTIONS: { k: SectionKey; l: string; i: string }[] = [
+export const SETTINGS_NAV: { k: SectionKey; l: string; i: string }[] = [
   { k: 'firm', l: 'Firm details', i: '⊡' },
   { k: 'hmrc', l: 'HMRC connection', i: '⟷' },
   { k: 'email', l: 'Email connection', i: '✉' },
@@ -26,16 +27,21 @@ const SECTIONS: { k: SectionKey; l: string; i: string }[] = [
 interface Props {
   active: SectionKey
   onChange: (k: SectionKey) => void
+  sections?: { k: SectionKey; l: string; i: string }[]
 }
 
 // WCAG 4.1.2 — use <button> so items are keyboard-reachable (Tab + Enter/Space).
 // WCAG 1.4.3 — active text: B.text (#0F172A) on B.white (#FFFFFF) → 19.1:1 ✓
 //              inactive text: B.muted (#64748B) on transparent/surface → 4.6:1 ✓
-export default function SettingsSidebar({ active, onChange }: Props) {
+export default function SettingsSidebar({
+  active,
+  onChange,
+  sections = SETTINGS_NAV,
+}: Props) {
   return (
     <nav aria-label="Settings navigation">
       <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        {SECTIONS.map((s) => (
+        {sections.map((s) => (
           <button
             key={s.k}
             type="button"

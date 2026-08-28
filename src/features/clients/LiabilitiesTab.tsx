@@ -18,6 +18,7 @@ import {
   type HmrcPayment,
 } from '@/services/clients.service'
 import MessageModal from '@/features/clients/detail/MessageModal'
+import { usePermissions } from '@/hooks/usePermissions'
 
 const outlineBtn: React.CSSProperties = {
   padding: '7px 14px',
@@ -163,6 +164,7 @@ function buildPaymentDetailsMessage(
 }
 
 export default function LiabilitiesTab({ client }: Props) {
+  const { canChase } = usePermissions()
   const [liabLoading, setLiabLoading] = useState(false)
   const [liabError, setLiabError] = useState<string | null>(null)
   const [onlyOpen, setOnlyOpen] = useState(false)
@@ -781,6 +783,7 @@ export default function LiabilitiesTab({ client }: Props) {
             </div>
           </div>
         </Card>
+        {canChase && (
         <Card>
           <CardHeader title="Send to client" />
           <div style={{ padding: '14px 20px' }}>
@@ -806,8 +809,10 @@ export default function LiabilitiesTab({ client }: Props) {
             </button>
           </div>
         </Card>
+        )}
       </div>
 
+      {canChase && (
       <MessageModal
         show={showMsgModal}
         onClose={() => setShowMsgModal(false)}
@@ -816,6 +821,7 @@ export default function LiabilitiesTab({ client }: Props) {
         initialSubject={paymentMsg.subject}
         initialBody={paymentMsg.body}
       />
+      )}
     </div>
   )
 }

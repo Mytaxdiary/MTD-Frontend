@@ -5,6 +5,7 @@ import { PATH_ACTIVE_MAP, ROUTE_PATHS } from '@/config/routes'
 import B from '@/styles/theme'
 import { useAuth } from '@/hooks/useAuth'
 import { useCurrentUser, userInitials } from '@/components/auth/CurrentUserProvider'
+import { usePermissions } from '@/hooks/usePermissions'
 import NotificationBell from '@/components/ui/NotificationBell'
 import BrandLogo from '@/components/ui/BrandLogo'
 import {
@@ -172,6 +173,7 @@ export default function AppSidebar({ overdueCount = 2 }: { overdueCount?: number
   const pathname = usePathname()
   const { logout } = useAuth()
   const { user, loading } = useCurrentUser()
+  const { canAddClients, canChase, canViewSettings } = usePermissions()
 
   const active = PATH_ACTIVE_MAP[pathname] ?? 'dashboard'
   const go = (key: string) => router.push(ROUTE_PATHS[key] ?? `/${key}`)
@@ -227,30 +229,40 @@ export default function AppSidebar({ overdueCount = 2 }: { overdueCount?: number
               icon={<UsersIcon />}
               onClick={() => go('clients')}
             />
-            <NavItem
-              label="Chase manager"
-              active={active === 'chase'}
-              icon={<SendIcon />}
-              count={overdueCount}
-              onClick={() => go('chase')}
-            />
+            {canChase && (
+              <NavItem
+                label="Chase manager"
+                active={active === 'chase'}
+                icon={<SendIcon />}
+                count={overdueCount}
+                onClick={() => go('chase')}
+              />
+            )}
           </div>
 
           <div role="group" aria-label="Manage" style={{ marginTop: 26 }}>
             <SectionLabel>MANAGE</SectionLabel>
-            <NavItem
-              label="Add client"
-              active={active === 'add-client'}
-              icon={<PlusCircleIcon />}
-              onClick={() => go('add-client')}
-            />
+            {canAddClients && (
+              <NavItem
+                label="Add client"
+                active={active === 'add-client'}
+                icon={<PlusCircleIcon />}
+                onClick={() => go('add-client')}
+              />
+            )}
             <NavItem
               label="Settings"
               active={active === 'settings'}
               icon={<SettingsIcon />}
               onClick={() => go('settings')}
             />
-            <NavItem label="HMRC connection" icon={<LinkIcon />} onClick={() => go('settings')} />
+            {canViewSettings && (
+              <NavItem
+                label="HMRC connection"
+                icon={<LinkIcon />}
+                onClick={() => router.push('/settings?section=hmrc')}
+              />
+            )}
           </div>
         </div>
 

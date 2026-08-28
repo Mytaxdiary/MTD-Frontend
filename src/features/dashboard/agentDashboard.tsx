@@ -5,6 +5,7 @@ import TypePills from '@/components/common/typePills'
 import { matchesTypeFilter } from '@/lib/helpers/clientType'
 import B from '@/styles/theme'
 import { useCurrentUser, firstName } from '@/components/auth/CurrentUserProvider'
+import { usePermissions } from '@/hooks/usePermissions'
 import dashboardService, {
   type DashboardClientRow,
   type DashboardSummary,
@@ -270,6 +271,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
   const [loading, setLoading] = useState(true)
 
   const { user } = useCurrentUser()
+  const { isStaff, canAddClients, canChase } = usePermissions()
   const greetingName = firstName(user?.name) || 'there'
 
   const loadSummary = useCallback(async () => {
@@ -347,6 +349,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
           </div>
         </div>
         <div style={{ display: 'flex', gap: 10, flexShrink: 0 }}>
+          {canAddClients && (
           <button
             onClick={() => navigate('add-client')}
             style={{
@@ -368,6 +371,8 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
             <PlusIcon />
             Add client
           </button>
+          )}
+          {canChase && (
           <button
             onClick={() => navigate('chase')}
             style={{
@@ -387,8 +392,9 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
             }}
           >
             <SendIcon size={15} />
-            Chase all overdue
+            Chase {isStaff ? 'overdue' : 'all overdue'}
           </button>
+          )}
         </div>
       </div>
 
@@ -497,7 +503,11 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
               </FilterSelect>
             )}
             <span style={{ fontSize: 13, color: B.light, marginLeft: 4 }}>
-              {loading ? 'Loading...' : `${filtered.length} of ${clients.length}`}
+              {loading
+                ? 'Loading...'
+                : isStaff
+                  ? `${filtered.length} assigned client${filtered.length !== 1 ? 's' : ''}`
+                  : `${filtered.length} of ${clients.length}`}
             </span>
           </div>
           <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
@@ -623,11 +633,16 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                               marginTop: 10,
                             }}
                           >
-                            No clients match the current filter.
+                            {clients.length === 0 && isStaff
+                              ? 'No clients assigned to you yet.'
+                              : 'No clients match the current filter.'}
                           </div>
                           <div style={{ fontSize: 13.5, color: B.muted, marginTop: 6 }}>
-                            Try adjusting your filters or add a new client to get started.
+                            {isStaff
+                              ? 'Try adjusting your filters, or wait until a client is assigned to you.'
+                              : 'Try adjusting your filters or add a new client to get started.'}
                           </div>
+                          {canAddClients && (
                           <button
                             onClick={() => navigate('add-client')}
                             style={{
@@ -650,6 +665,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                             <PlusIcon />
                             Add your first client
                           </button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -691,7 +707,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                           <span style={{ color: B.muted, fontSize: 13 }}>{c.chase}</span>
                         </td>
                         <td style={{ padding: '12px 16px' }}>
-                          {pipelineOf(c) === 'pending-invite' && (
+                          {canAddClients && pipelineOf(c) === 'pending-invite' && (
                             <button
                               style={{
                                 padding: '5px 14px',
@@ -710,7 +726,8 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                               Resend
                             </button>
                           )}
-                          {(pipelineOf(c) === 'not-started' || pipelineOf(c) === 'chased') && (
+                          {canChase &&
+                            (pipelineOf(c) === 'not-started' || pipelineOf(c) === 'chased') && (
                             <button
                               style={{
                                 padding: '5px 14px',
