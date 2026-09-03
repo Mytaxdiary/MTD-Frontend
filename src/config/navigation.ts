@@ -24,6 +24,7 @@ export const NAV_SECTIONS: { main: NavItemConfig[]; manage: NavItemConfig[] } = 
   ],
   manage: [
     { label: 'Add client', icon: '+', route: 'add-client', activeOn: ['add-client'] },
+    { label: 'Invite client', icon: '✉', route: 'invite-client', activeOn: ['invite-client'] },
     { label: 'Settings', icon: '⚙', route: 'settings', activeOn: ['settings'] },
     { label: 'HMRC connection', icon: '⟷', route: 'settings', activeOn: [] },
   ],

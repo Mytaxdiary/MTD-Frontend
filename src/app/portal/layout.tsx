@@ -5,7 +5,7 @@ import BrandLogo from '@/components/ui/BrandLogo'
 
 const NAV_LINKS = [
   { href: '/portal/dashboard', label: 'Dashboard' },
-  { href: '/portal/messages', label: 'Messages' },
+  { href: '/portal/messages', label: 'Chat' },
   { href: '/portal/files', label: 'Files' },
 ]
 

@@ -1,7 +1,12 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import portalService, { type PortalMe } from '@/services/portal.service'
+import portalService, {
+  type PortalBusinessQuarterly,
+  type PortalLiabilitiesResponse,
+  type PortalMe,
+  type PortalPaymentDeadlineGroup,
+} from '@/services/portal.service'
 import { clearPortalSessionCookie } from '@/lib/auth/portalTokenStorage'
 import MtdScopeNotice from '@/components/ui/MtdScopeNotice'
 import B from '@/styles/theme'
@@ -9,12 +14,13 @@ import B from '@/styles/theme'
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, { bg: string; c: string; l: string }> = {
     Open: { bg: B.amberBg, c: B.amberText, l: 'Open' },
+    Pending: { bg: B.amberBg, c: B.amberText, l: 'Pending' },
     Fulfilled: { bg: B.greenBg, c: B.greenText, l: 'Submitted' },
+    Submitted: { bg: B.greenBg, c: B.greenText, l: 'Submitted' },
     Overdue: { bg: B.redBg, c: B.redText, l: 'Overdue' },
-    MTD: { bg: B.greenBg, c: B.greenText, l: 'MTD enrolled' },
-    'MTD Exempt': { bg: B.purpleBg, c: B.purpleText, l: 'MTD Exempt' },
-    'Annual NINO': { bg: B.amberBg, c: B.amberText, l: 'Annual NINO' },
-    'No Status': { bg: B.surface, c: B.muted, l: 'No status' },
+    paid: { bg: B.greenBg, c: B.greenText, l: 'Paid' },
+    upcoming: { bg: B.amberBg, c: B.amberText, l: 'Due' },
+    overdue: { bg: B.redBg, c: B.redText, l: 'Overdue' },
   }
   const s = map[status] ?? { bg: B.surface, c: B.muted, l: status }
   return (
@@ -63,15 +69,56 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
   )
 }
 
+function DeadlineCard({
+  title,
+  group,
+}: {
+  title: string
+  group: PortalPaymentDeadlineGroup | null | undefined
+}) {
+  const amount = group?.amount ?? 0
+  const items = group?.items ?? []
+  return (
+    <div
+      style={{
+        background: B.surface,
+        borderRadius: 10,
+        padding: '16px 18px',
+        border: `1px solid ${B.border}`,
+      }}
+    >
+      <div style={{ fontSize: 13, color: B.muted, fontWeight: 600, marginBottom: 6 }}>{title}</div>
+      <div
+        style={{
+          fontSize: 22,
+          fontWeight: 800,
+          color: amount > 0 ? B.redText : B.text,
+          marginBottom: 10,
+        }}
+      >
+        {formatCurrency(amount)}
+      </div>
+      {items.length === 0 ? (
+        <div style={{ fontSize: 13, color: B.muted }}>Nothing outstanding for this date.</div>
+      ) : (
+        <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: B.text, lineHeight: 1.6 }}>
+          {items.map((item) => (
+            <li key={item.documentId ?? `${item.label}-${item.dueDate}`}>
+              {item.label}
+              {item.dueDate ? ` · due ${formatDate(item.dueDate)}` : ''}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+
 export default function PortalDashboard() {
   const router = useRouter()
   const [me, setMe] = useState<PortalMe | null>(null)
-  const [obligations, setObligations] = useState<unknown[]>([])
-  const [liabilities, setLiabilities] = useState<unknown>(null)
-  const [itsaStatuses, setItsaStatuses] = useState<unknown[]>([])
-  const [submissions, setSubmissions] = useState<{
-    taxYear?: string; totalIncome?: number; totalExpenses?: number; netProfit?: number; netLoss?: number; message?: string
-  } | null>(null)
+  const [businesses, setBusinesses] = useState<PortalBusinessQuarterly[]>([])
+  const [liabilities, setLiabilities] = useState<PortalLiabilitiesResponse | null>(null)
   const [unread, setUnread] = useState(0)
   const [loading, setLoading] = useState(true)
 
@@ -84,18 +131,12 @@ export default function PortalDashboard() {
           portalService.getUnreadCount(),
         ])
         setMe(meData)
-        setObligations(oblData.obligations ?? [])
+        setBusinesses(oblData.businesses ?? [])
         setUnread(unreadCount)
 
         if (meData.authorisedAt) {
-          const [liabData, itsaData, subData] = await Promise.all([
-            portalService.getLiabilities(),
-            portalService.getItsaStatus(),
-            portalService.getSubmissions(),
-          ])
+          const liabData = await portalService.getLiabilities()
           setLiabilities(liabData)
-          setItsaStatuses(itsaData.itsaStatuses ?? [])
-          setSubmissions(subData)
         }
       } catch {
         router.push('/portal/login')
@@ -115,17 +156,16 @@ export default function PortalDashboard() {
   if (loading) {
     return (
       <div style={{ textAlign: 'center', paddingTop: 100 }}>
-        <div style={{ fontSize: 32, marginBottom: 14 }}>⏳</div>
         <p style={{ fontSize: 15, color: B.muted, margin: 0 }}>Loading your portal...</p>
       </div>
     )
   }
 
-  const bal = liabilities as Record<string, number> | null
+  const bal = liabilities?.balanceDetails
+  const pay = liabilities?.paymentDetails
 
   return (
     <div>
-      {/* Agent preview banner */}
       {me?.isPreview && (
         <div
           style={{
@@ -142,7 +182,6 @@ export default function PortalDashboard() {
             fontWeight: 500,
           }}
         >
-          <span style={{ fontSize: 18 }}>👁</span>
           <span>
             You are viewing the portal as <strong>{me.name}</strong>. This is a read-only preview.
           </span>
@@ -165,7 +204,6 @@ export default function PortalDashboard() {
         </div>
       )}
 
-      {/* Header row */}
       <div
         style={{
           display: 'flex',
@@ -205,7 +243,7 @@ export default function PortalDashboard() {
               cursor: 'pointer',
             }}
           >
-            Messages{unread > 0 ? ` (${unread})` : ''}
+            Chat{unread > 0 ? ` (${unread})` : ''}
           </button>
           {!me?.isPreview && (
             <button
@@ -226,7 +264,6 @@ export default function PortalDashboard() {
         </div>
       </div>
 
-      {/* HMRC auth status notice */}
       {!me?.authorisedAt && (
         <div
           style={{
@@ -240,8 +277,18 @@ export default function PortalDashboard() {
             lineHeight: 1.6,
           }}
         >
-          <strong>HMRC authorisation pending.</strong> Your accountant has sent you an invitation
-          via HMRC. Once you accept it, your submissions and liabilities will appear here.
+          {me?.portalOnly ? (
+            <>
+              <strong>HMRC access has not been granted yet.</strong> You can use the portal and
+              message your accountant. Liabilities and quarterly submissions will appear here once
+              your accountant links your HMRC account and you accept their invitation.
+            </>
+          ) : (
+            <>
+              <strong>HMRC authorisation pending.</strong> Your accountant has invited you via HMRC.
+              Once you accept that invitation, your submissions and liabilities will appear here.
+            </>
+          )}
         </div>
       )}
 
@@ -249,196 +296,43 @@ export default function PortalDashboard() {
         <MtdScopeNotice />
       </div>
 
-      {/* Quarterly deadlines */}
-      <Card title="Quarterly deadlines">
-        {obligations.length === 0 ? (
-          <p style={{ fontSize: 15, color: B.muted, margin: 0 }}>No obligations found.</p>
+      {/* Task 2 — Liabilities + payment deadlines */}
+      <Card title="HMRC liabilities">
+        {!me?.authorisedAt ? (
+          <p style={{ fontSize: 15, color: B.muted, margin: 0 }}>
+            No liability data yet. This section fills in after HMRC access is granted.
+          </p>
+        ) : liabilities?.message && !liabilities.liabilities?.length ? (
+          <p style={{ fontSize: 15, color: B.muted, margin: 0 }}>{liabilities.message}</p>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
-            <thead>
-              <tr style={{ borderBottom: `2px solid ${B.border}` }}>
-                {['Period', 'Due date', 'Status'].map((h) => (
-                  <th
-                    key={h}
-                    style={{
-                      textAlign: 'left',
-                      padding: '8px 12px',
-                      fontSize: 12,
-                      color: B.muted,
-                      fontWeight: 700,
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {(
-                obligations as Array<{
-                  obligations?: Array<{
-                    periodStartDate: string
-                    periodEndDate: string
-                    dueDate: string
-                    status: string
-                  }>
-                }>
-              ).flatMap((group, gi) =>
-                (group.obligations ?? []).map((ob, oi) => (
-                  <tr key={`${gi}-${oi}`} style={{ borderBottom: `1px solid ${B.borderLight}` }}>
-                    <td style={{ padding: '10px 12px', fontSize: 14 }}>
-                      {formatDate(ob.periodStartDate)} to {formatDate(ob.periodEndDate)}
-                    </td>
-                    <td style={{ padding: '10px 12px', fontSize: 14 }}>{formatDate(ob.dueDate)}</td>
-                    <td style={{ padding: '10px 12px' }}>
-                      <StatusBadge status={ob.status} />
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        )}
-      </Card>
-
-      {/* HMRC Tax status */}
-      {me?.authorisedAt && itsaStatuses.length > 0 && (
-        <Card title="HMRC Making Tax Digital status">
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
-            <thead>
-              <tr style={{ borderBottom: `2px solid ${B.border}` }}>
-                {['Tax year', 'Status', 'Reason'].map((h) => (
-                  <th
-                    key={h}
-                    style={{
-                      textAlign: 'left',
-                      padding: '8px 12px',
-                      fontSize: 12,
-                      color: B.muted,
-                      fontWeight: 700,
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {(itsaStatuses as Array<{ taxYear: string; itsaStatusDetails?: Array<{ status: string; statusReason?: string; submittedOn?: string }> }>).map((row) =>
-                (row.itsaStatusDetails ?? []).map((detail, di) => (
-                  <tr key={`${row.taxYear}-${di}`} style={{ borderBottom: `1px solid ${B.borderLight}` }}>
-                    <td style={{ padding: '10px 12px', fontSize: 14, fontWeight: 600 }}>{row.taxYear}</td>
-                    <td style={{ padding: '10px 12px' }}>
-                      <StatusBadge status={detail.status} />
-                    </td>
-                    <td style={{ padding: '10px 12px', fontSize: 13, color: B.muted }}>
-                      {detail.statusReason ?? 'N/A'}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </Card>
-      )}
-
-      {/* Submitted figures */}
-      {me?.authorisedAt && submissions && !submissions.message && (
-        <Card title={`Submitted figures${submissions.taxYear ? ` (${submissions.taxYear})` : ''}`}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
-            {(
-              [
-                ['Income (YTD)', submissions.totalIncome ?? 0, false],
-                ['Expenses (YTD)', submissions.totalExpenses ?? 0, false],
-                ['Net profit / loss', (submissions.netProfit ?? 0) - (submissions.netLoss ?? 0), true],
-              ] as [string, number, boolean][]
-            ).map(([label, amount, isNet]) => (
-              <div
-                key={label}
-                style={{
-                  background: B.surface,
-                  borderRadius: 10,
-                  padding: '16px 18px',
-                  border: `1px solid ${B.border}`,
-                  boxShadow: B.cardShadow,
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: 13,
-                    color: B.muted,
-                    marginBottom: 8,
-                    fontWeight: 600,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.4px',
-                  }}
-                >
-                  {label}
-                </div>
-                <div
-                  style={{
-                    fontSize: 22,
-                    fontWeight: 800,
-                    color: isNet && amount < 0 ? B.redText : B.text,
-                  }}
-                >
-                  {formatCurrency(Math.abs(amount))}
-                  {isNet && amount < 0 && (
-                    <span style={{ fontSize: 12, fontWeight: 500, color: B.redText, marginLeft: 6 }}>loss</span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-          <div style={{ marginTop: 14, fontSize: 13, color: B.light }}>
-            Year-to-date totals as filed with HMRC.
-          </div>
-        </Card>
-      )}
-
-      {/* HMRC balance */}
-      {me?.authorisedAt && (
-        <Card title="HMRC balance">
-          {!bal ? (
-            <p style={{ fontSize: 15, color: B.muted, margin: 0 }}>No liability data available.</p>
-          ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+          <>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 16 }}>
+              <DeadlineCard title="Payable by 31 January" group={liabilities?.paymentDeadlines?.january} />
+              <DeadlineCard title="Payable by 31 July" group={liabilities?.paymentDeadlines?.july} />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
               {(
                 [
-                  ['Overdue', bal.overdueAmount],
-                  ['Payable', bal.payableAmount],
-                  ['Pending', bal.pendingChargeSAmount],
+                  ['Total outstanding', bal?.totalBalance],
+                  ['Overdue', bal?.overdueAmount],
+                  ['Payable', bal?.payableAmount],
                 ] as [string, number | undefined][]
               ).map(([label, amount]) => (
                 <div
                   key={label}
                   style={{
                     background: B.surface,
-                    borderRadius: 10,
-                    padding: '16px 18px',
+                    borderRadius: 8,
+                    padding: '12px 14px',
                     border: `1px solid ${B.border}`,
-                    boxShadow: B.cardShadow,
                   }}
                 >
-                  <div
-                    style={{
-                      fontSize: 13,
-                      color: B.muted,
-                      marginBottom: 8,
-                      fontWeight: 600,
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.4px',
-                    }}
-                  >
+                  <div style={{ fontSize: 12, color: B.muted, fontWeight: 600, marginBottom: 4 }}>
                     {label}
                   </div>
                   <div
                     style={{
-                      fontSize: 22,
+                      fontSize: 18,
                       fontWeight: 800,
                       color: amount && amount > 0 ? B.redText : B.text,
                     }}
@@ -448,36 +342,139 @@ export default function PortalDashboard() {
                 </div>
               ))}
             </div>
-          )}
-          <div
-            style={{
-              marginTop: 18,
-              padding: '14px 18px',
-              background: B.blueBg,
-              borderRadius: 9,
-              fontSize: 13,
-              color: B.blueText,
-              lineHeight: 1.7,
-            }}
-          >
-            <strong>To pay HMRC:</strong> Sort code 08-32-10, Account 12001039, Reference: your UTR
-            <br />
+          </>
+        )}
+      </Card>
+
+      {/* Task 2 — How to pay */}
+      <Card title="How to pay HMRC">
+        {!me?.authorisedAt || !pay ? (
+          <p style={{ fontSize: 15, color: B.muted, margin: 0 }}>
+            Payment details will show here once HMRC access is granted.
+          </p>
+        ) : (
+          <div>
+            {pay.amountDue != null && (
+              <p style={{ margin: '0 0 14px', fontSize: 15, color: B.text }}>
+                Amount due: <strong>{formatCurrency(pay.amountDue)}</strong>
+                {pay.overdueAmount != null && pay.overdueAmount > 0 && (
+                  <span style={{ color: B.redText }}>
+                    {' '}
+                    (including {formatCurrency(pay.overdueAmount)} overdue)
+                  </span>
+                )}
+              </p>
+            )}
+            <div
+              style={{
+                background: B.blueBg,
+                borderRadius: 9,
+                padding: '14px 18px',
+                fontSize: 14,
+                color: B.blueText,
+                lineHeight: 1.8,
+              }}
+            >
+              <div>
+                <strong>Sort code:</strong> {pay.sortCode}
+              </div>
+              <div>
+                <strong>Account number:</strong> {pay.accountNumber}
+              </div>
+              <div>
+                <strong>Reference:</strong> {pay.reference}
+                {!pay.hasUtr && (
+                  <span style={{ display: 'block', fontSize: 12, marginTop: 4, opacity: 0.85 }}>
+                    Ask your accountant for your UTR if you do not have it.
+                  </span>
+                )}
+              </div>
+            </div>
             <a
-              href="https://www.gov.uk/pay-self-assessment-tax-bill"
+              href={pay.payOnlineUrl}
               target="_blank"
               rel="noreferrer"
-              style={{ color: B.link, fontWeight: 600 }}
+              style={{
+                display: 'inline-block',
+                marginTop: 14,
+                color: B.link,
+                fontWeight: 600,
+                fontSize: 14,
+              }}
             >
               Pay online at gov.uk
             </a>
           </div>
-        </Card>
-      )}
+        )}
+      </Card>
+
+      {/* Task 3 — Quarterly submissions per business */}
+      <Card title="Quarterly submissions">
+        {!me?.authorisedAt ? (
+          <p style={{ fontSize: 15, color: B.muted, margin: 0 }}>
+            Quarterly submissions will appear here once HMRC access is granted.
+          </p>
+        ) : businesses.length === 0 ? (
+          <p style={{ fontSize: 15, color: B.muted, margin: 0 }}>No quarterly submissions found.</p>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+            {businesses.map((biz) => (
+              <div key={biz.businessId || biz.label}>
+                <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 8, color: B.text }}>
+                  {biz.label}
+                </div>
+                {biz.periods.length === 0 ? (
+                  <p style={{ fontSize: 14, color: B.muted, margin: 0 }}>No periods for this business.</p>
+                ) : (
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+                    <thead>
+                      <tr style={{ borderBottom: `2px solid ${B.border}` }}>
+                        {['Period', 'Due date', 'Status'].map((h) => (
+                          <th
+                            key={h}
+                            style={{
+                              textAlign: 'left',
+                              padding: '8px 12px',
+                              fontSize: 12,
+                              color: B.muted,
+                              fontWeight: 700,
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.5px',
+                            }}
+                          >
+                            {h}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {biz.periods.map((ob, oi) => (
+                        <tr
+                          key={`${biz.businessId}-${ob.periodKey ?? oi}`}
+                          style={{ borderBottom: `1px solid ${B.borderLight}` }}
+                        >
+                          <td style={{ padding: '10px 12px' }}>
+                            {formatDate(ob.periodStartDate)} to {formatDate(ob.periodEndDate)}
+                          </td>
+                          <td style={{ padding: '10px 12px' }}>{formatDate(ob.dueDate)}</td>
+                          <td style={{ padding: '10px 12px' }}>
+                            <StatusBadge status={ob.status} />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </Card>
     </div>
   )
 }
 
-function formatDate(d?: string): string {
+function formatDate(d?: string | null): string {
   if (!d) return 'N/A'
   try {
     return new Date(d).toLocaleDateString('en-GB', {
@@ -490,6 +487,6 @@ function formatDate(d?: string): string {
   }
 }
 
-function formatCurrency(amount?: number): string {
+function formatCurrency(amount?: number | null): string {
   return `£${Math.abs(amount ?? 0).toLocaleString('en-GB', { minimumFractionDigits: 2 })}`
 }

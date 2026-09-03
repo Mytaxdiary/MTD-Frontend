@@ -250,6 +250,14 @@ export default function AppSidebar({ overdueCount = 2 }: { overdueCount?: number
                 onClick={() => go('add-client')}
               />
             )}
+            {canAddClients && (
+              <NavItem
+                label="Invite client"
+                active={active === 'invite-client'}
+                icon={<SendIcon />}
+                onClick={() => go('invite-client')}
+              />
+            )}
             <NavItem
               label="Settings"
               active={active === 'settings'}

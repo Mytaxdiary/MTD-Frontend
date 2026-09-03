@@ -10,6 +10,7 @@ import TeamSection from './components/TeamSection'
 import NotificationsSection from './components/NotificationsSection'
 import BillingSection from './components/BillingSection'
 import SandboxInvitationsSection from './components/SandboxInvitationsSection'
+import CustomerManagementSection from './components/CustomerManagementSection'
 import SecuritySection from './components/SecuritySection'
 import DataPrivacySection from './components/DataPrivacySection'
 import { usePermissions } from '@/hooks/usePermissions'
@@ -25,7 +26,7 @@ export default function Settings(_props: { navigate?: (route: string) => void })
       if (s.k === 'team' || s.k === 'billing' || s.k === 'data-privacy') return perms.isOwner
       if (s.k === 'security') return true
       if (s.k === 'email') return perms.canViewSettings || perms.canChase
-      if (s.k === 'sandbox-invitations') return perms.canAddClients
+      if (s.k === 'customers' || s.k === 'sandbox-invitations') return perms.canAddClients
       return perms.canViewSettings
     })
   }, [perms.isOwner, perms.canViewSettings, perms.canChase, perms.canAddClients])
@@ -71,6 +72,7 @@ export default function Settings(_props: { navigate?: (route: string) => void })
               {section === 'firm' && perms.canViewSettings && <FirmDetailsSection />}
               {section === 'hmrc' && perms.canViewSettings && <HmrcSection />}
               {section === 'email' && (perms.canViewSettings || perms.canChase) && <EmailSection />}
+              {section === 'customers' && perms.canAddClients && <CustomerManagementSection />}
               {section === 'sandbox-invitations' && perms.canAddClients && (
                 <SandboxInvitationsSection />
               )}

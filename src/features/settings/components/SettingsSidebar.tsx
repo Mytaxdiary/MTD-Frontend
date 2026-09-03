@@ -5,6 +5,7 @@ export type SectionKey =
   | 'firm'
   | 'hmrc'
   | 'email'
+  | 'customers'
   | 'sandbox-invitations'
   | 'team'
   | 'notifications'
@@ -16,6 +17,7 @@ export const SETTINGS_NAV: { k: SectionKey; l: string; i: string }[] = [
   { k: 'firm', l: 'Firm details', i: '⊡' },
   { k: 'hmrc', l: 'HMRC connection', i: '⟷' },
   { k: 'email', l: 'Email connection', i: '✉' },
+  { k: 'customers', l: 'Customer management', i: '◉' },
   { k: 'sandbox-invitations', l: 'Sandbox invitations', i: '▤' },
   { k: 'team', l: 'Team', i: '☷' },
   { k: 'notifications', l: 'Notifications', i: '⊙' },

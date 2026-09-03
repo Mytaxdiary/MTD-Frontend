@@ -71,6 +71,28 @@ export interface CreateClientResult {
   warning?: string
 }
 
+export interface PortalCustomerRecord {
+  id: string
+  name: string
+  email: string
+  portalOnly: boolean
+  portalActive: boolean
+  invitedAt: string
+  lastLoginAt: string | null
+  setupPending: boolean
+}
+
+export interface InvitePortalClientPayload {
+  firstName: string
+  lastName: string
+  email: string
+}
+
+export interface InvitePortalClientResult {
+  client: ClientRecord
+  message: string
+}
+
 export interface BulkImportRowError {
   row: number
   field: string
@@ -478,6 +500,29 @@ export const clientsService = {
 
   async listOutstandingInvitations(): Promise<ClientRecord[]> {
     const res = await apiClient.get<{ data: ClientRecord[] }>('/clients/outstanding-invitations')
+    return res.data.data
+  },
+
+  async invitePortalClient(payload: InvitePortalClientPayload): Promise<InvitePortalClientResult> {
+    const res = await apiClient.post<{ data: InvitePortalClientResult }>(
+      '/clients/portal-invite',
+      payload,
+    )
+    return res.data.data
+  },
+
+  async listPortalCustomers(): Promise<PortalCustomerRecord[]> {
+    const res = await apiClient.get<{ data: PortalCustomerRecord[] }>('/clients/portal-customers')
+    return res.data.data
+  },
+
+  async resendPortalInvite(id: string): Promise<{ message: string }> {
+    const res = await apiClient.post<{ data: { message: string } }>(`/clients/${id}/portal-invite`)
+    return res.data.data
+  },
+
+  async removePortalAccess(id: string): Promise<{ message: string }> {
+    const res = await apiClient.delete<{ data: { message: string } }>(`/clients/${id}/portal-access`)
     return res.data.data
   },
 

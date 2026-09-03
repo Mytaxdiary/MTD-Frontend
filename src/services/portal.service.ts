@@ -2,41 +2,88 @@ import portalAxiosClient from '@/lib/api/portalAxiosClient'
 
 export interface PortalMe {
   name: string
-  nino: string
+  nino?: string
   agentType: string
   invitationStatus: string
   authorisedAt?: string
+  portalOnly?: boolean
+  utr?: string
   firmName: string
   firmEmail: string
   isPreview: boolean
 }
 
+export interface PortalObligationPeriod {
+  periodStartDate: string
+  periodEndDate: string
+  dueDate: string
+  receivedDate?: string
+  status: string
+  periodKey?: string
+}
+
+export interface PortalBusinessQuarterly {
+  businessId: string
+  typeOfBusiness: string
+  label: string
+  periods: PortalObligationPeriod[]
+}
+
 export interface PortalObligation {
   typeOfBusiness?: string
   businessId?: string
-  obligations?: Array<{
-    periodStartDate: string
-    periodEndDate: string
-    dueDate: string
-    receivedDate?: string
-    status: string
-    periodKey: string
-  }>
+  obligations?: PortalObligationPeriod[]
+  obligationDetails?: PortalObligationPeriod[]
 }
 
-export interface PortalLiabilityLine {
-  taxYear?: string
+export interface PortalLiabilityRow {
   documentId?: string
-  documentText?: string
-  documentDueDate?: string
-  documentOutstandingAmount?: number
-  documentDescription?: string
+  taxYear?: string
+  label: string
+  dueDate: string | null
+  outstandingAmount: number
+  originalAmount: number | null
+  status: 'paid' | 'upcoming' | 'overdue'
+  deadline: 'january' | 'july' | 'other'
+}
+
+export interface PortalPaymentDeadlineGroup {
+  label: string
+  amount: number
+  items: PortalLiabilityRow[]
+}
+
+export interface PortalPaymentDetails {
+  sortCode: string
+  accountNumber: string
+  reference: string
+  hasUtr: boolean
+  amountDue: number | null
+  overdueAmount: number | null
+  payOnlineUrl: string
+}
+
+export interface PortalLiabilitiesResponse {
+  message?: string
+  balanceDetails?: {
+    payableAmount?: number
+    overdueAmount?: number
+    totalBalance?: number
+    pendingChargeDueAmount?: number
+  } | null
+  liabilities?: PortalLiabilityRow[]
+  paymentDeadlines?: {
+    january: PortalPaymentDeadlineGroup | null
+    july: PortalPaymentDeadlineGroup | null
+  }
+  paymentDetails?: PortalPaymentDetails | null
 }
 
 export interface PortalMessage {
   id: string
   subject: string
   body: string
+  sender?: 'agent' | 'client'
   readAt?: string
   createdAt: string
 }
@@ -76,17 +123,23 @@ const portalService = {
     return res.data.data
   },
 
-  async getObligations(): Promise<{ obligations: PortalObligation[]; message?: string }> {
+  async getObligations(): Promise<{
+    obligations: PortalObligation[]
+    businesses?: PortalBusinessQuarterly[]
+    message?: string
+  }> {
     const res = await portalAxiosClient.get<{
-      data: { obligations: PortalObligation[]; message?: string }
+      data: {
+        obligations: PortalObligation[]
+        businesses?: PortalBusinessQuarterly[]
+        message?: string
+      }
     }>('/portal/obligations')
     return res.data.data
   },
 
-  async getLiabilities(): Promise<{ balanceDetails?: unknown; message?: string }> {
-    const res = await portalAxiosClient.get<{
-      data: { balanceDetails?: unknown; message?: string }
-    }>('/portal/liabilities')
+  async getLiabilities(): Promise<PortalLiabilitiesResponse> {
+    const res = await portalAxiosClient.get<{ data: PortalLiabilitiesResponse }>('/portal/liabilities')
     return res.data.data
   },
 
@@ -112,6 +165,14 @@ const portalService = {
 
   async getMessages(): Promise<PortalMessage[]> {
     const res = await portalAxiosClient.get<{ data: PortalMessage[] }>('/portal/messages')
+    return res.data.data
+  },
+
+  async sendMessage(body: string, subject?: string): Promise<PortalMessage> {
+    const res = await portalAxiosClient.post<{ data: PortalMessage }>('/portal/messages', {
+      body,
+      subject,
+    })
     return res.data.data
   },
 
