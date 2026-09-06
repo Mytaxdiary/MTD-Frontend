@@ -460,6 +460,9 @@ export default function ChaseManager({
             Chase manager
           </div>
           <div style={{ fontSize: 15, color: B.muted, marginTop: 2 }}>
+            Email chasers for outstanding records — separate from portal chat
+          </div>
+          <div style={{ fontSize: 13, color: B.muted, marginTop: 4 }}>
             {clientsLoading
               ? 'Loading clients...'
               : clientsError
@@ -836,10 +839,11 @@ export default function ChaseManager({
             <div style={CARD}>
               <div style={CARD_HEADER}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                  <span style={{ fontSize: 16, fontWeight: 700 }}>Chase templates</span>
+                  <span style={{ fontSize: 16, fontWeight: 700 }}>Email chase templates</span>
                   <InfoTooltip label="What are chase templates?" align="left" width={320}>
-                    Chase templates are reusable email messages for clients whose records or data are
-                    outstanding. Pick a template here, tick the clients on the left, then send.
+                    These are reusable <strong>email chase</strong> messages for clients whose
+                    records or data are outstanding — not portal chat. Pick a template here, tick
+                    the clients on the left, then send.
                     {canManageTemplates
                       ? ' You can create, edit and delete templates, and use variables such as '
                       : ' Use variables such as '}

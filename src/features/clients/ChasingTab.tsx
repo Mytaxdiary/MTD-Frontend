@@ -234,6 +234,21 @@ export default function ChasingTab({ clientId }: { clientId?: string | null }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div
+        style={{
+          padding: '12px 14px',
+          background: B.amberBg,
+          border: '1px solid #FDE68A',
+          borderRadius: 8,
+          fontSize: 13,
+          color: B.amberText,
+          lineHeight: 1.5,
+        }}
+      >
+        These are <strong>email chasers</strong> for outstanding records or data. Portal chat with
+        the client is on the <strong>Chat history</strong> tab.
+      </div>
+
       {/* Summary strip */}
       <div style={{ display: 'flex', gap: 12 }}>
         {[
@@ -288,7 +303,8 @@ export default function ChasingTab({ clientId }: { clientId?: string | null }) {
       {/* Chase log card */}
       <Card>
         <CardHeader
-          title="Chase history"
+          title="Email chase history"
+          sub="Emails and SMS chasers sent from Chase manager"
           right={
             <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
               {(['all', 'email', 'sms'] as FilterType[]).map((f) => (
@@ -326,7 +342,7 @@ export default function ChasingTab({ clientId }: { clientId?: string | null }) {
           {!loading && !error && filtered.length === 0 && (
             <div style={{ padding: '32px 0', textAlign: 'center', fontSize: 13, color: B.light }}>
               {logs.length === 0
-                ? 'No chases sent yet. Use Chase Manager to send the first chase.'
+                ? 'No email chases sent yet. Use Chase manager to send the first chase.'
                 : 'No chases match the selected filter.'}
             </div>
           )}
@@ -354,8 +370,8 @@ export default function ChasingTab({ clientId }: { clientId?: string | null }) {
           color: B.blueText,
         }}
       >
-        To send a new chase, go to <b>Chase Manager</b> → select this client → pick a template →
-        Send.
+        To send a new email chase, go to <b>Chase manager</b> (email chasers) → select this client →
+        pick a template → Send. For portal messages, use the <b>Chat history</b> tab.
       </div>
     </div>
   )

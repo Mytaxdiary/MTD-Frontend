@@ -788,7 +788,8 @@ export default function LiabilitiesTab({ client }: Props) {
           <CardHeader title="Send to client" />
           <div style={{ padding: '14px 20px' }}>
             <div style={{ fontSize: 12, color: B.muted, lineHeight: 1.6, marginBottom: 12 }}>
-              Send liability summary and payment details to the client&apos;s portal.
+              Send liability summary and payment details via <strong>portal chat</strong> (not an
+              email chase).
             </div>
             <button
               type="button"
@@ -805,7 +806,7 @@ export default function LiabilitiesTab({ client }: Props) {
                 cursor: 'pointer',
               }}
             >
-              Message client with payment details
+              Send via portal chat
             </button>
           </div>
         </Card>

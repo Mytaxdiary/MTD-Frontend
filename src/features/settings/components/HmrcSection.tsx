@@ -108,6 +108,7 @@ export default function HmrcSection() {
   const [refreshSuccess, setRefreshSuccess] = useState(false)
 
   const [fraudTesting, setFraudTesting] = useState(false)
+  const [fraudFeedbackTesting, setFraudFeedbackTesting] = useState(false)
   const [fraudTested, setFraudTested] = useState(false)
   const [fraudValid, setFraudValid] = useState<boolean | null>(null)
   const [fraudHasWarnings, setFraudHasWarnings] = useState(false)
@@ -214,6 +215,40 @@ export default function HmrcSection() {
       setFraudError(msg)
     } finally {
       setFraudTesting(false)
+    }
+  }
+
+  async function handleCheckObligationsFeedback() {
+    setFraudFeedbackTesting(true)
+    setFraudError(null)
+    setFraudDetail(null)
+    try {
+      const result = await hmrcService.getFraudValidationFeedback('obligations-mtd')
+      setFraudTested(true)
+      setFraudValid(result.valid)
+      setFraudHasWarnings(result.warningCount > 0)
+      if (result.requestCount === 0) {
+        setFraudDetail(result.detail)
+      } else if (result.valid) {
+        setFraudDetail(
+          `Obligations feedback OK (${result.requestCount} endpoint(s))` +
+            (result.warningCount ? ` — ${result.warningCount} with warnings.` : '.') +
+            (result.detail ? `\n${result.detail}` : '')
+        )
+      } else {
+        setFraudDetail(
+          `Obligations feedback has ${result.invalidCount} invalid request(s).\n${result.detail}`
+        )
+      }
+    } catch (err: unknown) {
+      setFraudTested(true)
+      setFraudValid(false)
+      const msg =
+        (err as { message?: string })?.message ??
+        'Failed to get Obligations fraud validation-feedback.'
+      setFraudError(msg)
+    } finally {
+      setFraudFeedbackTesting(false)
     }
   }
 
@@ -623,6 +658,7 @@ export default function HmrcSection() {
                           ? B.amberText
                           : B.greenText
                         : B.amberText,
+                      whiteSpace: 'pre-wrap',
                     }}
                   >
                     {fraudDetail}
@@ -651,9 +687,20 @@ export default function HmrcSection() {
                           opacity: fraudTesting ? 0.7 : 1,
                         }}
                         onClick={handleTestFraudHeaders}
-                        disabled={fraudTesting}
+                        disabled={fraudTesting || fraudFeedbackTesting}
                       >
                         {fraudTesting ? 'Testing...' : 'Test fraud headers'}
+                      </button>
+                      <button
+                        style={{
+                          ...outlineBtn,
+                          cursor: fraudFeedbackTesting ? 'not-allowed' : 'pointer',
+                          opacity: fraudFeedbackTesting ? 0.7 : 1,
+                        }}
+                        onClick={handleCheckObligationsFeedback}
+                        disabled={fraudTesting || fraudFeedbackTesting}
+                      >
+                        {fraudFeedbackTesting ? 'Checking...' : 'Obligations feedback'}
                       </button>
                       <button
                         style={{

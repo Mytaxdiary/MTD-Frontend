@@ -70,6 +70,23 @@ export interface FraudHeaderValidationResult {
   warnings?: unknown[]
 }
 
+export interface FraudValidationFeedbackResult {
+  api: string
+  valid: boolean
+  requestCount: number
+  invalidCount: number
+  warningCount: number
+  detail: string
+  requests?: Array<{
+    path?: string
+    method?: string
+    requestTimestamp?: string
+    code?: string
+  }>
+  code?: string
+  message?: string
+}
+
 export const hmrcService = {
   /** Get the HMRC OAuth authorize URL from the backend. */
   async getConnectUrl(): Promise<string> {
@@ -127,6 +144,17 @@ export const hmrcService = {
   async validateFraudHeaders(): Promise<FraudHeaderValidationResult> {
     const res = await apiClient.get<{ data: FraudHeaderValidationResult }>(
       '/hmrc/validate-fraud-headers'
+    )
+    return res.data.data
+  },
+
+  /** Feedback on last sandbox requests to a supported API (e.g. obligations-mtd). */
+  async getFraudValidationFeedback(
+    api = 'obligations-mtd'
+  ): Promise<FraudValidationFeedbackResult> {
+    const res = await apiClient.get<{ data: FraudValidationFeedbackResult }>(
+      '/hmrc/fraud-validation-feedback',
+      { params: { api } }
     )
     return res.data.data
   },

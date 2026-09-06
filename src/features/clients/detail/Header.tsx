@@ -16,7 +16,15 @@ function clientInitials(name: string): string {
     .toUpperCase()
 }
 
-const ALL_TABS = ['overview', 'liabilities', 'chasing', 'notes'] as const
+const ALL_TABS = ['overview', 'liabilities', 'chasing', 'chat', 'notes'] as const
+
+const TAB_LABELS: Record<(typeof ALL_TABS)[number], string> = {
+  overview: 'Overview',
+  liabilities: 'Liabilities',
+  chasing: 'Email chases',
+  chat: 'Chat history',
+  notes: 'Notes',
+}
 
 interface Props {
   client: ClientRecord | null
@@ -28,7 +36,6 @@ interface Props {
   clientId: string | null
   previewLoading: boolean
   setPreviewLoading: (v: boolean) => void
-  onMessageClick: () => void
   onAssigned?: (assignedToUserId: string | null) => void
 }
 
@@ -42,7 +49,6 @@ export default function ClientDetailHeader({
   clientId,
   previewLoading,
   setPreviewLoading,
-  onMessageClick,
   onAssigned,
 }: Props) {
   const { isOwner, isStaff, people } = useAssignableStaff()
@@ -50,7 +56,7 @@ export default function ClientDetailHeader({
   const displayName = client?.name ?? ''
   const tabs = ALL_TABS.filter((tab) => {
     if (tab === 'liabilities') return canViewLiabilities
-    if (tab === 'chasing') return canChase
+    if (tab === 'chasing' || tab === 'chat') return canChase
     if (tab === 'notes') return canViewNotes
     return true
   })
@@ -227,12 +233,12 @@ export default function ClientDetailHeader({
                 color: B.text,
               }}
             >
-              Chase client
+              Email chases
             </button>
           )}
           {canChase && (
             <button
-              onClick={onMessageClick}
+              onClick={() => setActiveTab('chat')}
               style={{
                 padding: '8px 16px',
                 borderRadius: 8,
@@ -244,7 +250,7 @@ export default function ClientDetailHeader({
                 color: B.text,
               }}
             >
-              Message client
+              Portal chat
             </button>
           )}
           <button
@@ -285,7 +291,7 @@ export default function ClientDetailHeader({
               textTransform: 'capitalize',
             }}
           >
-            {tab}
+            {TAB_LABELS[tab]}
           </button>
         ))}
       </div>

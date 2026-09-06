@@ -17,8 +17,8 @@ import { usePermissions } from '@/hooks/usePermissions'
 import ClientDetailBreadcrumb from './detail/Breadcrumb'
 import ClientDetailHeader from './detail/Header'
 import MetricsStrip from './detail/MetricsStrip'
-import MessageModal from './detail/MessageModal'
 import OverviewTab from './detail/OverviewTab'
+import ChatHistoryTab from './detail/ChatHistoryTab'
 
 export default function ClientDetail({
   clientId = null,
@@ -42,7 +42,6 @@ export default function ClientDetail({
   const [incomeSummaryLoading, setIncomeSummaryLoading] = useState(false)
 
   const [previewLoading, setPreviewLoading] = useState(false)
-  const [showMsgModal, setShowMsgModal] = useState(false)
 
   // ── Data fetching ───────────────────────────────────────────────────────────
 
@@ -123,6 +122,7 @@ export default function ClientDetail({
     if (activeTab === 'liabilities' && !canViewLiabilities) setActiveTab('overview')
     if (activeTab === 'notes' && !canViewNotes) setActiveTab('overview')
     if (activeTab === 'chasing' && !canChase) setActiveTab('overview')
+    if (activeTab === 'chat' && !canChase) setActiveTab('overview')
   }, [activeTab, canViewLiabilities, canViewNotes, canChase])
 
   // ── Derived display values ──────────────────────────────────────────────────
@@ -155,7 +155,6 @@ export default function ClientDetail({
         clientId={clientId}
         previewLoading={previewLoading}
         setPreviewLoading={setPreviewLoading}
-        onMessageClick={() => setShowMsgModal(true)}
         onAssigned={(assignedToUserId) =>
           setClient((prev) => (prev ? { ...prev, assignedToUserId } : prev))
         }
@@ -254,17 +253,12 @@ export default function ClientDetail({
 
         {!clientError && activeTab === 'chasing' && canChase && <ChasingTab clientId={clientId} />}
 
+        {!clientError && activeTab === 'chat' && canChase && (
+          <ChatHistoryTab clientId={clientId} clientName={client?.name ?? 'client'} />
+        )}
+
         {!clientError && activeTab === 'notes' && canViewNotes && <NotesTab clientId={clientId} />}
       </div>
-
-      {canChase && (
-        <MessageModal
-          show={showMsgModal}
-          onClose={() => setShowMsgModal(false)}
-          clientId={clientId}
-          clientName={client?.name ?? 'client'}
-        />
-      )}
     </div>
   )
 }
