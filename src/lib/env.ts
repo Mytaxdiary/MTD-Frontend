@@ -11,4 +11,6 @@ export const env = {
   appName: process.env.NEXT_PUBLIC_APP_NAME ?? 'My Tax Diary',
   appEnv: process.env.NEXT_PUBLIC_APP_ENV ?? 'development',
   apiBaseUrl: process.env.NEXT_PUBLIC_API_BASE_URL ?? '',
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? '',
+  gaMeasurementId: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? '',
 } as const

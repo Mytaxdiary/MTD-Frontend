@@ -11,6 +11,7 @@ type SiteButtonProps = {
   children: ReactNode
   onClick?: () => void
   type?: 'button' | 'submit'
+  disabled?: boolean
 }
 
 function buttonClass(variant: Variant, block?: boolean, className?: string) {
@@ -28,6 +29,7 @@ export default function SiteButton({
   children,
   onClick,
   type = 'button',
+  disabled,
 }: SiteButtonProps) {
   const cls = buttonClass(variant, block, className)
 
@@ -40,7 +42,7 @@ export default function SiteButton({
   }
 
   return (
-    <button type={type} className={cls} onClick={onClick}>
+    <button type={type} className={cls} onClick={onClick} disabled={disabled}>
       {children}
     </button>
   )

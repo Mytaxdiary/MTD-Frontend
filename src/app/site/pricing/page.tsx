@@ -4,6 +4,7 @@ export const metadata = {
   title: 'Pricing',
   description:
     'My Tax Diary packages for UK accounting firms. Monthly or annual plans for agent portal, client portal, HMRC MTD, chase, and staff access.',
+  alternates: { canonical: '/site/pricing' },
 }
 
 export default function MarketingPricingPage() {

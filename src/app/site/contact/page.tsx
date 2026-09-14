@@ -1,14 +1,19 @@
-import SiteContainer from '@/features/marketing/components/SiteContainer'
+import ContactEnquiryForm from '@/features/marketing/components/ContactEnquiryForm'
 
-export const metadata = { title: 'Contact' }
+export const metadata = {
+  title: 'Contact',
+  description:
+    'Enquire about My Tax Diary packages for UK accountants. Tell us about your firm and MTD ITSA needs.',
+  alternates: { canonical: '/site/contact' },
+}
 
-export default function MarketingContactPage() {
-  return (
-    <SiteContainer>
-      <div className="mtd-shell-note" style={{ marginTop: 48 }}>
-        <h2>Contact</h2>
-        <p>Placeholder for Task 5. Enquiry form and email wiring come next.</p>
-      </div>
-    </SiteContainer>
-  )
+type PageProps = {
+  searchParams?: Promise<{ plan?: string }>
+}
+
+export default async function MarketingContactPage({ searchParams }: PageProps) {
+  const params = (await searchParams) ?? {}
+  const plan = typeof params.plan === 'string' ? params.plan : ''
+
+  return <ContactEnquiryForm initialPlan={plan} />
 }

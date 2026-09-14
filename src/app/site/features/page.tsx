@@ -74,6 +74,7 @@ export const metadata = {
   title: 'Features',
   description:
     'Explore My Tax Diary features for UK accountants: agent dashboard, client portal, HMRC MTD, chase manager, and staff permissions.',
+  alternates: { canonical: '/site/features' },
 }
 
 export default function MarketingFeaturesPage() {

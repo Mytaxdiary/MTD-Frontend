@@ -55,9 +55,12 @@ const STEPS = [
 ] as const
 
 export const metadata = {
-  title: 'Home',
+  title: {
+    absolute: 'My Tax Diary — MTD ITSA for UK accountants',
+  },
   description:
     'My Tax Diary is MTD ITSA software for UK accountants — agent portal, client portal, HMRC connection, chase, and staff permissions.',
+  alternates: { canonical: '/site' },
 }
 
 export default function MarketingHomePage() {

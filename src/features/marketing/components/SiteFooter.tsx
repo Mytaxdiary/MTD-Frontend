@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import BrandLogo from '@/components/ui/BrandLogo'
 import SiteContainer from './SiteContainer'
-import { SITE_APP_LOGIN, SITE_APP_REGISTER, SITE_NAV } from '../nav'
+import { SITE_APP_LOGIN, SITE_APP_REGISTER, SITE_LEGAL, SITE_NAV } from '../nav'
 
 export default function SiteFooter() {
   return (
@@ -10,7 +10,10 @@ export default function SiteFooter() {
         <div className="mtd-site-footer__grid">
           <div className="mtd-site-footer__brand">
             <BrandLogo width={160} />
-            <p>MTD ITSA software for UK accountants. Agent portal, client portal, HMRC, chase, and staff.</p>
+            <p>
+              MTD ITSA software for UK accountants. Agent portal, client portal, HMRC, chase, and
+              staff.
+            </p>
           </div>
 
           <div className="mtd-site-footer__col">
@@ -26,18 +29,20 @@ export default function SiteFooter() {
             <h4>Account</h4>
             <Link href={SITE_APP_LOGIN}>Sign in</Link>
             <Link href={SITE_APP_REGISTER}>Get started</Link>
+            <a href="mailto:info@mytaxdiary.co.uk">Contact email</a>
           </div>
 
           <div className="mtd-site-footer__col">
             <h4>Legal</h4>
-            <Link href="/terms">Terms</Link>
-            <Link href="/privacy-policy">Privacy</Link>
+            <Link href={SITE_LEGAL.terms}>Terms</Link>
+            <Link href={SITE_LEGAL.privacy}>Privacy</Link>
+            <Link href={SITE_LEGAL.cookies}>Cookies</Link>
           </div>
         </div>
 
         <div className="mtd-site-footer__bottom">
           <span>© {new Date().getFullYear()} My Tax Diary Ltd</span>
-          <span>Company No. 17312332 · Preview at /site</span>
+          <span>Company No. 17312332 · ICO ZC190729</span>
         </div>
       </SiteContainer>
     </footer>

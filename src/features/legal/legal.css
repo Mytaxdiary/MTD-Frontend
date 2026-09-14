@@ -1,0 +1,156 @@
+/* Shared legal document styles (marketing shell + standalone public pages) */
+
+.mtd-legal-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.mtd-legal-section h2 {
+  margin: 0 0 14px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  letter-spacing: -0.02em;
+}
+
+.mtd-legal-section h2 span {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0284a8;
+  min-width: 22px;
+}
+
+.mtd-legal-section__body {
+  padding-left: 0;
+}
+
+@media (min-width: 640px) {
+  .mtd-legal-section__body {
+    padding-left: 32px;
+  }
+}
+
+.mtd-legal-p {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.75;
+}
+
+.mtd-legal-p a,
+.mtd-legal-section a {
+  color: #0369a1;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.mtd-legal-list {
+  margin: 0 0 12px;
+  padding-left: 20px;
+}
+
+.mtd-legal-list li {
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.75;
+  margin-bottom: 6px;
+}
+
+/* Standalone public chrome (outside /site) */
+
+.mtd-legal-standalone {
+  min-height: 100vh;
+  background: #f8fafc;
+  font-family: 'DM Sans', 'Segoe UI', system-ui, sans-serif;
+  color: #0f172a;
+}
+
+.mtd-legal-standalone__nav {
+  background: #fff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.mtd-legal-standalone__brand {
+  font-size: 16px;
+  font-weight: 800;
+  color: #1b2a4a;
+  text-decoration: none;
+  letter-spacing: -0.02em;
+}
+
+.mtd-legal-standalone__links {
+  display: flex;
+  gap: 16px 24px;
+  flex-wrap: wrap;
+  font-size: 13px;
+}
+
+.mtd-legal-standalone__links a {
+  color: #64748b;
+  text-decoration: none;
+}
+
+.mtd-legal-standalone__links a:last-child {
+  color: #1e3a5f;
+  font-weight: 600;
+}
+
+.mtd-legal-standalone__wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 40px 20px 80px;
+}
+
+.mtd-legal-standalone__header {
+  margin-bottom: 40px;
+}
+
+.mtd-legal-standalone__eyebrow {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.mtd-legal-standalone__header h1 {
+  margin: 0 0 12px;
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+.mtd-legal-standalone__meta {
+  margin: 0;
+  font-size: 15px;
+  color: #64748b;
+}
+
+.mtd-legal-standalone__footer {
+  margin-top: 64px;
+  padding-top: 24px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  gap: 16px 24px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.mtd-legal-standalone__footer a {
+  color: #0369a1;
+  text-decoration: none;
+}

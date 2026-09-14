@@ -1,14 +1,14 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import PrivacyBody from '@/features/legal/PrivacyBody'
+import CookiesBody from '@/features/legal/CookiesBody'
 import '@/features/legal/legal.css'
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | My Tax Diary',
-  description: 'Privacy Policy for My Tax Diary Ltd.',
+  title: 'Cookies Policy | My Tax Diary',
+  description: 'Cookies Policy for My Tax Diary Ltd.',
 }
 
-export default function PrivacyPolicyPage() {
+export default function CookiesPage() {
   return (
     <div className="mtd-legal-standalone">
       <nav className="mtd-legal-standalone__nav">
@@ -16,8 +16,8 @@ export default function PrivacyPolicyPage() {
           My Tax Diary
         </Link>
         <div className="mtd-legal-standalone__links">
-          <Link href="/terms">Terms &amp; Conditions</Link>
-          <Link href="/cookies">Cookies</Link>
+          <Link href="/privacy-policy">Privacy Policy</Link>
+          <Link href="/terms">Terms</Link>
           <Link href="/login">Sign in</Link>
         </div>
       </nav>
@@ -25,15 +25,15 @@ export default function PrivacyPolicyPage() {
       <div className="mtd-legal-standalone__wrap">
         <header className="mtd-legal-standalone__header">
           <p className="mtd-legal-standalone__eyebrow">My Tax Diary Ltd, My Tax Diary Platform</p>
-          <h1>Privacy Policy</h1>
+          <h1>Cookies Policy</h1>
           <p className="mtd-legal-standalone__meta">Effective date: 20 July 2026</p>
         </header>
 
-        <PrivacyBody termsHref="/terms" cookiesHref="/cookies" />
+        <CookiesBody privacyHref="/privacy-policy" />
 
         <div className="mtd-legal-standalone__footer">
-          <Link href="/terms">Terms &amp; Conditions</Link>
-          <Link href="/cookies">Cookies</Link>
+          <Link href="/privacy-policy">Privacy Policy</Link>
+          <Link href="/terms">Terms</Link>
           <Link href="/login">Sign in</Link>
           <a href="mailto:info@mytaxdiary.co.uk">info@mytaxdiary.co.uk</a>
           <span>My Tax Diary Ltd, Company No. 17312332</span>

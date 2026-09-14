@@ -16,6 +16,7 @@ const PLANS = [
     annual: 39,
     cta: 'Get started',
     href: SITE_APP_REGISTER,
+    enquireHref: '/site/contact?plan=starter',
     featured: false,
     points: [
       'Agent dashboard and client list',
@@ -33,6 +34,7 @@ const PLANS = [
     annual: 79,
     cta: 'Get started',
     href: SITE_APP_REGISTER,
+    enquireHref: '/site/contact?plan=growth',
     featured: true,
     points: [
       'Everything in Starter',
@@ -49,7 +51,8 @@ const PLANS = [
     monthly: 179,
     annual: 149,
     cta: 'Contact us',
-    href: '/site/contact',
+    href: '/site/contact?plan=scale',
+    enquireHref: '/site/contact?plan=scale',
     featured: false,
     points: [
       'Everything in Growth',
@@ -73,6 +76,21 @@ const COMPARISON: { feature: string; starter: string; growth: string; scale: str
   { feature: 'Custom rollout', starter: '—', growth: '—', scale: 'Yes' },
 ]
 
+const FAQS = [
+  {
+    q: 'Are these final prices?',
+    a: 'Not yet. The figures below are draft placeholders so you can compare package shape. Final numbers will be confirmed with Adnan before go-live.',
+  },
+  {
+    q: 'Can we switch packages later?',
+    a: 'Yes. Start where you are and move up when your client volume or team size grows. Use the enquiry form if you want help choosing.',
+  },
+  {
+    q: 'Is there a free trial?',
+    a: 'You can register and explore the product. For a guided walkthrough or package advice, send an enquiry and we will follow up.',
+  },
+] as const
+
 function priceLabel(billing: Billing, monthly: number, annual: number) {
   const amount = billing === 'monthly' ? monthly : annual
   return `£${amount}`
@@ -88,8 +106,8 @@ export default function PricingPlans() {
           <p className="mtd-page-hero__eyebrow">Pricing</p>
           <h1>Simple packages for UK accounting firms</h1>
           <p>
-            Choose a plan that matches your practice size. Prices below are draft placeholders until
-            final package numbers are confirmed.
+            Choose a plan that matches your practice size. Draft prices shown for comparison —
+            enquire if you want a package recommendation for your firm.
           </p>
           <div className="mtd-price-toggle" role="group" aria-label="Billing period">
             <button
@@ -133,13 +151,20 @@ export default function PricingPlans() {
                     <li key={point}>{point}</li>
                   ))}
                 </ul>
-                <SiteButton
-                  href={plan.href}
-                  variant={plan.featured ? 'secondary' : 'ghost'}
-                  block
-                >
-                  {plan.cta}
-                </SiteButton>
+                <div className="mtd-price-card__actions">
+                  <SiteButton
+                    href={plan.href}
+                    variant={plan.featured ? 'secondary' : 'ghost'}
+                    block
+                  >
+                    {plan.cta}
+                  </SiteButton>
+                  {plan.id !== 'scale' ? (
+                    <SiteButton href={plan.enquireHref} variant="ghost" block>
+                      Enquire about {plan.name}
+                    </SiteButton>
+                  ) : null}
+                </div>
               </article>
             ))}
           </div>
@@ -173,6 +198,23 @@ export default function PricingPlans() {
                 ))}
               </tbody>
             </table>
+          </div>
+        </SiteContainer>
+      </section>
+
+      <section className="mtd-home-section">
+        <SiteContainer>
+          <div className="mtd-home-section__head">
+            <h2>Pricing questions</h2>
+            <p>Short answers while final package numbers are confirmed.</p>
+          </div>
+          <div className="mtd-price-faq">
+            {FAQS.map((item) => (
+              <div key={item.q} className="mtd-price-faq__item">
+                <h3>{item.q}</h3>
+                <p>{item.a}</p>
+              </div>
+            ))}
           </div>
         </SiteContainer>
       </section>

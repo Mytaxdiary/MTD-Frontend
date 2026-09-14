@@ -245,6 +245,13 @@
   width: 100%;
 }
 
+.mtd-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+  pointer-events: none;
+}
+
 /* ── Main + footer ──────────────────────────────────────────────────────── */
 
 .mtd-site-main {
@@ -973,6 +980,30 @@
   background: var(--mtd-primary);
 }
 
+.mtd-price-card__actions {
+  display: grid;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.mtd-price-faq {
+  display: grid;
+  gap: 22px;
+  max-width: 720px;
+}
+
+.mtd-price-faq__item h3 {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+}
+
+.mtd-price-faq__item p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--mtd-muted);
+}
+
 .mtd-compare-wrap {
   overflow-x: auto;
   border: 1px solid var(--mtd-border-light);
@@ -1019,6 +1050,238 @@
   border-bottom: 0;
 }
 
+/* ── Contact / enquiry ──────────────────────────────────────────────────── */
+
+.mtd-contact-layout {
+  display: grid;
+  gap: 40px;
+  align-items: start;
+  grid-template-columns: 1fr;
+}
+
+.mtd-contact-form {
+  position: relative;
+  display: grid;
+  gap: 16px;
+  padding: 28px 24px;
+  border: 1px solid var(--mtd-border-light);
+  border-radius: var(--mtd-radius);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: var(--mtd-shadow);
+}
+
+.mtd-contact-form__row {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr;
+}
+
+.mtd-field {
+  display: grid;
+  gap: 8px;
+}
+
+.mtd-field span {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mtd-navy);
+}
+
+.mtd-field span em {
+  font-style: normal;
+  font-weight: 500;
+  color: var(--mtd-light);
+}
+
+.mtd-field input,
+.mtd-field select,
+.mtd-field textarea {
+  width: 100%;
+  border: 1px solid var(--mtd-border);
+  border-radius: var(--mtd-radius-sm);
+  background: #fff;
+  color: var(--mtd-text);
+  font-family: var(--mtd-font-body);
+  font-size: 15px;
+  padding: 12px 14px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mtd-field textarea {
+  resize: vertical;
+  min-height: 140px;
+  line-height: 1.5;
+}
+
+.mtd-field input:focus,
+.mtd-field select:focus,
+.mtd-field textarea:focus {
+  border-color: var(--mtd-primary);
+  box-shadow: 0 0 0 3px rgba(14, 165, 201, 0.18);
+}
+
+.mtd-hp {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.mtd-contact-form__error {
+  margin: 0;
+  font-size: 14px;
+  color: #b91c1c;
+}
+
+.mtd-contact-aside {
+  padding-top: 4px;
+}
+
+.mtd-contact-aside h2 {
+  margin: 0 0 14px;
+  font-size: 1.25rem;
+}
+
+.mtd-contact-aside ul {
+  margin: 0 0 18px;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.mtd-contact-aside li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--mtd-muted);
+}
+
+.mtd-contact-aside li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--mtd-primary);
+}
+
+.mtd-contact-aside p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--mtd-muted);
+}
+
+.mtd-contact-aside a {
+  color: var(--mtd-link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.mtd-contact-success {
+  max-width: 560px;
+  padding: 8px 0 24px;
+}
+
+.mtd-contact-success h2 {
+  margin: 0 0 12px;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+.mtd-contact-success p {
+  margin: 0 0 24px;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--mtd-muted);
+}
+
+/* ── Legal docs inside /site ────────────────────────────────────────────── */
+
+.mtd-legal-hero h1 {
+  max-width: 16ch;
+}
+
+.mtd-legal-doc {
+  padding-top: 24px;
+}
+
+.mtd-legal-doc .mtd-legal-section h2 {
+  color: var(--mtd-navy);
+  font-family: var(--mtd-font-display);
+}
+
+.mtd-legal-doc .mtd-legal-section h2 span {
+  color: var(--mtd-primary-dark);
+}
+
+.mtd-legal-doc .mtd-legal-p,
+.mtd-legal-doc .mtd-legal-list li {
+  color: var(--mtd-muted);
+}
+
+.mtd-legal-doc a {
+  color: var(--mtd-link);
+}
+
+.mtd-legal-related {
+  margin-top: 56px;
+  padding-top: 24px;
+  border-top: 1px solid var(--mtd-border-light);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  font-size: 13px;
+  color: var(--mtd-light);
+}
+
+.mtd-legal-related a {
+  color: var(--mtd-link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media (max-width: 719px) {
+  .mtd-page-hero {
+    padding: 40px 0 28px;
+  }
+
+  .mtd-page-hero h1 {
+    max-width: none;
+  }
+
+  .mtd-home-section {
+    padding: 52px 0;
+  }
+
+  .mtd-price-toggle {
+    width: 100%;
+  }
+
+  .mtd-price-toggle__btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .mtd-compare-wrap {
+    margin-inline: -8px;
+  }
+
+  .mtd-contact-form {
+    padding: 22px 16px;
+  }
+
+  .mtd-feature-mock {
+    min-height: 0;
+  }
+}
+
 @media (min-width: 860px) {
   .mtd-feature-row {
     grid-template-columns: 1.05fr 0.95fr;
@@ -1036,6 +1299,15 @@
   .mtd-price-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 22px;
+  }
+
+  .mtd-contact-layout {
+    grid-template-columns: 1.35fr 0.85fr;
+    gap: 48px;
+  }
+
+  .mtd-contact-form__row {
+    grid-template-columns: 1fr 1fr;
   }
 }
 
