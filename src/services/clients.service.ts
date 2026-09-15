@@ -288,6 +288,83 @@ export interface ChargeHistoryResponse {
   chargeHistoryDetails: HmrcChargeHistoryDetail[]
 }
 
+export interface CodingOutAmountItem {
+  amount: number
+  id?: number
+  source?: string
+  relatedTaxYear?: string
+  submittedOn?: string
+}
+
+export interface CodingOutUnderpaymentsResponse {
+  taxCodeComponents?: {
+    payeUnderpayment?: CodingOutAmountItem[]
+    selfAssessmentUnderpayment?: CodingOutAmountItem[]
+    debt?: CodingOutAmountItem[]
+    inYearAdjustment?: CodingOutAmountItem
+  }
+  unmatchedCustomerSubmissions?: {
+    payeUnderpayment?: CodingOutAmountItem[]
+    selfAssessmentUnderpayment?: CodingOutAmountItem[]
+    debt?: CodingOutAmountItem[]
+    inYearAdjustment?: CodingOutAmountItem
+  }
+  unmatchedCustomerInfo?: { amount?: number; source?: string }
+}
+
+export interface UpsertCodingOutBody {
+  taxCodeComponents: {
+    payeUnderpayment?: Array<{ id: number; amount: number }>
+    selfAssessmentUnderpayment?: Array<{ id: number; amount: number }>
+    debt?: Array<{ id: number; amount: number }>
+    inYearAdjustment?: { id: number; amount: number }
+  }
+}
+
+export interface CodingOutStatusResponse {
+  processingDate: string
+  nino: string
+  taxYear: string
+  optOutIndicator: boolean
+}
+
+export interface ItsaPenaltiesResponse {
+  totalisations?: {
+    lateSubmissionPenaltyTotalValue?: number
+    penalisedPrincipalTotal?: number
+    latePaymentPenaltyPostedTotal?: number
+    latePaymentPenaltyEstimateTotal?: number
+  }
+  lateSubmissionPenalty?: {
+    summary?: {
+      activePenaltyPoints?: number
+      inactivePenaltyPoints?: number
+      periodOfComplianceAchievement?: string
+      regimeThreshold?: number
+      penaltyChargeAmount?: number
+    }
+    details?: Array<{
+      penaltyChargeReference?: string
+      penaltyStatus?: string
+      penaltyCategory?: string
+      penaltyChargeCreationDate?: string
+      penaltyChargeDueDate?: string
+      penaltyChargeAmount?: number
+    }>
+  }
+  latePaymentPenalty?: {
+    details?: Array<{
+      principalChargeReference?: string
+      penaltyChargeReference?: string
+      penaltyCategory?: string
+      penaltyStatus?: string
+      penaltyChargeCreationDate?: string
+      penaltyChargeDueDate?: string
+      penaltyChargeAmount?: number
+    }>
+  }
+}
+
 export interface PaymentRecord {
   date: string
   amount: number
@@ -646,6 +723,63 @@ export const clientsService = {
   ): Promise<ChargeHistoryResponse> {
     const res = await apiClient.get<{ data: ChargeHistoryResponse }>(
       `/clients/${id}/liabilities/charges/by-reference/${encodeURIComponent(chargeReference)}`
+    )
+    return res.data.data
+  },
+
+  async getCodingOutUnderpayments(
+    id: string,
+    taxYear: string
+  ): Promise<CodingOutUnderpaymentsResponse> {
+    const res = await apiClient.get<{ data: CodingOutUnderpaymentsResponse }>(
+      `/clients/${id}/liabilities/coding-out/${encodeURIComponent(taxYear)}`
+    )
+    return res.data.data
+  },
+
+  async upsertCodingOutUnderpayments(
+    id: string,
+    taxYear: string,
+    body: UpsertCodingOutBody
+  ): Promise<CodingOutUnderpaymentsResponse> {
+    const res = await apiClient.put<{ data: CodingOutUnderpaymentsResponse }>(
+      `/clients/${id}/liabilities/coding-out/${encodeURIComponent(taxYear)}`,
+      body
+    )
+    return res.data.data
+  },
+
+  async deleteCodingOutUnderpayments(id: string, taxYear: string): Promise<{ deleted: true }> {
+    const res = await apiClient.delete<{ data: { deleted: true } }>(
+      `/clients/${id}/liabilities/coding-out/${encodeURIComponent(taxYear)}`
+    )
+    return res.data.data
+  },
+
+  async getCodingOutStatus(id: string, taxYear: string): Promise<CodingOutStatusResponse> {
+    const res = await apiClient.get<{ data: CodingOutStatusResponse }>(
+      `/clients/${id}/liabilities/coding-out/${encodeURIComponent(taxYear)}/status`
+    )
+    return res.data.data
+  },
+
+  async optOutOfCodingOut(id: string, taxYear: string): Promise<CodingOutStatusResponse> {
+    const res = await apiClient.post<{ data: CodingOutStatusResponse }>(
+      `/clients/${id}/liabilities/coding-out/${encodeURIComponent(taxYear)}/opt-out`
+    )
+    return res.data.data
+  },
+
+  async optInToCodingOut(id: string, taxYear: string): Promise<CodingOutStatusResponse> {
+    const res = await apiClient.post<{ data: CodingOutStatusResponse }>(
+      `/clients/${id}/liabilities/coding-out/${encodeURIComponent(taxYear)}/opt-in`
+    )
+    return res.data.data
+  },
+
+  async getItsaPenalties(id: string): Promise<ItsaPenaltiesResponse> {
+    const res = await apiClient.get<{ data: ItsaPenaltiesResponse }>(
+      `/clients/${id}/liabilities/penalties`
     )
     return res.data.data
   },

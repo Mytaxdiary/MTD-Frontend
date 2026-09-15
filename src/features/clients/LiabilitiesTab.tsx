@@ -18,6 +18,7 @@ import {
   type HmrcPayment,
 } from '@/services/clients.service'
 import MessageModal from '@/features/clients/detail/MessageModal'
+import CodingOutPenaltiesPanel from '@/features/clients/CodingOutPenaltiesPanel'
 import { usePermissions } from '@/hooks/usePermissions'
 
 const outlineBtn: React.CSSProperties = {
@@ -313,6 +314,7 @@ export default function LiabilitiesTab({ client }: Props) {
   }, [canFetch, fetchLiabilities, fetchPayments])
 
   return (
+    <>
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20 }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
         {/* ── Liabilities ─────────────────────────────── */}
@@ -824,5 +826,10 @@ export default function LiabilitiesTab({ client }: Props) {
       />
       )}
     </div>
+
+      <div style={{ marginTop: 20 }}>
+        <CodingOutPenaltiesPanel clientId={client.id} authorised={!!client.authorisedAt} />
+      </div>
+    </>
   )
 }
