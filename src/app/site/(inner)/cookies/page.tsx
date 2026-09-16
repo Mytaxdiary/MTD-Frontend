@@ -1,20 +1,20 @@
 import type { Metadata } from 'next'
-import LegalPage from '@/features/marketing/components/LegalPage'
+import AppsiteLegalPage from '@/features/marketing/components/appsite/AppsiteLegalPage'
 import CookiesBody from '@/features/legal/CookiesBody'
 import { SITE_LEGAL } from '@/features/marketing/nav'
 
 export const metadata: Metadata = {
-  title: 'Cookies Policy',
-  description:
-    'Cookies Policy for My Tax Diary — how we use essential, preference, and analytics cookies.',
+  title: 'Cookie Policy',
+  description: 'The cookies this site sets and what they are used for.',
   alternates: { canonical: '/site/cookies' },
 }
 
 export default function MarketingCookiesPage() {
   return (
-    <LegalPage
+    <AppsiteLegalPage
       eyebrow="Legal"
-      title="Cookies Policy"
+      title="Cookie Policy"
+      lead="The cookies this site sets and what they are used for."
       effectiveDate="20 July 2026"
       related={[
         { href: SITE_LEGAL.privacy, label: 'Privacy Policy' },
@@ -22,6 +22,6 @@ export default function MarketingCookiesPage() {
       ]}
     >
       <CookiesBody privacyHref={SITE_LEGAL.privacy} />
-    </LegalPage>
+    </AppsiteLegalPage>
   )
 }

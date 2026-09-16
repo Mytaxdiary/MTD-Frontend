@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import LegalPage from '@/features/marketing/components/LegalPage'
+import AppsiteLegalPage from '@/features/marketing/components/appsite/AppsiteLegalPage'
 import TermsBody from '@/features/legal/TermsBody'
 import { SITE_LEGAL } from '@/features/marketing/nav'
 
@@ -12,9 +12,10 @@ export const metadata: Metadata = {
 
 export default function MarketingTermsPage() {
   return (
-    <LegalPage
+    <AppsiteLegalPage
       eyebrow="Legal"
-      title="Terms and Conditions"
+      title="Terms & Conditions"
+      lead="The terms that apply when you use My Tax Diary."
       effectiveDate="20 July 2026"
       related={[
         { href: SITE_LEGAL.privacy, label: 'Privacy Policy' },
@@ -22,6 +23,6 @@ export default function MarketingTermsPage() {
       ]}
     >
       <TermsBody privacyHref={SITE_LEGAL.privacy} />
-    </LegalPage>
+    </AppsiteLegalPage>
   )
 }

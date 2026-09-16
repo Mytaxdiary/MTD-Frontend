@@ -1,20 +1,20 @@
 import type { Metadata } from 'next'
-import LegalPage from '@/features/marketing/components/LegalPage'
+import AppsiteLegalPage from '@/features/marketing/components/appsite/AppsiteLegalPage'
 import PrivacyBody from '@/features/legal/PrivacyBody'
 import { SITE_LEGAL } from '@/features/marketing/nav'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
-  description:
-    'Privacy Policy for My Tax Diary Ltd — how we collect and use personal data for UK accountancy firms.',
+  description: 'How My Tax Diary Ltd handles personal data. ICO registration ZC190729.',
   alternates: { canonical: '/site/privacy' },
 }
 
 export default function MarketingPrivacyPage() {
   return (
-    <LegalPage
+    <AppsiteLegalPage
       eyebrow="Legal"
       title="Privacy Policy"
+      lead="How My Tax Diary Ltd handles personal data. ICO registration ZC190729."
       effectiveDate="20 July 2026"
       related={[
         { href: SITE_LEGAL.terms, label: 'Terms and Conditions' },
@@ -22,6 +22,6 @@ export default function MarketingPrivacyPage() {
       ]}
     >
       <PrivacyBody termsHref={SITE_LEGAL.terms} cookiesHref={SITE_LEGAL.cookies} />
-    </LegalPage>
+    </AppsiteLegalPage>
   )
 }

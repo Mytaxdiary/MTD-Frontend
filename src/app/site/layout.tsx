@@ -1,22 +1,6 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
-import { Outfit, DM_Sans } from 'next/font/google'
-import SiteShell from '@/features/marketing/components/SiteShell'
 import SiteAnalytics from '@/features/marketing/components/SiteAnalytics'
-import '@/features/marketing/styles/site.css'
-import '@/features/legal/legal.css'
-
-const display = Outfit({
-  subsets: ['latin'],
-  variable: '--font-mtd-display',
-  display: 'swap',
-})
-
-const body = DM_Sans({
-  subsets: ['latin'],
-  variable: '--font-mtd-body',
-  display: 'swap',
-})
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') ||
@@ -24,12 +8,12 @@ const siteUrl =
   'https://mytaxdiary.co.uk'
 
 const description =
-  'MTD ITSA software for UK accountants. Agent portal, client portal, HMRC connection, chase, and staff permissions.'
+  'The complete MTD for Income Tax solution for UK accountants. Agent portal, client portal, HMRC connection, chasing and staff controls.'
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'My Tax Diary — MTD ITSA for UK accountants',
+    default: 'My Tax Diary — MTD ITSA software for UK accountants',
     template: '%s | My Tax Diary',
   },
   description,
@@ -46,33 +30,44 @@ export const metadata: Metadata = {
   authors: [{ name: 'My Tax Diary Ltd' }],
   creator: 'My Tax Diary Ltd',
   publisher: 'My Tax Diary Ltd',
-  alternates: {
-    canonical: '/site',
+  alternates: { canonical: '/site' },
+  icons: {
+    icon: [
+      { url: '/site/favicon.ico', sizes: 'any' },
+      { url: '/site/favicon-16x16.png', type: 'image/png', sizes: '16x16' },
+      { url: '/site/favicon-32x32.png', type: 'image/png', sizes: '32x32' },
+      { url: '/site/favicon-48x48.png', type: 'image/png', sizes: '48x48' },
+    ],
+    apple: [{ url: '/site/apple-touch-icon.png', sizes: '180x180' }],
   },
   openGraph: {
     type: 'website',
     locale: 'en_GB',
     url: '/site',
     siteName: 'My Tax Diary',
-    title: 'My Tax Diary — MTD ITSA for UK accountants',
+    title: 'My Tax Diary — MTD ITSA software for UK accountants',
     description,
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'My Tax Diary — MTD ITSA for UK accountants',
+    title: 'My Tax Diary — MTD ITSA software for UK accountants',
     description,
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  robots: { index: true, follow: true },
 }
 
 export default function MarketingSiteLayout({ children }: { children: ReactNode }) {
   return (
-    <div className={`${display.variable} ${body.variable}`}>
+    <>
+      {/* Fonts — matches MTD-AppSite <head> exactly */}
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Caveat:wght@500;600&display=swap"
+        rel="stylesheet"
+      />
       <SiteAnalytics />
-      <SiteShell>{children}</SiteShell>
-    </div>
+      {children}
+    </>
   )
 }

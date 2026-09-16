@@ -1,9 +1,10 @@
-import ContactEnquiryForm from '@/features/marketing/components/ContactEnquiryForm'
+import type { Metadata } from 'next'
+import AppsiteContactForm from '@/features/marketing/components/appsite/AppsiteContactForm'
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Contact',
   description:
-    'Enquire about My Tax Diary packages for UK accountants. Tell us about your firm and MTD ITSA needs.',
+    'Tell us about your firm and what you need for MTD ITSA. We reply with package guidance.',
   alternates: { canonical: '/site/contact' },
 }
 
@@ -15,5 +16,5 @@ export default async function MarketingContactPage({ searchParams }: PageProps) 
   const params = (await searchParams) ?? {}
   const plan = typeof params.plan === 'string' ? params.plan : ''
 
-  return <ContactEnquiryForm initialPlan={plan} />
+  return <AppsiteContactForm initialPlan={plan} />
 }
