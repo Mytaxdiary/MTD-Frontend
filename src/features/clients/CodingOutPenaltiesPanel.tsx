@@ -39,8 +39,14 @@ function taxYearOptions(count = 5): string[] {
   return years
 }
 
+let componentIdSeq = 0
+
 function newComponentId(): number {
-  return Number(`${Date.now()}${Math.floor(Math.random() * 100)}`.slice(-12)) || Date.now()
+  componentIdSeq += 1
+  const n =
+    Number(`${Date.now()}${String(componentIdSeq).padStart(3, '0')}${Math.floor(Math.random() * 100)}`.slice(-12)) ||
+    Date.now() + componentIdSeq
+  return n
 }
 
 function parseAmount(raw: string): number | undefined {
@@ -61,6 +67,28 @@ function parseId(raw: string, fallback: number): number {
   return n
 }
 
+/** HMRC rejects payloads where the same id appears on more than one component. */
+function allocateUniqueId(raw: string, used: Set<number>): number {
+  let id = parseId(raw, newComponentId())
+  while (used.has(id)) {
+    id = newComponentId()
+  }
+  used.add(id)
+  return id
+}
+
+/** Keep first occurrence of an id; later collisions get a fresh id (sandbox stub quirk). */
+function uniquePrefillId(raw: number | null | undefined, used: Set<number>): string {
+  if (raw == null) return ''
+  let id = Number(raw)
+  if (!Number.isInteger(id) || id < 1) return ''
+  if (used.has(id)) {
+    id = newComponentId()
+  }
+  used.add(id)
+  return String(id)
+}
+
 function AmountRows({ title, items }: { title: string; items?: CodingOutAmountItem[] }) {
   if (!items?.length) return null
   return (
@@ -68,7 +96,7 @@ function AmountRows({ title, items }: { title: string; items?: CodingOutAmountIt
       <div style={{ fontSize: 12, fontWeight: 600, color: B.text, marginBottom: 6 }}>{title}</div>
       {items.map((item, idx) => (
         <div
-          key={`${title}-${item.id ?? idx}`}
+          key={`${title}-${item.id ?? idx}-${item.submittedOn ?? idx}`}
           style={{
             fontSize: 12,
             color: B.muted,
@@ -79,6 +107,9 @@ function AmountRows({ title, items }: { title: string; items?: CodingOutAmountIt
           {fmtMoney(item.amount)}
           {item.source ? ` · ${item.source}` : ''}
           {item.id != null ? ` · id ${item.id}` : ''}
+          {item.submittedOn
+            ? ` · ${new Date(item.submittedOn).toLocaleString('en-GB')}`
+            : ''}
         </div>
       ))}
     </div>
@@ -88,6 +119,48 @@ function AmountRows({ title, items }: { title: string; items?: CodingOutAmountIt
 function AmountOne({ title, item }: { title: string; item?: CodingOutAmountItem }) {
   if (!item) return null
   return <AmountRows title={title} items={[item]} />
+}
+
+function CodingOutSection({
+  heading,
+  components,
+}: {
+  heading: string
+  components?: CodingOutUnderpaymentsResponse['taxCodeComponents'] | null
+}) {
+  const hasAny =
+    !!components?.payeUnderpayment?.length ||
+    !!components?.selfAssessmentUnderpayment?.length ||
+    !!components?.debt?.length ||
+    !!components?.inYearAdjustment
+  if (!hasAny) return null
+  return (
+    <div style={{ marginBottom: 14 }}>
+      <div style={{ fontSize: 12, fontWeight: 700, color: B.text, marginBottom: 8 }}>{heading}</div>
+      <AmountRows title="PAYE underpayment" items={components?.payeUnderpayment} />
+      <AmountRows
+        title="Self Assessment underpayment"
+        items={components?.selfAssessmentUnderpayment}
+      />
+      <AmountRows title="Debt" items={components?.debt} />
+      <AmountOne title="In-year adjustment" item={components?.inYearAdjustment} />
+    </div>
+  )
+}
+
+type PrefillSource = {
+  amount?: number | null
+  id?: number | null
+} | null
+
+function pickPrefill(
+  unmatched?: PrefillSource | PrefillSource[],
+  held?: PrefillSource | PrefillSource[],
+): PrefillSource {
+  const u = Array.isArray(unmatched) ? unmatched[0] : unmatched
+  if (u && u.amount != null) return u
+  const h = Array.isArray(held) ? held[0] : held
+  return h ?? null
 }
 
 type UpsertComponents = {
@@ -123,6 +196,48 @@ export default function CodingOutPenaltiesPanel({ clientId, authorised }: Props)
   const [iya, setIya] = useState('')
   const [iyaId, setIyaId] = useState('')
 
+  const applyCodingToForm = useCallback((c: CodingOutUnderpaymentsResponse | null) => {
+    const tc = c?.taxCodeComponents
+    const um = c?.unmatchedCustomerSubmissions
+    const usedIds = new Set<number>()
+
+    const payeItem = pickPrefill(um?.payeUnderpayment, tc?.payeUnderpayment)
+    if (payeItem?.amount != null) {
+      setPaye(String(payeItem.amount))
+      setPayeId(uniquePrefillId(payeItem.id, usedIds))
+    } else {
+      setPaye('')
+      setPayeId('')
+    }
+
+    const saItem = pickPrefill(um?.selfAssessmentUnderpayment, tc?.selfAssessmentUnderpayment)
+    if (saItem?.amount != null) {
+      setSaUnder(String(saItem.amount))
+      setSaId(uniquePrefillId(saItem.id, usedIds))
+    } else {
+      setSaUnder('')
+      setSaId('')
+    }
+
+    const debtItem = pickPrefill(um?.debt, tc?.debt)
+    if (debtItem?.amount != null) {
+      setDebt(String(debtItem.amount))
+      setDebtId(uniquePrefillId(debtItem.id, usedIds))
+    } else {
+      setDebt('')
+      setDebtId('')
+    }
+
+    const iyaItem = pickPrefill(um?.inYearAdjustment, tc?.inYearAdjustment)
+    if (iyaItem?.amount != null) {
+      setIya(String(iyaItem.amount))
+      setIyaId(uniquePrefillId(iyaItem.id, usedIds))
+    } else {
+      setIya('')
+      setIyaId('')
+    }
+  }, [])
+
   const loadAll = useCallback(async () => {
     if (!authorised) return
     setLoading(true)
@@ -147,44 +262,11 @@ export default function CodingOutPenaltiesPanel({ clientId, authorised }: Props)
       setCoding(c)
       setStatus(s)
       setPenalties(p)
-
-      const tc = c?.taxCodeComponents
-      if (tc?.payeUnderpayment?.[0]) {
-        setPaye(String(tc.payeUnderpayment[0].amount ?? ''))
-        setPayeId(tc.payeUnderpayment[0].id != null ? String(tc.payeUnderpayment[0].id) : '')
-      } else {
-        setPaye('')
-        setPayeId('')
-      }
-      if (tc?.selfAssessmentUnderpayment?.[0]) {
-        setSaUnder(String(tc.selfAssessmentUnderpayment[0].amount ?? ''))
-        setSaId(
-          tc.selfAssessmentUnderpayment[0].id != null
-            ? String(tc.selfAssessmentUnderpayment[0].id)
-            : '',
-        )
-      } else {
-        setSaUnder('')
-        setSaId('')
-      }
-      if (tc?.debt?.[0]) {
-        setDebt(String(tc.debt[0].amount ?? ''))
-        setDebtId(tc.debt[0].id != null ? String(tc.debt[0].id) : '')
-      } else {
-        setDebt('')
-        setDebtId('')
-      }
-      if (tc?.inYearAdjustment) {
-        setIya(String(tc.inYearAdjustment.amount ?? ''))
-        setIyaId(tc.inYearAdjustment.id != null ? String(tc.inYearAdjustment.id) : '')
-      } else {
-        setIya('')
-        setIyaId('')
-      }
+      applyCodingToForm(c)
     } finally {
       setLoading(false)
     }
-  }, [authorised, clientId, taxYear])
+  }, [applyCodingToForm, authorised, clientId, taxYear])
 
   useEffect(() => {
     if (!authorised) {
@@ -204,25 +286,27 @@ export default function CodingOutPenaltiesPanel({ clientId, authorised }: Props)
       const saAmt = parseAmount(saUnder)
       const debtAmt = parseAmount(debt)
       const iyaAmt = parseAmount(iya)
+      const usedIds = new Set<number>()
       const taxCodeComponents: UpsertComponents = {}
       if (payeAmt != null) {
-        taxCodeComponents.payeUnderpayment = [
-          { id: parseId(payeId, newComponentId()), amount: payeAmt },
-        ]
+        const id = allocateUniqueId(payeId, usedIds)
+        setPayeId(String(id))
+        taxCodeComponents.payeUnderpayment = [{ id, amount: payeAmt }]
       }
       if (saAmt != null) {
-        taxCodeComponents.selfAssessmentUnderpayment = [
-          { id: parseId(saId, newComponentId()), amount: saAmt },
-        ]
+        const id = allocateUniqueId(saId, usedIds)
+        setSaId(String(id))
+        taxCodeComponents.selfAssessmentUnderpayment = [{ id, amount: saAmt }]
       }
       if (debtAmt != null) {
-        taxCodeComponents.debt = [{ id: parseId(debtId, newComponentId()), amount: debtAmt }]
+        const id = allocateUniqueId(debtId, usedIds)
+        setDebtId(String(id))
+        taxCodeComponents.debt = [{ id, amount: debtAmt }]
       }
       if (iyaAmt != null) {
-        taxCodeComponents.inYearAdjustment = {
-          id: parseId(iyaId, newComponentId()),
-          amount: iyaAmt,
-        }
+        const id = allocateUniqueId(iyaId, usedIds)
+        setIyaId(String(id))
+        taxCodeComponents.inYearAdjustment = { id, amount: iyaAmt }
       }
       if (!Object.keys(taxCodeComponents).length) {
         throw new Error('Enter at least one amount to save.')
@@ -231,6 +315,7 @@ export default function CodingOutPenaltiesPanel({ clientId, authorised }: Props)
         taxCodeComponents,
       })
       setCoding(next)
+      applyCodingToForm(next)
     } catch (err) {
       setCodingError(err instanceof Error ? err.message : 'Failed to save coding out amounts.')
     } finally {
@@ -246,6 +331,7 @@ export default function CodingOutPenaltiesPanel({ clientId, authorised }: Props)
       await clientsService.deleteCodingOutUnderpayments(clientId, taxYear)
       const next = await clientsService.getCodingOutUnderpayments(clientId, taxYear).catch(() => null)
       setCoding(next)
+      applyCodingToForm(next)
     } catch (err) {
       setCodingError(err instanceof Error ? err.message : 'Failed to delete coding out amounts.')
     } finally {
@@ -272,6 +358,7 @@ export default function CodingOutPenaltiesPanel({ clientId, authorised }: Props)
   }
 
   const components = coding?.taxCodeComponents
+  const unmatched = coding?.unmatchedCustomerSubmissions
   const totals = penalties?.totalisations
   const lateSub = penalties?.lateSubmissionPenalty
   const latePay = penalties?.latePaymentPenalty?.details ?? []
@@ -284,11 +371,18 @@ export default function CodingOutPenaltiesPanel({ clientId, authorised }: Props)
     fontSize: 13,
   }
 
+  const hasUnmatched =
+    !!unmatched?.payeUnderpayment?.length ||
+    !!unmatched?.selfAssessmentUnderpayment?.length ||
+    !!unmatched?.debt?.length ||
+    !!unmatched?.inYearAdjustment
+
   const hasAmounts =
     !!components?.payeUnderpayment?.length ||
     !!components?.selfAssessmentUnderpayment?.length ||
     !!components?.debt?.length ||
-    !!components?.inYearAdjustment
+    !!components?.inYearAdjustment ||
+    hasUnmatched
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -354,10 +448,38 @@ export default function CodingOutPenaltiesPanel({ clientId, authorised }: Props)
                   Status:{' '}
                   <b>{status.optOutIndicator ? 'Opted out of coding out' : 'Opted in to coding out'}</b>
                 </span>
-                <button type="button" style={outlineBtn} disabled={busy} onClick={() => void onOpt('out')}>
+                <button
+                  type="button"
+                  style={{
+                    ...outlineBtn,
+                    opacity: busy || status.optOutIndicator ? 0.5 : 1,
+                    cursor: busy || status.optOutIndicator ? 'not-allowed' : 'pointer',
+                  }}
+                  disabled={busy || status.optOutIndicator}
+                  onClick={() => void onOpt('out')}
+                  title={
+                    status.optOutIndicator
+                      ? 'Already opted out for this tax year'
+                      : 'Opt out of coding out'
+                  }
+                >
                   Opt out
                 </button>
-                <button type="button" style={outlineBtn} disabled={busy} onClick={() => void onOpt('in')}>
+                <button
+                  type="button"
+                  style={{
+                    ...outlineBtn,
+                    opacity: busy || !status.optOutIndicator ? 0.5 : 1,
+                    cursor: busy || !status.optOutIndicator ? 'not-allowed' : 'pointer',
+                  }}
+                  disabled={busy || !status.optOutIndicator}
+                  onClick={() => void onOpt('in')}
+                  title={
+                    !status.optOutIndicator
+                      ? 'Already opted in for this tax year'
+                      : 'Opt in to coding out'
+                  }
+                >
                   Opt in
                 </button>
               </div>
@@ -367,16 +489,17 @@ export default function CodingOutPenaltiesPanel({ clientId, authorised }: Props)
               <div style={{ fontSize: 12, color: B.redText, marginBottom: 10 }}>{codingError}</div>
             )}
 
-            <AmountRows title="PAYE underpayment" items={components?.payeUnderpayment} />
-            <AmountRows
-              title="Self Assessment underpayment"
-              items={components?.selfAssessmentUnderpayment}
-            />
-            <AmountRows title="Debt" items={components?.debt} />
-            <AmountOne title="In-year adjustment" item={components?.inYearAdjustment} />
+            <CodingOutSection heading="HMRC held amounts" components={components} />
+            <CodingOutSection heading="Your submitted amounts (unmatched)" components={unmatched} />
             {!hasAmounts && !codingError && (
               <div style={{ fontSize: 12, color: B.muted, marginBottom: 12 }}>
                 No coding out amounts returned for {taxYear}.
+              </div>
+            )}
+            {hasUnmatched && (
+              <div style={{ fontSize: 11, color: B.muted, marginBottom: 10 }}>
+                Save / amend writes your amounts into unmatched submissions until HMRC matches them.
+                Form fields prefer your unmatched values when present.
               </div>
             )}
 
@@ -420,6 +543,11 @@ export default function CodingOutPenaltiesPanel({ clientId, authorised }: Props)
                 onId={setIyaId}
                 fieldStyle={fieldStyle}
               />
+            </div>
+
+            <div style={{ fontSize: 11, color: B.muted, marginTop: 8 }}>
+              Each amount needs its own unique id. If HMRC/sandbox returned the same id on more than
+              one line, Save will assign unique ids automatically.
             </div>
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 12 }}>
