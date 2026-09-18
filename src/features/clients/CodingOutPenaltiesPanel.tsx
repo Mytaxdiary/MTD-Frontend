@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import B from '@/styles/theme'
 import { Card, CardHeader } from '@/components/ui/card'
+import InfoTooltip from '@/components/ui/InfoTooltip'
 import { currentUkTaxYear } from '@/lib/hmrc/taxYear'
 import {
   clientsService,
@@ -94,24 +95,67 @@ function AmountRows({ title, items }: { title: string; items?: CodingOutAmountIt
   return (
     <div style={{ marginBottom: 12 }}>
       <div style={{ fontSize: 12, fontWeight: 600, color: B.text, marginBottom: 6 }}>{title}</div>
-      {items.map((item, idx) => (
-        <div
-          key={`${title}-${item.id ?? idx}-${item.submittedOn ?? idx}`}
-          style={{
-            fontSize: 12,
-            color: B.muted,
-            padding: '6px 0',
-            borderBottom: `1px solid ${B.border}`,
-          }}
-        >
-          {fmtMoney(item.amount)}
-          {item.source ? ` · ${item.source}` : ''}
-          {item.id != null ? ` · id ${item.id}` : ''}
-          {item.submittedOn
-            ? ` · ${new Date(item.submittedOn).toLocaleString('en-GB')}`
-            : ''}
-        </div>
-      ))}
+      {items.map((item, idx) => {
+        const hasHiddenMeta = item.source != null || item.id != null
+        return (
+          <div
+            key={`${title}-${item.id ?? idx}-${item.submittedOn ?? idx}`}
+            style={{
+              fontSize: 12,
+              color: B.muted,
+              padding: '6px 0',
+              borderBottom: `1px solid ${B.border}`,
+            }}
+          >
+            <div style={{ color: B.text, fontWeight: 500 }}>
+              {fmtMoney(item.amount)}
+              {item.relatedTaxYear ? ` · ${item.relatedTaxYear}` : ''}
+              {item.submittedOn
+                ? ` · ${new Date(item.submittedOn).toLocaleString('en-GB')}`
+                : ''}
+            </div>
+            {hasHiddenMeta && (
+              <details style={{ marginTop: 4 }}>
+                <summary
+                  style={{
+                    cursor: 'pointer',
+                    fontSize: 11,
+                    color: B.muted,
+                    userSelect: 'none',
+                  }}
+                >
+                  Details
+                </summary>
+                <div
+                  style={{
+                    marginTop: 6,
+                    padding: '8px 10px',
+                    borderRadius: 6,
+                    background: B.surface,
+                    border: `1px solid ${B.border}`,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 4,
+                    fontSize: 11,
+                    lineHeight: 1.45,
+                  }}
+                >
+                  {item.source != null && (
+                    <div>
+                      Source: <b style={{ color: B.text }}>{item.source}</b>
+                    </div>
+                  )}
+                  {item.id != null && (
+                    <div>
+                      Id: <b style={{ color: B.text }}>{item.id}</b>
+                    </div>
+                  )}
+                </div>
+              </details>
+            )}
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -444,44 +488,80 @@ export default function CodingOutPenaltiesPanel({ clientId, authorised }: Props)
                   border: `1px solid ${B.border}`,
                 }}
               >
-                <span style={{ fontSize: 13, color: B.text }}>
+                <span
+                  style={{
+                    fontSize: 13,
+                    color: B.text,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                  }}
+                >
                   Status:{' '}
-                  <b>{status.optOutIndicator ? 'Opted out of coding out' : 'Opted in to coding out'}</b>
+                  <b>
+                    {status.optOutIndicator ? 'Opted out of coding out' : 'Opted in to coding out'}
+                  </b>
+                  <InfoTooltip label="What coding out status means" width={320}>
+                    Coding out means HMRC collects underpaid tax or debts through the client&apos;s
+                    PAYE tax code (taken from salary or pension over the year), instead of one lump
+                    sum.
+                    <br />
+                    <br />
+                    <b>Opted in:</b> HMRC may collect eligible amounts via the tax code for this tax
+                    year.
+                    <br />
+                    <br />
+                    <b>Opted out:</b> HMRC should not collect via the tax code for this tax year. The
+                    client pays those amounts another way.
+                  </InfoTooltip>
                 </span>
-                <button
-                  type="button"
-                  style={{
-                    ...outlineBtn,
-                    opacity: busy || status.optOutIndicator ? 0.5 : 1,
-                    cursor: busy || status.optOutIndicator ? 'not-allowed' : 'pointer',
-                  }}
-                  disabled={busy || status.optOutIndicator}
-                  onClick={() => void onOpt('out')}
-                  title={
-                    status.optOutIndicator
-                      ? 'Already opted out for this tax year'
-                      : 'Opt out of coding out'
-                  }
-                >
-                  Opt out
-                </button>
-                <button
-                  type="button"
-                  style={{
-                    ...outlineBtn,
-                    opacity: busy || !status.optOutIndicator ? 0.5 : 1,
-                    cursor: busy || !status.optOutIndicator ? 'not-allowed' : 'pointer',
-                  }}
-                  disabled={busy || !status.optOutIndicator}
-                  onClick={() => void onOpt('in')}
-                  title={
-                    !status.optOutIndicator
-                      ? 'Already opted in for this tax year'
-                      : 'Opt in to coding out'
-                  }
-                >
-                  Opt in
-                </button>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  <button
+                    type="button"
+                    style={{
+                      ...outlineBtn,
+                      opacity: busy || status.optOutIndicator ? 0.5 : 1,
+                      cursor: busy || status.optOutIndicator ? 'not-allowed' : 'pointer',
+                    }}
+                    disabled={busy || status.optOutIndicator}
+                    onClick={() => void onOpt('out')}
+                    title={
+                      status.optOutIndicator
+                        ? 'Already opted out for this tax year'
+                        : 'Opt out of coding out'
+                    }
+                  >
+                    Opt out
+                  </button>
+                  <InfoTooltip label="What opt out means" align="left" width={280}>
+                    Tell HMRC not to collect underpayments or debts through this client&apos;s PAYE
+                    tax code for {taxYear}. Use this if the client should pay separately instead of
+                    via salary or pension deductions.
+                  </InfoTooltip>
+                </span>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  <button
+                    type="button"
+                    style={{
+                      ...outlineBtn,
+                      opacity: busy || !status.optOutIndicator ? 0.5 : 1,
+                      cursor: busy || !status.optOutIndicator ? 'not-allowed' : 'pointer',
+                    }}
+                    disabled={busy || !status.optOutIndicator}
+                    onClick={() => void onOpt('in')}
+                    title={
+                      !status.optOutIndicator
+                        ? 'Already opted in for this tax year'
+                        : 'Opt in to coding out'
+                    }
+                  >
+                    Opt in
+                  </button>
+                  <InfoTooltip label="What opt in means" align="left" width={280}>
+                    Allow HMRC to collect eligible underpayments or debts through this client&apos;s
+                    PAYE tax code again for {taxYear}, after a previous opt out.
+                  </InfoTooltip>
+                </span>
               </div>
             )}
 
