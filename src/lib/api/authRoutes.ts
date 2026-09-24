@@ -1,5 +1,6 @@
 const NO_RETRY_PATHS = [
   '/auth/login',
+  '/auth/admin/login',
   '/auth/register',
   '/auth/refresh',
   '/auth/session',

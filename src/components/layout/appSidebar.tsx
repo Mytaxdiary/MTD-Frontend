@@ -332,7 +332,7 @@ export default function AppSidebar({ overdueCount = 2 }: { overdueCount?: number
 
           <button
             type="button"
-            onClick={logout}
+            onClick={() => void logout()}
             style={{
               width: '100%',
               padding: '10px 13px',

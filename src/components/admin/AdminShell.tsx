@@ -1,0 +1,35 @@
+'use client'
+
+import TokenRefreshProvider from '@/components/auth/TokenRefreshProvider'
+import CurrentUserProvider from '@/components/auth/CurrentUserProvider'
+import AdminSidebar from './AdminSidebar'
+
+export default function AdminShell({ children }: { children: React.ReactNode }) {
+  return (
+    <TokenRefreshProvider>
+      <CurrentUserProvider profileSource="admin">
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
+        <div
+          style={{
+            display: 'flex',
+            height: '100vh',
+            fontFamily: "'DM Sans', 'Segoe UI', system-ui, sans-serif",
+            background: '#F1F5F9',
+            color: '#0F172A',
+          }}
+        >
+          <AdminSidebar />
+          <main
+            id="main-content"
+            tabIndex={-1}
+            style={{ flex: 1, minWidth: 0, overflowY: 'auto', outline: 'none' }}
+          >
+            {children}
+          </main>
+        </div>
+      </CurrentUserProvider>
+    </TokenRefreshProvider>
+  )
+}

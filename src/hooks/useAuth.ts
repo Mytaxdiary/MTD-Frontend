@@ -17,6 +17,10 @@ interface AuthState {
   error: string | null
 }
 
+interface LogoutOptions {
+  redirectTo?: string
+}
+
 export function useAuth() {
   const router = useRouter()
   const [state, setState] = useState<AuthState>({ loading: false, error: null })
@@ -31,16 +35,14 @@ export function useAuth() {
       try {
         const response = await authService.login(payload)
 
-        // MFA required — store challenge token and redirect to /mfa page
         if (response.requiresMfa && response.mfaToken) {
           sessionStorage.setItem('mfa_token', response.mfaToken)
           router.push('/mfa')
           return
         }
 
-        // Backend sets httpOnly cookies; no manual token handling needed
         setAccessTokenExpiry(response.accessTokenExpiresAt)
-        setSessionCookie()
+        setSessionCookie('firm')
 
         if (!response.user.isEmailVerified) {
           router.push(`/check-email?email=${encodeURIComponent(payload.email)}`)
@@ -57,15 +59,41 @@ export function useAuth() {
     [router]
   )
 
+  const adminLogin = useCallback(
+    async (payload: LoginPayload) => {
+      setLoading(true)
+      setError(null)
+      try {
+        const response = await authService.adminLogin(payload)
+
+        if (response.requiresMfa && response.mfaToken) {
+          sessionStorage.setItem('mfa_token', response.mfaToken)
+          sessionStorage.setItem('mfa_audience', 'admin')
+          router.push('/mfa')
+          return
+        }
+
+        setAccessTokenExpiry(response.accessTokenExpiresAt)
+        setSessionCookie('admin')
+        router.push('/admin')
+      } catch (err) {
+        console.error('Admin login error:', err)
+        setError(err instanceof Error ? err.message : 'Login failed. Please try again.')
+      } finally {
+        setLoading(false)
+      }
+    },
+    [router]
+  )
+
   const register = useCallback(
     async (payload: RegisterPayload) => {
       setLoading(true)
       setError(null)
       try {
-        // Backend sets httpOnly cookies; no manual token handling needed
         const response = await authService.register(payload)
         setAccessTokenExpiry(response.accessTokenExpiresAt)
-        setSessionCookie()
+        setSessionCookie('firm')
 
         if (!response.user.isEmailVerified) {
           router.push(`/check-email?email=${encodeURIComponent(payload.email)}`)
@@ -109,17 +137,20 @@ export function useAuth() {
     }
   }, [])
 
-  const logout = useCallback(async () => {
-    try {
-      await authService.logout()
-    } catch {
-      // Ignore logout API errors — always clear session and redirect
-    } finally {
-      clearAccessTokenExpiry()
-      clearSessionCookie()
-      router.push('/login')
-    }
-  }, [router])
+  const logout = useCallback(
+    async (options?: LogoutOptions) => {
+      try {
+        await authService.logout()
+      } catch {
+        // Ignore logout API errors — always clear session and redirect
+      } finally {
+        clearAccessTokenExpiry()
+        clearSessionCookie()
+        router.push(options?.redirectTo ?? '/login')
+      }
+    },
+    [router]
+  )
 
-  return { ...state, login, register, forgotPassword, resetPassword, logout }
+  return { ...state, login, adminLogin, register, forgotPassword, resetPassword, logout }
 }

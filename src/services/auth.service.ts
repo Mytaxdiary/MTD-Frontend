@@ -43,8 +43,9 @@ export interface AuthUser {
   firmName: string
   isEmailVerified: boolean
   mfaEnabled?: boolean
-  role?: 'owner' | 'staff'
+  role?: 'owner' | 'staff' | 'admin'
   permissions?: StaffPermissions
+  tenantId?: string | null
 }
 
 export interface AuthTokens {
@@ -82,6 +83,15 @@ export const authService = {
   login: async (payload: LoginPayload): Promise<AuthResponse> => {
     const { data } = await axiosClient.post<{ success: true; data: AuthResponse }>(
       '/auth/login',
+      payload
+    )
+    return data.data
+  },
+
+  /** Platform product-owner admin sign-in. */
+  adminLogin: async (payload: LoginPayload): Promise<AuthResponse> => {
+    const { data } = await axiosClient.post<{ success: true; data: AuthResponse }>(
+      '/auth/admin/login',
       payload
     )
     return data.data
@@ -136,6 +146,11 @@ export const authService = {
 
   getProfile: async (): Promise<AuthUser> => {
     const { data } = await axiosClient.get<{ success: true; data: AuthUser }>('/auth/profile')
+    return data.data
+  },
+
+  getAdminProfile: async (): Promise<AuthUser> => {
+    const { data } = await axiosClient.get<{ success: true; data: AuthUser }>('/admin/me')
     return data.data
   },
 

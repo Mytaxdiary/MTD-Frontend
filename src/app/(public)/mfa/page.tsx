@@ -17,8 +17,10 @@ export default function MfaPage() {
   useEffect(() => {
     // Redirect to login if no challenge token in session
     const token = sessionStorage.getItem('mfa_token')
-    if (!token) router.replace('/login')
-    else inputRef.current?.focus()
+    if (!token) {
+      const audience = sessionStorage.getItem('mfa_audience')
+      router.replace(audience === 'admin' ? '/admin/login' : '/login')
+    } else inputRef.current?.focus()
   }, [router])
 
   const handleSubmit = async (ev: React.FormEvent) => {
@@ -39,10 +41,17 @@ export default function MfaPage() {
     setError(null)
     try {
       const response = await authService.mfaVerify(mfaToken, clean)
+      const audience = sessionStorage.getItem('mfa_audience')
       sessionStorage.removeItem('mfa_token')
+      sessionStorage.removeItem('mfa_audience')
       setAccessTokenExpiry(response.accessTokenExpiresAt)
-      setSessionCookie()
-      router.push('/dashboard')
+      if (audience === 'admin' || response.user.role === 'admin') {
+        setSessionCookie('admin')
+        router.push('/admin')
+      } else {
+        setSessionCookie('firm')
+        router.push('/dashboard')
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Invalid code. Please try again.')
     } finally {
@@ -63,8 +72,10 @@ export default function MfaPage() {
       footerContent={
         <button
           onClick={() => {
+            const audience = sessionStorage.getItem('mfa_audience')
             sessionStorage.removeItem('mfa_token')
-            router.push('/login')
+            sessionStorage.removeItem('mfa_audience')
+            router.push(audience === 'admin' ? '/admin/login' : '/login')
           }}
           style={{
             background: 'none',

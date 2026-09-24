@@ -5,9 +5,9 @@
  * Next.js server-side (checkAuth) cannot read cross-domain httpOnly cookies.
  *
  * Solution: after login/register the frontend sets a lightweight non-httpOnly
- * session indicator cookie (mtd_session=1) on the frontend domain.
- * checkAuth() reads this cookie — it carries NO sensitive data, just signals
- * "a session exists". Real security is enforced by the backend on every API call.
+ * session indicator cookie (mtd_session) on the frontend domain.
+ * Value is `firm` (accountant) or `admin` (platform). Real security is
+ * enforced by the backend on every API call.
  */
 export const TOKEN_KEYS = {
   access: 'mtd_at',
@@ -15,14 +15,16 @@ export const TOKEN_KEYS = {
   session: 'mtd_session',
 } as const
 
+export type SessionKind = 'firm' | 'admin'
+
 const IS_PROD = process.env.NODE_ENV === 'production'
 const SECURE_FLAG = IS_PROD ? '; Secure' : ''
 const SESSION_MAX_AGE = 60 * 60 * 24 * 7 // 7 days — aligned with refresh token TTL
 
 /** Call this after a successful login or register response. */
-export function setSessionCookie(): void {
+export function setSessionCookie(kind: SessionKind = 'firm'): void {
   if (typeof document === 'undefined') return
-  document.cookie = `${TOKEN_KEYS.session}=1; path=/; max-age=${SESSION_MAX_AGE}; SameSite=Lax${SECURE_FLAG}`
+  document.cookie = `${TOKEN_KEYS.session}=${kind}; path=/; max-age=${SESSION_MAX_AGE}; SameSite=Lax${SECURE_FLAG}`
 }
 
 /** Call this on logout. */

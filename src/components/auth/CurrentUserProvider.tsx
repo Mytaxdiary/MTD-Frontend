@@ -12,7 +12,15 @@ interface CurrentUserContextValue {
 
 const CurrentUserContext = createContext<CurrentUserContextValue | undefined>(undefined)
 
-export default function CurrentUserProvider({ children }: { children: React.ReactNode }) {
+type ProfileSource = 'firm' | 'admin'
+
+export default function CurrentUserProvider({
+  children,
+  profileSource = 'firm',
+}: {
+  children: React.ReactNode
+  profileSource?: ProfileSource
+}) {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -21,7 +29,10 @@ export default function CurrentUserProvider({ children }: { children: React.Reac
     setLoading(true)
     setError(null)
     try {
-      const profile = await authService.getProfile()
+      const profile =
+        profileSource === 'admin'
+          ? await authService.getAdminProfile()
+          : await authService.getProfile()
       setUser(profile)
     } catch (err: unknown) {
       setError((err as Error)?.message ?? 'Failed to load profile')
@@ -29,7 +40,7 @@ export default function CurrentUserProvider({ children }: { children: React.Reac
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [profileSource])
 
   useEffect(() => {
     void refresh()
