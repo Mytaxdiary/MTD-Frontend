@@ -4,7 +4,7 @@ import pricingHtml from '@/features/marketing/appsite-html/pricing'
 export const metadata: Metadata = {
   title: 'Pricing',
   description:
-    'Simple MTD ITSA packages for UK accounting firms. Compare Starter, Growth and Scale.',
+    'Draft MTD packages for accounting firms. Compare Starter, Growth and Scale by client journey features and team capacity.',
   alternates: { canonical: '/site/pricing' },
 }
 

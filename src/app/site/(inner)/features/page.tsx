@@ -4,7 +4,7 @@ import featuresHtml from '@/features/marketing/appsite-html/features'
 export const metadata: Metadata = {
   title: 'Features',
   description:
-    'Agent tools, client visibility, HMRC connection, chasing and staff controls for UK accountants.',
+    'Kanban and list status, digital handshake, deadlines and liabilities, chase, portal, and team permissions for MTD Income Tax.',
   alternates: { canonical: '/site/features' },
 }
 

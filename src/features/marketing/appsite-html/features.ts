@@ -1,9 +1,8 @@
-// AUTO-GENERATED from MTD-AppSite/*.html by scripts/gen-appsite.mjs. Do not edit by hand.
 const html = `<section class="page-hero">
   <div class="wrap">
     <div class="eyebrow reveal">Features</div>
-    <h1 class="reveal" style="--d:.06s">Built for MTD ITSA practice work</h1>
-    <p class="reveal" style="--d:.12s">Agent tools, client visibility, HMRC connection, chasing, and staff controls in one product designed for UK accountants.</p>
+    <h1 class="reveal" style="--d:.06s">Tools for the full client journey</h1>
+    <p class="reveal" style="--d:.12s">Deadlines, liabilities, status boards, digital handshake, chasing, and portal access — built by accountants for Making Tax Digital for Income Tax.</p>
     <div class="hero-actions reveal" style="--d:.18s">
       <a href="/register" class="btn btn-primary">Get started</a>
       <a href="/site/pricing" class="btn btn-ghost">View pricing</a>
@@ -15,23 +14,23 @@ const html = `<section class="page-hero">
   <div class="wrap">
   <div class="frow">
     <div class="frow-copy reveal reveal-l">
-      <div class="eyebrow">Agent dashboard</div>
-      <h2>See every client and deadline in one workspace</h2>
-      <p>Open your client list, jump into obligations and liabilities, and keep quarterly work moving without spreadsheet juggling.</p>
+      <div class="eyebrow">Status views</div>
+      <h2>Kanban and list views for every client</h2>
+      <p>See submission progress across your book. Flip between board and list so the whole team knows what is waiting, ready, or done.</p>
       <ul class="ticklist">
-        <li>Client list with clear status</li>
-        <li>Obligations and quarterly progress</li>
-        <li>Notes and chase history in context</li>
+        <li>Kanban for journey stages</li>
+        <li>List view for fast scanning</li>
+        <li>Deadlines and liability context</li>
       </ul>
     </div>
     <div class="frow-mock reveal" style="--d:.12s">
       <div class="panel">
     <div class="panel-bar"><i></i><i></i><i></i></div>
     <div class="panel-body">
-      <h5>Clients</h5>
-      <div class="panel-row">Walker &amp; Co &middot; SE + Property</div>
-      <div class="panel-row">Greenfield Ltd &middot; Self-employment</div>
-      <div class="panel-row">A. Khan &middot; UK property</div>
+      <h5>Jobs board</h5>
+      <div class="panel-row">Waiting on records &middot; 4</div>
+      <div class="panel-row">Ready to submit &middot; 2</div>
+      <div class="panel-row">Submitted this week &middot; 6</div>
     </div>
   </div>
     </div>
@@ -39,23 +38,23 @@ const html = `<section class="page-hero">
 
   <div class="frow flip">
     <div class="frow-copy reveal reveal-r">
-      <div class="eyebrow">Client portal</div>
-      <h2>Give clients a simple place to stay informed</h2>
-      <p>Clients can review liabilities, quarterly submissions, files, and messages without chasing your inbox.</p>
+      <div class="eyebrow">Digital handshake</div>
+      <h2>Request client access inside the product</h2>
+      <p>Invite clients, complete authorisation, and open portal access without long email threads. The handshake starts the journey cleanly.</p>
       <ul class="ticklist">
-        <li>Liabilities and payment guidance</li>
-        <li>Quarterly submission visibility</li>
-        <li>Two-way portal chat</li>
+        <li>Client invite from your firm</li>
+        <li>Access request in-product</li>
+        <li>Portal ready when connected</li>
       </ul>
     </div>
     <div class="frow-mock reveal" style="--d:.12s">
       <div class="panel">
     <div class="panel-bar"><i></i><i></i><i></i></div>
     <div class="panel-body">
-      <h5>Portal home</h5>
-      <div class="panel-row">Balance due 31 Jan</div>
-      <div class="panel-row">Q2 records requested</div>
-      <div class="panel-row">New message from your agent</div>
+      <h5>Handshake</h5>
+      <div class="panel-row">Invite sent &middot; Harris Ltd</div>
+      <div class="panel-row">Awaiting client confirm</div>
+      <div class="panel-row">Portal access unlocked</div>
     </div>
   </div>
     </div>
@@ -63,23 +62,23 @@ const html = `<section class="page-hero">
 
   <div class="frow">
     <div class="frow-copy reveal reveal-l">
-      <div class="eyebrow">HMRC MTD</div>
-      <h2>Stay connected to Making Tax Digital</h2>
-      <p>Authorise clients, pull live HMRC data, and work self-employment and UK property flows from the same product.</p>
+      <div class="eyebrow">Deadlines &amp; liabilities</div>
+      <h2>Know what is due and what is owed</h2>
+      <p>Keep quarterly dates and balances visible so chase and submission work stay grounded in the numbers that matter.</p>
       <ul class="ticklist">
-        <li>Agent HMRC connection</li>
-        <li>Obligations and account balances</li>
-        <li>Self-employment and UK property support</li>
+        <li>Upcoming obligation dates</li>
+        <li>Liability and balance visibility</li>
+        <li>Notes beside the live picture</li>
       </ul>
     </div>
     <div class="frow-mock reveal" style="--d:.12s">
       <div class="panel">
     <div class="panel-bar"><i></i><i></i><i></i></div>
     <div class="panel-body">
-      <h5>HMRC status</h5>
-      <div class="panel-row">Connected &middot; sandbox / live ready</div>
-      <div class="panel-row">Obligations synced</div>
-      <div class="panel-row">Liabilities loaded</div>
+      <h5>Client snapshot</h5>
+      <div class="panel-row">Next deadline &middot; 4 days</div>
+      <div class="panel-row">Balance due &middot; review</div>
+      <div class="panel-row">Chase history open</div>
     </div>
   </div>
     </div>
@@ -89,7 +88,7 @@ const html = `<section class="page-hero">
     <div class="frow-copy reveal reveal-r">
       <div class="eyebrow">Chase manager</div>
       <h2>Chase missing records before deadlines slip</h2>
-      <p>Send structured email reminders for the records you need, keep a clear history, and separate email chases from portal chat.</p>
+      <p>Send structured reminders for the packs you need, keep a clear history, and keep email chase separate from portal chat.</p>
       <ul class="ticklist">
         <li>Reusable chase templates</li>
         <li>Per-client chase history</li>
@@ -111,9 +110,33 @@ const html = `<section class="page-hero">
 
   <div class="frow">
     <div class="frow-copy reveal reveal-l">
+      <div class="eyebrow">HMRC connection</div>
+      <h2>Stay connected for Making Tax Digital</h2>
+      <p>Connect your firm, work authorised clients, and keep obligations and balances in the same workspace — without exposing low-level integration detail on the marketing site.</p>
+      <ul class="ticklist">
+        <li>Firm HMRC connection</li>
+        <li>Authorised client journeys</li>
+        <li>Self-employment and property support</li>
+      </ul>
+    </div>
+    <div class="frow-mock reveal" style="--d:.12s">
+      <div class="panel">
+    <div class="panel-bar"><i></i><i></i><i></i></div>
+    <div class="panel-body">
+      <h5>Connection</h5>
+      <div class="panel-row">Firm linked &middot; ready</div>
+      <div class="panel-row">Clients authorised</div>
+      <div class="panel-row">Journeys in sync</div>
+    </div>
+  </div>
+    </div>
+  </div>
+
+  <div class="frow flip">
+    <div class="frow-copy reveal reveal-r">
       <div class="eyebrow">Staff and permissions</div>
       <h2>Invite your team without opening everything</h2>
-      <p>Add staff, set permissions, and assign clients so each person only sees the work they should handle.</p>
+      <p>Add staff, set permissions, and assign clients so each person only sees the journeys they should handle.</p>
       <ul class="ticklist">
         <li>Staff invites from Settings</li>
         <li>Permission-based access</li>
@@ -138,8 +161,8 @@ const html = `<section class="page-hero">
 <section class="sec-soft">
   <div class="wrap">
     <div class="cta-plain reveal">
-      <h2>See the full workflow in your firm</h2>
-      <p>Start a firm account, or ask us which package fits your client volume.</p>
+      <h2>See the client journey in your firm</h2>
+      <p>Start a firm account, or ask which package fits how you manage deadlines and capacity.</p>
       <div class="cta-actions">
         <a href="/register" class="btn btn-primary">Get started</a>
         <a href="/site/contact" class="btn btn-ghost">Contact us</a>

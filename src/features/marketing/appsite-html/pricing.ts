@@ -1,9 +1,8 @@
-// AUTO-GENERATED from MTD-AppSite/*.html by scripts/gen-appsite.mjs. Do not edit by hand.
 const html = `<section class="page-hero">
   <div class="wrap">
     <div class="eyebrow reveal">Pricing</div>
-    <h1 class="reveal" style="--d:.06s">Simple packages for UK accounting firms</h1>
-    <p class="reveal" style="--d:.12s">Choose a plan that matches your practice size. Draft prices shown for comparison &mdash; enquire if you want a package recommendation for your firm.</p>
+    <h1 class="reveal" style="--d:.06s">Packages for how your practice manages clients</h1>
+    <p class="reveal" style="--d:.12s">Choose a plan that matches client volume and team size. Draft prices shown for comparison &mdash; enquire if you want a package recommendation for your firm.</p>
 
     <div class="toggle reveal" id="billingToggle" style="--d:.18s" role="group" aria-label="Billing period">
       <button type="button" data-cycle="monthly" aria-pressed="false">Monthly</button>
@@ -19,12 +18,13 @@ const html = `<section class="page-hero">
            data-annual="39" data-monthly="49">
         
         <h3>Starter</h3>
-        <p class="who">For small firms starting MTD ITSA with a focused client list.</p>
+        <p class="who">For small firms running MTD Income Tax with a focused client list.</p>
         <div class="price"><b class="amount">&pound;39</b><span class="period">/month, billed annually</span></div>
         <ul class="ticklist">
-        <li>Agent dashboard and client list</li>
-        <li>HMRC connect for authorised clients</li>
-        <li>Client portal access</li>
+        <li>Dashboard with deadlines and liabilities</li>
+        <li>Kanban and list status views</li>
+        <li>HMRC connection for authorised clients</li>
+        <li>Client portal and digital handshake</li>
         <li>Email chase templates</li>
         <li>Email support</li>
         </ul>
@@ -44,7 +44,7 @@ const html = `<section class="page-hero">
         <li>Staff invites and permissions</li>
         <li>Client assignment controls</li>
         <li>Portal chat and notifications</li>
-        <li>Priority onboarding help</li>
+        <li>Priority journey support</li>
         </ul>
         <div class="plan-actions">
         <a href="/register" class="btn btn-primary btn-block">Get started</a>
@@ -61,7 +61,7 @@ const html = `<section class="page-hero">
         <li>Everything in Growth</li>
         <li>Higher client capacity</li>
         <li>Advanced team controls</li>
-        <li>Dedicated onboarding support</li>
+        <li>Dedicated practice support</li>
         <li>Custom rollout discussion</li>
         </ul>
         <div class="plan-actions">
@@ -83,14 +83,16 @@ const html = `<section class="page-hero">
           <tr><th scope="col">Feature</th><th scope="col">Starter</th><th scope="col">Growth</th><th scope="col">Scale</th></tr>
         </thead>
         <tbody>
-          <tr><th scope="row">Agent dashboard</th><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+          <tr><th scope="row">Deadlines &amp; liabilities</th><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+          <tr><th scope="row">Kanban &amp; list views</th><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
           <tr><th scope="row">Client portal</th><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
-          <tr><th scope="row">HMRC MTD connection</th><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+          <tr><th scope="row">Digital handshake</th><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+          <tr><th scope="row">HMRC connection</th><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
           <tr><th scope="row">Email chase</th><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
           <tr><th scope="row">Staff permissions</th><td class="no">—</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
           <tr><th scope="row">Client assignment</th><td class="no">—</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
           <tr><th scope="row">Portal chat</th><td class="hl">Basic</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
-          <tr><th scope="row">Onboarding support</th><td class="hl">Email</td><td class="hl">Priority</td><td class="hl">Dedicated</td></tr>
+          <tr><th scope="row">Practice support</th><td class="hl">Email</td><td class="hl">Priority</td><td class="hl">Dedicated</td></tr>
           <tr><th scope="row">Custom rollout</th><td class="no">—</td><td class="no">—</td><td class="yes">Yes</td></tr>
         </tbody>
       </table>

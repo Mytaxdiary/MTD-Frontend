@@ -62,6 +62,31 @@ export interface AdminFirmDetail {
   users: AdminFirmUser[]
 }
 
+export type EnquiryStatus = 'new' | 'contacted' | 'closed'
+
+export interface AdminEnquiryItem {
+  id: string
+  name: string
+  firm: string
+  email: string
+  phone: string | null
+  message: string
+  sourcePage: string | null
+  planInterest: string | null
+  status: EnquiryStatus
+  internalNote: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface AdminEnquiryListResponse {
+  items: AdminEnquiryItem[]
+  page: number
+  limit: number
+  total: number
+  totalPages: number
+}
+
 export const adminService = {
   getOverview: async (): Promise<AdminOverviewStats> => {
     const { data } = await axiosClient.get<{ success: true; data: AdminOverviewStats }>(
@@ -95,6 +120,44 @@ export const adminService = {
   ): Promise<AdminFirmDetail> => {
     const { data } = await axiosClient.patch<{ success: true; data: AdminFirmDetail }>(
       `/admin/firms/${id}/active`,
+      payload
+    )
+    return data.data
+  },
+
+  listEnquiries: async (params: {
+    page?: number
+    limit?: number
+    status?: EnquiryStatus | ''
+    search?: string
+  }): Promise<AdminEnquiryListResponse> => {
+    const { data } = await axiosClient.get<{ success: true; data: AdminEnquiryListResponse }>(
+      '/admin/enquiries',
+      {
+        params: {
+          page: params.page,
+          limit: params.limit,
+          status: params.status || undefined,
+          search: params.search || undefined,
+        },
+      }
+    )
+    return data.data
+  },
+
+  getEnquiry: async (id: string): Promise<AdminEnquiryItem> => {
+    const { data } = await axiosClient.get<{ success: true; data: AdminEnquiryItem }>(
+      `/admin/enquiries/${id}`
+    )
+    return data.data
+  },
+
+  updateEnquiry: async (
+    id: string,
+    payload: { status?: EnquiryStatus; internalNote?: string | null }
+  ): Promise<AdminEnquiryItem> => {
+    const { data } = await axiosClient.patch<{ success: true; data: AdminEnquiryItem }>(
+      `/admin/enquiries/${id}`,
       payload
     )
     return data.data

@@ -4,9 +4,9 @@ import homeHtml from '@/features/marketing/appsite-html/home'
 import '@/features/marketing/styles/appsite-home.css'
 
 export const metadata: Metadata = {
-  title: { absolute: 'My Tax Diary — MTD ITSA software for UK accountants' },
+  title: { absolute: 'My Tax Diary — MTD Income Tax for accounting firms' },
   description:
-    'The complete MTD for Income Tax solution for UK accountants. Agent portal, client portal, HMRC connection, chasing and staff controls.',
+    'Track client journeys for Making Tax Digital: deadlines, liabilities, kanban and list status, digital handshake, chase, and portal access. Built by accountants.',
   alternates: { canonical: '/site' },
 }
 

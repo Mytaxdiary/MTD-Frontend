@@ -8,12 +8,12 @@ const siteUrl =
   'https://mytaxdiary.co.uk'
 
 const description =
-  'The complete MTD for Income Tax solution for UK accountants. Agent portal, client portal, HMRC connection, chasing and staff controls.'
+  'Track client journeys for Making Tax Digital: deadlines, liabilities, kanban and list status, digital handshake, chase, and portal access. Built by accountants.'
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'My Tax Diary — MTD ITSA software for UK accountants',
+    default: 'My Tax Diary — MTD Income Tax for accounting firms',
     template: '%s | My Tax Diary',
   },
   description,
@@ -21,10 +21,10 @@ export const metadata: Metadata = {
   keywords: [
     'MTD ITSA',
     'Making Tax Digital',
-    'UK accountants',
+    'accounting firms',
     'tax agent software',
-    'HMRC',
     'client portal',
+    'deadlines',
     'My Tax Diary',
   ],
   authors: [{ name: 'My Tax Diary Ltd' }],
@@ -45,12 +45,12 @@ export const metadata: Metadata = {
     locale: 'en_GB',
     url: '/site',
     siteName: 'My Tax Diary',
-    title: 'My Tax Diary — MTD ITSA software for UK accountants',
+    title: 'My Tax Diary — MTD Income Tax for accounting firms',
     description,
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'My Tax Diary — MTD ITSA software for UK accountants',
+    title: 'My Tax Diary — MTD Income Tax for accounting firms',
     description,
   },
   robots: { index: true, follow: true },

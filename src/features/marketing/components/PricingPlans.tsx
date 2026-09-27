@@ -41,7 +41,7 @@ const PLANS = [
       'Staff invites and permissions',
       'Client assignment controls',
       'Portal chat and notifications',
-      'Priority onboarding help',
+      'Priority journey support',
     ],
   },
   {
@@ -58,7 +58,7 @@ const PLANS = [
       'Everything in Growth',
       'Higher client capacity',
       'Advanced team controls',
-      'Dedicated onboarding support',
+      'Dedicated practice support',
       'Custom rollout discussion',
     ],
   },

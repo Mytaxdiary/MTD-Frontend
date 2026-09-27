@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og'
 
 export const runtime = 'edge'
-export const alt = 'My Tax Diary — MTD ITSA software for UK accountants'
+export const alt = 'My Tax Diary — MTD Income Tax for accounting firms'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -44,7 +44,7 @@ export default function OpenGraphImage() {
               maxWidth: 900,
             }}
           >
-            MTD ITSA software for UK accountants
+            Keep every client journey on track for MTD
           </div>
           <div
             style={{
@@ -55,7 +55,7 @@ export default function OpenGraphImage() {
               maxWidth: 820,
             }}
           >
-            Agent portal · Client portal · HMRC · Chase · Staff permissions
+            Deadlines · Liabilities · Kanban & list · Digital handshake · Chase
           </div>
         </div>
       </div>

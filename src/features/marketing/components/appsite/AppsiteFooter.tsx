@@ -13,8 +13,8 @@ export default function AppsiteFooter() {
               <img src="/site/logo.png" alt="My Tax Diary" className="company-logo" />
             </a>
             <p>
-              MTD ITSA software for UK accountants. Agent portal, client portal, HMRC, chase, and
-              staff.
+              MTD Income Tax software for accounting firms. Track client journeys, deadlines,
+              liabilities, chase, and portal access.
             </p>
           </div>
 
