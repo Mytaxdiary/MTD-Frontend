@@ -548,18 +548,19 @@ function ClientInfoCard({
   displayNino: string
   onClientUpdated?: (client: ClientRecord) => void
 }) {
+  const [fullName, setFullName] = useState(client?.name ?? '')
   const [preferredName, setPreferredName] = useState(client?.preferredName ?? '')
-  const [editingPreferred, setEditingPreferred] = useState(false)
+  const [editingField, setEditingField] = useState<'name' | 'preferred' | null>(null)
   const [draft, setDraft] = useState('')
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
 
   useEffect(() => {
+    setFullName(client?.name ?? '')
     setPreferredName(client?.preferredName ?? '')
-  }, [client?.preferredName, client?.id])
+  }, [client?.name, client?.preferredName, client?.id])
 
   const rows: [string, string][] = [
-    ['Full name', client?.name ?? 'Not set'],
     ['NINO', displayNino],
     ['Email', client?.email ?? 'Not set'],
     ['Postcode', client?.postcode ?? 'Not set'],
@@ -568,41 +569,195 @@ function ClientInfoCard({
     ['Authorised since', fmtAuthDate(client?.authorisedAt)],
   ]
 
-  const firstNameFallback = client?.name?.trim().split(/\s+/)[0] || 'first name'
+  const firstNameFallback = fullName.trim().split(/\s+/)[0] || 'first name'
 
-  const handleEditPreferred = () => {
-    setDraft(preferredName)
+  const startEdit = (field: 'name' | 'preferred') => {
+    setDraft(field === 'name' ? fullName : preferredName)
     setSaveError(null)
-    setEditingPreferred(true)
+    setEditingField(field)
   }
 
-  const handleSavePreferred = async () => {
-    if (!clientId) return
+  const handleSave = async () => {
+    if (!clientId || !editingField) return
     const trimmed = draft.trim()
-    if (trimmed.length > 80) {
+    if (editingField === 'name') {
+      if (!trimmed) {
+        setSaveError('Full name cannot be empty')
+        return
+      }
+      if (trimmed.length > 200) {
+        setSaveError('Full name must be 200 characters or fewer')
+        return
+      }
+    } else if (trimmed.length > 80) {
       setSaveError('Preferred name must be 80 characters or fewer')
       return
     }
     setSaving(true)
     setSaveError(null)
     try {
-      const updated = await clientsService.updateClient(clientId, {
-        preferredName: trimmed,
-      })
+      const updated = await clientsService.updateClient(
+        clientId,
+        editingField === 'name' ? { name: trimmed } : { preferredName: trimmed },
+      )
+      setFullName(updated.name)
       setPreferredName(updated.preferredName ?? '')
-      setEditingPreferred(false)
+      setEditingField(null)
       onClientUpdated?.(updated)
     } catch {
-      setSaveError('Failed to save preferred name. Please try again.')
+      setSaveError(
+        editingField === 'name'
+          ? 'Failed to save full name. Please try again.'
+          : 'Failed to save preferred name. Please try again.',
+      )
     } finally {
       setSaving(false)
     }
+  }
+
+  const editBtnStyle: React.CSSProperties = {
+    padding: '4px 10px',
+    borderRadius: 6,
+    border: `1px solid ${B.border}`,
+    background: B.white,
+    fontSize: 12,
+    fontWeight: 600,
+    color: B.link,
+    cursor: 'pointer',
+    flexShrink: 0,
+  }
+
+  const renderEditable = (
+    field: 'name' | 'preferred',
+    label: string,
+    hint: string,
+    value: string,
+    emptyLabel: string,
+    placeholder: string,
+    maxLength: number,
+  ) => {
+    const isEditing = editingField === field
+    return (
+      <div style={{ padding: '10px 0 4px', borderBottom: `1px solid ${B.borderLight}` }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 10,
+            marginBottom: isEditing ? 8 : 0,
+          }}
+        >
+          <div>
+            <div style={{ fontSize: 13, color: B.muted }}>{label}</div>
+            <div style={{ fontSize: 11, color: B.light, marginTop: 2 }}>{hint}</div>
+          </div>
+          {!isEditing && !editingField && clientId && (
+            <button type="button" onClick={() => startEdit(field)} style={editBtnStyle}>
+              Edit
+            </button>
+          )}
+        </div>
+
+        {isEditing ? (
+          <div>
+            <input
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              placeholder={placeholder}
+              maxLength={maxLength}
+              style={{
+                width: '100%',
+                padding: '8px 10px',
+                borderRadius: 7,
+                border: `1px solid ${B.border}`,
+                fontSize: 13,
+                fontFamily: 'inherit',
+                boxSizing: 'border-box',
+              }}
+            />
+            {saveError && (
+              <div style={{ fontSize: 12, color: B.redText, marginTop: 6 }}>{saveError}</div>
+            )}
+            <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={saving}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: 6,
+                  border: 'none',
+                  background: B.primary,
+                  color: '#fff',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  cursor: saving ? 'not-allowed' : 'pointer',
+                }}
+              >
+                {saving ? 'Saving...' : 'Save'}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setEditingField(null)
+                  setSaveError(null)
+                }}
+                disabled={saving}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: 6,
+                  border: `1px solid ${B.border}`,
+                  background: B.white,
+                  fontSize: 12,
+                  color: B.muted,
+                  cursor: 'pointer',
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div
+            style={{
+              fontSize: 13,
+              fontWeight: 600,
+              color: value ? B.text : B.light,
+              fontStyle: value ? 'normal' : 'italic',
+              marginTop: 6,
+            }}
+          >
+            {value || emptyLabel}
+          </div>
+        )}
+      </div>
+    )
   }
 
   return (
     <Card>
       <CardHeader title="Client details" />
       <div style={{ padding: '12px 20px' }}>
+        {renderEditable(
+          'name',
+          'Full name',
+          'Shown on the dashboard, client list, and header.',
+          fullName,
+          'Not set',
+          'Client full name',
+          200,
+        )}
+        {renderEditable(
+          'preferred',
+          'Preferred name',
+          `Used in chase emails as {name}. Defaults to ${firstNameFallback}.`,
+          preferredName,
+          `Not set (will use ${firstNameFallback})`,
+          'Preferred name (or leave blank for first name)',
+          80,
+        )}
+
         {rows.map(([k, v], i) => (
           <div
             key={i}
@@ -627,118 +782,6 @@ function ClientInfoCard({
             </span>
           </div>
         ))}
-
-        {/* Preferred name — used in chase email greetings */}
-        <div style={{ padding: '10px 0 4px' }}>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              gap: 10,
-              marginBottom: editingPreferred ? 8 : 0,
-            }}
-          >
-            <div>
-              <div style={{ fontSize: 13, color: B.muted }}>Preferred name</div>
-              <div style={{ fontSize: 11, color: B.light, marginTop: 2 }}>
-                Used in chase emails as {'{name}'}. Defaults to {firstNameFallback}.
-              </div>
-            </div>
-            {!editingPreferred && clientId && (
-              <button
-                type="button"
-                onClick={handleEditPreferred}
-                style={{
-                  padding: '4px 10px',
-                  borderRadius: 6,
-                  border: `1px solid ${B.border}`,
-                  background: B.white,
-                  fontSize: 12,
-                  fontWeight: 600,
-                  color: B.link,
-                  cursor: 'pointer',
-                  flexShrink: 0,
-                }}
-              >
-                Edit
-              </button>
-            )}
-          </div>
-
-          {editingPreferred ? (
-            <div>
-              <input
-                value={draft}
-                onChange={(e) => setDraft(e.target.value)}
-                placeholder="Preferred name (or leave blank for first name)"
-                maxLength={80}
-                style={{
-                  width: '100%',
-                  padding: '8px 10px',
-                  borderRadius: 7,
-                  border: `1px solid ${B.border}`,
-                  fontSize: 13,
-                  fontFamily: 'inherit',
-                  boxSizing: 'border-box',
-                }}
-              />
-              {saveError && (
-                <div style={{ fontSize: 12, color: B.redText, marginTop: 6 }}>{saveError}</div>
-              )}
-              <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-                <button
-                  type="button"
-                  onClick={handleSavePreferred}
-                  disabled={saving}
-                  style={{
-                    padding: '6px 12px',
-                    borderRadius: 6,
-                    border: 'none',
-                    background: B.primary,
-                    color: '#fff',
-                    fontSize: 12,
-                    fontWeight: 600,
-                    cursor: saving ? 'not-allowed' : 'pointer',
-                  }}
-                >
-                  {saving ? 'Saving...' : 'Save'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setEditingPreferred(false)
-                    setSaveError(null)
-                  }}
-                  disabled={saving}
-                  style={{
-                    padding: '6px 12px',
-                    borderRadius: 6,
-                    border: `1px solid ${B.border}`,
-                    background: B.white,
-                    fontSize: 12,
-                    color: B.muted,
-                    cursor: 'pointer',
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div
-              style={{
-                fontSize: 13,
-                fontWeight: 600,
-                color: preferredName ? B.text : B.light,
-                fontStyle: preferredName ? 'normal' : 'italic',
-                marginTop: 6,
-              }}
-            >
-              {preferredName || `Not set (will use ${firstNameFallback})`}
-            </div>
-          )}
-        </div>
       </div>
     </Card>
   )

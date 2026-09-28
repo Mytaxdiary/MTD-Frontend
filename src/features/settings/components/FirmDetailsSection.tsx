@@ -3,8 +3,10 @@ import { useState, useEffect, useCallback } from 'react'
 import B from '@/styles/theme'
 import { Card, CardHeader as CardHead } from '@/components/ui/card'
 import tenantsService, { type FirmDetails } from '@/services/tenants.service'
+import { useCurrentUser } from '@/components/auth/CurrentUserProvider'
 
 export default function FirmDetailsSection() {
+  const { refresh } = useCurrentUser()
   const [firmDetails, setFirmDetails] = useState<FirmDetails | null>(null)
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -43,6 +45,7 @@ export default function FirmDetailsSection() {
         postcode: firmDetails.postcode,
       })
       setFirmDetails(updated)
+      await refresh()
       setSuccess(true)
       setTimeout(() => setSuccess(false), 3000)
     } catch {

@@ -613,7 +613,7 @@ export const clientsService = {
 
   async updateClient(
     id: string,
-    fields: { utr?: string; preferredName?: string },
+    fields: { name?: string; utr?: string; preferredName?: string },
   ): Promise<ClientRecord> {
     const res = await apiClient.patch<{ data: ClientRecord }>(`/clients/${id}`, fields)
     return res.data.data

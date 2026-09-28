@@ -7,9 +7,23 @@ import B from '@/styles/theme'
 
 type Phase = 'idle' | 'setup-loading' | 'setup-ready' | 'enabling' | 'disable-confirm' | 'disabling'
 
+function splitDisplayName(name?: string | null): { firstName: string; lastName: string } {
+  const parts = (name ?? '').trim().split(/\s+/).filter(Boolean)
+  if (parts.length === 0) return { firstName: '', lastName: '' }
+  if (parts.length === 1) return { firstName: parts[0], lastName: '' }
+  return { firstName: parts[0], lastName: parts.slice(1).join(' ') }
+}
+
 export default function SecuritySection() {
   const { user, refresh: reloadUser } = useCurrentUser()
   const mfaEnabled = (user as { mfaEnabled?: boolean })?.mfaEnabled ?? false
+
+  const initialName = splitDisplayName(user?.name)
+  const [firstName, setFirstName] = useState(user?.firstName ?? initialName.firstName)
+  const [lastName, setLastName] = useState(user?.lastName ?? initialName.lastName)
+  const [savingProfile, setSavingProfile] = useState(false)
+  const [profileError, setProfileError] = useState<string | null>(null)
+  const [profileSuccess, setProfileSuccess] = useState(false)
 
   const [phase, setPhase] = useState<Phase>('idle')
   const [qrDataUrl, setQrDataUrl] = useState<string>('')
@@ -23,12 +37,49 @@ export default function SecuritySection() {
   const enableInputRef = useRef<HTMLInputElement>(null)
   const disableInputRef = useRef<HTMLInputElement>(null)
 
+  useEffect(() => {
+    const fromUser = {
+      firstName: user?.firstName ?? '',
+      lastName: user?.lastName ?? '',
+    }
+    if (fromUser.firstName || fromUser.lastName) {
+      setFirstName(fromUser.firstName)
+      setLastName(fromUser.lastName)
+      return
+    }
+    const parsed = splitDisplayName(user?.name)
+    setFirstName(parsed.firstName)
+    setLastName(parsed.lastName)
+  }, [user?.id, user?.firstName, user?.lastName, user?.name])
+
   // Generate QR code image whenever otpauthUrl changes
   useEffect(() => {
     if (phase === 'setup-ready' && secret) {
       enableInputRef.current?.focus()
     }
   }, [phase, secret])
+
+  async function saveProfile() {
+    const first = firstName.trim()
+    const last = lastName.trim()
+    if (!first || !last) {
+      setProfileError('First and last name are required.')
+      return
+    }
+    setSavingProfile(true)
+    setProfileError(null)
+    setProfileSuccess(false)
+    try {
+      await authService.updateProfile({ firstName: first, lastName: last })
+      await reloadUser()
+      setProfileSuccess(true)
+      setTimeout(() => setProfileSuccess(false), 3000)
+    } catch (err) {
+      setProfileError(err instanceof Error ? err.message : 'Failed to save name.')
+    } finally {
+      setSavingProfile(false)
+    }
+  }
 
   async function startSetup() {
     setPhase('setup-loading')
@@ -103,6 +154,120 @@ export default function SecuritySection() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* Your profile — agent display name */}
+      <div
+        style={{
+          background: B.white,
+          borderRadius: 12,
+          border: `1px solid ${B.border}`,
+          boxShadow: B.cardShadow,
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            padding: '14px 20px',
+            borderBottom: `1px solid ${B.border}`,
+          }}
+        >
+          <div style={{ fontSize: 16, fontWeight: 700 }}>Your profile</div>
+          <div style={{ fontSize: 13, color: B.muted, marginTop: 4 }}>
+            This name appears in the sidebar, greeting, and avatar initials.
+          </div>
+        </div>
+        <div style={{ padding: '20px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <div>
+              <label
+                style={{
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: B.muted,
+                  display: 'block',
+                  marginBottom: 5,
+                }}
+              >
+                First name
+              </label>
+              <input
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '10px 14px',
+                  borderRadius: 8,
+                  border: `1px solid ${B.border}`,
+                  fontSize: 14,
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                }}
+              />
+            </div>
+            <div>
+              <label
+                style={{
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: B.muted,
+                  display: 'block',
+                  marginBottom: 5,
+                }}
+              >
+                Last name
+              </label>
+              <input
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '10px 14px',
+                  borderRadius: 8,
+                  border: `1px solid ${B.border}`,
+                  fontSize: 14,
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                }}
+              />
+            </div>
+          </div>
+
+          {profileError && (
+            <div style={{ fontSize: 13, color: B.redText, marginTop: 10 }}>{profileError}</div>
+          )}
+          {profileSuccess && (
+            <div style={{ fontSize: 13, color: B.greenText, marginTop: 10 }}>Name updated.</div>
+          )}
+
+          <div
+            style={{
+              borderTop: `1px solid ${B.border}`,
+              paddingTop: 16,
+              marginTop: 16,
+              display: 'flex',
+              justifyContent: 'flex-end',
+            }}
+          >
+            <button
+              type="button"
+              onClick={saveProfile}
+              disabled={savingProfile}
+              style={{
+                padding: '9px 22px',
+                borderRadius: 8,
+                border: 'none',
+                background: savingProfile ? B.light : B.primary,
+                color: '#fff',
+                fontSize: 14,
+                fontWeight: 600,
+                cursor: savingProfile ? 'not-allowed' : 'pointer',
+              }}
+            >
+              {savingProfile ? 'Saving...' : 'Save name'}
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Status card */}
       <div
         style={{

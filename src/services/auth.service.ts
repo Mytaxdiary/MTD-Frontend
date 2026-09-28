@@ -39,6 +39,8 @@ export interface StaffPermissions {
 export interface AuthUser {
   id: string
   name: string
+  firstName?: string
+  lastName?: string
   email: string
   firmName: string
   isEmailVerified: boolean
@@ -146,6 +148,17 @@ export const authService = {
 
   getProfile: async (): Promise<AuthUser> => {
     const { data } = await axiosClient.get<{ success: true; data: AuthUser }>('/auth/profile')
+    return data.data
+  },
+
+  updateProfile: async (payload: {
+    firstName: string
+    lastName: string
+  }): Promise<AuthUser> => {
+    const { data } = await axiosClient.patch<{ success: true; data: AuthUser }>(
+      '/auth/profile',
+      payload,
+    )
     return data.data
   },
 

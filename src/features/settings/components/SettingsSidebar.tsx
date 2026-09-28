@@ -21,7 +21,7 @@ export const SETTINGS_NAV: { k: SectionKey; l: string; i: string }[] = [
   { k: 'sandbox-invitations', l: 'Sandbox invitations', i: '▤' },
   { k: 'team', l: 'Team', i: '☷' },
   { k: 'notifications', l: 'Notifications', i: '⊙' },
-  { k: 'security', l: 'Security & 2FA', i: '⊛' },
+  { k: 'security', l: 'Account & security', i: '⊛' },
   { k: 'billing', l: 'Plan & billing', i: '◇' },
   { k: 'data-privacy', l: 'Data & Privacy', i: '⊕' },
 ]
