@@ -44,7 +44,6 @@
 
   /* ---------- HERO: settled split layout (no scroll theater) ---------- */
   var scribble = document.getElementById('scribble');
-  var greet = document.getElementById('greet');
   if (scribble) scribble.classList.add('drawn');
 
   /* ---------- SCROLL REVEALS ---------- */
@@ -126,7 +125,6 @@
       entries.forEach(function(en){
         if (!en.isIntersecting) return;
         runCount(en.target);
-        if (en.target.closest('.mock-greet, .mock-main')) greet.classList.add('waving');
         cio.unobserve(en.target);
       });
     }, {threshold:0.5});

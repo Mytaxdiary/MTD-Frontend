@@ -75,76 +75,18 @@ const html = `<!-- ===== HEADER ===== -->
           </div>
         </div>
 
-        <!-- DASHBOARD MOCK -->
+        <!-- DASHBOARD SCREENSHOT -->
         <div class="hero-visual-wrap">
           <div class="hero-visual" id="heroVisual">
             <div class="mock-inner">
-              <div class="mock" id="mockCard">
-                <div class="mock-top">
-                <div class="mock-logo">
-                  <img
-                    src="/site/logo.png"
-                    alt="My Tax Diary"
-                    class="mock-logo-img"
-                  >
-                </div>
-                  <div class="mock-user">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9fb2c0" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"/></svg>
-                    <div class="avatar">JD</div>
-                    <div>
-                      <b>James Parker</b>
-                      <small>ABC Accountants</small>
-                    </div>
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9fb2c0" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
-                  </div>
-                </div>
-
-                <div class="mock-body">
-                  <aside class="mock-side">
-                    <div class="side-item on"><span class="dot"></span>Dashboard</div>
-                    <div class="side-item"><span class="dot"></span>Clients</div>
-                    <div class="side-item"><span class="dot"></span>Chase</div>
-                    <div class="side-item"><span class="dot"></span>Portal</div>
-                    <div class="side-item"><span class="dot"></span>Settings</div>
-                  </aside>
-
-                  <div class="mock-main">
-                    <div class="mock-greet" id="greet">Good morning, James! <span class="wave">👋</span></div>
-
-                    <div class="stats">
-                      <div class="stat"><b data-count="23">0</b><span>Active clients</span></div>
-                      <div class="stat"><b data-count="8">0</b><span>Due this quarter</span></div>
-                      <div class="stat red"><b data-count="2">0</b><span>Need chasing</span></div>
-                      <div class="stat green"><b data-count="14">0</b><span>On track</span></div>
-                    </div>
-
-                    <div class="mock-head">
-                      <h5>Upcoming deadlines</h5>
-                      <a href="/site/features">View all</a>
-                    </div>
-
-                    <div class="dl">
-                      <span class="bullet" style="background:#ef5a5a"></span>
-                      <span class="txt">Q1 jobs board <em>3 clients waiting on records</em></span>
-                      <span class="pill p-red">Due soon</span>
-                    </div>
-                    <div class="dl">
-                      <span class="bullet" style="background:#f0b429"></span>
-                      <span class="txt">Harris Ltd <em>Digital handshake pending</em></span>
-                      <span class="pill p-amber">Access</span>
-                    </div>
-                    <div class="dl">
-                      <span class="bullet" style="background:#12b8bd"></span>
-                      <span class="txt">Walker &amp; Co <em>Liabilities reviewed</em></span>
-                      <span class="pill p-teal">On track</span>
-                    </div>
-                    <div class="dl">
-                      <span class="bullet" style="background:#12b8bd"></span>
-                      <span class="txt">Green &amp; Co. <em>Ready for quarterly update</em></span>
-                      <span class="pill p-teal">Ready</span>
-                    </div>
-                  </div>
-                </div>
+              <div class="mock mock-shot" id="mockCard">
+                <img
+                  src="/site/dashboard-hero.png"
+                  alt="My Tax Diary dashboard showing client pipeline, deadlines, and chase status"
+                  class="mock-shot-img"
+                  width="1280"
+                  height="800"
+                >
               </div>
 
               <div class="mock-float">
