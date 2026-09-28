@@ -41,20 +41,20 @@ const html = `<!-- ===== HEADER ===== -->
     <div class="wrap">
       <div class="hero-grid">
 
-        <!-- COPY (animates in on the left) -->
+        <!-- COPY -->
         <div class="hero-copy" id="heroCopy">
-          <div class="eyebrow" data-anim>Built by accountants</div>
-          <h1 data-anim><span class="light">My Tax Diary</span><br>Keep every client journey<br>on track for MTD</h1>
-          <p class="lead" data-anim>Track deadlines and liabilities, see submission status in kanban or list view, and request client access with a simple digital handshake. Developed by accountants to cut the chase around Making Tax Digital for Income Tax.</p>
+          <div class="eyebrow">Built by accountants</div>
+          <h1><span class="light">My Tax Diary</span><br>Keep every client journey<br>on track for MTD</h1>
+          <p class="lead">Track deadlines and liabilities, see submission status in kanban or list view, and request client access with a simple digital handshake. Developed by accountants to cut the chase around Making Tax Digital for Income Tax.</p>
 
-          <div class="hero-actions" data-anim>
+          <div class="hero-actions">
             <a href="/register" class="btn btn-primary btn-lg">Get started free
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </a>
             <a href="/site/contact" class="btn btn-ghost btn-lg">Book a demo</a>
           </div>
 
-          <div class="ticks" data-anim>
+          <div class="ticks">
             <div class="tick">
               <svg width="19" height="19" viewBox="0 0 24 24" fill="#12b8bd"><circle cx="12" cy="12" r="12"/><polyline points="7 12.5 10.5 16 17 9" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
               Deadlines &amp; liabilities</div>
@@ -66,7 +66,7 @@ const html = `<!-- ===== HEADER ===== -->
               Digital handshake</div>
           </div>
 
-          <div class="scribble" id="scribble" data-anim>
+          <div class="scribble" id="scribble">
             <svg width="66" height="58" viewBox="0 0 66 58" fill="none" stroke="var(--navy)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
               <path d="M6 2C-1 14 2 32 14 42c9 8 22 12 34 12"/>
               <path d="M41 47l9 7-8 4"/>
@@ -75,7 +75,7 @@ const html = `<!-- ===== HEADER ===== -->
           </div>
         </div>
 
-        <!-- DASHBOARD (enters wide & face-on, settles right + tilted) -->
+        <!-- DASHBOARD MOCK -->
         <div class="hero-visual-wrap">
           <div class="hero-visual" id="heroVisual">
             <div class="mock-inner">
@@ -161,11 +161,6 @@ const html = `<!-- ===== HEADER ===== -->
           </div>
         </div>
       </div>
-    </div>
-
-    <div class="scroll-cue" id="cue">
-      <span class="mouse"></span>
-      Scroll
     </div>
   </div>
 </div>

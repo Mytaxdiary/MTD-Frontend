@@ -455,7 +455,7 @@ export default function ChaseManager({
           flexShrink: 0,
         }}
       >
-        <div>
+          <div>
           <div style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.01em' }}>
             Chase manager
           </div>
@@ -576,12 +576,12 @@ export default function ChaseManager({
                 {sending
                   ? 'Sending...'
                   : `Send to ${selected.size} business${selected.size > 1 ? 'es' : ''}`}
-              </button>
+            </button>
               {sendError && <span style={{ fontSize: 13, color: B.redText }}>{sendError}</span>}
             </div>
           )}
         </div>
-      </div>
+        </div>
 
       {emailConnected === false && (
         <div
@@ -618,13 +618,13 @@ export default function ChaseManager({
           >
             Connect email
           </button>
-        </div>
+                  </div>
       )}
 
       <div style={{ padding: '18px 28px', flex: 1 }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 18, alignItems: 'start' }}>
           {/* ─────────── Left: client list ─────────── */}
-          <div>
+                            <div>
             {/* Preselect banner from Clients → Chase selected */}
             {preselectNote && (
               <div
@@ -660,7 +660,7 @@ export default function ChaseManager({
                 >
                   ×
                 </button>
-              </div>
+                            </div>
             )}
 
             {/* Send error banner */}
@@ -677,7 +677,7 @@ export default function ChaseManager({
                 }}
               >
                 {sendError}
-              </div>
+                          </div>
             )}
 
             {/* No template selected warning */}
@@ -694,13 +694,13 @@ export default function ChaseManager({
                 }}
               >
                 Select a template on the right before sending.
-              </div>
+                          </div>
             )}
 
             {clientsLoading && (
               <div style={{ padding: '32px', textAlign: 'center', fontSize: 15, color: B.muted }}>
                 Loading clients...
-              </div>
+                        </div>
             )}
 
             {!clientsLoading && chaseClients.length === 0 && (
@@ -718,7 +718,7 @@ export default function ChaseManager({
                     ? 'No authorised clients assigned to you yet.'
                     : 'No authorised clients yet. Add and authorise clients to start chasing.'
                   : 'No open periods on this page for the current filters. Filed quarters are hidden.'}
-              </div>
+                      </div>
             )}
 
             {filteredOverdue.length > 0 && (
@@ -736,8 +736,8 @@ export default function ChaseManager({
                   onToggle={toggleSelect}
                   onOpenClient={openClientDetail}
                 />
-              </div>
-            )}
+                </div>
+              )}
             {filteredUpcoming.length > 0 && (
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 9 }}>
@@ -948,7 +948,7 @@ export default function ChaseManager({
                               ✕
                             </button>
                             )}
-                          </div>
+                        </div>
                         </div>
                       </div>
                     )
@@ -1005,7 +1005,7 @@ export default function ChaseManager({
                       select a client to preview with real data
                     </span>
                   )}
-                </div>
+                    </div>
                 <div style={{ display: 'flex', gap: 6 }}>
                   {!editMode && currentTemplate && canManageTemplates && (
                     <button
@@ -1158,7 +1158,7 @@ export default function ChaseManager({
                             boxSizing: 'border-box',
                           }}
                         />
-                      </div>
+                  </div>
                       <div>
                         <div
                           style={{
@@ -1171,7 +1171,7 @@ export default function ChaseManager({
                           }}
                         >
                           Type
-                        </div>
+                  </div>
                         <select
                           value={editType}
                           onChange={(e) => setEditType(e.target.value)}
@@ -1190,8 +1190,8 @@ export default function ChaseManager({
                           <option value="data-request">Data request</option>
                           <option value="general">General</option>
                         </select>
-                      </div>
-                    </div>
+                </div>
+              </div>
 
                     {/* Subject */}
                     <div
@@ -1257,7 +1257,7 @@ export default function ChaseManager({
                     {saveError && (
                       <div style={{ fontSize: 12, color: B.redText, marginTop: 8 }}>
                         {saveError}
-                      </div>
+                </div>
                     )}
                   </>
                 )}

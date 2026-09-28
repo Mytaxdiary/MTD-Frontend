@@ -71,3 +71,14 @@ button.settings-nav-item {
   padding: 0;
   font-family: inherit;
 }
+
+/* Dark sidebar: keep wheel-scroll on short screens, hide the light OS scrollbar */
+.app-sidebar-nav {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.app-sidebar-nav::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}

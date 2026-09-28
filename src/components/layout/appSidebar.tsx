@@ -213,8 +213,8 @@ export default function AppSidebar({ overdueCount = 2 }: { overdueCount?: number
           <BrandLogo width={216} priority />
         </div>
 
-        {/* Nav groups */}
-        <div style={{ padding: '4px 12px', flex: 1, overflowY: 'auto' }}>
+        {/* Nav groups — scrollable on short viewports; scrollbar hidden (dark sidebar). */}
+        <div className="app-sidebar-nav" style={{ padding: '4px 12px', flex: 1, minHeight: 0, overflowY: 'auto' }}>
           <div role="group" aria-label="Main">
             <SectionLabel>MAIN</SectionLabel>
             <NavItem
