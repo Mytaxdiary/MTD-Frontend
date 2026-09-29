@@ -113,7 +113,7 @@ const html = `<!-- ===== HEADER ===== -->
     <div class="sec-head">
       <div class="eyebrow reveal">Why firms choose My Tax Diary</div>
       <h2 class="reveal" style="--d:.06s">Client journeys, not just onboarding</h2>
-      <p class="reveal" style="--d:.12s">See who needs records, what is due, and what is owed — then nudge clients and keep quarterly work moving.</p>
+      <p class="reveal" style="--d:.12s">See who needs records, what is due, and what is owed, then nudge clients and keep quarterly work moving.</p>
     </div>
 
     <div class="grid-3">
@@ -140,7 +140,7 @@ const html = `<!-- ===== HEADER ===== -->
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a7fb8" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M19 8v4"/><path d="M17 10h4"/></svg>
         </div>
         <h3>Digital handshake</h3>
-        <p>Request client access inside the product — invite, authorise, and open the portal without awkward email chains.</p>
+        <p>Request client access inside the product: invite, authorise, and open the portal without awkward email chains.</p>
         <a href="/site/features" class="link">Learn more →</a>
       </div>
     </div>
@@ -175,7 +175,7 @@ const html = `<!-- ===== HEADER ===== -->
       <div class="step reveal" style="--d:.36s">
         <div class="step-n">4</div>
         <h4>Submit and stay ready</h4>
-        <p>Complete the quarterly update with HMRC when the journey is ready — then start the next cycle clean.</p>
+        <p>Complete the quarterly update with HMRC when the journey is ready, then start the next cycle clean.</p>
       </div>
     </div>
   </div>
@@ -187,7 +187,7 @@ const html = `<!-- ===== HEADER ===== -->
     <div class="sec-head">
       <div class="eyebrow reveal">Practice outcomes</div>
       <h2 class="reveal" style="--d:.06s">What changes for your team</h2>
-      <p class="reveal" style="--d:.12s">Clearer ownership of each client journey — less inbox noise, fewer missed dates.</p>
+      <p class="reveal" style="--d:.12s">Clearer ownership of each client journey, with less inbox noise and fewer missed dates.</p>
     </div>
 
     <div class="benefits" style="max-width:640px;margin:0 auto">
@@ -206,7 +206,7 @@ const html = `<!-- ===== HEADER ===== -->
     <div class="cta reveal">
       <div class="eyebrow">Simple. Clear. Ready for MTD.</div>
       <h2>Ready to manage client journeys with less chase?</h2>
-      <p>See deadlines, liabilities, and status in one place — then book a demo if you want a walkthrough.</p>
+      <p>See deadlines, liabilities, and status in one place, then book a demo if you want a walkthrough.</p>
       <div class="cta-actions">
         <a href="/register" class="btn btn-primary btn-lg">Get started free
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>

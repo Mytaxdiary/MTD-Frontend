@@ -2,7 +2,7 @@ const html = `<section class="page-hero">
   <div class="wrap">
     <div class="eyebrow reveal">Features</div>
     <h1 class="reveal" style="--d:.06s">Tools for the full client journey</h1>
-    <p class="reveal" style="--d:.12s">Deadlines, liabilities, status boards, digital handshake, chasing, and portal access — built by accountants for Making Tax Digital for Income Tax.</p>
+    <p class="reveal" style="--d:.12s">Deadlines, liabilities, status boards, digital handshake, chasing, and portal access, built by accountants for Making Tax Digital for Income Tax.</p>
     <div class="hero-actions reveal" style="--d:.18s">
       <a href="/register" class="btn btn-primary">Get started</a>
       <a href="/site/pricing" class="btn btn-ghost">View pricing</a>
@@ -112,7 +112,7 @@ const html = `<section class="page-hero">
     <div class="frow-copy reveal reveal-l">
       <div class="eyebrow">HMRC connection</div>
       <h2>Stay connected for Making Tax Digital</h2>
-      <p>Connect your firm, work authorised clients, and keep obligations and balances in the same workspace — without exposing low-level integration detail on the marketing site.</p>
+      <p>Connect your firm, work authorised clients, and keep obligations and balances in the same workspace, without exposing low-level integration detail on the marketing site.</p>
       <ul class="ticklist">
         <li>Firm HMRC connection</li>
         <li>Authorised client journeys</li>

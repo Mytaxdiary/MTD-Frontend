@@ -2,7 +2,7 @@ const html = `<section class="page-hero">
   <div class="wrap">
     <div class="eyebrow reveal">Pricing</div>
     <h1 class="reveal" style="--d:.06s">Packages for how your practice manages clients</h1>
-    <p class="reveal" style="--d:.12s">Choose a plan that matches client volume and team size. Draft prices shown for comparison &mdash; enquire if you want a package recommendation for your firm.</p>
+    <p class="reveal" style="--d:.12s">Choose a plan that matches client volume and team size. Draft prices shown for comparison. Enquire if you want a package recommendation for your firm.</p>
 
     <div class="toggle reveal" id="billingToggle" style="--d:.18s" role="group" aria-label="Billing period">
       <button type="button" data-cycle="monthly" aria-pressed="false">Monthly</button>
@@ -89,11 +89,11 @@ const html = `<section class="page-hero">
           <tr><th scope="row">Digital handshake</th><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
           <tr><th scope="row">HMRC connection</th><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
           <tr><th scope="row">Email chase</th><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
-          <tr><th scope="row">Staff permissions</th><td class="no">—</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
-          <tr><th scope="row">Client assignment</th><td class="no">—</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+          <tr><th scope="row">Staff permissions</th><td class="no">No</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+          <tr><th scope="row">Client assignment</th><td class="no">No</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
           <tr><th scope="row">Portal chat</th><td class="hl">Basic</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
           <tr><th scope="row">Practice support</th><td class="hl">Email</td><td class="hl">Priority</td><td class="hl">Dedicated</td></tr>
-          <tr><th scope="row">Custom rollout</th><td class="no">—</td><td class="no">—</td><td class="yes">Yes</td></tr>
+          <tr><th scope="row">Custom rollout</th><td class="no">No</td><td class="no">No</td><td class="yes">Yes</td></tr>
         </tbody>
       </table>
     </div>

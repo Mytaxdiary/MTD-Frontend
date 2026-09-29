@@ -102,7 +102,7 @@ export default function ContactEnquiryForm({ initialPlan = '' }: ContactEnquiryF
         <SiteContainer>
           <div className="mtd-contact-success">
             <p className="mtd-page-hero__eyebrow">Enquiry sent</p>
-            <h2>Thanks — we have received your message</h2>
+            <h2>Thanks. We have received your message</h2>
             <p>
               Someone from My Tax Diary will get back to you shortly. If your enquiry is urgent,
               email us at info@mytaxdiary.co.uk.

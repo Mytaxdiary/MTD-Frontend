@@ -279,7 +279,7 @@ export default function AppsiteContactForm({ initialPlan = '' }: ContactFormProp
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </div>
-                <h3>Thank you — enquiry received</h3>
+                <h3>Thank you. Enquiry received</h3>
                 <p>
                   We will review your firm details and reply with package guidance or a short call
                   invite.

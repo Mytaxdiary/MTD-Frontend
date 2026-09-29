@@ -125,6 +125,20 @@ export const adminService = {
     return data.data
   },
 
+  invalidateFirmSessions: async (id: string): Promise<AdminFirmDetail> => {
+    const { data } = await axiosClient.post<{ success: true; data: AdminFirmDetail }>(
+      `/admin/firms/${id}/invalidate-sessions`
+    )
+    return data.data
+  },
+
+  invalidateUserSessions: async (firmId: string, userId: string): Promise<AdminFirmDetail> => {
+    const { data } = await axiosClient.post<{ success: true; data: AdminFirmDetail }>(
+      `/admin/firms/${firmId}/users/${userId}/invalidate-sessions`
+    )
+    return data.data
+  },
+
   listEnquiries: async (params: {
     page?: number
     limit?: number

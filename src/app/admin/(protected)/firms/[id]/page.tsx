@@ -77,8 +77,11 @@ export default function AdminFirmDetailPage() {
   const [loading, setLoading] = useState(true)
   const [toggling, setToggling] = useState(false)
   const [showDeactivate, setShowDeactivate] = useState(false)
+  const [showForceLogoutAll, setShowForceLogoutAll] = useState(false)
+  const [forceLogoutUserId, setForceLogoutUserId] = useState<string | null>(null)
   const [reason, setReason] = useState('')
   const [actionError, setActionError] = useState<string | null>(null)
+  const [actionMsg, setActionMsg] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     if (!id) return
@@ -103,6 +106,7 @@ export default function AdminFirmDetailPage() {
     if (!id) return
     setToggling(true)
     setActionError(null)
+    setActionMsg(null)
     try {
       const updated = await adminService.setFirmActive(id, { isActive: true })
       setFirm(updated)
@@ -119,6 +123,7 @@ export default function AdminFirmDetailPage() {
     if (!id) return
     setToggling(true)
     setActionError(null)
+    setActionMsg(null)
     try {
       const updated = await adminService.setFirmActive(id, {
         isActive: false,
@@ -129,6 +134,40 @@ export default function AdminFirmDetailPage() {
       setReason('')
     } catch (err) {
       setActionError(err instanceof Error ? err.message : 'Failed to deactivate firm')
+    } finally {
+      setToggling(false)
+    }
+  }
+
+  const forceLogoutAll = async () => {
+    if (!id) return
+    setToggling(true)
+    setActionError(null)
+    setActionMsg(null)
+    try {
+      const updated = await adminService.invalidateFirmSessions(id)
+      setFirm(updated)
+      setShowForceLogoutAll(false)
+      setActionMsg('All users on this firm have been signed out.')
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'Failed to force logout')
+    } finally {
+      setToggling(false)
+    }
+  }
+
+  const forceLogoutUser = async (userId: string) => {
+    if (!id) return
+    setToggling(true)
+    setActionError(null)
+    setActionMsg(null)
+    try {
+      const updated = await adminService.invalidateUserSessions(id, userId)
+      setFirm(updated)
+      setForceLogoutUserId(null)
+      setActionMsg('User has been signed out.')
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'Failed to force logout user')
     } finally {
       setToggling(false)
     }
@@ -189,13 +228,37 @@ export default function AdminFirmDetailPage() {
               </p>
             </div>
 
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowForceLogoutAll(true)
+                  setShowDeactivate(false)
+                  setActionError(null)
+                  setActionMsg(null)
+                }}
+                disabled={toggling}
+                style={{
+                  padding: '9px 14px',
+                  borderRadius: 8,
+                  border: `1px solid ${B.border}`,
+                  background: B.white,
+                  color: B.text,
+                  fontSize: 13.5,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+              >
+                Force logout all
+              </button>
               {firm.isActive ? (
                 <button
                   type="button"
                   onClick={() => {
                     setShowDeactivate(true)
+                    setShowForceLogoutAll(false)
                     setActionError(null)
+                    setActionMsg(null)
                   }}
                   disabled={toggling}
                   style={{
@@ -248,6 +311,22 @@ export default function AdminFirmDetailPage() {
             </div>
           )}
 
+          {actionMsg && (
+            <div
+              style={{
+                padding: '10px 12px',
+                borderRadius: 8,
+                background: B.greenBg,
+                color: B.greenText,
+                fontSize: 13,
+                marginBottom: 14,
+                fontWeight: 600,
+              }}
+            >
+              {actionMsg}
+            </div>
+          )}
+
           {!firm.isActive && (
             <div
               style={{
@@ -268,6 +347,61 @@ export default function AdminFirmDetailPage() {
                   <strong>Reason:</strong> {firm.deactivationReason}
                 </>
               )}
+            </div>
+          )}
+
+          {showForceLogoutAll && (
+            <div
+              style={{
+                background: B.white,
+                border: `1px solid ${B.border}`,
+                borderRadius: 12,
+                padding: 16,
+                marginBottom: 16,
+                boxShadow: B.cardShadow,
+              }}
+            >
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 6, color: B.text }}>
+                Force logout all users?
+              </div>
+              <p style={{ margin: '0 0 12px', fontSize: 13, color: B.muted, lineHeight: 1.5 }}>
+                Signs out every user on this firm immediately. The firm stays active and they can
+                sign in again. Use this if an account may be compromised.
+              </p>
+              <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowForceLogoutAll(false)}
+                  disabled={toggling}
+                  style={{
+                    padding: '8px 12px',
+                    borderRadius: 8,
+                    border: `1px solid ${B.border}`,
+                    background: B.white,
+                    cursor: 'pointer',
+                    fontSize: 13,
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void forceLogoutAll()}
+                  disabled={toggling}
+                  style={{
+                    padding: '8px 12px',
+                    borderRadius: 8,
+                    border: 'none',
+                    background: B.primaryBtn,
+                    color: '#fff',
+                    fontWeight: 600,
+                    cursor: toggling ? 'not-allowed' : 'pointer',
+                    fontSize: 13,
+                  }}
+                >
+                  {toggling ? 'Signing out…' : 'Confirm force logout'}
+                </button>
+              </div>
             </div>
           )}
 
@@ -433,9 +567,9 @@ export default function AdminFirmDetailPage() {
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13.5 }}>
               <thead>
                 <tr style={{ background: B.surface, textAlign: 'left' }}>
-                  {['Name', 'Email', 'Role', 'Status', 'Last login'].map((h) => (
+                  {['Name', 'Email', 'Role', 'Status', 'Last login', ''].map((h) => (
                     <th
-                      key={h}
+                      key={h || 'actions'}
                       style={{
                         padding: '10px 14px',
                         fontSize: 11.5,
@@ -454,7 +588,7 @@ export default function AdminFirmDetailPage() {
               <tbody>
                 {firm.users.length === 0 && (
                   <tr>
-                    <td colSpan={5} style={{ padding: 20, color: B.muted }}>
+                    <td colSpan={6} style={{ padding: 20, color: B.muted }}>
                       No users on this firm.
                     </td>
                   </tr>
@@ -469,6 +603,66 @@ export default function AdminFirmDetailPage() {
                     </td>
                     <td style={{ padding: '12px 14px', color: B.muted }}>
                       {formatShortDate(u.lastLoginAt)}
+                    </td>
+                    <td style={{ padding: '12px 14px', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                      {forceLogoutUserId === u.id ? (
+                        <div style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}>
+                          <button
+                            type="button"
+                            onClick={() => setForceLogoutUserId(null)}
+                            disabled={toggling}
+                            style={{
+                              padding: '5px 10px',
+                              borderRadius: 6,
+                              border: `1px solid ${B.border}`,
+                              background: B.white,
+                              fontSize: 12,
+                              cursor: 'pointer',
+                            }}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => void forceLogoutUser(u.id)}
+                            disabled={toggling}
+                            style={{
+                              padding: '5px 10px',
+                              borderRadius: 6,
+                              border: 'none',
+                              background: B.primaryBtn,
+                              color: '#fff',
+                              fontSize: 12,
+                              fontWeight: 600,
+                              cursor: toggling ? 'not-allowed' : 'pointer',
+                            }}
+                          >
+                            {toggling ? '…' : 'Confirm'}
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setForceLogoutUserId(u.id)
+                            setActionError(null)
+                            setActionMsg(null)
+                          }}
+                          disabled={toggling}
+                          style={{
+                            padding: '5px 10px',
+                            borderRadius: 6,
+                            border: `1px solid ${B.border}`,
+                            background: B.white,
+                            fontSize: 12,
+                            fontWeight: 600,
+                            color: B.muted,
+                            cursor: 'pointer',
+                          }}
+                        >
+                          Force logout
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}

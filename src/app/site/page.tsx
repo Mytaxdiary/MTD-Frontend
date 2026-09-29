@@ -4,7 +4,7 @@ import homeHtml from '@/features/marketing/appsite-html/home'
 import '@/features/marketing/styles/appsite-home.css'
 
 export const metadata: Metadata = {
-  title: { absolute: 'My Tax Diary — MTD Income Tax for accounting firms' },
+  title: { absolute: 'My Tax Diary: MTD Income Tax for accounting firms' },
   description:
     'Track client journeys for Making Tax Digital: deadlines, liabilities, kanban and list status, digital handshake, chase, and portal access. Built by accountants.',
   alternates: { canonical: '/site' },

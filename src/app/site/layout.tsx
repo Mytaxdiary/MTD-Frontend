@@ -13,7 +13,7 @@ const description =
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'My Tax Diary — MTD Income Tax for accounting firms',
+    default: 'My Tax Diary: MTD Income Tax for accounting firms',
     template: '%s | My Tax Diary',
   },
   description,
@@ -45,12 +45,12 @@ export const metadata: Metadata = {
     locale: 'en_GB',
     url: '/site',
     siteName: 'My Tax Diary',
-    title: 'My Tax Diary — MTD Income Tax for accounting firms',
+    title: 'My Tax Diary: MTD Income Tax for accounting firms',
     description,
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'My Tax Diary — MTD Income Tax for accounting firms',
+    title: 'My Tax Diary: MTD Income Tax for accounting firms',
     description,
   },
   robots: { index: true, follow: true },

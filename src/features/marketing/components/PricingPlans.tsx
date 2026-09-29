@@ -69,11 +69,11 @@ const COMPARISON: { feature: string; starter: string; growth: string; scale: str
   { feature: 'Client portal', starter: 'Yes', growth: 'Yes', scale: 'Yes' },
   { feature: 'HMRC MTD connection', starter: 'Yes', growth: 'Yes', scale: 'Yes' },
   { feature: 'Email chase', starter: 'Yes', growth: 'Yes', scale: 'Yes' },
-  { feature: 'Staff permissions', starter: '—', growth: 'Yes', scale: 'Yes' },
-  { feature: 'Client assignment', starter: '—', growth: 'Yes', scale: 'Yes' },
+  { feature: 'Staff permissions', starter: 'No', growth: 'Yes', scale: 'Yes' },
+  { feature: 'Client assignment', starter: 'No', growth: 'Yes', scale: 'Yes' },
   { feature: 'Portal chat', starter: 'Basic', growth: 'Yes', scale: 'Yes' },
   { feature: 'Onboarding support', starter: 'Email', growth: 'Priority', scale: 'Dedicated' },
-  { feature: 'Custom rollout', starter: '—', growth: '—', scale: 'Yes' },
+  { feature: 'Custom rollout', starter: 'No', growth: 'No', scale: 'Yes' },
 ]
 
 const FAQS = [
@@ -106,8 +106,8 @@ export default function PricingPlans() {
           <p className="mtd-page-hero__eyebrow">Pricing</p>
           <h1>Simple packages for UK accounting firms</h1>
           <p>
-            Choose a plan that matches your practice size. Draft prices shown for comparison —
-            enquire if you want a package recommendation for your firm.
+            Choose a plan that matches your practice size. Draft prices shown for comparison.
+            Enquire if you want a package recommendation for your firm.
           </p>
           <div className="mtd-price-toggle" role="group" aria-label="Billing period">
             <button
