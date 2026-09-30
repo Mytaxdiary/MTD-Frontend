@@ -19,7 +19,7 @@ env:
 
 jobs:
   verify:
-    name: Lint, typecheck and build
+    name: Lint, typecheck, test and build
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -40,6 +40,9 @@ jobs:
 
       - name: TypeScript check
         run: npx tsc --noEmit
+
+      - name: Unit tests
+        run: npm test -- --passWithNoTests
 
       - name: Production build (CI verification)
         env:

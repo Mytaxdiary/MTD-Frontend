@@ -578,7 +578,7 @@ export const clientsService = {
   async listOutstandingInvitations(): Promise<ClientRecord[]> {
     const res = await apiClient.get<{ data: ClientRecord[] }>('/clients/outstanding-invitations')
     return res.data.data
-  }
+  },
 
   /** Add Client panel — pending/expired/declined + accepted without authorisedAt */
   async listInvitationPanel(): Promise<ClientRecord[]> {

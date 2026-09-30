@@ -107,15 +107,26 @@ const html = `<section class="page-hero">
       </ul>
     </div>
     <div class="frow-mock reveal" style="--d:.12s">
+      <div class="panel panel-shot">
+        <img
+          src="/site/feature-chase.png"
+          alt="Chase manager with client list and email chase templates"
+          class="panel-shot-img"
+          width="1280"
+          height="800"
+        >
+      </div>
+      <!-- OLD MOCK (kept for now — do not delete)
       <div class="panel">
-    <div class="panel-bar"><i></i><i></i><i></i></div>
-    <div class="panel-body">
-      <h5>Email chases</h5>
-      <div class="panel-row">Q3 bank statements &middot; sent</div>
-      <div class="panel-row">Receipts follow-up &middot; due Fri</div>
-      <div class="panel-row">Template: quarterly pack</div>
-    </div>
-  </div>
+        <div class="panel-bar"><i></i><i></i><i></i></div>
+        <div class="panel-body">
+          <h5>Email chases</h5>
+          <div class="panel-row">Q3 bank statements &middot; sent</div>
+          <div class="panel-row">Receipts follow-up &middot; due Fri</div>
+          <div class="panel-row">Template: quarterly pack</div>
+        </div>
+      </div>
+      -->
     </div>
   </div>
 
@@ -131,15 +142,26 @@ const html = `<section class="page-hero">
       </ul>
     </div>
     <div class="frow-mock reveal" style="--d:.12s">
+      <div class="panel panel-shot">
+        <img
+          src="/site/feature-hmrc.png"
+          alt="Settings HMRC connection page showing firm connected with ARN"
+          class="panel-shot-img"
+          width="1280"
+          height="800"
+        >
+      </div>
+      <!-- OLD MOCK (kept for now — do not delete)
       <div class="panel">
-    <div class="panel-bar"><i></i><i></i><i></i></div>
-    <div class="panel-body">
-      <h5>Connection</h5>
-      <div class="panel-row">Firm linked &middot; ready</div>
-      <div class="panel-row">Clients authorised</div>
-      <div class="panel-row">Journeys in sync</div>
-    </div>
-  </div>
+        <div class="panel-bar"><i></i><i></i><i></i></div>
+        <div class="panel-body">
+          <h5>Connection</h5>
+          <div class="panel-row">Firm linked &middot; ready</div>
+          <div class="panel-row">Clients authorised</div>
+          <div class="panel-row">Journeys in sync</div>
+        </div>
+      </div>
+      -->
     </div>
   </div>
 
@@ -155,15 +177,26 @@ const html = `<section class="page-hero">
       </ul>
     </div>
     <div class="frow-mock reveal" style="--d:.12s">
+      <div class="panel panel-shot">
+        <img
+          src="/site/feature-staff.png"
+          alt="Settings Team page showing owner and staff with roles and permissions"
+          class="panel-shot-img"
+          width="1280"
+          height="800"
+        >
+      </div>
+      <!-- OLD MOCK (kept for now — do not delete)
       <div class="panel">
-    <div class="panel-bar"><i></i><i></i><i></i></div>
-    <div class="panel-body">
-      <h5>Team</h5>
-      <div class="panel-row">Sara &middot; clients assigned</div>
-      <div class="panel-row">Omar &middot; chase + portal</div>
-      <div class="panel-row">Owner &middot; full access</div>
-    </div>
-  </div>
+        <div class="panel-bar"><i></i><i></i><i></i></div>
+        <div class="panel-body">
+          <h5>Team</h5>
+          <div class="panel-row">Sara &middot; clients assigned</div>
+          <div class="panel-row">Omar &middot; chase + portal</div>
+          <div class="panel-row">Owner &middot; full access</div>
+        </div>
+      </div>
+      -->
     </div>
   </div>
   </div>
