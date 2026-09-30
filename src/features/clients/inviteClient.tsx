@@ -76,7 +76,7 @@ export default function InviteClient({ navigate = () => {} }: { navigate?: (rout
       >
         <div style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.01em' }}>Invite client</div>
         <div style={{ fontSize: 15, color: B.muted, marginTop: 3 }}>
-          Give a customer access to the client portal only — no HMRC authorisation
+          Give a customer access to the client portal only, with no HMRC authorisation
         </div>
       </div>
 

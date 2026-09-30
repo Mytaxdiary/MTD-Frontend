@@ -134,7 +134,7 @@ export default function MessageModal({
         >
           <div>
             <div style={{ fontWeight: 700, fontSize: 15, color: B.text }}>
-              Portal chat — {clientName}
+              Portal chat: {clientName}
             </div>
             <div style={{ fontSize: 12, color: B.muted, marginTop: 2 }}>
               Separate from email chasers

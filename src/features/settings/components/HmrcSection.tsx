@@ -232,7 +232,7 @@ export default function HmrcSection() {
       } else if (result.valid) {
         setFraudDetail(
           `Obligations feedback OK (${result.requestCount} endpoint(s))` +
-            (result.warningCount ? ` — ${result.warningCount} with warnings.` : '.') +
+            (result.warningCount ? ` (${result.warningCount} with warnings).` : '.') +
             (result.detail ? `\n${result.detail}` : '')
         )
       } else {

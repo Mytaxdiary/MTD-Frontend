@@ -24,15 +24,26 @@ const html = `<section class="page-hero">
       </ul>
     </div>
     <div class="frow-mock reveal" style="--d:.12s">
+      <div class="panel panel-shot">
+        <img
+          src="/site/feature-status.png"
+          alt="Dashboard kanban showing client journey status columns"
+          class="panel-shot-img"
+          width="1280"
+          height="800"
+        >
+      </div>
+      <!-- OLD MOCK (kept for now — do not delete)
       <div class="panel">
-    <div class="panel-bar"><i></i><i></i><i></i></div>
-    <div class="panel-body">
-      <h5>Jobs board</h5>
-      <div class="panel-row">Waiting on records &middot; 4</div>
-      <div class="panel-row">Ready to submit &middot; 2</div>
-      <div class="panel-row">Submitted this week &middot; 6</div>
-    </div>
-  </div>
+        <div class="panel-bar"><i></i><i></i><i></i></div>
+        <div class="panel-body">
+          <h5>Jobs board</h5>
+          <div class="panel-row">Waiting on records &middot; 4</div>
+          <div class="panel-row">Ready to submit &middot; 2</div>
+          <div class="panel-row">Submitted this week &middot; 6</div>
+        </div>
+      </div>
+      -->
     </div>
   </div>
 

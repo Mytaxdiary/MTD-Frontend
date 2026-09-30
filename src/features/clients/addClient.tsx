@@ -76,6 +76,18 @@ function invitationBadge(inv: ClientRecord): InvBadge {
       c: '#991B1B',
       border: '#FECACA',
     },
+    accepted: {
+      label: 'Accepted — linking',
+      bg: '#EEF2FF',
+      c: '#3730A3',
+      border: '#C7D2FE',
+    },
+    'partial-auth': {
+      label: 'Partial auth — linking',
+      bg: '#EEF2FF',
+      c: '#3730A3',
+      border: '#C7D2FE',
+    },
   }
   if (inv.invitationStatus === 'pending') {
     return inv.invitationId ? map.pending_sent : map.pending_unsent
@@ -112,6 +124,9 @@ function invitationHint(inv: ClientRecord): string {
       return 'Invitation was cancelled. Resend to re-invite.'
     case 'deauthorised':
       return 'Client removed your firm as their agent'
+    case 'accepted':
+    case 'partial-auth':
+      return 'Client accepted — waiting for HMRC relationship to activate. Refresh from the client page if this persists.'
     default:
       return ''
   }
@@ -138,28 +153,24 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
 
-  // Pending invitations panel
   const [pendingClients, setPendingClients] = useState<ClientRecord[]>([])
   const [pendingLoading, setPendingLoading] = useState(true)
+  const [pendingLoadError, setPendingLoadError] = useState<string | null>(null)
   const [resendingId, setResendingId] = useState<string | null>(null)
   const [resendPanelError, setResendPanelError] = useState<string | null>(null)
 
-  const ACTIONABLE_STATUSES = ['pending', 'expired', 'rejected', 'cancelled', 'deauthorised']
-
   const loadPending = useCallback(() => {
     setPendingLoading(true)
+    setPendingLoadError(null)
     clientsService
-      .list({ limit: 200 })
-      .then((res) =>
-        setPendingClients(
-          res.clients.filter((c: ClientRecord) =>
-            ACTIONABLE_STATUSES.includes(c.invitationStatus),
-          ),
-        ),
-      )
-      .catch(() => setPendingClients([]))
+      .listInvitationPanel()
+      .then((clients) => setPendingClients(clients))
+      .catch((err) => {
+        setPendingClients([])
+        setPendingLoadError(apiErrorMessage(err))
+      })
       .finally(() => setPendingLoading(false))
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     loadPending()
@@ -883,6 +894,8 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                     { status: 'rejected', label: 'Declined', bg: B.redBg, c: B.redText },
                     { status: 'deauthorised', label: 'Deauthorised', bg: B.redBg, c: B.redText },
                     { status: 'cancelled', label: 'Cancelled', bg: B.surface, c: B.muted },
+                    { status: 'accepted', label: 'Linking', bg: '#EEF2FF', c: '#3730A3' },
+                    { status: 'partial-auth', label: 'Linking', bg: '#EEF2FF', c: '#3730A3' },
                   ] as { status: string; label: string; bg: string; c: string }[]
                 )
                   .filter((s) => pendingClients.some((c) => c.invitationStatus === s.status))
@@ -932,6 +945,27 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                   >
                     Loading...
                   </div>
+                ) : pendingLoadError ? (
+                  <div style={{ padding: '20px 0', textAlign: 'center' }}>
+                    <div style={{ fontSize: 14, color: B.redText, marginBottom: 8 }}>
+                      {pendingLoadError}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={loadPending}
+                      style={{
+                        padding: '6px 12px',
+                        borderRadius: 6,
+                        border: `1px solid ${B.border}`,
+                        background: 'transparent',
+                        color: B.muted,
+                        fontSize: 12,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Retry
+                    </button>
+                  </div>
                 ) : pendingClients.length === 0 ? (
                   <div style={{ padding: '20px 0', textAlign: 'center' }}>
                     <div style={{ fontSize: 20, marginBottom: 6 }}>✓</div>
@@ -943,7 +977,10 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                   pendingClients.map((inv, i) => {
                     const badge = invitationBadge(inv)
                     const hint = invitationHint(inv)
-                    const canResendNow = inv.invitationStatus !== 'pending' || !inv.invitationId
+                    const linking =
+                      inv.invitationStatus === 'accepted' || inv.invitationStatus === 'partial-auth'
+                    const canResendNow =
+                      !linking && (inv.invitationStatus !== 'pending' || !inv.invitationId)
                     return (
                       <div
                         key={inv.id}
@@ -1002,29 +1039,49 @@ export default function AddClient({ navigate = () => {} }: { navigate?: (route: 
                             >
                               {badge.label}
                             </span>
-                            <button
-                              type="button"
-                              disabled={resendingId === inv.id}
-                              onClick={() => handleResend(inv)}
-                              style={{
-                                fontSize: 11,
-                                fontWeight: canResendNow ? 600 : 400,
-                                padding: '3px 10px',
-                                borderRadius: 6,
-                                border: `1px solid ${canResendNow ? B.primary : B.border}`,
-                                background: canResendNow ? B.blueBg : 'transparent',
-                                cursor: resendingId === inv.id ? 'not-allowed' : 'pointer',
-                                color: canResendNow ? B.blueText : B.muted,
-                                opacity: resendingId === inv.id ? 0.6 : 1,
-                                whiteSpace: 'nowrap',
-                              }}
-                            >
-                              {resendingId === inv.id
-                                ? 'Sending...'
-                                : canResendNow
-                                  ? 'Send invite'
-                                  : 'Resend'}
-                            </button>
+                            {linking ? (
+                              <button
+                                type="button"
+                                onClick={() => navigate(`clients/detail?id=${inv.id}`)}
+                                style={{
+                                  fontSize: 11,
+                                  fontWeight: 600,
+                                  padding: '3px 10px',
+                                  borderRadius: 6,
+                                  border: `1px solid ${B.border}`,
+                                  background: 'transparent',
+                                  cursor: 'pointer',
+                                  color: B.muted,
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                View client
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                disabled={resendingId === inv.id}
+                                onClick={() => handleResend(inv)}
+                                style={{
+                                  fontSize: 11,
+                                  fontWeight: canResendNow ? 600 : 400,
+                                  padding: '3px 10px',
+                                  borderRadius: 6,
+                                  border: `1px solid ${canResendNow ? B.primary : B.border}`,
+                                  background: canResendNow ? B.blueBg : 'transparent',
+                                  cursor: resendingId === inv.id ? 'not-allowed' : 'pointer',
+                                  color: canResendNow ? B.blueText : B.muted,
+                                  opacity: resendingId === inv.id ? 0.6 : 1,
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                {resendingId === inv.id
+                                  ? 'Sending...'
+                                  : canResendNow
+                                    ? 'Send invite'
+                                    : 'Resend'}
+                              </button>
+                            )}
                           </div>
                         </div>
                       </div>
