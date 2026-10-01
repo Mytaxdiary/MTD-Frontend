@@ -82,11 +82,13 @@ export default function NotificationsSection() {
               on={prefs.chaseEmail}
               onChange={(v) => set('chaseEmail', v)}
               label="Send client chases via email"
+              hint="When on, chase emails go to the client from your connected email."
             />
             <SettingsToggle
               on={prefs.chaseSms}
               onChange={(v) => set('chaseSms', v)}
               label="Send client chases via SMS"
+              hint="Optional SMS channel for chase reminders where SMS is set up."
             />
             <div
               style={{
@@ -104,22 +106,26 @@ export default function NotificationsSection() {
               on={prefs.overdueAlert}
               onChange={(v) => set('overdueAlert', v)}
               label="Email me when a client obligation becomes overdue"
+              hint="Sends you an alert when a quarterly deadline is missed."
             />
             <SettingsToggle
               on={prefs.deadlineReminder}
               onChange={(v) => set('deadlineReminder', v)}
               label="Email me before upcoming deadlines"
+              hint="Reminder email before deadlines, based on the days setting below."
             />
             <SettingsToggle
               on={prefs.inviteAccepted}
               onChange={(v) => set('inviteAccepted', v)}
               label="Notify me when a client accepts an invitation"
+              hint="In-app and email alert when a client accepts your HMRC invite."
               isNew
             />
             <SettingsToggle
               on={prefs.liabilityAlert}
               onChange={(v) => set('liabilityAlert', v)}
               label="Alert me when a client has overdue HMRC liabilities"
+              hint="Flags clients with unpaid HMRC balances that need attention."
               isNew
             />
 

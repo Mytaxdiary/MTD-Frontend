@@ -8,6 +8,7 @@ import { useCurrentUser, userInitials } from '@/components/auth/CurrentUserProvi
 import { usePermissions } from '@/hooks/usePermissions'
 import NotificationBell from '@/components/ui/NotificationBell'
 import BrandLogo from '@/components/ui/BrandLogo'
+import Tooltip from '@/components/ui/Tooltip'
 import {
   GridIcon,
   UsersIcon,
@@ -132,22 +133,24 @@ const NavItem = ({ label, active, icon, count = 0, onClick }: NavItemProps) => (
     </span>
     <span style={{ flex: 1 }}>{label}</span>
     {count > 0 && (
-      <span
-        aria-label={`${count} overdue`}
-        style={{
-          fontSize: 11,
-          fontWeight: 700,
-          background: B.red,
-          color: '#fff',
-          borderRadius: 10,
-          padding: '2px 7px',
-          minWidth: 19,
-          textAlign: 'center',
-          lineHeight: 1.35,
-        }}
-      >
-        {count}
-      </span>
+      <Tooltip content={`${count} overdue client${count === 1 ? '' : 's'}`} side="bottom" maxWidth={160}>
+        <span
+          aria-label={`${count} overdue`}
+          style={{
+            fontSize: 11,
+            fontWeight: 700,
+            background: B.red,
+            color: '#fff',
+            borderRadius: 10,
+            padding: '2px 7px',
+            minWidth: 19,
+            textAlign: 'center',
+            lineHeight: 1.35,
+          }}
+        >
+          {count}
+        </span>
+      </Tooltip>
     )}
   </button>
 )

@@ -64,6 +64,14 @@ export interface AdminFirmDetail {
 
 export type EnquiryStatus = 'new' | 'contacted' | 'closed'
 
+export type AdminAuditAction =
+  | 'firm.activate'
+  | 'firm.deactivate'
+  | 'firm.deactivation_reason_update'
+  | 'firm.invalidate_sessions'
+  | 'user.invalidate_sessions'
+  | 'enquiry.update'
+
 export interface AdminEnquiryItem {
   id: string
   name: string
@@ -81,6 +89,27 @@ export interface AdminEnquiryItem {
 
 export interface AdminEnquiryListResponse {
   items: AdminEnquiryItem[]
+  page: number
+  limit: number
+  total: number
+  totalPages: number
+}
+
+export interface AdminAuditLogItem {
+  id: string
+  actorUserId: string
+  actorEmail: string | null
+  action: AdminAuditAction
+  targetType: 'firm' | 'user' | 'enquiry'
+  targetId: string
+  targetLabel: string | null
+  summary: string
+  metadata: Record<string, unknown> | null
+  createdAt: string
+}
+
+export interface AdminAuditLogListResponse {
+  items: AdminAuditLogItem[]
   page: number
   limit: number
   total: number
@@ -173,6 +202,26 @@ export const adminService = {
     const { data } = await axiosClient.patch<{ success: true; data: AdminEnquiryItem }>(
       `/admin/enquiries/${id}`,
       payload
+    )
+    return data.data
+  },
+
+  listAuditLogs: async (params: {
+    page?: number
+    limit?: number
+    action?: AdminAuditAction | ''
+    search?: string
+  }): Promise<AdminAuditLogListResponse> => {
+    const { data } = await axiosClient.get<{ success: true; data: AdminAuditLogListResponse }>(
+      '/admin/audit-logs',
+      {
+        params: {
+          page: params.page,
+          limit: params.limit,
+          action: params.action || undefined,
+          search: params.search || undefined,
+        },
+      }
     )
     return data.data
   },

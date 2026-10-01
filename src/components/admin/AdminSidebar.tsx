@@ -11,6 +11,7 @@ import {
   SendIcon,
   SettingsIcon,
   SignOutIcon,
+  ClockIcon,
 } from '@/components/ui/icons'
 
 const SIDEBAR_WIDTH = 244
@@ -28,6 +29,12 @@ const NAV = [
     label: 'Enquiries',
     icon: SendIcon,
     match: (p: string) => p.startsWith('/admin/enquiries'),
+  },
+  {
+    href: '/admin/audit',
+    label: 'Audit log',
+    icon: ClockIcon,
+    match: (p: string) => p.startsWith('/admin/audit'),
   },
   {
     href: '/admin/support',

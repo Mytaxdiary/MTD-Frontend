@@ -2,11 +2,12 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import BrandLogo from '@/components/ui/BrandLogo'
+import Tooltip from '@/components/ui/Tooltip'
 
 const NAV_LINKS = [
-  { href: '/portal/dashboard', label: 'Dashboard' },
-  { href: '/portal/messages', label: 'Chat' },
-  { href: '/portal/files', label: 'Files' },
+  { href: '/portal/dashboard', label: 'Dashboard', tip: 'Your obligations, balances, and deadlines' },
+  { href: '/portal/messages', label: 'Chat', tip: 'Message your accountant' },
+  { href: '/portal/files', label: 'Files', tip: 'Upload and view shared documents' },
 ]
 
 export default function PortalLayout({ children }: { children: React.ReactNode }) {
@@ -56,25 +57,26 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
 
         {!isAuthPage && (
           <nav style={{ display: 'flex', gap: 4 }}>
-            {NAV_LINKS.map(({ href, label }) => {
+            {NAV_LINKS.map(({ href, label, tip }) => {
               const active = pathname.startsWith(href)
               return (
-                <Link
-                  key={href}
-                  href={href}
-                  style={{
-                    padding: '7px 18px',
-                    borderRadius: 7,
-                    fontSize: 15,
-                    fontWeight: active ? 700 : 400,
-                    color: active ? '#fff' : 'rgba(255,255,255,0.70)',
-                    background: active ? 'rgba(255,255,255,0.18)' : 'transparent',
-                    textDecoration: 'none',
-                    transition: 'background 0.15s',
-                  }}
-                >
-                  {label}
-                </Link>
+                <Tooltip key={href} content={tip} side="bottom" maxWidth={220}>
+                  <Link
+                    href={href}
+                    style={{
+                      padding: '7px 18px',
+                      borderRadius: 7,
+                      fontSize: 15,
+                      fontWeight: active ? 700 : 400,
+                      color: active ? '#fff' : 'rgba(255,255,255,0.70)',
+                      background: active ? 'rgba(255,255,255,0.18)' : 'transparent',
+                      textDecoration: 'none',
+                      transition: 'background 0.15s',
+                    }}
+                  >
+                    {label}
+                  </Link>
+                </Tooltip>
               )
             })}
           </nav>

@@ -9,6 +9,7 @@ import { useCurrentUser } from '@/components/auth/CurrentUserProvider'
 import { usePermissions } from '@/hooks/usePermissions'
 import { useAssignableStaff } from '@/features/clients/useAssignableStaff'
 import AssigneeSelect from '@/features/clients/AssigneeSelect'
+import Tooltip from '@/components/ui/Tooltip'
 
 function apiErrorMessage(err: unknown): string {
   const msg = (err as { message?: string })?.message
@@ -98,17 +99,77 @@ function mapToRows(c: ClientRecord): ClientListRow[] {
 }
 
 const Badge = ({ status }: { status: string }) => {
-  const m: Record<string, { bg: string; c: string; b: string; l: string }> = {
-    overdue: { bg: B.redBg, c: B.redText, b: '#FECACA', l: 'Overdue' },
-    'due-soon': { bg: B.amberBg, c: B.amberText, b: '#FDE68A', l: 'Due soon' },
-    ready: { bg: B.greenBg, c: B.greenText, b: '#A7F3D0', l: 'Records ready' },
-    filed: { bg: B.greenBg, c: B.greenText, b: '#A7F3D0', l: 'Authorised' },
-    chased: { bg: B.blueBg, c: B.blueText, b: '#BAE6FD', l: 'Chased' },
-    pending: { bg: B.purpleBg, c: B.purpleText, b: '#DDD6FE', l: 'Pending invite' },
-    'invite-accepted': { bg: B.amberBg, c: B.amberText, b: '#FDE68A', l: 'Invite accepted' },
-    'partial-auth': { bg: B.amberBg, c: B.amberText, b: '#FDE68A', l: 'Partial auth' },
-    rejected: { bg: B.redBg, c: B.redText, b: '#FECACA', l: 'Rejected' },
-    expired: { bg: B.surface, c: B.muted, b: B.border, l: 'Expired' },
+  const m: Record<string, { bg: string; c: string; b: string; l: string; tip: string }> = {
+    overdue: {
+      bg: B.redBg,
+      c: B.redText,
+      b: '#FECACA',
+      l: 'Overdue',
+      tip: 'Filing deadline has passed',
+    },
+    'due-soon': {
+      bg: B.amberBg,
+      c: B.amberText,
+      b: '#FDE68A',
+      l: 'Due soon',
+      tip: 'Deadline is coming up soon',
+    },
+    ready: {
+      bg: B.greenBg,
+      c: B.greenText,
+      b: '#A7F3D0',
+      l: 'Records ready',
+      tip: 'Client records are ready for you to review',
+    },
+    filed: {
+      bg: B.greenBg,
+      c: B.greenText,
+      b: '#A7F3D0',
+      l: 'Authorised',
+      tip: 'HMRC agent relationship is active',
+    },
+    chased: {
+      bg: B.blueBg,
+      c: B.blueText,
+      b: '#BAE6FD',
+      l: 'Chased',
+      tip: 'A chase email was sent for this period',
+    },
+    pending: {
+      bg: B.purpleBg,
+      c: B.purpleText,
+      b: '#DDD6FE',
+      l: 'Pending invite',
+      tip: 'Waiting for the client to accept your HMRC invitation',
+    },
+    'invite-accepted': {
+      bg: B.amberBg,
+      c: B.amberText,
+      b: '#FDE68A',
+      l: 'Invite accepted',
+      tip: 'Client accepted — firm authorisation is completing',
+    },
+    'partial-auth': {
+      bg: B.amberBg,
+      c: B.amberText,
+      b: '#FDE68A',
+      l: 'Partial auth',
+      tip: 'Some services authorised; full access may still be pending',
+    },
+    rejected: {
+      bg: B.redBg,
+      c: B.redText,
+      b: '#FECACA',
+      l: 'Rejected',
+      tip: 'Client declined the HMRC invitation',
+    },
+    expired: {
+      bg: B.surface,
+      c: B.muted,
+      b: B.border,
+      l: 'Expired',
+      tip: 'Invitation expired — resend to invite again',
+    },
   }
   const s =
     m[status] ??
@@ -120,22 +181,26 @@ const Badge = ({ status }: { status: string }) => {
         .split('-')
         .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
         .join(' '),
+      tip: status,
     } as const)
   return (
-    <span
-      style={{
-        fontSize: 12,
-        fontWeight: 700,
-        padding: '3px 11px',
-        borderRadius: 20,
-        background: s.bg,
-        color: s.c,
-        border: `1px solid ${s.b}`,
-        whiteSpace: 'nowrap',
-      }}
-    >
-      {s.l}
-    </span>
+    <Tooltip content={s.tip} side="top" maxWidth={260}>
+      <span
+        style={{
+          fontSize: 12,
+          fontWeight: 700,
+          padding: '3px 11px',
+          borderRadius: 20,
+          background: s.bg,
+          color: s.c,
+          border: `1px solid ${s.b}`,
+          whiteSpace: 'nowrap',
+          cursor: 'help',
+        }}
+      >
+        {s.l}
+      </span>
+    </Tooltip>
   )
 }
 

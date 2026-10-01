@@ -4,6 +4,7 @@ import B from '@/styles/theme'
 import { Card, CardHeader as CardHead } from '@/components/ui/card'
 import { hmrcService, type HmrcStatus } from '@/services/hmrc.service'
 import SandboxTestUsersCard from './SandboxTestUsersCard'
+import Tooltip from '@/components/ui/Tooltip'
 
 function fraudHeadersLabel(tested: boolean, valid: boolean | null, hasWarnings?: boolean): string {
   if (!tested) return 'Not tested yet'
@@ -520,12 +521,18 @@ export default function HmrcSection() {
                           Not set
                         </span>
                       )}
+                      <Tooltip
+                        content="Agent Reference Number from your HMRC Agent Services Account"
+                        side="top"
+                        maxWidth={260}
+                      >
                       <button
+                        type="button"
                         onClick={() => {
                           setArnInput(hmrcStatus?.arn ?? '')
                           setArnEditing(true)
                         }}
-                        title="Edit ARN"
+                        aria-label="Edit ARN"
                         style={{
                           padding: '2px 6px',
                           borderRadius: 5,
@@ -539,6 +546,7 @@ export default function HmrcSection() {
                       >
                         Edit
                       </button>
+                      </Tooltip>
                     </div>
                   )}
                 </div>

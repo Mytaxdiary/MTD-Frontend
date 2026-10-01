@@ -1,13 +1,16 @@
 import B from '@/styles/theme'
+import InfoTooltip from '@/components/ui/InfoTooltip'
 
 interface Props {
   on: boolean
   onChange: (v: boolean) => void
   label: string
   isNew?: boolean
+  /** Optional short help shown beside the label. */
+  hint?: string
 }
 
-export default function SettingsToggle({ on, onChange, label, isNew }: Props) {
+export default function SettingsToggle({ on, onChange, label, isNew, hint }: Props) {
   return (
     <div
       style={{
@@ -20,6 +23,11 @@ export default function SettingsToggle({ on, onChange, label, isNew }: Props) {
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <span style={{ fontSize: 13 }}>{label}</span>
+        {hint && (
+          <InfoTooltip label={`About: ${label}`} align="left" width={280}>
+            {hint}
+          </InfoTooltip>
+        )}
         {isNew && (
           <span
             style={{
@@ -36,7 +44,17 @@ export default function SettingsToggle({ on, onChange, label, isNew }: Props) {
         )}
       </div>
       <div
+        role="switch"
+        aria-checked={on}
+        aria-label={label}
+        tabIndex={0}
         onClick={() => onChange(!on)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            onChange(!on)
+          }
+        }}
         style={{
           width: 40,
           height: 22,

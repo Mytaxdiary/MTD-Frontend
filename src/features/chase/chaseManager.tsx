@@ -15,6 +15,7 @@ import {
 import { useCurrentUser } from '@/components/auth/CurrentUserProvider'
 import { usePermissions } from '@/hooks/usePermissions'
 import InfoTooltip from '@/components/ui/InfoTooltip'
+import Tooltip from '@/components/ui/Tooltip'
 import { emailConnectionService } from '@/services/email-connection.service'
 import B from '@/styles/theme'
 
@@ -926,13 +927,13 @@ export default function ChaseManager({
                           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                             <TypeBadge type={t.type} />
                             {canManageTemplates && (
+                            <Tooltip content="Delete this chase template" side="top" maxWidth={180}>
                             <button
                               onClick={(e) => {
                                 e.stopPropagation()
                                 handleDelete(t.id)
                               }}
                               disabled={deletingId === t.id}
-                              title="Delete template"
                               aria-label={`Delete ${t.name}`}
                               style={{
                                 fontSize: 13,
@@ -947,6 +948,7 @@ export default function ChaseManager({
                             >
                               ✕
                             </button>
+                            </Tooltip>
                             )}
                         </div>
                         </div>

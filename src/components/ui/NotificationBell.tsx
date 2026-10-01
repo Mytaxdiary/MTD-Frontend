@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import appNotificationsService, { type AppNotification } from '@/services/appNotifications.service'
+import Tooltip from '@/components/ui/Tooltip'
 
 function timeAgo(iso: string): string {
   const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000)
@@ -89,6 +90,11 @@ export default function NotificationBell() {
   return (
     <div ref={wrapRef} style={{ position: 'relative' }}>
       {/* Bell button */}
+      <Tooltip
+        content={count > 0 ? `${count} unread notification${count === 1 ? '' : 's'}` : 'Notifications'}
+        side="bottom"
+        maxWidth={180}
+      >
       <button
         type="button"
         aria-label={count > 0 ? `${count} unread notifications` : 'Notifications'}
@@ -142,6 +148,7 @@ export default function NotificationBell() {
           </span>
         )}
       </button>
+      </Tooltip>
 
       {/* Dropdown panel — opens upward from the bottom of the sidebar */}
       {open && (

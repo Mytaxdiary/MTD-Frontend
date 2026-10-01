@@ -11,6 +11,7 @@ import dashboardService, {
   type DashboardSummary,
 } from '@/services/dashboard.service'
 import EmptyStateIllustration from '@/components/ui/EmptyStateIllustration'
+import Tooltip from '@/components/ui/Tooltip'
 import {
   PIPELINE_KANBAN_COLS,
   PIPELINE_STATUS_LABELS,
@@ -18,6 +19,23 @@ import {
   isPipelineStatus,
   type PipelineStatus,
 } from '@/lib/dashboard/pipelineStatus'
+
+const QDOT_TIPS: Record<string, string> = {
+  filed: 'Submitted to HMRC for this quarter',
+  ready: 'Ready to submit',
+  pending: 'Not started for this quarter',
+  overdue: 'Deadline has passed',
+  'N/A': 'Not available until the client is authorised',
+}
+
+const PIPELINE_TIPS: Record<PipelineStatus, string> = {
+  'pending-invite': 'Waiting for the client to accept your HMRC invitation',
+  'not-started': 'Authorised, but not chased yet this quarter',
+  chased: 'A chase email was sent this quarter',
+  'records-received': 'Client records are in — ready for your review',
+  'ready-for-review': 'Figures are ready for a final check before filing',
+  submitted: 'Filed to HMRC this quarter',
+}
 import {
   BoardViewIcon,
   CalendarIcon,
@@ -61,16 +79,19 @@ const QDot = ({ status }: { status: string }) => {
     'N/A': '#E2E8F0',
   }
   return (
-    <div
-      style={{
-        width: 10,
-        height: 10,
-        borderRadius: 5,
-        background: colors[status] || B.light,
-        border: status === 'overdue' ? '1.5px solid #FECACA' : 'none',
-      }}
-      title={status}
-    />
+    <Tooltip content={QDOT_TIPS[status] ?? status} side="top" maxWidth={200}>
+      <span
+        aria-label={QDOT_TIPS[status] ?? status}
+        style={{
+          width: 10,
+          height: 10,
+          borderRadius: 5,
+          background: colors[status] || B.light,
+          border: status === 'overdue' ? '1.5px solid #FECACA' : 'none',
+          display: 'inline-block',
+        }}
+      />
+    </Tooltip>
   )
 }
 
@@ -85,20 +106,23 @@ const PipelineBadge = ({ status }: { status: string }) => {
   const key: PipelineStatus = isPipelineStatus(status) ? status : 'not-started'
   const s = PIPELINE_STATUS_STYLES[key]
   return (
-    <span
-      style={{
-        fontSize: 12,
-        fontWeight: 700,
-        padding: '3px 11px',
-        borderRadius: 20,
-        background: s.bg,
-        color: s.c,
-        border: `1px solid ${s.b}`,
-        whiteSpace: 'nowrap',
-      }}
-    >
-      {PIPELINE_STATUS_LABELS[key]}
-    </span>
+    <Tooltip content={PIPELINE_TIPS[key]} side="top" maxWidth={260}>
+      <span
+        style={{
+          fontSize: 12,
+          fontWeight: 700,
+          padding: '3px 11px',
+          borderRadius: 20,
+          background: s.bg,
+          color: s.c,
+          border: `1px solid ${s.b}`,
+          whiteSpace: 'nowrap',
+          cursor: 'help',
+        }}
+      >
+        {PIPELINE_STATUS_LABELS[key]}
+      </span>
+    </Tooltip>
   )
 }
 
@@ -532,41 +556,56 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
             </button>
             <div style={{ display: 'flex' }}>
               {[
-                { k: 'list', label: 'List view', Icon: ListViewIcon },
-                { k: 'kanban', label: 'Kanban view', Icon: BoardViewIcon },
-                { k: 'year', label: 'Year view', Icon: YearViewIcon },
+                {
+                  k: 'list',
+                  label: 'List view',
+                  tip: 'Scan all clients in a table',
+                  Icon: ListViewIcon,
+                },
+                {
+                  k: 'kanban',
+                  label: 'Kanban view',
+                  tip: 'See clients by pipeline stage',
+                  Icon: BoardViewIcon,
+                },
+                {
+                  k: 'year',
+                  label: 'Year view',
+                  tip: 'Quarter status across the tax year',
+                  Icon: YearViewIcon,
+                },
               ].map((v, i, arr) => {
                 const isActive = view === v.k
                 return (
-                  <button
-                    key={v.k}
-                    onClick={() => {
-                      setView(v.k)
-                      if (v.k !== 'list') setQuarterFilter('all')
-                    }}
-                    aria-pressed={isActive}
-                    title={v.label}
-                    aria-label={v.label}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: 36,
-                      height: 34,
-                      padding: 0,
-                      border: `1px solid ${isActive ? B.sidebarBg : B.borderLight}`,
-                      cursor: 'pointer',
-                      background: isActive ? B.sidebarBg : B.white,
-                      color: isActive ? '#fff' : B.light,
-                      borderRadius:
-                        i === 0 ? '8px 0 0 8px' : i === arr.length - 1 ? '0 8px 8px 0' : 0,
-                      marginLeft: i === 0 ? 0 : -1,
-                      position: 'relative',
-                      zIndex: isActive ? 1 : 0,
-                    }}
-                  >
-                    <v.Icon />
-                  </button>
+                  <Tooltip key={v.k} content={v.tip} side="bottom" maxWidth={200}>
+                    <button
+                      onClick={() => {
+                        setView(v.k)
+                        if (v.k !== 'list') setQuarterFilter('all')
+                      }}
+                      aria-pressed={isActive}
+                      aria-label={v.label}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: 36,
+                        height: 34,
+                        padding: 0,
+                        border: `1px solid ${isActive ? B.sidebarBg : B.borderLight}`,
+                        cursor: 'pointer',
+                        background: isActive ? B.sidebarBg : B.white,
+                        color: isActive ? '#fff' : B.light,
+                        borderRadius:
+                          i === 0 ? '8px 0 0 8px' : i === arr.length - 1 ? '0 8px 8px 0' : 0,
+                        marginLeft: i === 0 ? 0 : -1,
+                        position: 'relative',
+                        zIndex: isActive ? 1 : 0,
+                      }}
+                    >
+                      <v.Icon />
+                    </button>
+                  </Tooltip>
                 )
               })}
             </div>

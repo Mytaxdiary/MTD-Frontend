@@ -9,34 +9,78 @@ import portalService, {
 } from '@/services/portal.service'
 import { clearPortalSessionCookie } from '@/lib/auth/portalTokenStorage'
 import MtdScopeNotice from '@/components/ui/MtdScopeNotice'
+import Tooltip from '@/components/ui/Tooltip'
 import B from '@/styles/theme'
 
 function StatusBadge({ status }: { status: string }) {
-  const map: Record<string, { bg: string; c: string; l: string }> = {
-    Open: { bg: B.amberBg, c: B.amberText, l: 'Open' },
-    Pending: { bg: B.amberBg, c: B.amberText, l: 'Pending' },
-    Fulfilled: { bg: B.greenBg, c: B.greenText, l: 'Submitted' },
-    Submitted: { bg: B.greenBg, c: B.greenText, l: 'Submitted' },
-    Overdue: { bg: B.redBg, c: B.redText, l: 'Overdue' },
-    paid: { bg: B.greenBg, c: B.greenText, l: 'Paid' },
-    upcoming: { bg: B.amberBg, c: B.amberText, l: 'Due' },
-    overdue: { bg: B.redBg, c: B.redText, l: 'Overdue' },
+  const map: Record<string, { bg: string; c: string; l: string; tip: string }> = {
+    Open: {
+      bg: B.amberBg,
+      c: B.amberText,
+      l: 'Open',
+      tip: 'This quarter still needs to be submitted',
+    },
+    Pending: {
+      bg: B.amberBg,
+      c: B.amberText,
+      l: 'Pending',
+      tip: 'Waiting to be completed',
+    },
+    Fulfilled: {
+      bg: B.greenBg,
+      c: B.greenText,
+      l: 'Submitted',
+      tip: 'Already submitted to HMRC',
+    },
+    Submitted: {
+      bg: B.greenBg,
+      c: B.greenText,
+      l: 'Submitted',
+      tip: 'Already submitted to HMRC',
+    },
+    Overdue: {
+      bg: B.redBg,
+      c: B.redText,
+      l: 'Overdue',
+      tip: 'The filing deadline has passed',
+    },
+    paid: {
+      bg: B.greenBg,
+      c: B.greenText,
+      l: 'Paid',
+      tip: 'This balance has been paid',
+    },
+    upcoming: {
+      bg: B.amberBg,
+      c: B.amberText,
+      l: 'Due',
+      tip: 'Payment is due by this date',
+    },
+    overdue: {
+      bg: B.redBg,
+      c: B.redText,
+      l: 'Overdue',
+      tip: 'Payment is past due',
+    },
   }
-  const s = map[status] ?? { bg: B.surface, c: B.muted, l: status }
+  const s = map[status] ?? { bg: B.surface, c: B.muted, l: status, tip: status }
   return (
-    <span
-      style={{
-        fontSize: 12,
-        fontWeight: 700,
-        padding: '4px 12px',
-        borderRadius: 20,
-        background: s.bg,
-        color: s.c,
-        letterSpacing: '0.2px',
-      }}
-    >
-      {s.l}
-    </span>
+    <Tooltip content={s.tip} side="top" maxWidth={220}>
+      <span
+        style={{
+          fontSize: 12,
+          fontWeight: 700,
+          padding: '4px 12px',
+          borderRadius: 20,
+          background: s.bg,
+          color: s.c,
+          letterSpacing: '0.2px',
+          cursor: 'help',
+        }}
+      >
+        {s.l}
+      </span>
+    </Tooltip>
   )
 }
 
