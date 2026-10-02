@@ -59,15 +59,26 @@ const html = `<section class="page-hero">
       </ul>
     </div>
     <div class="frow-mock reveal" style="--d:.12s">
+      <div class="panel panel-shot">
+        <img
+          src="/site/feature-handshake.png"
+          alt="Add client invitations panel showing pending and resend states"
+          class="panel-shot-img"
+          width="1280"
+          height="800"
+        >
+      </div>
+      <!-- OLD MOCK (kept for now — do not delete)
       <div class="panel">
-    <div class="panel-bar"><i></i><i></i><i></i></div>
-    <div class="panel-body">
-      <h5>Handshake</h5>
-      <div class="panel-row">Invite sent &middot; Harris Ltd</div>
-      <div class="panel-row">Awaiting client confirm</div>
-      <div class="panel-row">Portal access unlocked</div>
-    </div>
-  </div>
+        <div class="panel-bar"><i></i><i></i><i></i></div>
+        <div class="panel-body">
+          <h5>Handshake</h5>
+          <div class="panel-row">Invite sent &middot; Harris Ltd</div>
+          <div class="panel-row">Awaiting client confirm</div>
+          <div class="panel-row">Portal access unlocked</div>
+        </div>
+      </div>
+      -->
     </div>
   </div>
 
