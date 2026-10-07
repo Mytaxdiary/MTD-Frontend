@@ -4,6 +4,12 @@ import { refreshAccessToken } from '@/lib/auth/refreshAccessToken'
 import { clearAccessTokenExpiry } from '@/lib/auth/accessTokenExpiry'
 import { clearSessionCookie } from '@/lib/auth/tokenStorage'
 import {
+  isBillingGateCode,
+  parseBillingErrorCode,
+  paywallPath,
+} from '@/lib/billing/billingErrors'
+import {
+  collectFraudPreventionPayload,
   collectFraudPreventionPayloadAsync,
   encodeFraudContextHeader,
 } from '@/lib/hmrc/collectFraudHeaders'
@@ -24,13 +30,37 @@ function processQueue(error: unknown): void {
   failedQueue = []
 }
 
+function extractErrorMessage(
+  data: { message?: string | string[] } | undefined,
+  fallback: string,
+): string {
+  const raw = data?.message
+  if (typeof raw === 'string') return raw
+  if (Array.isArray(raw)) return raw.join(' ')
+  return fallback
+}
+
 function redirectToLogin(): void {
   if (typeof window === 'undefined') return
   clearAccessTokenExpiry()
   clearSessionCookie()
   const path = window.location.pathname
-  if (!path.startsWith('/login') && !path.startsWith('/register')) {
+  if (!path.startsWith('/login') && !path.startsWith('/register') && !path.startsWith('/billing/')) {
     window.location.href = '/login'
+  }
+}
+
+function redirectToPaywall(message: string): void {
+  if (typeof window === 'undefined') return
+  clearAccessTokenExpiry()
+  clearSessionCookie()
+  const code = parseBillingErrorCode(message)
+  if (!code || !isBillingGateCode(code)) {
+    redirectToLogin()
+    return
+  }
+  if (!window.location.pathname.startsWith('/billing/paywall')) {
+    window.location.href = paywallPath(code, message)
   }
 }
 
@@ -40,11 +70,14 @@ async function attachFraudContext(
   if (typeof window === 'undefined') return config
   // Auth routes do not call HMRC — skip custom header to avoid unnecessary CORS preflight
   if (isAuthRoute(config.url)) return config
+  // Always attach browser payload. Missing X-Hmrc-Fraud-Context caused HMRC
+  // "Header required" findings (Device-ID / Timezone / Connection-Method / …).
   try {
     const payload = await collectFraudPreventionPayloadAsync()
     config.headers.set('X-Hmrc-Fraud-Context', encodeFraudContextHeader(payload))
   } catch {
-    // Best-effort — HMRC calls still work with vendor-only headers
+    const payload = collectFraudPreventionPayload()
+    config.headers.set('X-Hmrc-Fraud-Context', encodeFraudContextHeader(payload))
   }
   return config
 }
@@ -57,6 +90,13 @@ export function setupInterceptors(client: AxiosInstance): void {
     async (error: AxiosError<{ message?: string; statusCode?: number }>) => {
       const originalRequest = error.config as InternalAxiosRequestConfig & {
         _retry?: boolean
+      }
+
+      const billingMessage = extractErrorMessage(error.response?.data, '')
+      const billingCode = parseBillingErrorCode(billingMessage)
+      if (error.response?.status === 401 && billingCode && isBillingGateCode(billingCode)) {
+        redirectToPaywall(billingMessage)
+        return Promise.reject(error)
       }
 
       if (
@@ -89,17 +129,10 @@ export function setupInterceptors(client: AxiosInstance): void {
         }
       }
 
-      const raw = error.response?.data?.message as
-        | string
-        | string[]
-        | Record<string, unknown>
-        | undefined
-      const message =
-        typeof raw === 'string'
-          ? raw
-          : Array.isArray(raw)
-            ? raw.join(' ')
-            : error.message || 'An unexpected error occurred'
+      const message = extractErrorMessage(
+        error.response?.data,
+        error.message || 'An unexpected error occurred',
+      )
 
       const apiError = new Error(message) as Error & { statusCode?: number; responseData?: unknown }
       apiError.statusCode = error.response?.status

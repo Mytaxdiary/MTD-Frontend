@@ -1,5 +1,10 @@
-import axios from 'axios'
+import axios, { type InternalAxiosRequestConfig } from 'axios'
 import { env } from '@/lib/env'
+import {
+  collectFraudPreventionPayload,
+  collectFraudPreventionPayloadAsync,
+  encodeFraudContextHeader,
+} from '@/lib/hmrc/collectFraudHeaders'
 
 /**
  * Separate Axios instance for the Client Portal.
@@ -11,6 +16,25 @@ const portalAxiosClient = axios.create({
   withCredentials: true,
   headers: { 'Content-Type': 'application/json' },
 })
+
+async function attachFraudContext(
+  config: InternalAxiosRequestConfig
+): Promise<InternalAxiosRequestConfig> {
+  if (typeof window === 'undefined') return config
+  const url = config.url ?? ''
+  // Portal auth does not call HMRC
+  if (url.includes('/portal/login') || url.includes('/portal/setup')) return config
+  try {
+    const payload = await collectFraudPreventionPayloadAsync()
+    config.headers.set('X-Hmrc-Fraud-Context', encodeFraudContextHeader(payload))
+  } catch {
+    const payload = collectFraudPreventionPayload()
+    config.headers.set('X-Hmrc-Fraud-Context', encodeFraudContextHeader(payload))
+  }
+  return config
+}
+
+portalAxiosClient.interceptors.request.use(attachFraudContext)
 
 portalAxiosClient.interceptors.response.use(
   (res) => res,

@@ -11,6 +11,11 @@ import {
 } from '@/services/auth.service'
 import { setAccessTokenExpiry, clearAccessTokenExpiry } from '@/lib/auth/accessTokenExpiry'
 import { setSessionCookie, clearSessionCookie } from '@/lib/auth/tokenStorage'
+import {
+  isBillingGateCode,
+  parseBillingErrorCode,
+  paywallPath,
+} from '@/lib/billing/billingErrors'
 
 interface AuthState {
   loading: boolean
@@ -51,7 +56,13 @@ export function useAuth() {
         }
       } catch (err) {
         console.error('Login error:', err)
-        setError(err instanceof Error ? err.message : 'Login failed. Please try again.')
+        const message = err instanceof Error ? err.message : 'Login failed. Please try again.'
+        const code = parseBillingErrorCode(message)
+        if (code && isBillingGateCode(code)) {
+          router.push(paywallPath(code, message))
+          return
+        }
+        setError(message)
       } finally {
         setLoading(false)
       }

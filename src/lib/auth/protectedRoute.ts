@@ -10,6 +10,7 @@ export const PUBLIC_ROUTES = [
   '/verify-email',
   '/accept-invite',
   '/admin/login',
+  '/billing/paywall',
 ] as const
 
 export const DEFAULT_LOGIN_ROUTE = '/login'

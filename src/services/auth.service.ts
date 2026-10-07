@@ -48,6 +48,9 @@ export interface AuthUser {
   role?: 'owner' | 'staff' | 'admin'
   permissions?: StaffPermissions
   tenantId?: string | null
+  billingStatus?: string | null
+  /** ISO timestamp when free trial ends */
+  trialEndsAt?: string | null
 }
 
 export interface AuthTokens {

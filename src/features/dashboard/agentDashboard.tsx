@@ -4,8 +4,10 @@ import { useRouter } from 'next/navigation'
 import TypePills from '@/components/common/typePills'
 import { matchesTypeFilter } from '@/lib/helpers/clientType'
 import B from '@/styles/theme'
+import Link from 'next/link'
 import { useCurrentUser, firstName } from '@/components/auth/CurrentUserProvider'
 import { usePermissions } from '@/hooks/usePermissions'
+import { getTrialRemaining } from '@/lib/billing/trialRemaining'
 import dashboardService, {
   type DashboardClientRow,
   type DashboardSummary,
@@ -295,8 +297,9 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
   const [loading, setLoading] = useState(true)
 
   const { user } = useCurrentUser()
-  const { isStaff, canAddClients, canChase } = usePermissions()
+  const { isStaff, isOwner, canAddClients, canChase } = usePermissions()
   const greetingName = firstName(user?.name) || 'there'
+  const trial = getTrialRemaining(user?.billingStatus, user?.trialEndsAt)
 
   const loadSummary = useCallback(async () => {
     try {
@@ -421,6 +424,54 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
           )}
         </div>
       </div>
+
+      {trial && (
+        <div style={{ padding: '0 24px 16px', flexShrink: 0 }}>
+          <div
+            role="status"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 16,
+              flexWrap: 'wrap',
+              padding: '14px 18px',
+              borderRadius: 10,
+              background: trial.urgent ? B.amberBg : B.blueBg,
+              border: `1px solid ${trial.urgent ? '#FDE68A' : '#BAE6FD'}`,
+            }}
+          >
+            <div>
+              <div
+                style={{
+                  fontSize: 13,
+                  fontWeight: 700,
+                  color: trial.urgent ? B.amberText : B.blueText,
+                }}
+              >
+                Free trial: {trial.daysLeft} day{trial.daysLeft === 1 ? '' : 's'} left
+              </div>
+              <div style={{ fontSize: 12.5, color: B.muted, marginTop: 3 }}>
+                Your trial ends on {trial.endsLabel}. No card required until you subscribe.
+              </div>
+            </div>
+            {isOwner && (
+              <Link
+                href="/settings?section=billing"
+                style={{
+                  fontSize: 12.5,
+                  fontWeight: 600,
+                  color: trial.urgent ? B.amberText : B.link,
+                  textDecoration: 'none',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Plan &amp; billing →
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
 
       <div style={{ padding: '0 24px 24px', flex: 1 }}>
         {/* Metric cards — pipeline counts (same vocabulary as list / kanban / year) */}
