@@ -48,7 +48,7 @@ export default function AppsiteHeader() {
             Sign in
           </a>
           <a href="/register" className="btn btn-primary btn-sm">
-            Get started
+            Start free trial
           </a>
           <button className="burger" aria-label="Open menu" aria-expanded="false">
             <span></span>
@@ -76,7 +76,7 @@ export default function AppsiteHeader() {
               Sign in
             </a>
             <a href="/register" className="btn btn-primary">
-              Get started
+              Start free trial
             </a>
           </div>
         </div>

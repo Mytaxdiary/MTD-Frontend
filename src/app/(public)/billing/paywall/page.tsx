@@ -2,25 +2,27 @@
 
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import AuthPageLayout from '@/components/auth/authPageLayout'
 import B from '@/styles/theme'
 import { parseBillingErrorCode } from '@/lib/billing/billingErrors'
+import { getPaywallCopy } from '@/lib/billing/billingCopy'
+import { billingService } from '@/services/billing.service'
 
 function PaywallBody() {
   const params = useSearchParams()
-  const code = parseBillingErrorCode(params.get('code') ?? params.get('message') ?? '')
-  const message = params.get('message')
+  const raw = params.get('code') ?? params.get('message') ?? ''
+  const code = parseBillingErrorCode(raw)
+  const copy = getPaywallCopy(code)
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const title =
-    code === 'TRIAL_EXPIRED' ? 'Your free trial has ended' : 'Subscription required'
-
+  // Prefer our stable copy; only show API message when it is clean (no [CODE] suffix).
+  const apiMessage = params.get('message')
   const detail =
-    message && !message.includes('[')
-      ? message
-      : code === 'TRIAL_EXPIRED'
-        ? 'Subscribe to keep managing clients and quarterly submissions in My Tax Diary.'
-        : 'A paid subscription is required to continue using the agent portal.'
+    apiMessage && !apiMessage.includes('[') && apiMessage.trim().length > 0
+      ? apiMessage
+      : copy.detail
 
   const ctaStyle: React.CSSProperties = {
     display: 'inline-block',
@@ -33,6 +35,8 @@ function PaywallBody() {
     fontWeight: 700,
     textDecoration: 'none',
     textAlign: 'center',
+    cursor: 'pointer',
+    width: '100%',
   }
 
   const secondaryStyle: React.CSSProperties = {
@@ -42,9 +46,27 @@ function PaywallBody() {
     border: `1px solid ${B.border}`,
   }
 
+  async function subscribe() {
+    setBusy(true)
+    setError(null)
+    try {
+      const { url } = await billingService.createCheckoutSession()
+      window.location.href = url
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Could not start Checkout'
+      // No session / not owner → send them to sign in, then back here after expired login.
+      if (/401|unauthor/i.test(msg) || /sign in|login/i.test(msg)) {
+        window.location.href = '/login'
+        return
+      }
+      setError(msg)
+      setBusy(false)
+    }
+  }
+
   return (
     <AuthPageLayout
-      subtitle={title}
+      subtitle={copy.title}
       footerContent={
         <>
           Already subscribed?{' '}
@@ -57,19 +79,54 @@ function PaywallBody() {
         </>
       }
     >
-      <p style={{ margin: '0 0 20px', fontSize: 14, color: B.muted, lineHeight: 1.6 }}>{detail}</p>
+      <p style={{ margin: '0 0 14px', fontSize: 14, color: B.muted, lineHeight: 1.6 }}>{detail}</p>
+
+      <ul
+        style={{
+          margin: '0 0 20px',
+          padding: '0 0 0 18px',
+          fontSize: 13.5,
+          color: B.text,
+          lineHeight: 1.55,
+        }}
+      >
+        {copy.bullets.map((b) => (
+          <li key={b} style={{ marginBottom: 6 }}>
+            {b}
+          </li>
+        ))}
+      </ul>
+
+      {error && (
+        <p style={{ margin: '0 0 12px', fontSize: 13, color: B.redText, lineHeight: 1.5 }}>{error}</p>
+      )}
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <Link href="/site/pricing" style={ctaStyle}>
-          View pricing &amp; subscribe
+        <button type="button" style={ctaStyle} disabled={busy} onClick={() => void subscribe()}>
+          {busy ? 'Redirecting to Stripe…' : 'Subscribe with Stripe'}
+        </button>
+        <Link href={copy.primaryHref} style={secondaryStyle}>
+          {copy.primaryLabel}
         </Link>
-        <Link href="/settings?section=billing" style={secondaryStyle}>
-          Open Plan &amp; billing
+        <Link href={copy.secondaryHref} style={secondaryStyle}>
+          {copy.secondaryLabel}
         </Link>
-        <Link href="/site/contact" style={secondaryStyle}>
-          Contact support
+        <Link href="/login" style={secondaryStyle}>
+          Back to sign in
         </Link>
       </div>
+
+      <p
+        style={{
+          margin: '18px 0 0',
+          fontSize: 12,
+          color: B.muted,
+          lineHeight: 1.5,
+          textAlign: 'center',
+        }}
+      >
+        If Subscribe fails, sign in as the firm owner first, then try again from this page.
+      </p>
     </AuthPageLayout>
   )
 }

@@ -4,7 +4,7 @@ import AppsiteContactForm from '@/features/marketing/components/appsite/AppsiteC
 export const metadata: Metadata = {
   title: 'Contact',
   description:
-    'Tell us about your firm and what you need for MTD ITSA. We reply with package guidance.',
+    'Tell us about your firm and what you need for MTD ITSA. We reply with pricing guidance.',
   alternates: { canonical: '/site/contact' },
 }
 

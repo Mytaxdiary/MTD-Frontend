@@ -4,7 +4,7 @@ const html = `<section class="page-hero">
     <h1 class="reveal" style="--d:.06s">Tools for the full client journey</h1>
     <p class="reveal" style="--d:.12s">Deadlines, liabilities, status boards, digital handshake, chasing, and portal access, built by accountants for Making Tax Digital for Income Tax.</p>
     <div class="hero-actions reveal" style="--d:.18s">
-      <a href="/register" class="btn btn-primary">Get started</a>
+      <a href="/register" class="btn btn-primary">Start free trial</a>
       <a href="/site/pricing" class="btn btn-ghost">View pricing</a>
     </div>
   </div>
@@ -219,7 +219,7 @@ const html = `<section class="page-hero">
       <h2>See the client journey in your firm</h2>
       <p>Start a firm account, or ask which package fits how you manage deadlines and capacity.</p>
       <div class="cta-actions">
-        <a href="/register" class="btn btn-primary">Get started</a>
+        <a href="/register" class="btn btn-primary">Start free trial</a>
         <a href="/site/contact" class="btn btn-ghost">Contact us</a>
       </div>
     </div>

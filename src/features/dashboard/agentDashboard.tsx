@@ -466,7 +466,7 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
                   whiteSpace: 'nowrap',
                 }}
               >
-                Plan &amp; billing →
+                {trial.urgent ? 'Subscribe →' : 'Plan & billing →'}
               </Link>
             )}
           </div>

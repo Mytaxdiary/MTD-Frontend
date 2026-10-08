@@ -51,9 +51,23 @@ export function useAuth() {
 
         if (!response.user.isEmailVerified) {
           router.push(`/check-email?email=${encodeURIComponent(payload.email)}`)
-        } else {
-          router.push('/dashboard')
+          return
         }
+
+        const billing = response.user.billingStatus
+        if (billing === 'expired' || billing === 'cancelled') {
+          router.push(
+            paywallPath(
+              billing === 'expired' ? 'TRIAL_EXPIRED' : 'SUBSCRIPTION_REQUIRED',
+              billing === 'expired'
+                ? 'Your free trial has ended. [TRIAL_EXPIRED]'
+                : 'A paid subscription is required. [SUBSCRIPTION_REQUIRED]',
+            ),
+          )
+          return
+        }
+
+        router.push('/dashboard')
       } catch (err) {
         console.error('Login error:', err)
         const message = err instanceof Error ? err.message : 'Login failed. Please try again.'

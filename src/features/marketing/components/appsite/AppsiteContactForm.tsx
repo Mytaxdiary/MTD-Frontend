@@ -15,9 +15,10 @@ type ContactFormProps = {
 
 const PACKAGE_OPTIONS = [
   { label: 'Not sure yet', value: '' },
-  { label: 'Starter', value: 'starter' },
-  { label: 'Growth', value: 'growth' },
-  { label: 'Scale', value: 'scale' },
+  { label: 'Pricing / trial questions', value: 'pricing' },
+  { label: 'Switching from another system', value: 'switching' },
+  { label: 'Bulk client import help', value: 'bulk_import' },
+  { label: 'Something else', value: 'other' },
 ]
 
 type FieldKey = 'name' | 'firm' | 'email' | 'phone' | 'message'
@@ -126,7 +127,7 @@ export default function AppsiteContactForm({ initialPlan = '' }: ContactFormProp
             Talk to us about My Tax Diary
           </h1>
           <p className="reveal" style={{ ['--d' as string]: '.12s' } as React.CSSProperties}>
-            Tell us about your firm and what you need for MTD ITSA. We will reply with package
+            Tell us about your firm and what you need for MTD ITSA. We will reply with pricing
             guidance or a follow-up conversation.
           </p>
         </div>
@@ -203,7 +204,7 @@ export default function AppsiteContactForm({ initialPlan = '' }: ContactFormProp
                 </div>
 
                 <div className="field">
-                  <label htmlFor="c-package">Package interest</label>
+                  <label htmlFor="c-package">What can we help with?</label>
                   <select
                     id="c-package"
                     name="package"
@@ -281,7 +282,7 @@ export default function AppsiteContactForm({ initialPlan = '' }: ContactFormProp
                 </div>
                 <h3>Thank you. Enquiry received</h3>
                 <p>
-                  We will review your firm details and reply with package guidance or a short call
+                  We will review your firm details and reply with pricing guidance or a short call
                   invite.
                 </p>
               </div>
@@ -291,7 +292,7 @@ export default function AppsiteContactForm({ initialPlan = '' }: ContactFormProp
               <h2>What happens next</h2>
               <ul className="next-list">
                 <li>We review your enquiry and firm details.</li>
-                <li>We reply with package guidance or a short call invite.</li>
+                <li>We reply with pricing guidance or a short call invite.</li>
                 <li>You can also register and explore the product anytime.</li>
               </ul>
               <p className="mail">

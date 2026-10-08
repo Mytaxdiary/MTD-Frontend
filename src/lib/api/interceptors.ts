@@ -52,8 +52,7 @@ function redirectToLogin(): void {
 
 function redirectToPaywall(message: string): void {
   if (typeof window === 'undefined') return
-  clearAccessTokenExpiry()
-  clearSessionCookie()
+  // Keep the session so the owner can still open Stripe Checkout from the paywall.
   const code = parseBillingErrorCode(message)
   if (!code || !isBillingGateCode(code)) {
     redirectToLogin()

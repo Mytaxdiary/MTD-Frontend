@@ -298,6 +298,69 @@
     });
   }
 
+  /* -------------------------------------------- PRICING: ESTIMATOR --- */
+  var calc = $('#priceCalc');
+  if (calc) {
+    var calcInput    = $('#priceCalcClients', calc);
+    var calcAllowance= $('#priceCalcAllowance', calc);
+    var calcBase     = $('#priceCalcBase', calc);
+    var calcExtraCnt = $('#priceCalcExtraCount', calc);
+    var calcExtras   = $('#priceCalcExtras', calc);
+    var calcTotal    = $('#priceCalcTotal', calc);
+    var calcNote     = $('#priceCalcNote', calc);
+    var defaultNote  = calcNote ? calcNote.textContent : '';
+    var apiBase      = window.__MTD_API_BASE__ || '';
+    var calcTimer    = null;
+    var calcSeq      = 0;
+
+    var gbp = function (n) { return '£' + Number(n).toFixed(2); };
+
+    var renderQuote = function (q) {
+      if (calcAllowance) calcAllowance.textContent = q.includedClients;
+      if (calcBase) calcBase.textContent = gbp(q.baseGbp);
+      if (calcExtraCnt) calcExtraCnt.textContent = q.extraClients;
+      if (calcExtras) calcExtras.textContent = gbp(q.extrasGbp);
+      if (calcTotal) calcTotal.textContent = gbp(q.totalExVatGbp);
+      if (calcNote) {
+        calcNote.textContent = defaultNote;
+        calcNote.classList.remove('calc-note-error');
+      }
+    };
+
+    var showCalcError = function () {
+      if (calcNote) {
+        calcNote.textContent = 'Could not reach the pricing engine — showing the last known estimate.';
+        calcNote.classList.add('calc-note-error');
+      }
+    };
+
+    var fetchEstimate = function (clients) {
+      if (!apiBase || typeof fetch !== 'function') return;
+      var seq = ++calcSeq;
+      fetch(apiBase + '/billing/public/estimate?clients=' + encodeURIComponent(clients))
+        .then(function (res) { if (!res.ok) throw new Error('bad status'); return res.json(); })
+        .then(function (body) {
+          if (seq !== calcSeq) return; // a newer request already landed
+          var q = (body && body.data) ? body.data : body;
+          if (q && typeof q.totalExVatGbp === 'number') renderQuote(q);
+        })
+        .catch(showCalcError);
+    };
+
+    var onCalcInput = function () {
+      var n = parseInt(calcInput.value, 10);
+      if (!isFinite(n) || n < 0) n = 0;
+      if (n > 100000) n = 100000;
+      if (calcTimer) clearTimeout(calcTimer);
+      calcTimer = setTimeout(function () { fetchEstimate(n); }, 250);
+    };
+
+    if (calcInput) {
+      calcInput.addEventListener('input', onCalcInput);
+      fetchEstimate(parseInt(calcInput.value, 10) || 0);
+    }
+  }
+
   /* ----------------------------------------------- FORM VALIDATION --- */
   var emailOk = function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()); };
 

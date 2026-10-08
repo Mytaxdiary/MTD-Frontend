@@ -5,9 +5,62 @@ import { useRouter } from 'next/navigation'
 import B from '@/styles/theme'
 import {
   adminService,
+  type AdminBillingStatus,
   type AdminFirmListItem,
   type AdminFirmListResponse,
 } from '@/services/admin.service'
+
+const BILLING_FILTERS: { value: '' | AdminBillingStatus; label: string }[] = [
+  { value: '', label: 'All billing' },
+  { value: 'trial', label: 'Trial' },
+  { value: 'active', label: 'Active' },
+  { value: 'past_due', label: 'Past due' },
+  { value: 'expired', label: 'Expired' },
+  { value: 'cancelled', label: 'Cancelled' },
+]
+
+function billingLabel(status: string): string {
+  switch (status) {
+    case 'trial':
+      return 'Trial'
+    case 'active':
+      return 'Active'
+    case 'past_due':
+      return 'Past due'
+    case 'expired':
+      return 'Expired'
+    case 'cancelled':
+      return 'Cancelled'
+    default:
+      return status
+  }
+}
+
+function BillingPill({ status }: { status: string }) {
+  const tone =
+    status === 'active'
+      ? { bg: B.greenBg, color: B.greenText }
+      : status === 'trial'
+        ? { bg: B.blueBg, color: B.blueText }
+        : status === 'past_due'
+          ? { bg: B.amberBg, color: B.amberText }
+          : { bg: B.redBg, color: B.redText }
+  return (
+    <span
+      style={{
+        display: 'inline-block',
+        fontSize: 12,
+        fontWeight: 600,
+        padding: '3px 9px',
+        borderRadius: 999,
+        background: tone.bg,
+        color: tone.color,
+      }}
+    >
+      {billingLabel(status)}
+    </span>
+  )
+}
 
 function formatDate(iso: string): string {
   try {
@@ -44,6 +97,7 @@ export default function AdminFirmsPage() {
   const router = useRouter()
   const [search, setSearch] = useState('')
   const [query, setQuery] = useState('')
+  const [billingFilter, setBillingFilter] = useState<'' | AdminBillingStatus>('')
   const [page, setPage] = useState(1)
   const [data, setData] = useState<AdminFirmListResponse | null>(null)
   const [loading, setLoading] = useState(true)
@@ -57,6 +111,7 @@ export default function AdminFirmsPage() {
         page,
         limit: 20,
         search: query || undefined,
+        billingStatus: billingFilter || undefined,
       })
       setData(res)
     } catch (err) {
@@ -65,7 +120,7 @@ export default function AdminFirmsPage() {
     } finally {
       setLoading(false)
     }
-  }, [page, query])
+  }, [page, query, billingFilter])
 
   useEffect(() => {
     void load()
@@ -100,7 +155,28 @@ export default function AdminFirmsPage() {
           </p>
         </div>
 
-        <form onSubmit={onSearchSubmit} style={{ display: 'flex', gap: 8 }}>
+        <form onSubmit={onSearchSubmit} style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <select
+            value={billingFilter}
+            onChange={(e) => {
+              setPage(1)
+              setBillingFilter(e.target.value as '' | AdminBillingStatus)
+            }}
+            style={{
+              padding: '9px 12px',
+              borderRadius: 8,
+              border: `1px solid ${B.border}`,
+              fontSize: 13.5,
+              background: B.white,
+              color: B.text,
+            }}
+          >
+            {BILLING_FILTERS.map((opt) => (
+              <option key={opt.label} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
           <input
             type="search"
             value={search}
@@ -160,7 +236,7 @@ export default function AdminFirmsPage() {
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13.5 }}>
           <thead>
             <tr style={{ background: B.surface, textAlign: 'left' }}>
-              {['Firm', 'Owner email', 'Created', 'Plan', 'Status', ''].map((h) => (
+              {['Firm', 'Owner email', 'Created', 'Billing', 'Account', ''].map((h) => (
                 <th
                   key={h || 'actions'}
                   style={{
@@ -209,8 +285,8 @@ export default function AdminFirmsPage() {
                   <td style={{ padding: '13px 14px', color: B.muted }}>
                     {formatDate(firm.createdAt)}
                   </td>
-                  <td style={{ padding: '13px 14px', color: B.light }}>
-                    {firm.plan ?? '—'}
+                  <td style={{ padding: '13px 14px' }}>
+                    <BillingPill status={firm.billingStatus ?? 'active'} />
                   </td>
                   <td style={{ padding: '13px 14px' }}>
                     <StatusPill status={firm.status} />

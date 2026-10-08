@@ -14,7 +14,7 @@ const html = `<!-- ===== HEADER ===== -->
 
     <div class="nav-cta">
       <a href="/login" class="btn btn-ghost btn-sm">Sign in</a>
-      <a href="/register" class="btn btn-primary btn-sm">Get started</a>
+      <a href="/register" class="btn btn-primary btn-sm">Start free trial</a>
       <button class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button>
     </div>
   </div>
@@ -29,7 +29,7 @@ const html = `<!-- ===== HEADER ===== -->
       </nav>
       <div class="m-cta">
         <a href="/login" class="btn btn-ghost">Sign in</a>
-        <a href="/register" class="btn btn-primary">Get started</a>
+        <a href="/register" class="btn btn-primary">Start free trial</a>
       </div>
     </div>
   </div>
@@ -48,10 +48,10 @@ const html = `<!-- ===== HEADER ===== -->
           <p class="lead">Track deadlines and liabilities, see submission status in kanban or list view, and request client access with a simple digital handshake. Developed by accountants to cut the chase around Making Tax Digital for Income Tax.</p>
 
           <div class="hero-actions">
-            <a href="/register" class="btn btn-primary btn-lg">Get started free
+            <a href="/register" class="btn btn-primary btn-lg">Start free trial
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </a>
-            <a href="/site/contact" class="btn btn-ghost btn-lg">Book a demo</a>
+            <a href="/site/pricing" class="btn btn-ghost btn-lg">View pricing</a>
           </div>
 
           <div class="ticks">
@@ -206,13 +206,13 @@ const html = `<!-- ===== HEADER ===== -->
     <div class="cta reveal">
       <div class="eyebrow">Simple. Clear. Ready for MTD.</div>
       <h2>Ready to manage client journeys with less chase?</h2>
-      <p>See deadlines, liabilities, and status in one place, then book a demo if you want a walkthrough.</p>
+      <p>Start a free 7-day trial. No card required. See deadlines, liabilities, and status in one place.</p>
       <div class="cta-actions">
-        <a href="/register" class="btn btn-primary btn-lg">Get started free
+        <a href="/register" class="btn btn-primary btn-lg">Start free trial
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
-        <a href="/site/contact" class="btn btn-ghost btn-lg">Book a demo</a>
         <a href="/site/pricing" class="btn btn-ghost btn-lg">View pricing</a>
+        <a href="/site/contact" class="btn btn-ghost btn-lg">Book a demo</a>
       </div>
       <div class="cta-note">
         Built for the<br>client journey<br>after signup.
@@ -250,7 +250,7 @@ const html = `<!-- ===== HEADER ===== -->
         <h5>Account</h5>
         <ul>
           <li><a href="/login">Sign in</a></li>
-          <li><a href="/register">Get started</a></li>
+          <li><a href="/register">Start free trial</a></li>
           <li><a href="mailto:info@mytaxdiary.co.uk">Contact email</a></li>
         </ul>
       </div>

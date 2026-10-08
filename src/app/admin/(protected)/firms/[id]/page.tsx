@@ -224,7 +224,7 @@ export default function AdminFirmDetailPage() {
                 <StatusPill active={firm.isActive} />
               </div>
               <p style={{ margin: 0, fontSize: 13.5, color: B.muted }}>
-                Firm details, users, and HMRC connection status.
+                Firm details, billing, users, and HMRC connection status.
               </p>
             </div>
 
@@ -538,7 +538,41 @@ export default function AdminFirmDetailPage() {
               label="Address"
               value={[firm.address, firm.postcode].filter(Boolean).join(', ') || null}
             />
-            <Row label="Plan" value={firm.plan ?? '—'} />
+            <Row
+              label="Billing status"
+              value={
+                <span style={{ fontWeight: 600, textTransform: 'capitalize' }}>
+                  {(firm.billingStatus ?? 'active').replace('_', ' ')}
+                </span>
+              }
+            />
+            <Row label="Trial starts" value={formatShortDate(firm.trialStartsAt)} />
+            <Row label="Trial ends" value={formatShortDate(firm.trialEndsAt)} />
+            <Row label="Trial email domain" value={firm.trialEmailDomain ?? '—'} />
+            <Row
+              label="Billable clients"
+              value={`${firm.billableClientCount ?? firm.clientCount} (allowance ${firm.includedClientAllowance ?? 50})`}
+            />
+            <Row
+              label="Stripe customer"
+              value={
+                firm.stripeCustomerId ? (
+                  <code style={{ fontSize: 12.5 }}>{firm.stripeCustomerId}</code>
+                ) : (
+                  '—'
+                )
+              }
+            />
+            <Row
+              label="Stripe subscription"
+              value={
+                firm.stripeSubscriptionId ? (
+                  <code style={{ fontSize: 12.5 }}>{firm.stripeSubscriptionId}</code>
+                ) : (
+                  '—'
+                )
+              }
+            />
             <Row label="Created" value={formatDate(firm.createdAt)} />
             <Row
               label="HMRC status"

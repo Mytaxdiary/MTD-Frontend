@@ -9,6 +9,8 @@ export interface AdminOverviewStats {
   openEnquiries: number
 }
 
+export type AdminBillingStatus = 'trial' | 'active' | 'past_due' | 'cancelled' | 'expired'
+
 export interface AdminFirmListItem {
   id: string
   firmName: string
@@ -17,6 +19,8 @@ export interface AdminFirmListItem {
   createdAt: string
   isActive: boolean
   plan: string | null
+  billingStatus: AdminBillingStatus | string
+  trialEndsAt: string | null
   status: 'active' | 'inactive'
 }
 
@@ -50,6 +54,14 @@ export interface AdminFirmDetail {
   createdAt: string
   isActive: boolean
   plan: string | null
+  billingStatus: AdminBillingStatus | string
+  trialStartsAt: string | null
+  trialEndsAt: string | null
+  trialEmailDomain: string | null
+  stripeCustomerId: string | null
+  stripeSubscriptionId: string | null
+  billableClientCount: number
+  includedClientAllowance: number
   status: 'active' | 'inactive'
   deactivationReason: string | null
   deactivatedAt: string | null
@@ -128,10 +140,18 @@ export const adminService = {
     page?: number
     limit?: number
     search?: string
+    billingStatus?: AdminBillingStatus | ''
   }): Promise<AdminFirmListResponse> => {
     const { data } = await axiosClient.get<{ success: true; data: AdminFirmListResponse }>(
       '/admin/firms',
-      { params }
+      {
+        params: {
+          page: params.page,
+          limit: params.limit,
+          search: params.search || undefined,
+          billingStatus: params.billingStatus || undefined,
+        },
+      }
     )
     return data.data
   },
@@ -223,6 +243,29 @@ export const adminService = {
         },
       }
     )
+    return data.data
+  },
+
+  getTrialDays: async (): Promise<{ days: number }> => {
+    const { data } = await axiosClient.get<{ success: true; data: { days: number } }>(
+      '/admin/billing/trial-days'
+    )
+    return data.data
+  },
+
+  setTrialDays: async (days: number): Promise<{ days: number }> => {
+    const { data } = await axiosClient.patch<{ success: true; data: { days: number } }>(
+      '/admin/billing/trial-days',
+      { days }
+    )
+    return data.data
+  },
+
+  clearTrialDomain: async (domain: string): Promise<{ cleared: boolean; domain: string }> => {
+    const { data } = await axiosClient.delete<{
+      success: true
+      data: { cleared: boolean; domain: string }
+    }>('/admin/billing/trial-domains', { data: { domain } })
     return data.data
   },
 }

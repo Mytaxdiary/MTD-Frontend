@@ -8,6 +8,8 @@ import SSOPlaceholder from '@/components/auth/ssoPlaceholder'
 import FormField from '@/components/ui/formField'
 import { authInputStyle } from '@/lib/helpers/inputStyles'
 import { useAuth } from '@/hooks/useAuth'
+import { parseBillingErrorCode } from '@/lib/billing/billingErrors'
+import { getPaywallCopy } from '@/lib/billing/billingCopy'
 
 interface FormFields {
   firstName: string
@@ -45,9 +47,12 @@ export default function RegisterPage() {
     await register(form)
   }
 
+  const domainBlocked = parseBillingErrorCode(apiError) === 'TRIAL_DOMAIN_USED'
+  const domainCopy = getPaywallCopy('TRIAL_DOMAIN_USED')
+
   return (
     <AuthPageLayout
-      subtitle="Create your agent account"
+      subtitle={domainBlocked ? domainCopy.title : 'Create your agent account'}
       maxWidth={460}
       footerContent={
         <>
@@ -61,6 +66,63 @@ export default function RegisterPage() {
         </>
       }
     >
+      {domainBlocked ? (
+        <div>
+          <p style={{ margin: '0 0 14px', fontSize: 14, color: B.muted, lineHeight: 1.6 }}>
+            {domainCopy.detail}
+          </p>
+          <ul
+            style={{
+              margin: '0 0 18px',
+              padding: '0 0 0 18px',
+              fontSize: 13.5,
+              color: B.text,
+              lineHeight: 1.55,
+            }}
+          >
+            {domainCopy.bullets.map((b) => (
+              <li key={b} style={{ marginBottom: 6 }}>
+                {b}
+              </li>
+            ))}
+          </ul>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <Link
+              href={domainCopy.primaryHref}
+              style={{
+                display: 'inline-block',
+                padding: '11px 18px',
+                borderRadius: 8,
+                background: B.primary,
+                color: '#fff',
+                fontSize: 13,
+                fontWeight: 700,
+                textDecoration: 'none',
+                textAlign: 'center',
+              }}
+            >
+              {domainCopy.primaryLabel}
+            </Link>
+            <Link
+              href={domainCopy.secondaryHref}
+              style={{
+                display: 'inline-block',
+                padding: '11px 18px',
+                borderRadius: 8,
+                background: B.white,
+                color: B.navy,
+                border: `1px solid ${B.border}`,
+                fontSize: 13,
+                fontWeight: 700,
+                textDecoration: 'none',
+                textAlign: 'center',
+              }}
+            >
+              {domainCopy.secondaryLabel}
+            </Link>
+          </div>
+        </div>
+      ) : (
       <form onSubmit={handleSubmit} noValidate>
         {apiError && (
           <div
@@ -211,11 +273,23 @@ export default function RegisterPage() {
             letterSpacing: '0.01em',
           }}
         >
-          {loading ? 'Creating account…' : 'Create account'}
+          {loading ? 'Creating account…' : 'Start free trial'}
         </button>
+        <p
+          style={{
+            margin: '12px 0 0',
+            fontSize: 12,
+            color: B.muted,
+            textAlign: 'center',
+            lineHeight: 1.5,
+          }}
+        >
+          7-day free trial · no card required
+        </p>
       </form>
+      )}
 
-      <SSOPlaceholder dividerText="or sign up with" />
+      {!domainBlocked && <SSOPlaceholder dividerText="or sign up with" />}
     </AuthPageLayout>
   )
 }

@@ -2,9 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import B from '@/styles/theme'
 import { Card, CardHeader as CardHead } from '@/components/ui/card'
 import { billingService, type BillingQuote } from '@/services/billing.service'
+import { getTrialRemaining } from '@/lib/billing/trialRemaining'
+import { BILLING_PRICING_HREF } from '@/lib/billing/billingCopy'
 
 const outlineBtn: React.CSSProperties = {
   padding: '8px 16px',
@@ -19,14 +22,80 @@ const outlineBtn: React.CSSProperties = {
   display: 'inline-block',
 }
 
+const primaryBtn: React.CSSProperties = {
+  ...outlineBtn,
+  background: B.primaryBtn,
+  borderColor: B.primaryBtn,
+  color: '#fff',
+  fontWeight: 600,
+}
+
 function formatGbp(n: number): string {
   return `£${n.toFixed(n % 1 === 0 ? 0 : 2)}`
 }
 
+function formatDate(iso: string | null): string {
+  if (!iso) return '—'
+  try {
+    return new Date(iso).toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    })
+  } catch {
+    return iso
+  }
+}
+
+function statusLabel(status: string): string {
+  switch (status) {
+    case 'trial':
+      return 'Free trial'
+    case 'active':
+      return 'Active subscription'
+    case 'past_due':
+      return 'Payment past due'
+    case 'cancelled':
+      return 'Cancelled'
+    case 'expired':
+      return 'Trial expired'
+    default:
+      return status
+  }
+}
+
+function statusColors(status: string): { bg: string; border: string; text: string } {
+  switch (status) {
+    case 'trial':
+      return { bg: B.blueBg, border: '#BAE6FD', text: B.blueText }
+    case 'active':
+      return { bg: B.greenBg, border: '#BBF7D0', text: B.greenText }
+    case 'past_due':
+      return { bg: B.amberBg, border: '#FDE68A', text: B.amberText }
+    case 'expired':
+    case 'cancelled':
+      return { bg: B.redBg, border: '#FECACA', text: B.redText }
+    default:
+      return { bg: B.surface, border: B.border, text: B.muted }
+  }
+}
+
 export default function BillingSection() {
+  const searchParams = useSearchParams()
   const [quote, setQuote] = useState<BillingQuote | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [actionLoading, setActionLoading] = useState<'checkout' | 'portal' | null>(null)
+  const [banner, setBanner] = useState<string | null>(null)
+
+  useEffect(() => {
+    const checkout = searchParams.get('checkout')
+    if (checkout === 'success') {
+      setBanner('Payment received. Your subscription will show as active once Stripe confirms (usually a few seconds).')
+    } else if (checkout === 'cancelled') {
+      setBanner('Checkout was cancelled. You can subscribe any time.')
+    }
+  }, [searchParams])
 
   useEffect(() => {
     let cancelled = false
@@ -47,14 +116,55 @@ export default function BillingSection() {
     }
   }, [])
 
+  const status = quote?.billingStatus ?? 'active'
+  const trial = getTrialRemaining(quote?.billingStatus, quote?.trialEndsAt)
+  const colors = statusColors(status)
+  const needsSubscribe =
+    status === 'trial' || status === 'expired' || status === 'cancelled' || status === 'past_due'
+  const canManage = !!quote?.hasStripeCustomer
+
+  async function startCheckout() {
+    setActionLoading('checkout')
+    setError(null)
+    try {
+      const { url } = await billingService.createCheckoutSession()
+      window.location.href = url
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not start Checkout')
+      setActionLoading(null)
+    }
+  }
+
+  async function openPortal() {
+    setActionLoading('portal')
+    setError(null)
+    try {
+      const { url } = await billingService.createPortalSession()
+      window.location.href = url
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not open billing portal')
+      setActionLoading(null)
+    }
+  }
+
   const rows = quote
     ? [
+        ['Account status', statusLabel(status)],
+        ...(trial
+          ? ([
+              ['Trial days left', `${trial.daysLeft} day${trial.daysLeft === 1 ? '' : 's'}`],
+              ['Trial ends', trial.endsLabel],
+            ] as const)
+          : status === 'trial' && quote.trialEndsAt
+            ? ([['Trial ends', formatDate(quote.trialEndsAt)]] as const)
+            : []),
         ['Billable clients', String(quote.billableClients)],
         ['Included in base', String(quote.allowance)],
         ['Extra clients', String(quote.extraClients)],
         ['Base (ex-VAT)', formatGbp(quote.baseGbp)],
         ['Extras (ex-VAT)', formatGbp(quote.extrasGbp)],
         ['Monthly total (ex-VAT)', formatGbp(quote.totalExVatGbp)],
+        ['Next renewal', quote.nextRenewalAt ? formatDate(quote.nextRenewalAt) : '—'],
       ]
     : []
 
@@ -62,32 +172,58 @@ export default function BillingSection() {
     <Card>
       <CardHead titleSize={16} padding="16px 20px" title="Plan & billing" />
       <div style={{ padding: '20px' }}>
+        {banner && (
+          <div
+            style={{
+              padding: '10px 14px',
+              borderRadius: 7,
+              background: B.blueBg,
+              border: `1px solid #BAE6FD`,
+              marginBottom: 16,
+              fontSize: 13,
+              color: B.blueText,
+            }}
+          >
+            {banner}
+          </div>
+        )}
+
         <div
           style={{
             padding: '20px',
-            background: B.blueBg,
+            background: colors.bg,
             borderRadius: 10,
-            border: '1px solid #BAE6FD',
+            border: `1px solid ${colors.border}`,
             marginBottom: 20,
           }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: 16,
+              flexWrap: 'wrap',
+            }}
+          >
             <div>
               <div
                 style={{
                   fontSize: 11,
                   fontWeight: 600,
-                  color: B.blueText,
+                  color: colors.text,
                   letterSpacing: '0.04em',
                 }}
               >
-                CURRENT PLAN
+                CURRENT STATUS
               </div>
               <div style={{ fontSize: 22, fontWeight: 800, color: B.navy, marginTop: 4 }}>
-                Usage pricing
+                {loading ? '…' : statusLabel(status)}
               </div>
-              <div style={{ fontSize: 12, color: B.blueText, marginTop: 4 }}>
-                £50 / month for up to {quote?.allowance ?? 50} clients (ex-VAT)
+              <div style={{ fontSize: 12, color: colors.text, marginTop: 4 }}>
+                {trial
+                  ? `Free trial: ${trial.daysLeft} day${trial.daysLeft === 1 ? '' : 's'} left · ends ${trial.endsLabel}`
+                  : `£50 / month for up to ${quote?.allowance ?? 50} clients (ex-VAT)`}
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
@@ -95,7 +231,7 @@ export default function BillingSection() {
                 {loading ? '…' : formatGbp(quote?.totalExVatGbp ?? 0)}
                 <span style={{ fontSize: 13, fontWeight: 400, color: B.muted }}>/mo</span>
               </div>
-              <div style={{ fontSize: 12, color: B.blueText }}>ex-VAT · monthly</div>
+              <div style={{ fontSize: 12, color: colors.text }}>ex-VAT · monthly</div>
             </div>
           </div>
         </div>
@@ -132,13 +268,45 @@ export default function BillingSection() {
         ))}
 
         <div style={{ marginTop: 20, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <Link href="/site/pricing" style={outlineBtn}>
+          <Link href={BILLING_PRICING_HREF} style={outlineBtn}>
             View pricing
           </Link>
-          <span style={{ ...outlineBtn, opacity: 0.55, cursor: 'default' }}>
-            Checkout (Stripe — coming next)
-          </span>
+          {needsSubscribe && (
+            <button
+              type="button"
+              id="subscribe"
+              style={{
+                ...primaryBtn,
+                opacity: actionLoading ? 0.7 : 1,
+                cursor: actionLoading ? 'wait' : 'pointer',
+              }}
+              disabled={!!actionLoading}
+              onClick={() => void startCheckout()}
+            >
+              {actionLoading === 'checkout' ? 'Redirecting…' : 'Subscribe'}
+            </button>
+          )}
+          {canManage && (
+            <button
+              type="button"
+              style={{
+                ...outlineBtn,
+                opacity: actionLoading ? 0.7 : 1,
+                cursor: actionLoading ? 'wait' : 'pointer',
+              }}
+              disabled={!!actionLoading}
+              onClick={() => void openPortal()}
+            >
+              {actionLoading === 'portal' ? 'Opening…' : 'Manage billing'}
+            </button>
+          )}
         </div>
+        {needsSubscribe && (
+          <p style={{ margin: '12px 0 0', fontSize: 12, color: B.muted, lineHeight: 1.5 }}>
+            Subscribe opens Stripe Checkout for your current client count. You can update payment
+            details later from Manage billing.
+          </p>
+        )}
       </div>
     </Card>
   )

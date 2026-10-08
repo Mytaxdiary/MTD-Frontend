@@ -43,7 +43,7 @@ export default function AppsiteFooter() {
                 <a href="/login">Sign in</a>
               </li>
               <li>
-                <a href="/register">Get started</a>
+                <a href="/register">Start free trial</a>
               </li>
               <li>
                 <a href="mailto:info@mytaxdiary.co.uk">Contact email</a>
