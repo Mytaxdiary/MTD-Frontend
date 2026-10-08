@@ -730,7 +730,7 @@ export default function ChaseManager({
                     Overdue: deadline passed
                   </span>
                   <span style={{ fontSize: 14, color: B.muted }}>({filteredOverdue.length})</span>
-                </div>
+                  </div>
                 <ClientTable
                   clients={filteredOverdue}
                   selected={selected}
