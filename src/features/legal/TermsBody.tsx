@@ -90,7 +90,6 @@ export default function TermsBody({ privacyHref }: Props) {
           items={[
             'Access to the Service is provided on a subscription basis. The applicable fees, billing frequency, and any usage limits are those set out on our pricing page or in your order at the time you subscribe.',
             'Fees are payable in advance by the payment methods we support and are processed by our payment provider, Stripe. You authorise us to charge your chosen payment method on each renewal date until your subscription is cancelled.',
-            'Fees are stated exclusive of VAT, which will be added where applicable.',
             'If a payment fails or is overdue, we may suspend access to the Service until payment is received, having given you notice and a reasonable opportunity to pay.',
             "We may change our fees by giving you at least 30 days' notice; changes take effect from your next renewal. If you do not accept a fee change, you may cancel before the renewal takes effect.",
             'Except where required by law or expressly stated otherwise, fees are non-refundable, including for partly used subscription periods.',

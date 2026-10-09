@@ -41,8 +41,8 @@ export default function AdminSupportPage() {
   const saveTrialDays = async (ev: FormEvent) => {
     ev.preventDefault()
     const days = Number.parseInt(draftDays, 10)
-    if (!Number.isFinite(days) || days < 1 || days > 365) {
-      setError('Trial days must be a whole number between 1 and 365.')
+    if (!Number.isFinite(days) || days < 0 || days > 365) {
+      setError('Trial days must be a whole number between 0 and 365.')
       return
     }
     setSavingDays(true)
@@ -133,7 +133,7 @@ export default function AdminSupportPage() {
           Default trial length
         </h2>
         <p style={{ margin: '0 0 14px', fontSize: 13.5, color: B.muted, lineHeight: 1.5 }}>
-          Used when a new firm registers. Current value:{' '}
+          Used when a new firm registers (0 = no free trial). Current value:{' '}
           <strong style={{ color: B.text }}>
             {loading ? '…' : `${trialDays ?? '—'} day${trialDays === 1 ? '' : 's'}`}
           </strong>
@@ -142,7 +142,7 @@ export default function AdminSupportPage() {
         <form onSubmit={(e) => void saveTrialDays(e)} style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <input
             type="number"
-            min={1}
+            min={0}
             max={365}
             step={1}
             value={draftDays}

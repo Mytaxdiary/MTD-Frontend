@@ -3,7 +3,7 @@ import type { BillingGateCode } from './billingErrors'
 /** Marketing + paywall: start a new firm trial. */
 export const BILLING_START_TRIAL_HREF = '/register'
 
-/** Public pricing page (ex-VAT usage model). */
+/** Public pricing page. */
 export const BILLING_PRICING_HREF = '/site/pricing'
 
 /** In-app Plan & billing (owner Subscribe / Manage billing). */
@@ -31,7 +31,7 @@ export function getPaywallCopy(code: BillingGateCode | null): PaywallCopy {
       bullets: [
         'Personal mailboxes (gmail, outlook, yahoo) are not blocked',
         'Support can clear a corporate domain lock if needed',
-        'Pricing is £50/month for up to 50 clients, ex VAT',
+        'Pricing is £50/month for up to 50 clients',
       ],
       primaryLabel: 'View pricing',
       primaryHref: BILLING_PRICING_HREF,
@@ -46,7 +46,7 @@ export function getPaywallCopy(code: BillingGateCode | null): PaywallCopy {
       detail:
         'Subscribe to keep managing clients, HMRC submissions, and the client portal in My Tax Diary. Your firm data stays safe while you decide.',
       bullets: [
-        '£50/month covers your first 50 clients (ex VAT)',
+        '£50/month covers your first 50 clients',
         'Extra clients step down to a 50p floor',
         'Monthly billing only. Cancel anytime',
       ],
@@ -65,7 +65,7 @@ export function getPaywallCopy(code: BillingGateCode | null): PaywallCopy {
     bullets: [
       'Same product for every firm. No feature packages',
       'Usage pricing based on billable clients',
-      'VAT added separately on your invoice',
+      'Monthly billing only. Cancel anytime',
     ],
     primaryLabel: 'View pricing & subscribe',
     primaryHref: BILLING_PRICING_HREF,

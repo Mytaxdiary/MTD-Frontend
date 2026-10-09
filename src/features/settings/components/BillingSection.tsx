@@ -161,9 +161,9 @@ export default function BillingSection() {
         ['Billable clients', String(quote.billableClients)],
         ['Included in base', String(quote.allowance)],
         ['Extra clients', String(quote.extraClients)],
-        ['Base (ex-VAT)', formatGbp(quote.baseGbp)],
-        ['Extras (ex-VAT)', formatGbp(quote.extrasGbp)],
-        ['Monthly total (ex-VAT)', formatGbp(quote.totalExVatGbp)],
+        ['Base', formatGbp(quote.baseGbp)],
+        ['Extras', formatGbp(quote.extrasGbp)],
+        ['Monthly total', formatGbp(quote.totalExVatGbp)],
         ['Next renewal', quote.nextRenewalAt ? formatDate(quote.nextRenewalAt) : '—'],
       ]
     : []
@@ -223,7 +223,7 @@ export default function BillingSection() {
               <div style={{ fontSize: 12, color: colors.text, marginTop: 4 }}>
                 {trial
                   ? `Free trial: ${trial.daysLeft} day${trial.daysLeft === 1 ? '' : 's'} left · ends ${trial.endsLabel}`
-                  : `£50 / month for up to ${quote?.allowance ?? 50} clients (ex-VAT)`}
+                  : `£50 / month for up to ${quote?.allowance ?? 50} clients`}
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
@@ -231,7 +231,7 @@ export default function BillingSection() {
                 {loading ? '…' : formatGbp(quote?.totalExVatGbp ?? 0)}
                 <span style={{ fontSize: 13, fontWeight: 400, color: B.muted }}>/mo</span>
               </div>
-              <div style={{ fontSize: 12, color: colors.text }}>ex-VAT · monthly</div>
+              <div style={{ fontSize: 12, color: colors.text }}>monthly</div>
             </div>
           </div>
         </div>

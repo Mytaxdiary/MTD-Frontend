@@ -6,7 +6,7 @@ const html = `<section class="page-hero">
   <div class="wrap">
     <div class="eyebrow reveal">Pricing</div>
     <h1 class="reveal" style="--d:.06s">Simple, straightforward pricing</h1>
-    <p class="reveal" style="--d:.12s">£50 a month covers your first 50 clients, ex VAT. After that, the rate per extra client drops automatically as your book grows. No packages, no feature paywalls: every firm gets the full product.</p>
+    <p class="reveal" style="--d:.12s">£50 a month covers your first 50 clients. After that, the rate per extra client drops automatically as your book grows. No packages, no feature paywalls: every firm gets the full product.</p>
   </div>
 </section>
 
@@ -17,7 +17,7 @@ const html = `<section class="page-hero">
         <span class="plan-tag">All firms, one price</span>
         <h3>Usage pricing</h3>
         <p class="who">Pay for the clients you manage. Nothing to configure, no plan to pick.</p>
-        <div class="price"><b class="amount">&pound;50</b><span class="period">/month, up to 50 clients, ex VAT</span></div>
+        <div class="price"><b class="amount">&pound;50</b><span class="period">/month, up to 50 clients</span></div>
         <ul class="ticklist">
         <li>Agent dashboard with deadlines and liabilities</li>
         <li>HMRC connection for authorised clients</li>
@@ -67,9 +67,9 @@ const html = `<section class="page-hero">
       <div class="calc-result">
         <div class="calc-line"><span>Base (up to <b id="priceCalcAllowance">50</b> clients)</span><span id="priceCalcBase">&pound;50.00</span></div>
         <div class="calc-line"><span>Extra clients (<span id="priceCalcExtraCount">0</span>)</span><span id="priceCalcExtras">&pound;0.00</span></div>
-        <div class="calc-line calc-total"><span>Monthly total, ex VAT</span><span id="priceCalcTotal">&pound;50.00</span></div>
+        <div class="calc-line calc-total"><span>Monthly total</span><span id="priceCalcTotal">&pound;50.00</span></div>
       </div>
-      <p class="calc-note" id="priceCalcNote">VAT added on your invoice. Billed monthly, no annual plan.</p>
+      <p class="calc-note" id="priceCalcNote">Billed monthly, no annual plan.</p>
     </div>
   </div>
 </section>
@@ -108,7 +108,7 @@ const html = `<section class="page-hero">
       <div class="faq reveal" style="--d:.12s">
       <details open>
         <summary>Are these the final prices?</summary>
-        <div class="answer">Yes. &pound;50/month covers your first 50 clients, ex VAT. Past that, the per-client rate steps down automatically as your client count grows. See the table above.</div>
+        <div class="answer">Yes. &pound;50/month covers your first 50 clients. Past that, the per-client rate steps down automatically as your client count grows. See the table above.</div>
       </details>
       <details>
         <summary>How is a &ldquo;client&rdquo; counted?</summary>
@@ -121,10 +121,6 @@ const html = `<section class="page-hero">
       <details>
         <summary>What happens if I add or remove clients mid-month?</summary>
         <div class="answer">Your bill is prorated automatically within the current billing period. You only ever pay for what you actually used.</div>
-      </details>
-      <details>
-        <summary>Do these prices include VAT?</summary>
-        <div class="answer">No. Prices shown here and in your account are ex-VAT; VAT is added as a separate line on your invoice.</div>
       </details>
       <details>
         <summary>What happens when my trial ends?</summary>
