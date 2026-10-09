@@ -81,6 +81,7 @@ export type AdminAuditAction =
   | 'firm.deactivate'
   | 'firm.deactivation_reason_update'
   | 'firm.invalidate_sessions'
+  | 'firm.purge'
   | 'user.invalidate_sessions'
   | 'enquiry.update'
 
@@ -266,6 +267,33 @@ export const adminService = {
       success: true
       data: { cleared: boolean; domain: string }
     }>('/admin/billing/trial-domains', { data: { domain } })
+    return data.data
+  },
+
+  /** Permanently delete firm by owner/staff email so they can register again. */
+  purgeFirmByEmail: async (
+    email: string
+  ): Promise<{
+    deleted: true
+    email: string
+    tenantId: string
+    firmName: string
+    usersRemoved: number
+    clientsRemoved: number
+    trialDomainCleared: string | null
+  }> => {
+    const { data } = await axiosClient.delete<{
+      success: true
+      data: {
+        deleted: true
+        email: string
+        tenantId: string
+        firmName: string
+        usersRemoved: number
+        clientsRemoved: number
+        trialDomainCleared: string | null
+      }
+    }>('/admin/firms/by-email', { params: { email } })
     return data.data
   },
 }

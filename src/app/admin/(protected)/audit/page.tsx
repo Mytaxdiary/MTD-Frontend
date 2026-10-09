@@ -15,6 +15,7 @@ const ACTION_FILTERS: { value: '' | AdminAuditAction; label: string }[] = [
   { value: 'firm.deactivate', label: 'Firm deactivate' },
   { value: 'firm.deactivation_reason_update', label: 'Reason update' },
   { value: 'firm.invalidate_sessions', label: 'Firm force logout' },
+  { value: 'firm.purge', label: 'Firm purge' },
   { value: 'user.invalidate_sessions', label: 'User force logout' },
   { value: 'enquiry.update', label: 'Enquiry update' },
 ]
@@ -24,6 +25,7 @@ const ACTION_LABELS: Record<AdminAuditAction, string> = {
   'firm.deactivate': 'Firm deactivate',
   'firm.deactivation_reason_update': 'Reason update',
   'firm.invalidate_sessions': 'Firm force logout',
+  'firm.purge': 'Firm purge',
   'user.invalidate_sessions': 'User force logout',
   'enquiry.update': 'Enquiry update',
 }
