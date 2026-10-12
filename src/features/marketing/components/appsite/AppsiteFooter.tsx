@@ -13,8 +13,8 @@ export default function AppsiteFooter() {
               <img src="/site/logo.png" alt="My Tax Diary" className="company-logo" />
             </a>
             <p>
-              MTD Income Tax software for accounting firms. Track client journeys, deadlines,
-              liabilities, chase, and portal access.
+              MTD Income Tax monitoring for accounting firms. See who has submitted, what is owed
+              and when, and let the chasers do the chasing. We do not file; your software does.
             </p>
           </div>
 

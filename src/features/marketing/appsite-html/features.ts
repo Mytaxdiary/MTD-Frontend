@@ -1,11 +1,11 @@
 const html = `<section class="page-hero">
   <div class="wrap">
     <div class="eyebrow reveal">Features</div>
-    <h1 class="reveal" style="--d:.06s">Tools for the full client journey</h1>
-    <p class="reveal" style="--d:.12s">Deadlines, liabilities, status boards, digital handshake, chasing, and portal access, built by accountants for Making Tax Digital for Income Tax.</p>
+    <h1 class="reveal" style="--d:.06s">MTD monitoring tools for your practice</h1>
+    <p class="reveal" style="--d:.12s">See who has submitted, what is owed and when, run automatic chasers, and give clients a simple dashboard. Read from HMRC. File where you already file.</p>
     <div class="hero-actions reveal" style="--d:.18s">
-      <a href="/register" class="btn btn-primary">Start free trial</a>
-      <a href="/site/pricing" class="btn btn-ghost">View pricing</a>
+      <a href="/register" class="btn btn-primary">Start your 7-day free trial</a>
+      <a href="/site/contact" class="btn btn-ghost">Book a demo</a>
     </div>
   </div>
 </section>
@@ -14,20 +14,20 @@ const html = `<section class="page-hero">
   <div class="wrap">
   <div class="frow">
     <div class="frow-copy reveal reveal-l">
-      <div class="eyebrow">Status views</div>
-      <h2>Kanban and list views for every client</h2>
-      <p>See submission progress across your book. Flip between board and list so the whole team knows what is waiting, ready, or done.</p>
+      <div class="eyebrow">Submission status</div>
+      <h2>Know who has submitted across your whole book</h2>
+      <p>One view of quarterly updates and final declarations, with status pulled from HMRC. Flip between board and list so the team sees who is waiting, who is done, and who needs a call.</p>
       <ul class="ticklist">
-        <li>Kanban for journey stages</li>
-        <li>List view for fast scanning</li>
-        <li>Deadlines and liability context</li>
+        <li>Status from HMRC, not a forgotten spreadsheet</li>
+        <li>Board and list views for the full client book</li>
+        <li>Deadlines beside each client's position</li>
       </ul>
     </div>
     <div class="frow-mock reveal" style="--d:.12s">
       <div class="panel panel-shot">
         <img
           src="/site/feature-status.png"
-          alt="Dashboard kanban showing client journey status columns"
+          alt="Dashboard showing client MTD submission status across the firm"
           class="panel-shot-img"
           width="1280"
           height="800"
@@ -49,20 +49,79 @@ const html = `<section class="page-hero">
 
   <div class="frow flip">
     <div class="frow-copy reveal reveal-r">
-      <div class="eyebrow">Digital handshake</div>
-      <h2>Request client access inside the product</h2>
-      <p>Invite clients, complete authorisation, and open portal access without long email threads. The handshake starts the journey cleanly.</p>
+      <div class="eyebrow">Liabilities and due dates</div>
+      <h2>Answer "how much do I owe?" without logging into HMRC</h2>
+      <p>Liabilities, balancing payments and payment dates for every client, already on screen when they ring. The numbers stay current because they are read from HMRC.</p>
       <ul class="ticklist">
-        <li>Client invite from your firm</li>
-        <li>Access request in-product</li>
-        <li>Portal ready when connected</li>
+        <li>What is owed, and when it is due</li>
+        <li>Payments on account and balancing payments</li>
+        <li>A live picture for every connected client</li>
+      </ul>
+    </div>
+    <div class="frow-mock reveal" style="--d:.12s">
+      <div class="panel">
+    <div class="panel-bar"><i></i><i></i><i></i></div>
+    <div class="panel-body">
+      <h5>Client liabilities</h5>
+      <div class="panel-row">Payment on account &middot; due 31 Jan</div>
+      <div class="panel-row">Balancing payment &middot; review</div>
+      <div class="panel-row">Next quarterly deadline &middot; 12 days</div>
+    </div>
+  </div>
+    </div>
+  </div>
+
+  <div class="frow">
+    <div class="frow-copy reveal reveal-l">
+      <div class="eyebrow">Automatic chasers</div>
+      <h2>Stop chasing manually before every deadline</h2>
+      <p>Set the schedule once. My Tax Diary sends reminders before each deadline and shows who has responded. You keep the awkward follow-ups for the few who still need a call.</p>
+      <ul class="ticklist">
+        <li>Reminders on a schedule you control</li>
+        <li>Clear history of what was sent</li>
+        <li>See who replied and who still needs you</li>
+      </ul>
+    </div>
+    <div class="frow-mock reveal" style="--d:.12s">
+      <div class="panel panel-shot">
+        <img
+          src="/site/feature-chase.png"
+          alt="Chase manager with automatic client reminders before deadlines"
+          class="panel-shot-img"
+          width="1280"
+          height="800"
+        >
+      </div>
+      <!-- OLD MOCK (kept for now — do not delete)
+      <div class="panel">
+        <div class="panel-bar"><i></i><i></i><i></i></div>
+        <div class="panel-body">
+          <h5>Email chases</h5>
+          <div class="panel-row">Q3 bank statements &middot; sent</div>
+          <div class="panel-row">Receipts follow-up &middot; due Fri</div>
+          <div class="panel-row">Template: quarterly pack</div>
+        </div>
+      </div>
+      -->
+    </div>
+  </div>
+
+  <div class="frow flip">
+    <div class="frow-copy reveal reveal-r">
+      <div class="eyebrow">Client dashboard</div>
+      <h2>A view your clients will actually use</h2>
+      <p>Every connected client gets a simple login that shows what they owe HMRC and when. Payments on account, balancing payments and quarterly deadlines, each with a date, an amount, and a reminder before it is due.</p>
+      <ul class="ticklist">
+        <li>Clear amounts and due dates</li>
+        <li>Reminders before payments on account</li>
+        <li>No bookkeeping, no jargon to configure</li>
       </ul>
     </div>
     <div class="frow-mock reveal" style="--d:.12s">
       <div class="panel panel-shot">
         <img
           src="/site/feature-handshake.png"
-          alt="Add client invitations panel showing pending and resend states"
+          alt="Client connection and portal access for the client dashboard"
           class="panel-shot-img"
           width="1280"
           height="800"
@@ -84,79 +143,20 @@ const html = `<section class="page-hero">
 
   <div class="frow">
     <div class="frow-copy reveal reveal-l">
-      <div class="eyebrow">Deadlines &amp; liabilities</div>
-      <h2>Know what is due and what is owed</h2>
-      <p>Keep quarterly dates and balances visible so chase and submission work stay grounded in the numbers that matter.</p>
-      <ul class="ticklist">
-        <li>Upcoming obligation dates</li>
-        <li>Liability and balance visibility</li>
-        <li>Notes beside the live picture</li>
-      </ul>
-    </div>
-    <div class="frow-mock reveal" style="--d:.12s">
-      <div class="panel">
-    <div class="panel-bar"><i></i><i></i><i></i></div>
-    <div class="panel-body">
-      <h5>Client snapshot</h5>
-      <div class="panel-row">Next deadline &middot; 4 days</div>
-      <div class="panel-row">Balance due &middot; review</div>
-      <div class="panel-row">Chase history open</div>
-    </div>
-  </div>
-    </div>
-  </div>
-
-  <div class="frow flip">
-    <div class="frow-copy reveal reveal-r">
-      <div class="eyebrow">Chase manager</div>
-      <h2>Chase missing records before deadlines slip</h2>
-      <p>Send structured reminders for the packs you need, keep a clear history, and keep email chase separate from portal chat.</p>
-      <ul class="ticklist">
-        <li>Reusable chase templates</li>
-        <li>Per-client chase history</li>
-        <li>Clear email vs portal messaging</li>
-      </ul>
-    </div>
-    <div class="frow-mock reveal" style="--d:.12s">
-      <div class="panel panel-shot">
-        <img
-          src="/site/feature-chase.png"
-          alt="Chase manager with client list and email chase templates"
-          class="panel-shot-img"
-          width="1280"
-          height="800"
-        >
-      </div>
-      <!-- OLD MOCK (kept for now — do not delete)
-      <div class="panel">
-        <div class="panel-bar"><i></i><i></i><i></i></div>
-        <div class="panel-body">
-          <h5>Email chases</h5>
-          <div class="panel-row">Q3 bank statements &middot; sent</div>
-          <div class="panel-row">Receipts follow-up &middot; due Fri</div>
-          <div class="panel-row">Template: quarterly pack</div>
-        </div>
-      </div>
-      -->
-    </div>
-  </div>
-
-  <div class="frow">
-    <div class="frow-copy reveal reveal-l">
       <div class="eyebrow">HMRC connection</div>
-      <h2>Stay connected for Making Tax Digital</h2>
-      <p>Connect your firm, work authorised clients, and keep obligations and balances in the same workspace, without exposing low-level integration detail on the marketing site.</p>
+      <h2>Read-only from HMRC. Always current.</h2>
+      <p>Connect your firm, invite clients to authorise, and keep submission status, obligations and balances in one workspace. We do not file returns here. Your existing software does that. We pick up the new status afterwards.</p>
       <ul class="ticklist">
         <li>Firm HMRC connection</li>
-        <li>Authorised client journeys</li>
-        <li>Self-employment and property support</li>
+        <li>Authorised clients in your dashboard</li>
+        <li>Self-employment and UK property support</li>
       </ul>
     </div>
     <div class="frow-mock reveal" style="--d:.12s">
       <div class="panel panel-shot">
         <img
           src="/site/feature-hmrc.png"
-          alt="Settings HMRC connection page showing firm connected with ARN"
+          alt="Settings HMRC connection showing firm linked and reading data from HMRC"
           class="panel-shot-img"
           width="1280"
           height="800"
@@ -180,7 +180,7 @@ const html = `<section class="page-hero">
     <div class="frow-copy reveal reveal-r">
       <div class="eyebrow">Staff and permissions</div>
       <h2>Invite your team without opening everything</h2>
-      <p>Add staff, set permissions, and assign clients so each person only sees the journeys they should handle.</p>
+      <p>Add staff, set permissions, and assign clients so each person only sees the monitoring work they should handle.</p>
       <ul class="ticklist">
         <li>Staff invites from Settings</li>
         <li>Permission-based access</li>
@@ -216,11 +216,12 @@ const html = `<section class="page-hero">
 <section class="sec-soft">
   <div class="wrap">
     <div class="cta-plain reveal">
-      <h2>See the client journey in your firm</h2>
-      <p>Start a firm account, or ask which package fits how you manage deadlines and capacity.</p>
+      <h2>See your whole client book in one place</h2>
+      <p>Try My Tax Diary free for 7 days. No card needed. If you would rather see it first, book a 20-minute walkthrough.</p>
       <div class="cta-actions">
-        <a href="/register" class="btn btn-primary">Start free trial</a>
-        <a href="/site/contact" class="btn btn-ghost">Contact us</a>
+        <a href="/register" class="btn btn-primary">Start your 7-day free trial</a>
+        <a href="/site/contact" class="btn btn-ghost">Book a demo</a>
+        <a href="/site/pricing" class="btn btn-ghost">View pricing</a>
       </div>
     </div>
   </div>

@@ -43,27 +43,28 @@ const html = `<!-- ===== HEADER ===== -->
 
         <!-- COPY -->
         <div class="hero-copy" id="heroCopy">
-          <div class="eyebrow">Built by accountants</div>
-          <h1><span class="light">My Tax Diary</span><br>Keep every client journey<br>on track for MTD</h1>
-          <p class="lead">Track deadlines and liabilities, see submission status in kanban or list view, and request client access with a simple digital handshake. Developed by accountants to cut the chase around Making Tax Digital for Income Tax.</p>
+          <div class="eyebrow">Built by accountants, for accountants</div>
+          <h1>See every client's MTD position<br>in one place</h1>
+          <p class="lead">Who has submitted and who has not. What each client owes and when. Automatic chasers so you are not sending them. My Tax Diary reads directly from HMRC, so the picture is always current.</p>
+          <p class="lead-note">We do not make submissions to HMRC. Your existing software does that. We make sure nothing gets missed. Everyone is talking about how to submit MTD ITSA returns, but nobody is mentioning how you monitor it. We are not a submission software. We let others deal with that. We help you stay on top of your clients and manage your internal workflows.</p>
 
           <div class="hero-actions">
-            <a href="/register" class="btn btn-primary btn-lg">Start free trial
+            <a href="/register" class="btn btn-primary btn-lg">Start your 7-day free trial
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </a>
-            <a href="/site/pricing" class="btn btn-ghost btn-lg">View pricing</a>
+            <a href="/site/contact" class="btn btn-ghost btn-lg">Book a demo</a>
           </div>
 
           <div class="ticks">
             <div class="tick">
               <svg width="19" height="19" viewBox="0 0 24 24" fill="#12b8bd"><circle cx="12" cy="12" r="12"/><polyline points="7 12.5 10.5 16 17 9" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              Deadlines &amp; liabilities</div>
+              Who has submitted</div>
             <div class="tick">
               <svg width="19" height="19" viewBox="0 0 24 24" fill="#12b8bd"><circle cx="12" cy="12" r="12"/><polyline points="7 12.5 10.5 16 17 9" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              Kanban &amp; list views</div>
+              What is owed, and when</div>
             <div class="tick">
               <svg width="19" height="19" viewBox="0 0 24 24" fill="#12b8bd"><circle cx="12" cy="12" r="12"/><polyline points="7 12.5 10.5 16 17 9" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              Digital handshake</div>
+              Automatic chasers</div>
           </div>
 
           <div class="scribble" id="scribble">
@@ -71,7 +72,7 @@ const html = `<!-- ===== HEADER ===== -->
               <path d="M6 2C-1 14 2 32 14 42c9 8 22 12 34 12"/>
               <path d="M41 47l9 7-8 4"/>
             </svg>
-            <div class="scribble-text">Less chasing<br>Clearer client<br>journeys.</div>
+            <div class="scribble-text">Monitor MTD.<br>Do not file it<br>here.</div>
           </div>
         </div>
 
@@ -82,7 +83,7 @@ const html = `<!-- ===== HEADER ===== -->
               <div class="mock mock-shot" id="mockCard">
                 <img
                   src="/site/dashboard-hero.png"
-                  alt="My Tax Diary dashboard showing client pipeline, deadlines, and chase status"
+                  alt="My Tax Diary dashboard showing client MTD status, liabilities, and chase"
                   class="mock-shot-img"
                   width="1280"
                   height="800"
@@ -94,8 +95,8 @@ const html = `<!-- ===== HEADER ===== -->
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22b07d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
                 <div>
-                  <b>HMRC connected</b>
-                  <small>Client journeys stay in sync</small>
+                  <b>Connected to HMRC</b>
+                  <small>Read-only, always up to date</small>
                 </div>
                 <span class="live"></span>
               </div>
@@ -111,36 +112,54 @@ const html = `<!-- ===== HEADER ===== -->
 <section class="sec-tint">
   <div class="wrap">
     <div class="sec-head">
-      <div class="eyebrow reveal">Why firms choose My Tax Diary</div>
-      <h2 class="reveal" style="--d:.06s">Client journeys, not just onboarding</h2>
-      <p class="reveal" style="--d:.12s">See who needs records, what is due, and what is owed, then nudge clients and keep quarterly work moving.</p>
+      <div class="eyebrow reveal">Why firms use My Tax Diary</div>
+      <h2 class="reveal" style="--d:.06s">Five things you stop doing by hand</h2>
+      <p class="reveal" style="--d:.12s">Monitoring built for accounting firms. Status from HMRC, chasers on schedule, and a clear answer when a client asks what they owe.</p>
     </div>
 
-    <div class="grid-3">
+    <div class="grid-benefits">
       <div class="card reveal">
+        <div class="ico">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a7fb8" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <h3>Know who has submitted</h3>
+        <p>One dashboard across your whole client book. Each client's quarterly updates and final declaration, with status pulled from HMRC, not from a spreadsheet someone forgot to update.</p>
+        <a href="/site/features" class="link">Learn more →</a>
+      </div>
+
+      <div class="card reveal" style="--d:.08s">
+        <div class="ico">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a7fb8" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <h3>Stop chasing manually</h3>
+        <p>Automatic chasers go out before each deadline. You set the schedule once; My Tax Diary sends the reminders and shows you who has responded.</p>
+        <a href="/site/features" class="link">Learn more →</a>
+      </div>
+
+      <div class="card reveal" style="--d:.16s">
+        <div class="ico">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a7fb8" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        </div>
+        <h3>Answer "how much do I owe?" instantly</h3>
+        <p>Liabilities and payment dates for every client, visible without logging into HMRC. When a client rings, the answer is already on screen.</p>
+        <a href="/site/features" class="link">Learn more →</a>
+      </div>
+
+      <div class="card reveal" style="--d:.24s">
+        <div class="ico">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a7fb8" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h3>Give every client their own view</h3>
+        <p>Each client gets a simple dashboard showing what they owe and when. A better service for them, fewer calls for you.</p>
+        <a href="/site/features" class="link">Learn more →</a>
+      </div>
+
+      <div class="card reveal" style="--d:.32s">
         <div class="ico">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a7fb8" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         </div>
-        <h3>Deadlines &amp; liabilities</h3>
-        <p>Keep quarterly dates and balances visible so nothing slips between clients and HMRC.</p>
-        <a href="/site/features" class="link">Learn more →</a>
-      </div>
-
-      <div class="card reveal" style="--d:.1s">
-        <div class="ico">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a7fb8" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-        </div>
-        <h3>Kanban &amp; list views</h3>
-        <p>Switch between board and list to see submission status across your whole client book.</p>
-        <a href="/site/features" class="link">Learn more →</a>
-      </div>
-
-      <div class="card reveal" style="--d:.2s">
-        <div class="ico">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a7fb8" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M19 8v4"/><path d="M17 10h4"/></svg>
-        </div>
-        <h3>Digital handshake</h3>
-        <p>Request client access inside the product: invite, authorise, and open the portal without awkward email chains.</p>
+        <h3>No more missed payments on account</h3>
+        <p>Clients forget payments on account and get penalised. Their dashboard shows every due date and amount, with a reminder before each one.</p>
         <a href="/site/features" class="link">Learn more →</a>
       </div>
     </div>
@@ -152,50 +171,62 @@ const html = `<!-- ===== HEADER ===== -->
   <div class="wrap">
     <div class="sec-head" style="margin-bottom:0">
       <div class="eyebrow reveal">How it works</div>
-      <h2 class="reveal" style="--d:.06s">From first connection to steady quarterly rhythm</h2>
-      <p class="reveal" style="--d:.12s">Focus on the client journey after they are on your books.</p>
+      <h2 class="reveal" style="--d:.06s">Four steps, none of them filing</h2>
+      <p class="reveal" style="--d:.12s">Connect, monitor, chase, and keep filing where you already file today.</p>
     </div>
 
     <div class="steps" id="steps"><span class="spark" id="spark"></span>
       <div class="step reveal">
         <div class="step-n">1</div>
-        <h4>Connect with a digital handshake</h4>
-        <p>Invite the client and complete access so you can work their MTD journey in one place.</p>
+        <h4>Connect your clients</h4>
+        <p>Invite each client from inside My Tax Diary. Once they authorise, their HMRC data appears in your dashboard.</p>
       </div>
       <div class="step reveal" style="--d:.12s">
         <div class="step-n">2</div>
-        <h4>Track deadlines and liabilities</h4>
-        <p>See what is due and what is owed without rebuilding the picture in spreadsheets.</p>
+        <h4>See the full picture</h4>
+        <p>Submission status, liabilities and due dates for every client, refreshed from HMRC.</p>
       </div>
       <div class="step reveal" style="--d:.24s">
         <div class="step-n">3</div>
-        <h4>Chase records, then move status</h4>
-        <p>Send reminders, update kanban or list status, and keep every client moving toward submission.</p>
+        <h4>Let the chasers run</h4>
+        <p>Automatic reminders go to clients before each deadline. You see who has responded and who needs a call.</p>
       </div>
       <div class="step reveal" style="--d:.36s">
         <div class="step-n">4</div>
-        <h4>Submit and stay ready</h4>
-        <p>Complete the quarterly update with HMRC when the journey is ready, then start the next cycle clean.</p>
+        <h4>File where you file today</h4>
+        <p>Submit through your existing software. My Tax Diary picks up the new status from HMRC and the next quarter begins.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ===== BENEFITS ===== -->
-<section class="sec-tint2" style="padding-top:48px">
+<!-- ===== CLIENT VIEW ===== -->
+<section class="sec-tint2">
   <div class="wrap">
     <div class="sec-head">
-      <div class="eyebrow reveal">Practice outcomes</div>
-      <h2 class="reveal" style="--d:.06s">What changes for your team</h2>
-      <p class="reveal" style="--d:.12s">Clearer ownership of each client journey, with less inbox noise and fewer missed dates.</p>
+      <div class="eyebrow reveal">What your clients see</div>
+      <h2 class="reveal" style="--d:.06s">A dashboard your clients will actually use</h2>
+      <p class="reveal" style="--d:.12s">Every client you connect gets their own login. It shows one thing clearly: what they owe HMRC, and when. Payments on account, balancing payments and quarterly deadlines, each with a date and an amount. A reminder arrives before each one.</p>
+      <p class="reveal" style="--d:.18s;max-width:640px;margin:16px auto 0;color:var(--muted);font-size:15px;line-height:1.6">No bookkeeping, no jargon, nothing to configure. It is the view they would get from HMRC if HMRC had built one.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BENEFITS ===== -->
+<section style="padding-top:48px">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow reveal">What changes for your practice</div>
+      <h2 class="reveal" style="--d:.06s">Outcomes you can feel in the week</h2>
+      <p class="reveal" style="--d:.12s">Less manual chasing, clearer answers, fewer awkward conversations.</p>
     </div>
 
-    <div class="benefits" style="max-width:640px;margin:0 auto">
-      <div class="benefit reveal" style="--d:.05s"><span class="check"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#12b8bd" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Deadlines and liabilities in one view</div>
-      <div class="benefit reveal" style="--d:.13s"><span class="check"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#12b8bd" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Kanban and list status for submissions</div>
-      <div class="benefit reveal" style="--d:.21s"><span class="check"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#12b8bd" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Digital handshake for client access</div>
-      <div class="benefit reveal" style="--d:.29s"><span class="check"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#12b8bd" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Structured chase before deadlines slip</div>
-      <div class="benefit reveal" style="--d:.37s"><span class="check"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#12b8bd" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Built by accountants for real practice work</div>
+    <div class="benefits" style="max-width:720px;margin:0 auto">
+      <div class="benefit reveal" style="--d:.05s"><span class="check"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#12b8bd" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Every client's MTD status in one view, pulled from HMRC</div>
+      <div class="benefit reveal" style="--d:.13s"><span class="check"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#12b8bd" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Chasers sent automatically, not from your inbox</div>
+      <div class="benefit reveal" style="--d:.21s"><span class="check"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#12b8bd" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Liabilities and due dates answered without logging into HMRC</div>
+      <div class="benefit reveal" style="--d:.29s"><span class="check"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#12b8bd" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>A client dashboard you can offer as part of your service</div>
+      <div class="benefit reveal" style="--d:.37s"><span class="check"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#12b8bd" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Fewer penalties for your clients, fewer awkward conversations for you</div>
     </div>
   </div>
 </section>
@@ -204,18 +235,18 @@ const html = `<!-- ===== HEADER ===== -->
 <section style="padding-top:20px" id="pricing">
   <div class="wrap">
     <div class="cta reveal">
-      <div class="eyebrow">Simple. Clear. Ready for MTD.</div>
-      <h2>Ready to manage client journeys with less chase?</h2>
-      <p>Start a free 7-day trial. No card required. See deadlines, liabilities, and status in one place.</p>
+      <div class="eyebrow">Ready when you are</div>
+      <h2>See your whole client book in one place</h2>
+      <p>Try My Tax Diary free for 7 days. No card needed. If you would rather see it first, book a 20-minute walkthrough.</p>
       <div class="cta-actions">
-        <a href="/register" class="btn btn-primary btn-lg">Start free trial
+        <a href="/register" class="btn btn-primary btn-lg">Start your 7-day free trial
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
-        <a href="/site/pricing" class="btn btn-ghost btn-lg">View pricing</a>
         <a href="/site/contact" class="btn btn-ghost btn-lg">Book a demo</a>
+        <a href="/site/pricing" class="btn btn-ghost btn-lg">View pricing</a>
       </div>
       <div class="cta-note">
-        Built for the<br>client journey<br>after signup.
+        We monitor.<br>Your software<br>files.
         <svg width="62" height="34" viewBox="0 0 62 34" fill="none" stroke="var(--navy)" stroke-width="1.6" stroke-linecap="round" style="margin-top:6px">
           <path d="M2 4c4 14 16 24 34 24 8 0 16-3 22-8"/>
           <path d="M52 24l6-4 1 8"/>
@@ -233,7 +264,7 @@ const html = `<!-- ===== HEADER ===== -->
         <a href="/site" class="logo" aria-label="My Tax Diary home">
         <img src="/site/logo.png" alt="My Tax Diary" class="company-logo">
         </a> 
-        <p>MTD Income Tax software for accounting firms. Track client journeys, deadlines, liabilities, chase, and portal access.</p>
+        <p>MTD Income Tax monitoring for accounting firms. See who has submitted, what is owed and when, and let the chasers do the chasing. We do not file; your software does.</p>
       </div>
 
       <div class="foot-col reveal" style="--d:.08s">

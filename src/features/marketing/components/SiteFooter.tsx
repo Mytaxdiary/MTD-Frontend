@@ -11,8 +11,8 @@ export default function SiteFooter() {
           <div className="mtd-site-footer__brand">
             <BrandLogo width={160} />
             <p>
-              MTD Income Tax software for accounting firms. Track client journeys, deadlines,
-              liabilities, chase, and portal access.
+              MTD Income Tax monitoring for accounting firms. See who has submitted, what is owed
+              and when, and let the chasers do the chasing. We do not file; your software does.
             </p>
           </div>
 

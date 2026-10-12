@@ -4,7 +4,7 @@ import featuresHtml from '@/features/marketing/appsite-html/features'
 export const metadata: Metadata = {
   title: 'Features',
   description:
-    'Kanban and list status, digital handshake, deadlines and liabilities, chase, portal, and team permissions for MTD Income Tax.',
+    'MTD ITSA monitoring for firms: submission status from HMRC, liabilities and due dates, automatic chasers, and a client dashboard. We do not file; your software does.',
   alternates: { canonical: '/site/features' },
 }
 
