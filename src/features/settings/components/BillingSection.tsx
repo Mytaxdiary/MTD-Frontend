@@ -119,6 +119,8 @@ export default function BillingSection() {
   const status = quote?.billingStatus ?? 'active'
   const trial = getTrialRemaining(quote?.billingStatus, quote?.trialEndsAt)
   const colors = statusColors(status)
+  const cancelsAt = quote?.cancelsAt ?? null
+  const cancelScheduled = status === 'active' && !!cancelsAt
   const needsSubscribe =
     status === 'trial' || status === 'expired' || status === 'cancelled' || status === 'past_due'
   const canManage = !!quote?.hasStripeCustomer
@@ -164,7 +166,14 @@ export default function BillingSection() {
         ['Base', formatGbp(quote.baseGbp)],
         ['Extras', formatGbp(quote.extrasGbp)],
         ['Monthly total', formatGbp(quote.totalExVatGbp)],
-        ['Next renewal', quote.nextRenewalAt ? formatDate(quote.nextRenewalAt) : '—'],
+        ...(cancelScheduled
+          ? ([
+              ['Cancels on', formatDate(cancelsAt)],
+              ['Access until', formatDate(cancelsAt)],
+            ] as const)
+          : ([
+              ['Next renewal', quote.nextRenewalAt ? formatDate(quote.nextRenewalAt) : '—'],
+            ] as const)),
       ]
     : []
 
@@ -223,7 +232,9 @@ export default function BillingSection() {
               <div style={{ fontSize: 12, color: colors.text, marginTop: 4 }}>
                 {trial
                   ? `Free trial: ${trial.daysLeft} day${trial.daysLeft === 1 ? '' : 's'} left · ends ${trial.endsLabel}`
-                  : `£50 / month for up to ${quote?.allowance ?? 50} clients`}
+                  : cancelScheduled
+                    ? `Cancels on ${formatDate(cancelsAt)}. You keep access until then.`
+                    : `£50 / month for up to ${quote?.allowance ?? 50} clients`}
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>

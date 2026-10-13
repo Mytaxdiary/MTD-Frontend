@@ -19,6 +19,8 @@ export interface BillingQuote {
   trialStartsAt: string | null
   trialEndsAt: string | null
   nextRenewalAt: string | null
+  /** Present only when cancel is scheduled for period end. */
+  cancelsAt: string | null
   hasStripeCustomer: boolean
 }
 
