@@ -199,7 +199,12 @@ export const outreachService = {
       .then((r) => r.data)
   },
 
-  listSuppressions(params?: { page?: number; search?: string; valueType?: string }) {
+  listSuppressions(params?: {
+    page?: number
+    limit?: number
+    search?: string
+    valueType?: string
+  }) {
     return axiosClient
       .get<PageResult<OutreachSuppression>>('/outreach/suppressions', { params })
       .then((r) => r.data)
