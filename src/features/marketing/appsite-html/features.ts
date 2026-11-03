@@ -1,8 +1,8 @@
 const html = `<section class="page-hero">
   <div class="wrap">
     <div class="eyebrow reveal">Features</div>
-    <h1 class="reveal" style="--d:.06s">MTD monitoring tools for your practice</h1>
-    <p class="reveal" style="--d:.12s">See who has submitted, what is owed and when, run automatic chasers, and give clients a simple dashboard. Read from HMRC. File where you already file.</p>
+    <h1 class="reveal" style="--d:.06s">Everything you need to keep on top of MTD across your client book</h1>
+    <p class="reveal" style="--d:.12s">See who has submitted, what each client owes and when, chase for figures, and give clients a simple portal. It works alongside the software you already file with.</p>
     <div class="hero-actions reveal" style="--d:.18s">
       <a href="/register" class="btn btn-primary">Start your 7-day free trial</a>
       <a href="/site/contact" class="btn btn-ghost">Book a demo</a>
@@ -15,19 +15,19 @@ const html = `<section class="page-hero">
   <div class="frow">
     <div class="frow-copy reveal reveal-l">
       <div class="eyebrow">Submission status</div>
-      <h2>Know who has submitted across your whole book</h2>
-      <p>One view of quarterly updates and final declarations, with status pulled from HMRC. Flip between board and list so the team sees who is waiting, who is done, and who needs a call.</p>
+      <h2>Know who has submitted, across your whole client book</h2>
+      <p>See every client's quarterly updates and final declaration in one place, with the status taken from HMRC. Use the kanban board when you want a visual overview of who is waiting and who is done. Switch to the list when you want to sort, filter and work through clients one by one.</p>
       <ul class="ticklist">
-        <li>Status from HMRC, not a forgotten spreadsheet</li>
-        <li>Board and list views for the full client book</li>
-        <li>Deadlines beside each client's position</li>
+        <li>Status from HMRC, not a spreadsheet someone forgot to update</li>
+        <li>Kanban board and list views of your whole client book</li>
+        <li>Filters to find exactly who needs attention</li>
       </ul>
     </div>
     <div class="frow-mock reveal" style="--d:.12s">
       <div class="panel panel-shot">
         <img
           src="/site/feature-status.png"
-          alt="Dashboard showing client MTD submission status across the firm"
+          alt="My Tax Diary dashboard in board view, showing each client's MTD submission status across the firm"
           class="panel-shot-img"
           width="1280"
           height="800"
@@ -50,19 +50,19 @@ const html = `<section class="page-hero">
   <div class="frow flip">
     <div class="frow-copy reveal reveal-r">
       <div class="eyebrow">Liabilities and due dates</div>
-      <h2>Answer "how much do I owe?" without logging into HMRC</h2>
-      <p>Liabilities, balancing payments and payment dates for every client, already on screen when they ring. The numbers stay current because they are read from HMRC.</p>
+      <h2>Answer "what do I owe?" without logging in to HMRC</h2>
+      <p>See each client's liability, payments on account, balancing payments and due dates on screen, so when a client rings you already have the answer. Figures are read from HMRC.</p>
       <ul class="ticklist">
-        <li>What is owed, and when it is due</li>
+        <li>What each client owes, and when it is due</li>
         <li>Payments on account and balancing payments</li>
-        <li>A live picture for every connected client</li>
+        <li>Every connected client in one place</li>
       </ul>
     </div>
     <div class="frow-mock reveal" style="--d:.12s">
       <div class="panel">
     <div class="panel-bar"><i></i><i></i><i></i></div>
     <div class="panel-body">
-      <h5>Client liabilities</h5>
+      <h5>Example</h5>
       <div class="panel-row">Payment on account &middot; due 31 Jan</div>
       <div class="panel-row">Balancing payment &middot; review</div>
       <div class="panel-row">Next quarterly deadline &middot; 12 days</div>
@@ -73,20 +73,20 @@ const html = `<section class="page-hero">
 
   <div class="frow">
     <div class="frow-copy reveal reveal-l">
-      <div class="eyebrow">Automatic chasers</div>
-      <h2>Stop chasing manually before every deadline</h2>
-      <p>Set the schedule once. My Tax Diary sends reminders before each deadline and shows who has responded. You keep the awkward follow-ups for the few who still need a call.</p>
+      <div class="eyebrow">Client chasers</div>
+      <h2>Stop chasing for figures from your own inbox</h2>
+      <p>Set up your chase templates once, then email clients before each quarterly deadline to ask for their figures. Replies come straight to your inbox, so you can get on with preparing the update. Every chaser is logged, so you can see what went out and when.</p>
       <ul class="ticklist">
-        <li>Reminders on a schedule you control</li>
-        <li>Clear history of what was sent</li>
-        <li>See who replied and who still needs you</li>
+        <li>Templates you choose, sent when you need them</li>
+        <li>A log of every chaser sent and when</li>
+        <li>Replies go straight to your own inbox</li>
       </ul>
     </div>
     <div class="frow-mock reveal" style="--d:.12s">
       <div class="panel panel-shot">
         <img
           src="/site/feature-chase.png"
-          alt="Chase manager with automatic client reminders before deadlines"
+          alt="My Tax Diary chaser manager showing chase templates and clients to email"
           class="panel-shot-img"
           width="1280"
           height="800"
@@ -108,20 +108,56 @@ const html = `<section class="page-hero">
 
   <div class="frow flip">
     <div class="frow-copy reveal reveal-r">
-      <div class="eyebrow">Client dashboard</div>
-      <h2>A view your clients will actually use</h2>
-      <p>Every connected client gets a simple login that shows what they owe HMRC and when. Payments on account, balancing payments and quarterly deadlines, each with a date, an amount, and a reminder before it is due.</p>
+      <div class="eyebrow">Team and permissions</div>
+      <h2>Share the workload with your team</h2>
+      <p>Add your staff, assign clients to each person, and let them chase and manage the clients they are responsible for. The chaser log keeps a record of what went out and when, so nothing falls between the cracks.</p>
       <ul class="ticklist">
-        <li>Clear amounts and due dates</li>
-        <li>Reminders before payments on account</li>
-        <li>No bookkeeping, no jargon to configure</li>
+        <li>Invite staff from Settings</li>
+        <li>Assign clients to the right member of your team</li>
+        <li>Staff chase and manage the clients assigned to them</li>
       </ul>
     </div>
     <div class="frow-mock reveal" style="--d:.12s">
       <div class="panel panel-shot">
         <img
+          src="/site/feature-staff.png"
+          alt="My Tax Diary team settings page showing the owner and staff members with their roles and permissions"
+          class="panel-shot-img"
+          width="1280"
+          height="800"
+        >
+      </div>
+      <!-- OLD MOCK (kept for now — do not delete)
+      <div class="panel">
+        <div class="panel-bar"><i></i><i></i><i></i></div>
+        <div class="panel-body">
+          <h5>Team</h5>
+          <div class="panel-row">Sara &middot; clients assigned</div>
+          <div class="panel-row">Omar &middot; chase + portal</div>
+          <div class="panel-row">Owner &middot; full access</div>
+        </div>
+      </div>
+      -->
+    </div>
+  </div>
+
+  <div class="frow">
+    <div class="frow-copy reveal reveal-l">
+      <div class="eyebrow">Client portal</div>
+      <h2>A simple portal for every client</h2>
+      <p>Every connected client gets their own login to a clear, jargon-free dashboard. It shows their quarterly submissions, their latest liability and how to pay. It is a better service for them, and fewer "where do I stand?" calls for you.</p>
+      <ul class="ticklist">
+        <li>Their submissions and what they owe, with dates and amounts</li>
+        <li>Payments on account and balancing payments</li>
+        <li>Clear guidance on how to pay</li>
+      </ul>
+      <p class="frow-note">Figures shown are as reported by HMRC.</p>
+    </div>
+    <div class="frow-mock reveal" style="--d:.12s">
+      <div class="panel panel-shot">
+        <img
           src="/site/feature-handshake.png"
-          alt="Client connection and portal access for the client dashboard"
+          alt="My Tax Diary client portal showing a client's submissions, what they owe and how to pay"
           class="panel-shot-img"
           width="1280"
           height="800"
@@ -141,22 +177,23 @@ const html = `<section class="page-hero">
     </div>
   </div>
 
-  <div class="frow">
-    <div class="frow-copy reveal reveal-l">
+  <div class="frow flip">
+    <div class="frow-copy reveal reveal-r">
       <div class="eyebrow">HMRC connection</div>
-      <h2>Read-only from HMRC. Always current.</h2>
-      <p>Connect your firm, invite clients to authorise, and keep submission status, obligations and balances in one workspace. We do not file returns here. Your existing software does that. We pick up the new status afterwards.</p>
+      <h2>Connected to HMRC, with read-only access</h2>
+      <p>Connect your firm once, then add each client's name, UTR and National Insurance number. We send them a link to authorise you through HMRC. From then on, their submission status, obligations and balances are refreshed from HMRC daily.</p>
+      <p>You keep filing with the software you use today, and My Tax Diary picks up the new status afterwards.</p>
       <ul class="ticklist">
-        <li>Firm HMRC connection</li>
-        <li>Authorised clients in your dashboard</li>
-        <li>Self-employment and UK property support</li>
+        <li>One connection for your firm</li>
+        <li>Clients authorise you through a link we send them</li>
+        <li>Self-employment and UK property income</li>
       </ul>
     </div>
     <div class="frow-mock reveal" style="--d:.12s">
       <div class="panel panel-shot">
         <img
           src="/site/feature-hmrc.png"
-          alt="Settings HMRC connection showing firm linked and reading data from HMRC"
+          alt="My Tax Diary settings page showing the firm connected to HMRC and reading data from it"
           class="panel-shot-img"
           width="1280"
           height="800"
@@ -170,41 +207,6 @@ const html = `<section class="page-hero">
           <div class="panel-row">Firm linked &middot; ready</div>
           <div class="panel-row">Clients authorised</div>
           <div class="panel-row">Journeys in sync</div>
-        </div>
-      </div>
-      -->
-    </div>
-  </div>
-
-  <div class="frow flip">
-    <div class="frow-copy reveal reveal-r">
-      <div class="eyebrow">Staff and permissions</div>
-      <h2>Invite your team without opening everything</h2>
-      <p>Add staff, set permissions, and assign clients so each person only sees the monitoring work they should handle.</p>
-      <ul class="ticklist">
-        <li>Staff invites from Settings</li>
-        <li>Permission-based access</li>
-        <li>Assigned-client scoping</li>
-      </ul>
-    </div>
-    <div class="frow-mock reveal" style="--d:.12s">
-      <div class="panel panel-shot">
-        <img
-          src="/site/feature-staff.png"
-          alt="Settings Team page showing owner and staff with roles and permissions"
-          class="panel-shot-img"
-          width="1280"
-          height="800"
-        >
-      </div>
-      <!-- OLD MOCK (kept for now — do not delete)
-      <div class="panel">
-        <div class="panel-bar"><i></i><i></i><i></i></div>
-        <div class="panel-body">
-          <h5>Team</h5>
-          <div class="panel-row">Sara &middot; clients assigned</div>
-          <div class="panel-row">Omar &middot; chase + portal</div>
-          <div class="panel-row">Owner &middot; full access</div>
         </div>
       </div>
       -->

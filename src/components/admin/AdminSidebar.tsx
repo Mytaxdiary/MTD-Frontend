@@ -31,6 +31,36 @@ const NAV = [
     match: (p: string) => p.startsWith('/admin/enquiries'),
   },
   {
+    href: '/admin/outreach/queue',
+    label: 'Outreach queue',
+    icon: ClockIcon,
+    match: (p: string) => p.startsWith('/admin/outreach/queue'),
+  },
+  {
+    href: '/admin/outreach/prospects',
+    label: 'Prospects',
+    icon: UsersIcon,
+    match: (p: string) => p.startsWith('/admin/outreach/prospects'),
+  },
+  {
+    href: '/admin/outreach/templates',
+    label: 'Templates',
+    icon: SendIcon,
+    match: (p: string) => p.startsWith('/admin/outreach/templates'),
+  },
+  {
+    href: '/admin/outreach/campaigns',
+    label: 'Campaigns',
+    icon: GridIcon,
+    match: (p: string) => p.startsWith('/admin/outreach/campaigns'),
+  },
+  {
+    href: '/admin/outreach/suppressions',
+    label: 'Suppressions',
+    icon: SettingsIcon,
+    match: (p: string) => p.startsWith('/admin/outreach/suppressions'),
+  },
+  {
     href: '/admin/audit',
     label: 'Audit log',
     icon: ClockIcon,

@@ -4,9 +4,9 @@ import homeHtml from '@/features/marketing/appsite-html/home'
 import '@/features/marketing/styles/appsite-home.css'
 
 export const metadata: Metadata = {
-  title: { absolute: 'My Tax Diary: MTD Income Tax monitoring for accounting firms' },
+  title: { absolute: 'My Tax Diary: MTD Income Tax monitoring for accountants' },
   description:
-    "See every client's MTD ITSA status, liabilities and due dates in one dashboard, with automatic chasers and a client view. Read-only from HMRC. Built by accountants.",
+    "See every client's MTD Income Tax status, what they owe and when, in one dashboard. Read-only HMRC data, client chasers and a client portal.",
   alternates: { canonical: '/site' },
 }
 

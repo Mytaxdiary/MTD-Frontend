@@ -13,4 +13,6 @@ export const env = {
   apiBaseUrl: process.env.NEXT_PUBLIC_API_BASE_URL ?? '',
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? '',
   gaMeasurementId: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? '',
+  /** Calendly (or equivalent) demo booking URL. Empty = Contact form only. */
+  demoBookingUrl: process.env.NEXT_PUBLIC_DEMO_BOOKING_URL ?? '',
 } as const

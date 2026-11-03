@@ -13,8 +13,8 @@ export default function AppsiteFooter() {
               <img src="/site/logo.png" alt="My Tax Diary" className="company-logo" />
             </a>
             <p>
-              MTD Income Tax monitoring for accounting firms. See who has submitted, what is owed
-              and when, and let the chasers do the chasing. We do not file; your software does.
+              MTD Income Tax monitoring for accounting practices. See who has submitted, what is
+              owed and when, all in one dashboard.
             </p>
           </div>
 
@@ -46,7 +46,7 @@ export default function AppsiteFooter() {
                 <a href="/register">Start free trial</a>
               </li>
               <li>
-                <a href="mailto:info@mytaxdiary.co.uk">Contact email</a>
+                <a href="mailto:info@mytaxdiary.co.uk">info@mytaxdiary.co.uk</a>
               </li>
             </ul>
           </div>

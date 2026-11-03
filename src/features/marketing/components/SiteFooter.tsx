@@ -11,8 +11,8 @@ export default function SiteFooter() {
           <div className="mtd-site-footer__brand">
             <BrandLogo width={160} />
             <p>
-              MTD Income Tax monitoring for accounting firms. See who has submitted, what is owed
-              and when, and let the chasers do the chasing. We do not file; your software does.
+              MTD Income Tax monitoring for accounting practices. See who has submitted, what is
+              owed and when, all in one dashboard.
             </p>
           </div>
 
@@ -29,7 +29,7 @@ export default function SiteFooter() {
             <h4>Account</h4>
             <Link href={SITE_APP_LOGIN}>Sign in</Link>
             <Link href={SITE_APP_REGISTER}>Get started</Link>
-            <a href="mailto:info@mytaxdiary.co.uk">Contact email</a>
+            <a href="mailto:info@mytaxdiary.co.uk">info@mytaxdiary.co.uk</a>
           </div>
 
           <div className="mtd-site-footer__col">

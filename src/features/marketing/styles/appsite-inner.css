@@ -131,6 +131,7 @@ section{padding:80px 0}
 .ticklist{list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:18px}
 .ticklist li{position:relative;padding-left:20px;font-size:14.8px;color:var(--body)}
 .ticklist li:before{content:"";position:absolute;left:0;top:9px;width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.frow-note{margin-top:14px;font-size:13px;color:var(--muted)}
 
 /* -------------------------------------------------------------- FOOTER --- */
 .site-footer{border-top:1px solid var(--line);background:var(--bg-soft);padding:58px 0 0}

@@ -134,6 +134,28 @@ section{padding:86px 0}
 .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
 .grid-benefits{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
 .lead-note{margin:14px 0 0;font-size:14.5px;line-height:1.55;color:var(--muted);max-width:34em}
+.trial-micro{margin:10px 0 0;font-size:13.5px;color:var(--muted)}
+.why-now{padding:64px 0;background:#fff;border-top:1px solid var(--line)}
+.fact-row{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:8px}
+.fact-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 20px}
+.fact-card b{display:block;font-family:'Poppins';font-size:15.5px;font-weight:600;color:var(--navy);margin-bottom:8px}
+.fact-card span{font-size:14px;color:var(--muted);line-height:1.5}
+.problem-table{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff;max-width:960px;margin:0 auto}
+.problem-head,.problem-row{display:grid;grid-template-columns:1.2fr 1fr 1.1fr;gap:12px;padding:16px 18px}
+.problem-head{background:#1F4E79;color:#fff;font-family:'Poppins';font-size:13.5px;font-weight:600}
+.problem-row{border-top:1px solid var(--line);font-size:14px;color:var(--navy-soft);align-items:start}
+.problem-row span:last-child{color:var(--teal-deep);font-weight:500}
+.steps-note{text-align:center;margin-top:28px;font-size:13.5px;color:var(--muted)}
+.portal-ticks{max-width:640px;margin:0 auto 18px;display:flex;flex-direction:column;gap:14px}
+.portal-close{max-width:680px;margin:0 auto;text-align:center;font-size:15.5px;line-height:1.6;color:var(--navy-soft)}
+.portal-small{max-width:680px;margin:12px auto 0;text-align:center;font-size:13px;color:var(--muted)}
+.faq{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;cursor:pointer;padding:20px 40px 20px 0;position:relative;font-family:'Poppins';font-size:16px;font-weight:600;color:var(--navy)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary:after{content:"";position:absolute;right:8px;top:50%;width:9px;height:9px;border-right:2px solid var(--accent,#12b8bd);border-bottom:2px solid var(--accent,#12b8bd);transform:translateY(-70%) rotate(45deg);transition:transform .3s var(--ease)}
+.faq details[open] summary:after{transform:translateY(-30%) rotate(-135deg)}
+.faq .answer{font-size:15px;padding:0 0 20px;max-width:760px;color:var(--navy-soft);line-height:1.55}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:30px 28px 26px;transition:transform .35s var(--ease),box-shadow .35s var(--ease),border-color .35s;position:relative}
 .card:hover{transform:translateY(-6px);box-shadow:var(--shadow);border-color:#d4e9f2}
 .ico{width:50px;height:50px;border-radius:13px;background:var(--icon-bg);display:flex;align-items:center;justify-content:center;margin-bottom:20px;transition:transform .4s var(--ease),background .35s}
@@ -239,6 +261,9 @@ footer{border-top:1px solid var(--line);padding:62px 0 0;background:#fff}
 @media (max-width:820px){
   .grid-3{grid-template-columns:1fr}
   .grid-benefits{grid-template-columns:1fr 1fr}
+  .fact-row{grid-template-columns:1fr}
+  .problem-head,.problem-row{grid-template-columns:1fr;gap:6px}
+  .problem-head span:not(:first-child),.problem-row span:not(:first-child){padding-left:0}
   .steps{grid-template-columns:1fr 1fr;gap:34px}
   .steps:before,.steps:after{display:none}
   .stats-row{grid-template-columns:1fr 1fr;gap:32px 0}

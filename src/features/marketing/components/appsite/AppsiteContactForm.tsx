@@ -48,6 +48,7 @@ export default function AppsiteContactForm({ initialPlan = '' }: ContactFormProp
   const [formError, setFormError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [sent, setSent] = useState(false)
+  const bookingUrl = env.demoBookingUrl.trim()
 
   const mailtoHref = useMemo(() => {
     const body = `Name: ${name}\nFirm: ${firm}\n\n${message}`
@@ -130,6 +131,19 @@ export default function AppsiteContactForm({ initialPlan = '' }: ContactFormProp
             Tell us about your firm and what you need for MTD ITSA. We will reply with pricing
             guidance or a follow-up conversation.
           </p>
+          {bookingUrl ? (
+            <p className="reveal" style={{ ['--d' as string]: '.18s', marginTop: 18 } as React.CSSProperties}>
+              <a
+                id="book"
+                href={bookingUrl}
+                className="btn btn-primary"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Book a demo
+              </a>
+            </p>
+          ) : null}
         </div>
       </section>
 
@@ -295,6 +309,13 @@ export default function AppsiteContactForm({ initialPlan = '' }: ContactFormProp
                 <li>We reply with pricing guidance or a short call invite.</li>
                 <li>You can also register and explore the product anytime.</li>
               </ul>
+              {bookingUrl ? (
+                <p style={{ marginTop: 16 }}>
+                  <a href={bookingUrl} className="btn btn-ghost" target="_blank" rel="noopener noreferrer">
+                    Prefer to book a time? Open the calendar
+                  </a>
+                </p>
+              ) : null}
               <p className="mail">
                 Prefer email? Write to <a href="mailto:info@mytaxdiary.co.uk">info@mytaxdiary.co.uk</a>
               </p>

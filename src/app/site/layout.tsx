@@ -8,7 +8,7 @@ const siteUrl =
   'https://mytaxdiary.co.uk'
 
 const description =
-  "See every client's MTD ITSA status, liabilities and due dates in one dashboard, with automatic chasers and a client view. Read-only from HMRC. Built by accountants."
+  "See every client's MTD ITSA status, liabilities and due dates in one dashboard, with email chasers and a client view. Read-only from HMRC. Built by accountants."
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
