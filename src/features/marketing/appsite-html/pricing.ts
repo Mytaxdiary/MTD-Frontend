@@ -16,7 +16,7 @@ const html = `<section class="page-hero">
       <div class="plan featured reveal" style="--d:.0s">
         <span class="plan-tag">All firms, one price</span>
         <h3>Usage pricing</h3>
-        <p class="who">Pay for the clients you manage. Nothing to configure, no plan to pick.</p>
+        <p class="who">You only pay for the clients you use. Nothing to configure, no plan to pick.</p>
         <div class="price"><b class="amount">&pound;50</b><span class="period">/month, up to 50 clients</span></div>
         <ul class="ticklist">
         <li>Agent dashboard with deadlines and liabilities</li>
@@ -84,7 +84,7 @@ const html = `<section class="page-hero">
       <div class="card reveal" style="--d:.0s">
         <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
         <h3>Pay for what you use</h3>
-        <p>A client counts as soon as you add them, whether or not HMRC authorisation is complete yet.</p>
+        <p>A client counts as soon as you add them to My Tax Diary. You only pay for the clients on your account.</p>
       </div>
       <div class="card reveal" style="--d:.08s">
         <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 12l2 2 4-4M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></div>
@@ -112,7 +112,7 @@ const html = `<section class="page-hero">
       </details>
       <details>
         <summary>How is a &ldquo;client&rdquo; counted?</summary>
-        <div class="answer">As soon as you add them to My Tax Diary, whether or not HMRC authorisation is complete yet.</div>
+        <div class="answer">As soon as you add them to My Tax Diary. You only pay for the clients you add.</div>
       </details>
       <details>
         <summary>Is there a free trial?</summary>
