@@ -1,8 +1,6 @@
 const DEVICE_ID_KEY = 'mtd_hmrc_device_id'
 const PUBLIC_IP_CACHE_KEY = 'mtd_hmrc_public_ip'
 const IP_CACHE_MS = 5 * 60 * 1000
-/** HMRC docs example — never send this as Gov-Client-Public-Port. */
-const BANNED_EXAMPLE_PORTS = new Set(['12345'])
 
 export interface FraudPreventionClientPayload {
   deviceId: string
@@ -17,6 +15,7 @@ export interface FraudPreventionClientPayload {
   windowWidth: number
   windowHeight: number
   publicIp?: string
+  /** Deprecated: browsers cannot read the real public TCP port. Server captures it. */
   publicPort?: string
   publicIpTimestamp?: string
 }
@@ -124,18 +123,6 @@ export async function fetchClientPublicIp(): Promise<string | undefined> {
   return undefined
 }
 
-/**
- * Optional configured port only — never invent 12345.
- * Browsers cannot read the real public TCP port for WEB_APP_VIA_SERVER.
- */
-function configuredClientPublicPort(): string | undefined {
-  const raw = process.env.NEXT_PUBLIC_HMRC_CLIENT_PUBLIC_PORT?.trim()
-  if (!raw || BANNED_EXAMPLE_PORTS.has(raw)) return undefined
-  const n = Number(raw)
-  if (!Number.isInteger(n) || n < 1 || n > 65535 || n === 80 || n === 443) return undefined
-  return raw
-}
-
 /** Collects browser data for HMRC WEB_APP_VIA_SERVER (sent as X-Hmrc-Fraud-Context). */
 export function collectFraudPreventionPayload(): FraudPreventionClientPayload {
   const screens = collectScreens()
@@ -152,15 +139,17 @@ export function collectFraudPreventionPayload(): FraudPreventionClientPayload {
   }
 }
 
-/** Same as collectFraudPreventionPayload but enriches with public IP + port when available. */
+/**
+ * Same as collectFraudPreventionPayload but enriches with public IP when available.
+ * Does not set publicPort — browsers cannot read the real client TCP source port.
+ * Nest/nginx capture Gov-Client-Public-Port from X-Client-Source-Port / socket.
+ */
 export async function collectFraudPreventionPayloadAsync(): Promise<FraudPreventionClientPayload> {
   const payload = collectFraudPreventionPayload()
   const publicIp = await fetchClientPublicIp()
   if (publicIp) {
     payload.publicIp = publicIp
     payload.publicIpTimestamp = new Date().toISOString()
-    const port = configuredClientPublicPort()
-    if (port) payload.publicPort = port
   }
   return payload
 }
