@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import portalService, {
   type PortalBusinessQuarterly,
   type PortalLiabilitiesResponse,
@@ -208,8 +209,49 @@ export default function PortalDashboard() {
   const bal = liabilities?.balanceDetails
   const pay = liabilities?.paymentDetails
 
+  const showMfaReminder = !!me && !me.isPreview && !me.mfaEnabled
+
   return (
     <div>
+      {showMfaReminder && (
+        <div
+          role="status"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 16,
+            flexWrap: 'wrap',
+            padding: '14px 18px',
+            borderRadius: 10,
+            background: B.amberBg,
+            border: '1px solid #FDE68A',
+            marginBottom: 22,
+          }}
+        >
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: B.amberText }}>
+              Turn on two-step verification
+            </div>
+            <div style={{ fontSize: 12.5, color: B.muted, marginTop: 3 }}>
+              Protect your portal login with an authenticator app.
+            </div>
+          </div>
+          <Link
+            href="/portal/security"
+            style={{
+              fontSize: 12.5,
+              fontWeight: 600,
+              color: B.amberText,
+              textDecoration: 'none',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Enable 2FA →
+          </Link>
+        </div>
+      )}
+
       {me?.isPreview && (
         <div
           style={{

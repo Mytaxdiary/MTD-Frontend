@@ -1,8 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import B from '@/styles/theme'
 import { adminService, type AdminOverviewStats } from '@/services/admin.service'
+import { useCurrentUser } from '@/components/auth/CurrentUserProvider'
 
 function StatCard({
   label,
@@ -35,6 +37,8 @@ function StatCard({
 }
 
 export default function AdminOverviewPage() {
+  const { user, loading: userLoading } = useCurrentUser()
+  const showMfaReminder = !userLoading && !!user && !user.mfaEnabled
   const [stats, setStats] = useState<AdminOverviewStats | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
@@ -66,6 +70,45 @@ export default function AdminOverviewPage() {
       <p style={{ margin: '0 0 24px', fontSize: 14, color: B.muted }}>
         Read-only snapshot of firms and marketing enquiries.
       </p>
+
+      {showMfaReminder && (
+        <div
+          role="status"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 16,
+            flexWrap: 'wrap',
+            padding: '14px 18px',
+            borderRadius: 10,
+            background: B.amberBg,
+            border: '1px solid #FDE68A',
+            marginBottom: 18,
+          }}
+        >
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: B.amberText }}>
+              Turn on two-step verification
+            </div>
+            <div style={{ fontSize: 12.5, color: B.muted, marginTop: 3 }}>
+              Protect your admin account with an authenticator app.
+            </div>
+          </div>
+          <Link
+            href="/admin/security"
+            style={{
+              fontSize: 12.5,
+              fontWeight: 600,
+              color: B.amberText,
+              textDecoration: 'none',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Enable 2FA →
+          </Link>
+        </div>
+      )}
 
       {loading && <div style={{ color: B.muted, fontSize: 14 }}>Loading…</div>}
       {error && (

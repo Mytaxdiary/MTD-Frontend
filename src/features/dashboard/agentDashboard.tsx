@@ -296,10 +296,11 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
   const [summary, setSummary] = useState<DashboardSummary | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const { user } = useCurrentUser()
+  const { user, loading: userLoading } = useCurrentUser()
   const { isStaff, isOwner, canAddClients, canChase } = usePermissions()
   const greetingName = firstName(user?.name) || 'there'
   const trial = getTrialRemaining(user?.billingStatus, user?.trialEndsAt)
+  const showMfaReminder = !userLoading && !!user && !user.mfaEnabled
 
   const loadSummary = useCallback(async () => {
     try {
@@ -424,6 +425,46 @@ export default function Dashboard({ navigate = () => {} }: { navigate?: (route: 
           )}
         </div>
       </div>
+
+      {showMfaReminder && (
+        <div style={{ padding: '0 24px 16px', flexShrink: 0 }}>
+          <div
+            role="status"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 16,
+              flexWrap: 'wrap',
+              padding: '14px 18px',
+              borderRadius: 10,
+              background: B.amberBg,
+              border: '1px solid #FDE68A',
+            }}
+          >
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: B.amberText }}>
+                Turn on two-step verification
+              </div>
+              <div style={{ fontSize: 12.5, color: B.muted, marginTop: 3 }}>
+                Protect your account with an authenticator app. It only takes a minute.
+              </div>
+            </div>
+            <Link
+              href="/settings?section=security"
+              style={{
+                fontSize: 12.5,
+                fontWeight: 600,
+                color: B.amberText,
+                textDecoration: 'none',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              Enable 2FA →
+            </Link>
+          </div>
+        </div>
+      )}
 
       {trial && (
         <div style={{ padding: '0 24px 16px', flexShrink: 0 }}>

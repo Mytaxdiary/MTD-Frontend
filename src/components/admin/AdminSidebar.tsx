@@ -12,6 +12,7 @@ import {
   SettingsIcon,
   SignOutIcon,
   ClockIcon,
+  AlertIcon,
 } from '@/components/ui/icons'
 
 const SIDEBAR_WIDTH = 244
@@ -65,6 +66,18 @@ const NAV = [
     label: 'Audit log',
     icon: ClockIcon,
     match: (p: string) => p.startsWith('/admin/audit'),
+  },
+  {
+    href: '/admin/errors',
+    label: 'Errors',
+    icon: AlertIcon,
+    match: (p: string) => p.startsWith('/admin/errors'),
+  },
+  {
+    href: '/admin/security',
+    label: 'Security',
+    icon: SettingsIcon,
+    match: (p: string) => p.startsWith('/admin/security'),
   },
   {
     href: '/admin/support',

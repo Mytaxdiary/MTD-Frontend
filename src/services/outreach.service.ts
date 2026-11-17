@@ -125,6 +125,13 @@ export interface PageResult<T> {
   totalPages: number
 }
 
+type ApiEnvelope<T> = { success: true; data: T; timestamp?: string }
+
+function unwrap<T>(r: { data: ApiEnvelope<T> | T }): T {
+  const body = r.data as ApiEnvelope<T> & T
+  return (body && typeof body === 'object' && 'data' in body ? body.data : body) as T
+}
+
 export const outreachService = {
   listContacts(params?: {
     page?: number
@@ -134,20 +141,22 @@ export const outreachService = {
     firmId?: string
   }) {
     return axiosClient
-      .get<PageResult<OutreachContact>>('/outreach/contacts', { params })
-      .then((r) => r.data)
+      .get<ApiEnvelope<PageResult<OutreachContact>>>('/outreach/contacts', { params })
+      .then(unwrap)
   },
 
   getContact(id: string) {
     return axiosClient
       .get<
-        OutreachContact & {
-          touchpoints: OutreachTouchpoint[]
-          openTasks: OutreachTask[]
-          firm?: OutreachFirm
-        }
+        ApiEnvelope<
+          OutreachContact & {
+            touchpoints: OutreachTouchpoint[]
+            openTasks: OutreachTask[]
+            firm?: OutreachFirm
+          }
+        >
       >(`/outreach/contacts/${id}`)
-      .then((r) => r.data)
+      .then(unwrap)
   },
 
   createContact(body: {
@@ -156,47 +165,57 @@ export const outreachService = {
     firstName?: string
     lastName?: string
   }) {
-    return axiosClient.post<OutreachContact>('/outreach/contacts', body).then((r) => r.data)
+    return axiosClient
+      .post<ApiEnvelope<OutreachContact>>('/outreach/contacts', body)
+      .then(unwrap)
   },
 
   releaseContact(id: string) {
-    return axiosClient.post<OutreachContact>(`/outreach/contacts/${id}/release`).then((r) => r.data)
+    return axiosClient
+      .post<ApiEnvelope<OutreachContact>>(`/outreach/contacts/${id}/release`)
+      .then(unwrap)
   },
 
   advanceStep(id: string) {
-    return axiosClient.post(`/outreach/contacts/${id}/advance-step`).then((r) => r.data)
+    return axiosClient
+      .post<ApiEnvelope<unknown>>(`/outreach/contacts/${id}/advance-step`)
+      .then(unwrap)
   },
 
   stopSequence(id: string, reason?: string) {
     return axiosClient
-      .post(`/outreach/contacts/${id}/stop-sequence`, { reason })
-      .then((r) => r.data)
+      .post<ApiEnvelope<unknown>>(`/outreach/contacts/${id}/stop-sequence`, { reason })
+      .then(unwrap)
   },
 
   listFirms(params?: { page?: number; limit?: number; search?: string }) {
     return axiosClient
-      .get<PageResult<OutreachFirm>>('/outreach/firms', { params })
-      .then((r) => r.data)
+      .get<ApiEnvelope<PageResult<OutreachFirm>>>('/outreach/firms', { params })
+      .then(unwrap)
   },
 
   createFirm(body: { name: string; domain?: string }) {
-    return axiosClient.post<OutreachFirm>('/outreach/firms', body).then((r) => r.data)
+    return axiosClient
+      .post<ApiEnvelope<OutreachFirm>>('/outreach/firms', body)
+      .then(unwrap)
   },
 
   todayQueue() {
     return axiosClient
-      .get<{ items: OutreachTask[]; asOf: string }>('/outreach/tasks/today')
-      .then((r) => r.data)
+      .get<ApiEnvelope<{ items: OutreachTask[]; asOf: string }>>('/outreach/tasks/today')
+      .then(unwrap)
   },
 
   updateTask(id: string, body: { status?: string; skipReason?: string }) {
-    return axiosClient.patch<OutreachTask>(`/outreach/tasks/${id}`, body).then((r) => r.data)
+    return axiosClient
+      .patch<ApiEnvelope<OutreachTask>>(`/outreach/tasks/${id}`, body)
+      .then(unwrap)
   },
 
   listTemplates(params?: { page?: number; limit?: number; search?: string }) {
     return axiosClient
-      .get<PageResult<OutreachTemplate>>('/outreach/templates', { params })
-      .then((r) => r.data)
+      .get<ApiEnvelope<PageResult<OutreachTemplate>>>('/outreach/templates', { params })
+      .then(unwrap)
   },
 
   listSuppressions(params?: {
@@ -206,8 +225,8 @@ export const outreachService = {
     valueType?: string
   }) {
     return axiosClient
-      .get<PageResult<OutreachSuppression>>('/outreach/suppressions', { params })
-      .then((r) => r.data)
+      .get<ApiEnvelope<PageResult<OutreachSuppression>>>('/outreach/suppressions', { params })
+      .then(unwrap)
   },
 
   createSuppression(body: {
@@ -217,43 +236,49 @@ export const outreachService = {
     notes?: string
   }) {
     return axiosClient
-      .post<OutreachSuppression>('/outreach/suppressions', body)
-      .then((r) => r.data)
+      .post<ApiEnvelope<OutreachSuppression>>('/outreach/suppressions', body)
+      .then(unwrap)
   },
 
   deleteSuppression(id: string) {
-    return axiosClient.delete(`/outreach/suppressions/${id}`).then((r) => r.data)
+    return axiosClient
+      .delete<ApiEnvelope<unknown>>(`/outreach/suppressions/${id}`)
+      .then(unwrap)
   },
 
   listCampaigns() {
     return axiosClient
-      .get<{ items: OutreachCampaign[] }>('/outreach/campaigns')
-      .then((r) => r.data)
+      .get<ApiEnvelope<{ items: OutreachCampaign[] }>>('/outreach/campaigns')
+      .then(unwrap)
   },
 
   campaignStats(id: string) {
     return axiosClient
-      .get<{
-        campaign: OutreachCampaign
-        stats: {
-          sent: number
-          delivered: number
-          bounced: number
-          clicked: number
-          replied: number
-          blocked: number
-        }
-      }>(`/outreach/campaigns/${id}/stats`)
-      .then((r) => r.data)
+      .get<
+        ApiEnvelope<{
+          campaign: OutreachCampaign
+          stats: {
+            sent: number
+            delivered: number
+            bounced: number
+            clicked: number
+            replied: number
+            blocked: number
+          }
+        }>
+      >(`/outreach/campaigns/${id}/stats`)
+      .then(unwrap)
   },
 
   releaseCampaign(id: string) {
     return axiosClient
-      .post<OutreachCampaign>(`/outreach/campaigns/${id}/release`)
-      .then((r) => r.data)
+      .post<ApiEnvelope<OutreachCampaign>>(`/outreach/campaigns/${id}/release`)
+      .then(unwrap)
   },
 
   listSequences() {
-    return axiosClient.get<OutreachSequence[]>('/outreach/sequences').then((r) => r.data)
+    return axiosClient
+      .get<ApiEnvelope<OutreachSequence[]>>('/outreach/sequences')
+      .then(unwrap)
   },
 }

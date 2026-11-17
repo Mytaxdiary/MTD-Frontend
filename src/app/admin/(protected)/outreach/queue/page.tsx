@@ -17,8 +17,8 @@ export default function OutreachQueuePage() {
     setError(null)
     try {
       const res = await outreachService.todayQueue()
-      setItems(res.items)
-      setAsOf(res.asOf)
+      setItems(res.items ?? [])
+      setAsOf(res.asOf ?? null)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load queue')
       setItems([])

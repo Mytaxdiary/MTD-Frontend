@@ -8,6 +8,7 @@ const NAV_LINKS = [
   { href: '/portal/dashboard', label: 'Dashboard', tip: 'Your obligations, balances, and deadlines' },
   { href: '/portal/messages', label: 'Chat', tip: 'Message your accountant' },
   { href: '/portal/files', label: 'Files', tip: 'Upload and view shared documents' },
+  { href: '/portal/security', label: 'Security', tip: 'Two-step verification settings' },
 ]
 
 export default function PortalLayout({ children }: { children: React.ReactNode }) {

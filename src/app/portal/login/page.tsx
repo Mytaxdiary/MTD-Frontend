@@ -10,6 +10,8 @@ export default function PortalLoginPage() {
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [mfaToken, setMfaToken] = useState<string | null>(null)
+  const [mfaCode, setMfaCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -18,11 +20,31 @@ export default function PortalLoginPage() {
     setError('')
     setLoading(true)
     try {
-      await portalService.login(email, password)
+      if (mfaToken) {
+        const clean = mfaCode.replace(/\D/g, '')
+        if (clean.length !== 6) {
+          setError('Enter the 6-digit code from your authenticator app.')
+          return
+        }
+        await portalService.verifyMfa(mfaToken, clean)
+        setPortalSessionCookie()
+        router.push('/portal/dashboard')
+        return
+      }
+
+      const result = await portalService.login(email, password)
+      if (result.requiresMfa && result.mfaToken) {
+        setMfaToken(result.mfaToken)
+        return
+      }
       setPortalSessionCookie()
       router.push('/portal/dashboard')
     } catch {
-      setError('Invalid email or password. Please try again.')
+      setError(
+        mfaToken
+          ? 'Invalid code. Please try again.'
+          : 'Invalid email or password. Please try again.',
+      )
     } finally {
       setLoading(false)
     }
@@ -47,10 +69,12 @@ export default function PortalLoginPage() {
           🔒
         </div>
         <h1 style={{ margin: '0 0 6px', fontSize: 24, fontWeight: 800, color: B.text }}>
-          Sign in to your portal
+          {mfaToken ? 'Enter authenticator code' : 'Sign in to your portal'}
         </h1>
         <p style={{ margin: 0, fontSize: 15, color: B.muted }}>
-          View your tax submissions and messages from your accountant.
+          {mfaToken
+            ? 'Open your authenticator app and enter the 6-digit code.'
+            : 'View your tax submissions and messages from your accountant.'}
         </p>
       </div>
 
@@ -64,51 +88,78 @@ export default function PortalLoginPage() {
         }}
       >
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: 18 }}>
-            <label
-              style={{
-                display: 'block',
-                fontSize: 14,
-                fontWeight: 600,
-                color: B.text,
-                marginBottom: 7,
-              }}
-            >
-              Email address
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              autoComplete="email"
-              style={inputStyle}
-              placeholder="you@example.com"
-            />
-          </div>
+          {!mfaToken ? (
+            <>
+              <div style={{ marginBottom: 18 }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: 14,
+                    fontWeight: 600,
+                    color: B.text,
+                    marginBottom: 7,
+                  }}
+                >
+                  Email address
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  autoComplete="email"
+                  style={inputStyle}
+                  placeholder="you@example.com"
+                />
+              </div>
 
-          <div style={{ marginBottom: 26 }}>
-            <label
-              style={{
-                display: 'block',
-                fontSize: 14,
-                fontWeight: 600,
-                color: B.text,
-                marginBottom: 7,
-              }}
-            >
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              autoComplete="current-password"
-              style={inputStyle}
-              placeholder="Enter your password"
-            />
-          </div>
+              <div style={{ marginBottom: 26 }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: 14,
+                    fontWeight: 600,
+                    color: B.text,
+                    marginBottom: 7,
+                  }}
+                >
+                  Password
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                  style={inputStyle}
+                  placeholder="Enter your password"
+                />
+              </div>
+            </>
+          ) : (
+            <div style={{ marginBottom: 26 }}>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: 14,
+                  fontWeight: 600,
+                  color: B.text,
+                  marginBottom: 7,
+                }}
+              >
+                Authenticator code
+              </label>
+              <input
+                value={mfaCode}
+                onChange={(e) => setMfaCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                required
+                style={{ ...inputStyle, letterSpacing: '0.16em', fontSize: 18 }}
+                placeholder="123456"
+              />
+            </div>
+          )}
 
           {error && (
             <div
@@ -143,8 +194,31 @@ export default function PortalLoginPage() {
               letterSpacing: '0.1px',
             }}
           >
-            {loading ? 'Signing in...' : 'Sign in'}
+            {loading ? 'Please wait…' : mfaToken ? 'Verify and continue' : 'Sign in'}
           </button>
+
+          {mfaToken && (
+            <button
+              type="button"
+              onClick={() => {
+                setMfaToken(null)
+                setMfaCode('')
+                setError('')
+              }}
+              style={{
+                width: '100%',
+                marginTop: 10,
+                padding: '10px 0',
+                background: 'transparent',
+                border: 'none',
+                color: B.muted,
+                fontSize: 13.5,
+                cursor: 'pointer',
+              }}
+            >
+              Back to email and password
+            </button>
+          )}
         </form>
       </div>
       <LegalFooter />

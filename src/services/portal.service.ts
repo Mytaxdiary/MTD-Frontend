@@ -11,6 +11,19 @@ export interface PortalMe {
   firmName: string
   firmEmail: string
   isPreview: boolean
+  mfaEnabled?: boolean
+}
+
+export interface PortalLoginResult {
+  name: string
+  requiresMfa?: boolean
+  mfaToken?: string
+}
+
+export interface PortalMfaSetupResponse {
+  secret: string
+  otpauthUrl: string
+  setupToken: string
 }
 
 export interface PortalObligationPeriod {
@@ -106,12 +119,33 @@ const portalService = {
     return res.data.data
   },
 
-  async login(email: string, password: string): Promise<{ name: string }> {
-    const res = await portalAxiosClient.post<{ data: { name: string } }>('/portal/auth/login', {
+  async login(email: string, password: string): Promise<PortalLoginResult> {
+    const res = await portalAxiosClient.post<{ data: PortalLoginResult }>('/portal/auth/login', {
       email,
       password,
     })
     return res.data.data
+  },
+
+  async verifyMfa(mfaToken: string, code: string): Promise<{ name: string }> {
+    const res = await portalAxiosClient.post<{ data: { name: string } }>('/portal/auth/mfa/verify', {
+      mfaToken,
+      code,
+    })
+    return res.data.data
+  },
+
+  async mfaSetup(): Promise<PortalMfaSetupResponse> {
+    const res = await portalAxiosClient.get<{ data: PortalMfaSetupResponse }>('/portal/mfa/setup')
+    return res.data.data
+  },
+
+  async mfaEnable(setupToken: string, code: string): Promise<void> {
+    await portalAxiosClient.post('/portal/mfa/enable', { setupToken, code })
+  },
+
+  async mfaDisable(password: string, code: string): Promise<void> {
+    await portalAxiosClient.post('/portal/mfa/disable', { password, code })
   },
 
   async logout(): Promise<void> {

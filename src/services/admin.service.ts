@@ -129,6 +129,32 @@ export interface AdminAuditLogListResponse {
   totalPages: number
 }
 
+export type AdminErrorSource = 'hmrc' | 'api' | 'server'
+
+export interface AdminErrorLogItem {
+  id: string
+  source: AdminErrorSource
+  endpoint: string
+  httpMethod: string | null
+  statusCode: number | null
+  message: string
+  clientId: string | null
+  clientLabel: string | null
+  tenantId: string | null
+  tenantLabel: string | null
+  userId: string | null
+  metadata: Record<string, unknown> | null
+  createdAt: string
+}
+
+export interface AdminErrorLogListResponse {
+  items: AdminErrorLogItem[]
+  page: number
+  limit: number
+  total: number
+  totalPages: number
+}
+
 export const adminService = {
   getOverview: async (): Promise<AdminOverviewStats> => {
     const { data } = await axiosClient.get<{ success: true; data: AdminOverviewStats }>(
@@ -240,6 +266,28 @@ export const adminService = {
           page: params.page,
           limit: params.limit,
           action: params.action || undefined,
+          search: params.search || undefined,
+        },
+      }
+    )
+    return data.data
+  },
+
+  listErrors: async (params: {
+    page?: number
+    limit?: number
+    source?: AdminErrorSource | ''
+    statusCode?: number
+    search?: string
+  }): Promise<AdminErrorLogListResponse> => {
+    const { data } = await axiosClient.get<{ success: true; data: AdminErrorLogListResponse }>(
+      '/admin/errors',
+      {
+        params: {
+          page: params.page,
+          limit: params.limit,
+          source: params.source || undefined,
+          statusCode: params.statusCode || undefined,
           search: params.search || undefined,
         },
       }
