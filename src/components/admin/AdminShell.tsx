@@ -14,7 +14,9 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         <div
           style={{
             display: 'flex',
-            height: '100vh',
+            height: '100dvh',
+            maxHeight: '100dvh',
+            overflow: 'hidden',
             fontFamily: "'DM Sans', 'Segoe UI', system-ui, sans-serif",
             background: '#F1F5F9',
             color: '#0F172A',
@@ -24,7 +26,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           <main
             id="main-content"
             tabIndex={-1}
-            style={{ flex: 1, minWidth: 0, overflowY: 'auto', outline: 'none' }}
+            style={{ flex: 1, minWidth: 0, minHeight: 0, overflowY: 'auto', outline: 'none' }}
           >
             {children}
           </main>

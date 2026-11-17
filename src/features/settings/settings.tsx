@@ -1,6 +1,6 @@
 'use client'
-import { useState, useEffect, useMemo } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useState, useEffect, useMemo, useCallback } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import B from '@/styles/theme'
 import SettingsSidebar, { SETTINGS_NAV, type SectionKey } from './components/SettingsSidebar'
 import FirmDetailsSection from './components/FirmDetailsSection'
@@ -17,6 +17,8 @@ import { usePermissions } from '@/hooks/usePermissions'
 
 export default function Settings(_props: { navigate?: (route: string) => void }) {
   const searchParams = useSearchParams()
+  const router = useRouter()
+  const pathname = usePathname()
   const perms = usePermissions()
   const [section, setSection] = useState<SectionKey>('security')
   const [navReady, setNavReady] = useState(false)
@@ -33,13 +35,28 @@ export default function Settings(_props: { navigate?: (route: string) => void })
 
   const allowedKeys = useMemo(() => visibleNav.map((s) => s.k), [visibleNav])
 
+  const setSectionInUrl = useCallback(
+    (key: SectionKey) => {
+      setSection(key)
+      const params = new URLSearchParams(searchParams.toString())
+      params.set('section', key)
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+    },
+    [pathname, router, searchParams],
+  )
+
   useEffect(() => {
     if (perms.loading || allowedKeys.length === 0) return
     const s = searchParams.get('section') as SectionKey | null
     const next = s && allowedKeys.includes(s) ? s : allowedKeys[0]
     setSection(next)
     setNavReady(true)
-  }, [searchParams, perms.loading, allowedKeys])
+    if (s !== next) {
+      const params = new URLSearchParams(searchParams.toString())
+      params.set('section', next)
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+    }
+  }, [searchParams, perms.loading, allowedKeys, pathname, router])
 
   const subtitle = perms.isOwner
     ? 'Manage your firm, HMRC connection, team, and preferences'
@@ -66,7 +83,7 @@ export default function Settings(_props: { navigate?: (route: string) => void })
           <div style={{ fontSize: 14, color: B.muted }}>Loading settings...</div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 24 }}>
-            <SettingsSidebar active={section} onChange={setSection} sections={visibleNav} />
+            <SettingsSidebar active={section} onChange={setSectionInUrl} sections={visibleNav} />
 
             <div>
               {section === 'firm' && perms.canViewSettings && <FirmDetailsSection />}

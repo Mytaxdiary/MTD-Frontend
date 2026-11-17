@@ -102,13 +102,17 @@ export default function AdminSidebar() {
       style={{
         width: SIDEBAR_WIDTH,
         flexShrink: 0,
+        alignSelf: 'stretch',
+        height: '100%',
+        minHeight: 0,
         display: 'flex',
         flexDirection: 'column',
+        overflow: 'hidden',
         background: `linear-gradient(180deg, ${B.sidebarBgTop} 0%, ${B.sidebarBg} 34%, ${B.sidebarBg} 100%)`,
         borderRight: `1px solid ${B.sidebarBorder}`,
       }}
     >
-      <div style={{ padding: '16px 14px 10px' }}>
+      <div style={{ padding: '16px 14px 10px', flexShrink: 0 }}>
         <BrandLogo width={216} priority />
         <div
           style={{
@@ -124,7 +128,10 @@ export default function AdminSidebar() {
         </div>
       </div>
 
-      <div style={{ padding: '8px 12px', flex: 1 }}>
+      <div
+        className="app-sidebar-nav"
+        style={{ padding: '8px 12px', flex: 1, minHeight: 0, overflowY: 'auto' }}
+      >
         {NAV.map((item) => {
           const active = item.match(pathname)
           const Icon = item.icon
@@ -166,7 +173,7 @@ export default function AdminSidebar() {
         })}
       </div>
 
-      <div style={{ padding: '14px', borderTop: `1px solid ${B.sidebarBorder}` }}>
+      <div style={{ padding: '14px', borderTop: `1px solid ${B.sidebarBorder}`, flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
           <div
             style={{
@@ -208,13 +215,14 @@ export default function AdminSidebar() {
             alignItems: 'center',
             gap: 8,
             width: '100%',
-            padding: '8px 10px',
+            padding: '9px 12px',
             borderRadius: 8,
-            border: '1px solid transparent',
-            background: 'transparent',
-            color: B.sidebarText,
+            border: `1px solid ${B.sidebarBorder}`,
+            background: 'rgba(255,255,255,0.04)',
+            color: B.sidebarTextActive,
             cursor: 'pointer',
             fontSize: 13,
+            fontWeight: 600,
           }}
         >
           <SignOutIcon />
