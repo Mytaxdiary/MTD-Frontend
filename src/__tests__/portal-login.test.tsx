@@ -130,7 +130,7 @@ describe('Portal Login Page', () => {
 
   // ── Loading state ───────────────────────────────────────────────────────────
 
-  it('disables submit button and shows "Signing in..." while request is in flight', async () => {
+  it('disables submit button and shows "Please wait…" while request is in flight', async () => {
     // Promise that never resolves keeps loading = true
     mockPortalLogin.mockReturnValue(new Promise(() => {}))
     render(<PortalLoginPage />)
@@ -140,7 +140,7 @@ describe('Portal Login Page', () => {
     fireEvent.click(getSubmitButton())
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /signing in/i })).toBeDisabled()
+      expect(screen.getByRole('button', { name: /please wait/i })).toBeDisabled()
     })
   })
 })
