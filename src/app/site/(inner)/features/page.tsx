@@ -9,14 +9,14 @@ export const metadata: Metadata = {
     title: 'Features | My Tax Diary',
     description:
       'Track MTD submission status, liabilities and due dates from HMRC, send client chasers and give clients a portal. Works alongside your filing software.',
-    url: '/site/features',
+    url: 'https://mytaxdiary.co.uk/features',
   },
   twitter: {
     title: 'Features | My Tax Diary',
     description:
       'Track MTD submission status, liabilities and due dates from HMRC, send client chasers and give clients a portal. Works alongside your filing software.',
   },
-  alternates: { canonical: '/site/features' },
+  alternates: { canonical: 'https://mytaxdiary.co.uk/features' },
 }
 
 export default function MarketingFeaturesPage() {

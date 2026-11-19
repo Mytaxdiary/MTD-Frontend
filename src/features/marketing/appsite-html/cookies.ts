@@ -16,7 +16,7 @@ const html = `<section class="page-hero">
         wording for you: this page carries legal weight and should be written or approved by your own adviser.</p>
       </div>
       <p style="margin-top:26px;font-size:15px">Questions in the meantime?
-        <a href="/site/contact" style="color:var(--accent-dark);text-decoration:underline">Get in touch</a>
+        <a href="https://mytaxdiary.co.uk/contact" style="color:var(--accent-dark);text-decoration:underline">Get in touch</a>
         or email <a href="mailto:info@mytaxdiary.co.uk" style="color:var(--accent-dark);text-decoration:underline">info@mytaxdiary.co.uk</a>.</p>
     </div>
   </div>

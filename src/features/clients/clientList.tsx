@@ -422,7 +422,7 @@ export default function ClientList({
           flexShrink: 0,
         }}
       >
-        <div>
+          <div>
           <div style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.01em' }}>Clients</div>
           <div style={{ fontSize: 15, color: B.muted, marginTop: 3 }}>
             {clientsLoading
@@ -449,7 +449,7 @@ export default function ClientList({
           + Add client
         </button>
         )}
-      </div>
+        </div>
 
       <div style={{ padding: '18px 28px', flex: 1 }}>
         <div
@@ -489,7 +489,7 @@ export default function ClientList({
             >
               ⌕
             </span>
-          </div>
+            </div>
           <select
             value={statusFilter}
             onChange={(e) => handleStatusChange(e.target.value)}
@@ -503,9 +503,9 @@ export default function ClientList({
               cursor: 'pointer',
             }}
           >
-            <option value="all">All statuses</option>
+              <option value="all">All statuses</option>
             <option value="filed">Authorised</option>
-            <option value="pending">Pending invite</option>
+              <option value="pending">Pending invite</option>
             <option value="invite-accepted">Invite accepted</option>
             <option value="partial-auth">Partial auth</option>
             <option value="rejected">Rejected</option>
@@ -527,7 +527,7 @@ export default function ClientList({
             <option value="all">All agent types</option>
             <option value="main">Main</option>
             <option value="supporting">Supporting</option>
-          </select>
+            </select>
           <div style={{ marginLeft: 'auto', display: 'flex', gap: 6, alignItems: 'center' }}>
             {selected.size > 0 && canChase && (
               <>
@@ -658,7 +658,7 @@ export default function ClientList({
               )}
             </div>
           </div>
-        </div>
+          </div>
 
         <div
           style={{
@@ -670,7 +670,7 @@ export default function ClientList({
           }}
         >
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
-            <thead>
+              <thead>
               <tr style={{ borderBottom: `2px solid ${B.border}`, background: B.surface }}>
                 {canChase && (
                 <th style={{ padding: '11px 16px', width: 36 }}>
@@ -819,11 +819,11 @@ export default function ClientList({
                   >
                     YTD income
                     <SortIcon col="income" />
-                  </th>
+                    </th>
                 )}
-              </tr>
-            </thead>
-            <tbody>
+                </tr>
+              </thead>
+              <tbody>
               {clientsLoading && (
                 <tr>
                   <td
@@ -999,8 +999,8 @@ export default function ClientList({
                     )}
                   </tr>
                 ))}
-            </tbody>
-          </table>
+              </tbody>
+            </table>
           <div
             style={{
               padding: '13px 20px',

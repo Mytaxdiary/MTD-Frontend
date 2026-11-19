@@ -1,23 +1,25 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import CookiesBody from '@/features/legal/CookiesBody'
+import { SITE_HOME, SITE_LEGAL } from '@/features/marketing/nav'
 import '@/features/legal/legal.css'
 
 export const metadata: Metadata = {
   title: 'Cookies Policy | My Tax Diary',
   description: 'Cookies Policy for My Tax Diary Ltd.',
+  alternates: { canonical: SITE_LEGAL.cookies },
 }
 
 export default function CookiesPage() {
   return (
     <div className="mtd-legal-standalone">
       <nav className="mtd-legal-standalone__nav">
-        <Link href="/" className="mtd-legal-standalone__brand">
+        <Link href={SITE_HOME} className="mtd-legal-standalone__brand">
           My Tax Diary
         </Link>
         <div className="mtd-legal-standalone__links">
-          <Link href="/privacy-policy">Privacy Policy</Link>
-          <Link href="/terms">Terms</Link>
+          <Link href={SITE_LEGAL.privacy}>Privacy Policy</Link>
+          <Link href={SITE_LEGAL.terms}>Terms</Link>
           <Link href="/login">Sign in</Link>
         </div>
       </nav>
@@ -29,11 +31,11 @@ export default function CookiesPage() {
           <p className="mtd-legal-standalone__meta">Effective date: 20 July 2026</p>
         </header>
 
-        <CookiesBody privacyHref="/privacy-policy" />
+        <CookiesBody privacyHref={SITE_LEGAL.privacy} />
 
         <div className="mtd-legal-standalone__footer">
-          <Link href="/privacy-policy">Privacy Policy</Link>
-          <Link href="/terms">Terms</Link>
+          <Link href={SITE_LEGAL.privacy}>Privacy Policy</Link>
+          <Link href={SITE_LEGAL.terms}>Terms</Link>
           <Link href="/login">Sign in</Link>
           <a href="mailto:info@mytaxdiary.co.uk">info@mytaxdiary.co.uk</a>
           <span>My Tax Diary Ltd, Company No. 17312332</span>

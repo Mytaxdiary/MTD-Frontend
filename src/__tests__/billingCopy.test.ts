@@ -11,7 +11,7 @@ describe('getPaywallCopy', () => {
   it('uses domain-lock copy for TRIAL_DOMAIN_USED', () => {
     const copy = getPaywallCopy('TRIAL_DOMAIN_USED')
     expect(copy.title).toMatch(/email domain/i)
-    expect(copy.secondaryHref).toBe('/site/contact')
+    expect(copy.secondaryHref).toBe('https://mytaxdiary.co.uk/contact')
   })
 
   it('defaults to subscription-required copy', () => {

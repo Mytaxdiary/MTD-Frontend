@@ -1,15 +1,15 @@
 const html = `<!-- ===== HEADER ===== -->
 <header id="hdr">
   <div class="wrap nav">
-      <a href="/site" class="logo">
+      <a href="https://mytaxdiary.co.uk" class="logo">
         <img src="/site/logo.png" alt="My Tax Diary" class="company-logo">
       </a>
 
     <nav class="nav-links">
-      <a href="/site" class="active">Home</a>
-      <a href="/site/features">Features</a>
-      <a href="/site/pricing">Pricing</a>
-      <a href="/site/contact">Contact</a>
+      <a href="https://mytaxdiary.co.uk" class="active">Home</a>
+      <a href="https://mytaxdiary.co.uk/features">Features</a>
+      <a href="https://mytaxdiary.co.uk/pricing">Pricing</a>
+      <a href="https://mytaxdiary.co.uk/contact">Contact</a>
     </nav>
 
     <div class="nav-cta">
@@ -22,10 +22,10 @@ const html = `<!-- ===== HEADER ===== -->
   <div class="mobile-menu" id="mobileMenu">
     <div class="wrap">
       <nav>
-        <a href="/site" class="active">Home</a>
-        <a href="/site/features">Features</a>
-        <a href="/site/pricing">Pricing</a>
-        <a href="/site/contact">Contact</a>
+        <a href="https://mytaxdiary.co.uk" class="active">Home</a>
+        <a href="https://mytaxdiary.co.uk/features">Features</a>
+        <a href="https://mytaxdiary.co.uk/pricing">Pricing</a>
+        <a href="https://mytaxdiary.co.uk/contact">Contact</a>
       </nav>
       <div class="m-cta">
         <a href="/login" class="btn btn-ghost">Sign in</a>
@@ -52,7 +52,7 @@ const html = `<!-- ===== HEADER ===== -->
             <a href="/register" class="btn btn-primary btn-lg">Start your 7-day free trial
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </a>
-            <a href="/site/contact" class="btn btn-ghost btn-lg">Book a demo</a>
+            <a href="https://mytaxdiary.co.uk/contact" class="btn btn-ghost btn-lg">Book a demo</a>
           </div>
           <p class="trial-micro">No card needed.</p>
 
@@ -122,7 +122,7 @@ const html = `<!-- ===== HEADER ===== -->
         </div>
         <h3>Know who has submitted</h3>
         <p>One dashboard for your whole client book. See each client's quarterly updates and final declaration, with the status taken from HMRC, not from a spreadsheet someone forgot to update.</p>
-        <a href="/site/features" class="link">Learn more →</a>
+        <a href="https://mytaxdiary.co.uk/features" class="link">Learn more →</a>
       </div>
 
       <div class="card reveal" style="--d:.08s">
@@ -131,7 +131,7 @@ const html = `<!-- ===== HEADER ===== -->
         </div>
         <h3>Stop chasing from your own inbox</h3>
         <p>My Tax Diary emails clients to ask for their quarterly figures, using templates you choose. Their replies come straight to your inbox, so you can get on with the update.</p>
-        <a href="/site/features" class="link">Learn more →</a>
+        <a href="https://mytaxdiary.co.uk/features" class="link">Learn more →</a>
       </div>
 
       <div class="card reveal" style="--d:.16s">
@@ -140,7 +140,7 @@ const html = `<!-- ===== HEADER ===== -->
         </div>
         <h3>Answer "what do I owe?" in seconds</h3>
         <p>See each client's liability and due dates without logging in to HMRC. When a client rings, the answer is already on your screen.</p>
-        <a href="/site/features" class="link">Learn more →</a>
+        <a href="https://mytaxdiary.co.uk/features" class="link">Learn more →</a>
       </div>
 
       <div class="card reveal" style="--d:.24s">
@@ -149,7 +149,7 @@ const html = `<!-- ===== HEADER ===== -->
         </div>
         <h3>Give every client their own view</h3>
         <p>Each client gets a simple portal showing their submissions, what they owe and how to pay it. A better service for them, and fewer calls for you.</p>
-        <a href="/site/features" class="link">Learn more →</a>
+        <a href="https://mytaxdiary.co.uk/features" class="link">Learn more →</a>
       </div>
 
       <div class="card reveal" style="--d:.32s">
@@ -158,7 +158,7 @@ const html = `<!-- ===== HEADER ===== -->
         </div>
         <h3>See payments coming before they land</h3>
         <p>Keep track of payments on account and balancing payments across your whole book, with the amounts and dates in one place.</p>
-        <a href="/site/features" class="link">Learn more →</a>
+        <a href="https://mytaxdiary.co.uk/features" class="link">Learn more →</a>
       </div>
     </div>
   </div>
@@ -263,8 +263,8 @@ const html = `<!-- ===== HEADER ===== -->
         <a href="/register" class="btn btn-primary btn-lg">Start your 7-day free trial
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
-        <a href="/site/contact" class="btn btn-ghost btn-lg">Book a demo</a>
-        <a href="/site/pricing" class="btn btn-ghost btn-lg">View pricing</a>
+        <a href="https://mytaxdiary.co.uk/contact" class="btn btn-ghost btn-lg">Book a demo</a>
+        <a href="https://mytaxdiary.co.uk/pricing" class="btn btn-ghost btn-lg">View pricing</a>
       </div>
       <div class="cta-note">
         Know where every<br>client stands.
@@ -282,7 +282,7 @@ const html = `<!-- ===== HEADER ===== -->
   <div class="wrap">
     <div class="foot-grid">
       <div class="foot-about reveal">
-        <a href="/site" class="logo" aria-label="My Tax Diary home">
+        <a href="https://mytaxdiary.co.uk" class="logo" aria-label="My Tax Diary home">
         <img src="/site/logo.png" alt="My Tax Diary" class="company-logo">
         </a> 
         <p>MTD Income Tax monitoring for accounting practices. See who has submitted, what is owed and when, all in one dashboard.</p>
@@ -291,10 +291,10 @@ const html = `<!-- ===== HEADER ===== -->
       <div class="foot-col reveal" style="--d:.08s">
         <h5>Product</h5>
         <ul>
-          <li><a href="/site">Home</a></li>
-          <li><a href="/site/features">Features</a></li>
-          <li><a href="/site/pricing">Pricing</a></li>
-          <li><a href="/site/contact">Contact</a></li>
+          <li><a href="https://mytaxdiary.co.uk">Home</a></li>
+          <li><a href="https://mytaxdiary.co.uk/features">Features</a></li>
+          <li><a href="https://mytaxdiary.co.uk/pricing">Pricing</a></li>
+          <li><a href="https://mytaxdiary.co.uk/contact">Contact</a></li>
         </ul>
       </div>
 
@@ -310,9 +310,9 @@ const html = `<!-- ===== HEADER ===== -->
       <div class="foot-col reveal" style="--d:.24s">
         <h5>Legal</h5>
         <ul>
-          <li><a href="/site/terms">Terms</a></li>
-          <li><a href="/site/privacy">Privacy</a></li>
-          <li><a href="/site/cookies">Cookies</a></li>
+          <li><a href="https://mytaxdiary.co.uk/terms">Terms</a></li>
+          <li><a href="https://mytaxdiary.co.uk/privacy">Privacy</a></li>
+          <li><a href="https://mytaxdiary.co.uk/cookies">Cookies</a></li>
         </ul>
       </div>
     </div>

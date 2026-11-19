@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'My Tax Diary Ltd' }],
   creator: 'My Tax Diary Ltd',
   publisher: 'My Tax Diary Ltd',
-  alternates: { canonical: '/site' },
+  alternates: { canonical: '/' },
   icons: {
     icon: [
       { url: '/site/favicon.ico', sizes: 'any' },
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_GB',
-    url: '/site',
+    url: '/',
     siteName: 'My Tax Diary',
     title: 'My Tax Diary: MTD Income Tax monitoring for accounting firms',
     description,

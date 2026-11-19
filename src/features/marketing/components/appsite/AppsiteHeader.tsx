@@ -1,6 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
+import { SITE_HOME, SITE_NAV, SITE_PAGES } from '@/features/marketing/nav'
 
 /**
  * Shared marketing header for inner pages (features/pricing/contact/legal).
@@ -8,15 +9,13 @@ import { usePathname } from 'next/navigation'
  * shadow + burger toggle) is handled by /public/site/site.js. Cross-page
  * links are plain anchors so each marketing route loads its own stylesheet.
  */
-const NAV = [
-  { href: '/site', label: 'Home' },
-  { href: '/site/features', label: 'Features' },
-  { href: '/site/pricing', label: 'Pricing' },
-  { href: '/site/contact', label: 'Contact' },
-]
+const NAV = SITE_NAV
 
 function isActive(pathname: string, href: string) {
-  if (href === '/site') return pathname === '/site'
+  if (href === SITE_HOME) return pathname === '/site' || pathname === '/'
+  if (href === SITE_PAGES.features) return pathname.startsWith('/site/features') || pathname.startsWith('/features')
+  if (href === SITE_PAGES.pricing) return pathname.startsWith('/site/pricing') || pathname.startsWith('/pricing')
+  if (href === SITE_PAGES.contact) return pathname.startsWith('/site/contact') || pathname.startsWith('/contact')
   return pathname === href || pathname.startsWith(`${href}/`)
 }
 
@@ -26,7 +25,7 @@ export default function AppsiteHeader() {
   return (
     <header className="site-header">
       <div className="wrap nav">
-        <a href="/site" className="logo" aria-label="My Tax Diary home">
+        <a href={SITE_HOME} className="logo" aria-label="My Tax Diary home">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/site/logo.png" alt="My Tax Diary" className="company-logo" />
         </a>

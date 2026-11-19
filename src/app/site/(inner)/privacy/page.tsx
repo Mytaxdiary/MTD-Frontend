@@ -6,7 +6,7 @@ import { SITE_LEGAL } from '@/features/marketing/nav'
 export const metadata: Metadata = {
   title: 'Privacy Policy',
   description: 'How My Tax Diary Ltd handles personal data. ICO registration ZC190729.',
-  alternates: { canonical: '/site/privacy' },
+  alternates: { canonical: SITE_LEGAL.privacy },
 }
 
 export default function MarketingPrivacyPage() {

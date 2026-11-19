@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: 'Terms and Conditions',
   description:
     'Terms and Conditions for My Tax Diary, MTD ITSA software for UK accountants and tax agents.',
-  alternates: { canonical: '/site/terms' },
+  alternates: { canonical: SITE_LEGAL.terms },
 }
 
 export default function MarketingTermsPage() {

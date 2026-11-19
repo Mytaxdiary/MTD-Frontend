@@ -1,3 +1,5 @@
+import { SITE_HOME, SITE_LEGAL, SITE_PAGES } from '@/features/marketing/nav'
+
 /**
  * Shared marketing footer for inner pages. Markup mirrors the `.site-footer`
  * block in MTD-AppSite/*.html. Static — no interactivity required.
@@ -8,7 +10,7 @@ export default function AppsiteFooter() {
       <div className="wrap">
         <div className="foot-grid">
           <div className="foot-about reveal">
-            <a href="/site" className="logo footer-logo" aria-label="My Tax Diary home">
+            <a href={SITE_HOME} className="logo footer-logo" aria-label="My Tax Diary home">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/site/logo.png" alt="My Tax Diary" className="company-logo" />
             </a>
@@ -22,16 +24,16 @@ export default function AppsiteFooter() {
             <h5>Product</h5>
             <ul>
               <li>
-                <a href="/site">Home</a>
+                <a href={SITE_HOME}>Home</a>
               </li>
               <li>
-                <a href="/site/features">Features</a>
+                <a href={SITE_PAGES.features}>Features</a>
               </li>
               <li>
-                <a href="/site/pricing">Pricing</a>
+                <a href={SITE_PAGES.pricing}>Pricing</a>
               </li>
               <li>
-                <a href="/site/contact">Contact</a>
+                <a href={SITE_PAGES.contact}>Contact</a>
               </li>
             </ul>
           </div>
@@ -55,13 +57,13 @@ export default function AppsiteFooter() {
             <h5>Legal</h5>
             <ul>
               <li>
-                <a href="/site/terms">Terms</a>
+                <a href={SITE_LEGAL.terms}>Terms</a>
               </li>
               <li>
-                <a href="/site/privacy">Privacy</a>
+                <a href={SITE_LEGAL.privacy}>Privacy</a>
               </li>
               <li>
-                <a href="/site/cookies">Cookies</a>
+                <a href={SITE_LEGAL.cookies}>Cookies</a>
               </li>
             </ul>
           </div>

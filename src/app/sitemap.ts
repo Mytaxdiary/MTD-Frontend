@@ -13,22 +13,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date()
 
   const paths = [
-    '/site',
-    '/site/features',
-    '/site/pricing',
-    '/site/contact',
-    '/site/terms',
-    '/site/privacy',
-    '/site/cookies',
+    '/',
+    '/features',
+    '/pricing',
+    '/contact',
     '/terms',
-    '/privacy-policy',
+    '/privacy',
     '/cookies',
   ]
 
   return paths.map((path) => ({
-    url: `${base}${path}`,
+    url: path === '/' ? base : `${base}${path}`,
     lastModified: now,
-    changeFrequency: path === '/site' ? 'weekly' : 'monthly',
-    priority: path === '/site' ? 1 : path.startsWith('/site/') ? 0.8 : 0.5,
+    changeFrequency: path === '/' ? 'weekly' : 'monthly',
+    priority: path === '/' ? 1 : 0.8,
   }))
 }

@@ -46,6 +46,7 @@ export default function PrivacyBody({ termsHref, cookiesHref }: Props) {
           items={[
             'Account data: name, business/firm name, job role, email address, and login credentials.',
             'Billing data: billing name, address, and payment details, which are processed by our payment provider, Stripe; we do not store full card numbers ourselves.',
+            'Connected mailbox data: if you connect a Gmail or Microsoft Outlook mailbox, we store the connected account email address and OAuth tokens needed to send email on your behalf. We do not receive or store your mailbox password.',
             'Usage data: how you interact with the Service, pages visited, and platform activity logs, collected in part via Google Analytics.',
             'Communications: correspondence you send us, including support requests.',
             'Technical data: IP address, browser type, and device information, collected automatically via cookies and similar technologies.',
@@ -59,6 +60,7 @@ export default function PrivacyBody({ termsHref, cookiesHref }: Props) {
           items={[
             'To provide, maintain, and secure the Service, which is necessary for performance of our contract with you.',
             'To process payments and manage your Subscription, which is necessary for performance of our contract with you.',
+            'To send client chase and related emails from your connected mailbox when you choose to use that feature, which is necessary for performance of our contract with you.',
             'To respond to support queries and communicate service updates, which is necessary for performance of our contract with you, or our legitimate interest in maintaining the relationship.',
             'To analyse and improve the Service via Google Analytics, based on your consent (managed via our cookie banner) or our legitimate interest in understanding platform usage, as applicable.',
             'To comply with legal and accounting obligations, such as retaining billing records, which is necessary for compliance with a legal obligation.',
@@ -87,6 +89,8 @@ export default function PrivacyBody({ termsHref, cookiesHref }: Props) {
           items={[
             'Stripe, Inc., to process subscription payments.',
             'Google (Google Analytics), to analyse Service usage.',
+            'Google (Gmail API), when you connect a Gmail account, so we can send email on your behalf using the send-only permission you grant.',
+            'Microsoft (Microsoft Graph / Outlook), when you connect an Outlook or Microsoft 365 mailbox, so we can send email on your behalf.',
             'Hetzner Online GmbH, our hosting and infrastructure provider, to host and operate the Service from data centres located in the European Economic Area (Germany and Finland).',
             'Professional advisers (such as accountants or lawyers) and regulators, where necessary.',
             'A buyer, in the event we sell or reorganise our business, subject to appropriate safeguards.',
@@ -95,7 +99,28 @@ export default function PrivacyBody({ termsHref, cookiesHref }: Props) {
         <LegalP>We do not sell personal data to third parties.</LegalP>
       </LegalSection>
 
-      <LegalSection num="7" title="Client Data We Process on Your Instructions">
+      <LegalSection num="7" title="Connected Email Accounts (Gmail and Microsoft)">
+        <LegalP>
+          The Service can optionally connect to your firm&apos;s Gmail or Microsoft Outlook mailbox
+          so chase and related client emails are sent from your own address. Connecting a mailbox is
+          optional. You can disconnect it at any time in the Service.
+        </LegalP>
+        <LegalP>
+          When you connect Gmail, we request only send access (
+          <code>gmail.send</code>
+          ). We use that access solely to send emails you initiate or configure in the Service. We do
+          not read your inbox, drafts, contacts, or other mailbox content, and we do not request full
+          mailbox access.
+        </LegalP>
+        <LegalP>
+          OAuth tokens are stored securely and used only to send those emails. We do not use Google
+          or Microsoft user data for advertising, and we do not sell or transfer that data for
+          unrelated purposes. Our use of information received from Google APIs complies with the
+          Google API Services User Data Policy, including the Limited Use requirements.
+        </LegalP>
+      </LegalSection>
+
+      <LegalSection num="8" title="Client Data We Process on Your Instructions">
         <LegalP>
           Where your firm uses the Service to retrieve or track information about your own clients
           via the HMRC API, such as agent authorisation status, submission history, or liability
@@ -111,7 +136,7 @@ export default function PrivacyBody({ termsHref, cookiesHref }: Props) {
         </LegalP>
       </LegalSection>
 
-      <LegalSection num="8" title="International Transfers">
+      <LegalSection num="9" title="International Transfers">
         <LegalP>
           The Service is hosted by Hetzner Online GmbH in data centres located in the European
           Economic Area (Germany and Finland). Transfers of personal data from the UK to the EEA are
@@ -126,7 +151,7 @@ export default function PrivacyBody({ termsHref, cookiesHref }: Props) {
         </LegalP>
       </LegalSection>
 
-      <LegalSection num="9" title="Data Retention">
+      <LegalSection num="10" title="Data Retention">
         <LegalP>
           We retain Customer account and billing data for as long as your Subscription is active, and
           for six years afterwards in line with standard UK accounting and tax record-keeping
@@ -136,7 +161,7 @@ export default function PrivacyBody({ termsHref, cookiesHref }: Props) {
         </LegalP>
       </LegalSection>
 
-      <LegalSection num="10" title="Security">
+      <LegalSection num="11" title="Security">
         <LegalP>
           We use appropriate technical and organisational measures to protect personal data,
           including encryption in transit, access controls, and regular security review of our
@@ -144,7 +169,7 @@ export default function PrivacyBody({ termsHref, cookiesHref }: Props) {
         </LegalP>
       </LegalSection>
 
-      <LegalSection num="11" title="Your Rights">
+      <LegalSection num="12" title="Your Rights">
         <LegalP>
           If you are an individual whose personal data we control (see section 2), you have the right
           to:
@@ -175,21 +200,21 @@ export default function PrivacyBody({ termsHref, cookiesHref }: Props) {
         </LegalP>
       </LegalSection>
 
-      <LegalSection num="12" title="Children">
+      <LegalSection num="13" title="Children">
         <LegalP>
           The Service is intended for business use by professional firms and is not directed at, or
           intended for use by, children.
         </LegalP>
       </LegalSection>
 
-      <LegalSection num="13" title="Changes to This Policy">
+      <LegalSection num="14" title="Changes to This Policy">
         <LegalP>
           We may update this Privacy Policy from time to time to reflect changes in our practices or
           legal requirements. Material changes will be notified via email or in-app notice.
         </LegalP>
       </LegalSection>
 
-      <LegalSection num="14" title="Contact Us">
+      <LegalSection num="15" title="Contact Us">
         <LegalP>
           For any questions about this Privacy Policy or how we handle personal data, contact us at{' '}
           <a href="mailto:info@mytaxdiary.co.uk">info@mytaxdiary.co.uk</a>.

@@ -13,6 +13,23 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  async redirects() {
+    return [
+      {
+        source: '/privacy-policy',
+        destination: '/privacy',
+        permanent: true,
+      },
+    ]
+  },
+  // Apex paths used after marketing moves to mytaxdiary.co.uk
+  async rewrites() {
+    return [
+      { source: '/features', destination: '/site/features' },
+      { source: '/pricing', destination: '/site/pricing' },
+      { source: '/contact', destination: '/site/contact' },
+    ]
+  },
 }
 
 module.exports = nextConfig

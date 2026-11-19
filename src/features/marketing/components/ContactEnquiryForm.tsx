@@ -69,7 +69,7 @@ export default function ContactEnquiryForm({ initialPlan = '' }: ContactEnquiryF
           phone: form.phone.trim() || undefined,
           message: form.message.trim(),
           planInterest: form.planInterest || undefined,
-          sourcePage: '/site/contact',
+          sourcePage: 'https://mytaxdiary.co.uk/contact',
           website: form.website,
         }),
       })
@@ -108,10 +108,10 @@ export default function ContactEnquiryForm({ initialPlan = '' }: ContactEnquiryF
               email us at info@mytaxdiary.co.uk.
             </p>
             <div className="mtd-page-hero__ctas">
-              <SiteButton href="/site/features" variant="secondary">
+              <SiteButton href="https://mytaxdiary.co.uk/features" variant="secondary">
                 Explore features
               </SiteButton>
-              <SiteButton href="/site/pricing" variant="ghost">
+              <SiteButton href="https://mytaxdiary.co.uk/pricing" variant="ghost">
                 View pricing
               </SiteButton>
             </div>

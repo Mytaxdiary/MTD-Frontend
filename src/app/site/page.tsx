@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: { absolute: 'My Tax Diary: MTD Income Tax monitoring for accountants' },
   description:
     "See every client's MTD Income Tax status, what they owe and when, in one dashboard. Read-only HMRC data, client chasers and a client portal.",
-  alternates: { canonical: '/site' },
+  alternates: { canonical: 'https://mytaxdiary.co.uk' },
 }
 
 export default function MarketingHomePage() {

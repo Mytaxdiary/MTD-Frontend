@@ -6,10 +6,13 @@ import { useState } from 'react'
 import BrandLogo from '@/components/ui/BrandLogo'
 import SiteButton from './SiteButton'
 import SiteContainer from './SiteContainer'
-import { SITE_APP_LOGIN, SITE_APP_REGISTER, SITE_NAV } from '../nav'
+import { SITE_APP_LOGIN, SITE_APP_REGISTER, SITE_HOME, SITE_NAV, SITE_PAGES } from '../nav'
 
 function isActive(pathname: string, href: string) {
-  if (href === '/site') return pathname === '/site'
+  if (href === SITE_HOME) return pathname === '/site' || pathname === '/'
+  if (href === SITE_PAGES.features) return pathname.startsWith('/site/features') || pathname.startsWith('/features')
+  if (href === SITE_PAGES.pricing) return pathname.startsWith('/site/pricing') || pathname.startsWith('/pricing')
+  if (href === SITE_PAGES.contact) return pathname.startsWith('/site/contact') || pathname.startsWith('/contact')
   return pathname === href || pathname.startsWith(`${href}/`)
 }
 
@@ -21,7 +24,7 @@ export default function SiteHeader() {
     <header className="mtd-site-header">
       <SiteContainer>
         <div className="mtd-site-header__inner">
-          <Link href="/site" className="mtd-site-header__brand" aria-label="My Tax Diary home">
+          <Link href={SITE_HOME} className="mtd-site-header__brand" aria-label="My Tax Diary home">
             <BrandLogo width={168} priority />
           </Link>
 

@@ -94,7 +94,7 @@ export default function AppsiteContactForm({ initialPlan = '' }: ContactFormProp
           phone: phone.trim() || undefined,
           message: message.trim(),
           planInterest: pkg || undefined,
-          sourcePage: '/site/contact',
+          sourcePage: 'https://mytaxdiary.co.uk/contact',
           website,
         }),
       })

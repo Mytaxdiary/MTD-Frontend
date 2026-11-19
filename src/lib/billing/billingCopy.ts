@@ -4,12 +4,12 @@ import type { BillingGateCode } from './billingErrors'
 export const BILLING_START_TRIAL_HREF = '/register'
 
 /** Public pricing page. */
-export const BILLING_PRICING_HREF = '/site/pricing'
+export const BILLING_PRICING_HREF = 'https://mytaxdiary.co.uk/pricing'
 
 /** In-app Plan & billing (owner Subscribe / Manage billing). */
 export const BILLING_SUBSCRIBE_HREF = '/settings?section=billing'
 
-export const BILLING_CONTACT_HREF = '/site/contact'
+export const BILLING_CONTACT_HREF = 'https://mytaxdiary.co.uk/contact'
 
 export interface PaywallCopy {
   title: string

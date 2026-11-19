@@ -5,7 +5,7 @@ const html = `<section class="page-hero">
     <p class="reveal" style="--d:.12s">See who has submitted, what each client owes and when, chase for figures, and give clients a simple portal. It works alongside the software you already file with.</p>
     <div class="hero-actions reveal" style="--d:.18s">
       <a href="/register" class="btn btn-primary">Start your 7-day free trial</a>
-      <a href="/site/contact" class="btn btn-ghost">Book a demo</a>
+      <a href="https://mytaxdiary.co.uk/contact" class="btn btn-ghost">Book a demo</a>
     </div>
   </div>
 </section>
@@ -222,8 +222,8 @@ const html = `<section class="page-hero">
       <p>Try My Tax Diary free for 7 days. No card needed. If you would rather see it first, book a 20-minute walkthrough.</p>
       <div class="cta-actions">
         <a href="/register" class="btn btn-primary">Start your 7-day free trial</a>
-        <a href="/site/contact" class="btn btn-ghost">Book a demo</a>
-        <a href="/site/pricing" class="btn btn-ghost">View pricing</a>
+        <a href="https://mytaxdiary.co.uk/contact" class="btn btn-ghost">Book a demo</a>
+        <a href="https://mytaxdiary.co.uk/pricing" class="btn btn-ghost">View pricing</a>
       </div>
     </div>
   </div>

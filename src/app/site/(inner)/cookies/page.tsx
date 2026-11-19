@@ -6,7 +6,7 @@ import { SITE_LEGAL } from '@/features/marketing/nav'
 export const metadata: Metadata = {
   title: 'Cookie Policy',
   description: 'The cookies this site sets and what they are used for.',
-  alternates: { canonical: '/site/cookies' },
+  alternates: { canonical: SITE_LEGAL.cookies },
 }
 
 export default function MarketingCookiesPage() {

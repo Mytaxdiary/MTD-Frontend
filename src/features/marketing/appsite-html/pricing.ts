@@ -138,7 +138,7 @@ const html = `<section class="page-hero">
       <p>Start your free 7-day trial today. No card required.</p>
       <div class="cta-actions">
         <a href="/register" class="btn btn-primary">Start your free trial</a>
-        <a href="/site/contact" class="btn btn-ghost">Have questions? Enquire</a>
+        <a href="https://mytaxdiary.co.uk/contact" class="btn btn-ghost">Have questions? Enquire</a>
       </div>
     </div>
   </div>

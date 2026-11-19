@@ -38,6 +38,12 @@ export default function TermsBody({ privacyHref }: Props) {
           history, and liability information (&quot;Client Data&quot;), so that your firm can monitor
           its client base in one place.
         </LegalP>
+        <LegalP>
+          Optionally, you may connect a Gmail or Microsoft Outlook mailbox so the Service can send
+          client chase and related emails from your firm&apos;s own address. Emails are sent only
+          when you use that feature. Connecting a mailbox is not required to use HMRC monitoring
+          features, and you may disconnect it at any time.
+        </LegalP>
       </LegalSection>
 
       <LegalSection num="3" title="What the Service Does Not Do">
@@ -61,6 +67,7 @@ export default function TermsBody({ privacyHref }: Props) {
             "the security and proper use of your HMRC credentials and agent services account, and complying with HMRC's terms and conditions applicable to agents;",
             'keeping your account login credentials confidential, and ensuring only authorised members of your firm access the Service;',
             "ensuring you have a lawful basis under UK GDPR to obtain and process your clients' data through the Service, and meeting your own obligations to your clients as data controller;",
+            'where you connect a mailbox, authorising only mailboxes your firm is entitled to use, and remaining responsible for the content and recipients of emails sent through the Service;',
             'your professional obligations to your clients, including any advice, filings, or deadlines. Decisions and actions taken in reliance on information shown in the Service remain your responsibility;',
             'providing accurate account and billing information and keeping it up to date;',
             'using the Service lawfully, and not attempting to interfere with, reverse engineer, resell, or misuse the Service or access it other than through the interfaces we provide.',
