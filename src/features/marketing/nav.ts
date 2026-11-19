@@ -1,5 +1,6 @@
 /** Final marketing origin (apex). App stays on app.mytaxdiary.co.uk. */
 export const SITE_ORIGIN = 'https://mytaxdiary.co.uk'
+export const APP_ORIGIN = 'https://app.mytaxdiary.co.uk'
 
 export const SITE_HOME = SITE_ORIGIN
 
@@ -23,5 +24,6 @@ export const SITE_LEGAL = {
   cookies: `${SITE_ORIGIN}/cookies`,
 } as const
 
-export const SITE_APP_LOGIN = '/login'
-export const SITE_APP_REGISTER = '/register'
+/** Agent auth lives on the app subdomain to avoid apex CORS. */
+export const SITE_APP_LOGIN = `${APP_ORIGIN}/login`
+export const SITE_APP_REGISTER = `${APP_ORIGIN}/register`

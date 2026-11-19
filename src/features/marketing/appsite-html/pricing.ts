@@ -27,7 +27,7 @@ const html = `<section class="page-hero">
         <li>Email support</li>
         </ul>
         <div class="plan-actions">
-        <a href="/register" class="btn btn-primary btn-block" id="start-trial">Start free trial</a>
+        <a href="https://app.mytaxdiary.co.uk/register" class="btn btn-primary btn-block" id="start-trial">Start free trial</a>
         </div>
         <p style="font-size:12.5px;color:var(--muted);text-align:center;margin-top:12px">7 days free · no card required</p>
       </div>
@@ -116,7 +116,7 @@ const html = `<section class="page-hero">
       </details>
       <details>
         <summary>Is there a free trial?</summary>
-        <div class="answer">Yes: every new firm gets a free 7-day trial with no card required. <a href="/register">Start your trial</a> to see the full product with your own clients.</div>
+        <div class="answer">Yes: every new firm gets a free 7-day trial with no card required. <a href="https://app.mytaxdiary.co.uk/register">Start your trial</a> to see the full product with your own clients.</div>
       </details>
       <details>
         <summary>What happens if I add or remove clients mid-month?</summary>
@@ -137,7 +137,7 @@ const html = `<section class="page-hero">
       <h2>Ready to get started?</h2>
       <p>Start your free 7-day trial today. No card required.</p>
       <div class="cta-actions">
-        <a href="/register" class="btn btn-primary">Start your free trial</a>
+        <a href="https://app.mytaxdiary.co.uk/register" class="btn btn-primary">Start your free trial</a>
         <a href="https://mytaxdiary.co.uk/contact" class="btn btn-ghost">Have questions? Enquire</a>
       </div>
     </div>

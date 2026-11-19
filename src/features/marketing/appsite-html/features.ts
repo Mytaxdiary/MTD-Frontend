@@ -4,7 +4,7 @@ const html = `<section class="page-hero">
     <h1 class="reveal" style="--d:.06s">Everything you need to keep on top of MTD across your client book</h1>
     <p class="reveal" style="--d:.12s">See who has submitted, what each client owes and when, chase for figures, and give clients a simple portal. It works alongside the software you already file with.</p>
     <div class="hero-actions reveal" style="--d:.18s">
-      <a href="/register" class="btn btn-primary">Start your 7-day free trial</a>
+      <a href="https://app.mytaxdiary.co.uk/register" class="btn btn-primary">Start your 7-day free trial</a>
       <a href="https://mytaxdiary.co.uk/contact" class="btn btn-ghost">Book a demo</a>
     </div>
   </div>
@@ -221,7 +221,7 @@ const html = `<section class="page-hero">
       <h2>See your whole client book in one place</h2>
       <p>Try My Tax Diary free for 7 days. No card needed. If you would rather see it first, book a 20-minute walkthrough.</p>
       <div class="cta-actions">
-        <a href="/register" class="btn btn-primary">Start your 7-day free trial</a>
+        <a href="https://app.mytaxdiary.co.uk/register" class="btn btn-primary">Start your 7-day free trial</a>
         <a href="https://mytaxdiary.co.uk/contact" class="btn btn-ghost">Book a demo</a>
         <a href="https://mytaxdiary.co.uk/pricing" class="btn btn-ghost">View pricing</a>
       </div>

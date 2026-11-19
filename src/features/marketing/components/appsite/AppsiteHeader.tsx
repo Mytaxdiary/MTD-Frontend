@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { SITE_HOME, SITE_NAV, SITE_PAGES } from '@/features/marketing/nav'
+import { SITE_APP_LOGIN, SITE_APP_REGISTER, SITE_HOME, SITE_NAV, SITE_PAGES } from '@/features/marketing/nav'
 
 /**
  * Shared marketing header for inner pages (features/pricing/contact/legal).
@@ -43,10 +43,10 @@ export default function AppsiteHeader() {
         </nav>
 
         <div className="nav-cta">
-          <a href="/login" className="btn btn-ghost btn-sm">
+          <a href={SITE_APP_LOGIN} className="btn btn-ghost btn-sm">
             Sign in
           </a>
-          <a href="/register" className="btn btn-primary btn-sm">
+          <a href={SITE_APP_REGISTER} className="btn btn-primary btn-sm">
             Start free trial
           </a>
           <button className="burger" aria-label="Open menu" aria-expanded="false">
@@ -71,10 +71,10 @@ export default function AppsiteHeader() {
             ))}
           </nav>
           <div className="m-cta">
-            <a href="/login" className="btn btn-ghost">
+            <a href={SITE_APP_LOGIN} className="btn btn-ghost">
               Sign in
             </a>
-            <a href="/register" className="btn btn-primary">
+            <a href={SITE_APP_REGISTER} className="btn btn-primary">
               Start free trial
             </a>
           </div>

@@ -1,4 +1,4 @@
-import { SITE_HOME, SITE_LEGAL, SITE_PAGES } from '@/features/marketing/nav'
+import { SITE_APP_LOGIN, SITE_APP_REGISTER, SITE_HOME, SITE_LEGAL, SITE_PAGES } from '@/features/marketing/nav'
 
 /**
  * Shared marketing footer for inner pages. Markup mirrors the `.site-footer`
@@ -42,10 +42,10 @@ export default function AppsiteFooter() {
             <h5>Account</h5>
             <ul>
               <li>
-                <a href="/login">Sign in</a>
+                <a href={SITE_APP_LOGIN}>Sign in</a>
               </li>
               <li>
-                <a href="/register">Start free trial</a>
+                <a href={SITE_APP_REGISTER}>Start free trial</a>
               </li>
               <li>
                 <a href="mailto:info@mytaxdiary.co.uk">info@mytaxdiary.co.uk</a>

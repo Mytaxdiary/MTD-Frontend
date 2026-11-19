@@ -13,8 +13,8 @@ const html = `<!-- ===== HEADER ===== -->
     </nav>
 
     <div class="nav-cta">
-      <a href="/login" class="btn btn-ghost btn-sm">Sign in</a>
-      <a href="/register" class="btn btn-primary btn-sm">Start free trial</a>
+      <a href="https://app.mytaxdiary.co.uk/login" class="btn btn-ghost btn-sm">Sign in</a>
+      <a href="https://app.mytaxdiary.co.uk/register" class="btn btn-primary btn-sm">Start free trial</a>
       <button class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button>
     </div>
   </div>
@@ -28,8 +28,8 @@ const html = `<!-- ===== HEADER ===== -->
         <a href="https://mytaxdiary.co.uk/contact">Contact</a>
       </nav>
       <div class="m-cta">
-        <a href="/login" class="btn btn-ghost">Sign in</a>
-        <a href="/register" class="btn btn-primary">Start free trial</a>
+        <a href="https://app.mytaxdiary.co.uk/login" class="btn btn-ghost">Sign in</a>
+        <a href="https://app.mytaxdiary.co.uk/register" class="btn btn-primary">Start free trial</a>
       </div>
     </div>
   </div>
@@ -49,7 +49,7 @@ const html = `<!-- ===== HEADER ===== -->
           <p class="lead-note">It works alongside the software you already file with, so there is nothing to switch and nothing to re-enter.</p>
 
           <div class="hero-actions">
-            <a href="/register" class="btn btn-primary btn-lg">Start your 7-day free trial
+            <a href="https://app.mytaxdiary.co.uk/register" class="btn btn-primary btn-lg">Start your 7-day free trial
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </a>
             <a href="https://mytaxdiary.co.uk/contact" class="btn btn-ghost btn-lg">Book a demo</a>
@@ -260,7 +260,7 @@ const html = `<!-- ===== HEADER ===== -->
       <h2>See your whole client book in one place</h2>
       <p>Try My Tax Diary free for 7 days. No card needed. If you would rather see it first, book a 20-minute walkthrough.</p>
       <div class="cta-actions">
-        <a href="/register" class="btn btn-primary btn-lg">Start your 7-day free trial
+        <a href="https://app.mytaxdiary.co.uk/register" class="btn btn-primary btn-lg">Start your 7-day free trial
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
         <a href="https://mytaxdiary.co.uk/contact" class="btn btn-ghost btn-lg">Book a demo</a>
@@ -301,8 +301,8 @@ const html = `<!-- ===== HEADER ===== -->
       <div class="foot-col reveal" style="--d:.16s">
         <h5>Account</h5>
         <ul>
-          <li><a href="/login">Sign in</a></li>
-          <li><a href="/register">Start free trial</a></li>
+          <li><a href="https://app.mytaxdiary.co.uk/login">Sign in</a></li>
+          <li><a href="https://app.mytaxdiary.co.uk/register">Start free trial</a></li>
           <li><a href="mailto:info@mytaxdiary.co.uk">info@mytaxdiary.co.uk</a></li>
         </ul>
       </div>

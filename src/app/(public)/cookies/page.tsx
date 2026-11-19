@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import CookiesBody from '@/features/legal/CookiesBody'
-import { SITE_HOME, SITE_LEGAL } from '@/features/marketing/nav'
+import { SITE_APP_LOGIN, SITE_HOME, SITE_LEGAL } from '@/features/marketing/nav'
 import '@/features/legal/legal.css'
 
 export const metadata: Metadata = {
@@ -20,7 +20,7 @@ export default function CookiesPage() {
         <div className="mtd-legal-standalone__links">
           <Link href={SITE_LEGAL.privacy}>Privacy Policy</Link>
           <Link href={SITE_LEGAL.terms}>Terms</Link>
-          <Link href="/login">Sign in</Link>
+          <Link href={SITE_APP_LOGIN}>Sign in</Link>
         </div>
       </nav>
 
@@ -36,7 +36,7 @@ export default function CookiesPage() {
         <div className="mtd-legal-standalone__footer">
           <Link href={SITE_LEGAL.privacy}>Privacy Policy</Link>
           <Link href={SITE_LEGAL.terms}>Terms</Link>
-          <Link href="/login">Sign in</Link>
+          <Link href={SITE_APP_LOGIN}>Sign in</Link>
           <a href="mailto:info@mytaxdiary.co.uk">info@mytaxdiary.co.uk</a>
           <span>My Tax Diary Ltd, Company No. 17312332</span>
         </div>
